@@ -42,7 +42,7 @@ body {
   height: 50px;
   overflow: hidden;
   /* background-color: aqua; */
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 #sidebar_profile_container:hover {
@@ -73,7 +73,7 @@ body {
   width: 230px;
   height: 50px;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   /* background-color: aqua; */
 }
 
