@@ -1,0 +1,70 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.Announcement-container {
+  font-size: 25px;
+  /* padding: 25px */
+}
+
+
+.Announcement-header {
+  display: flex;
+  width: 700px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Announcement-title {
+  font-weight: bold;
+}
+
+.Announcement-more {
+  font-size: 0.8em;
+  color: #6f6f6f;
+}
+
+
+.Announcement-card {
+  width: 700px;
+  height: 250px;
+  font-size: 25px;
+  border-radius: 15px;
+  border: 2px #eee solid;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.Announcement-card-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
+}
+
+.Announcement-profile {
+  display: flex;
+  align-items: center;
+} 
+
+
+.Announcement-profile > img {
+  width: 40px;
+  margin-right: 10px;
+} 
+
+.Announcement-profile > p {
+  font-size: 0.8em;
+} 
+
+.announcement-card-title {
+  width: 100%;
+  font-weight: bold;
+}
+
+.announcement-card-info {
+  width: 100%;
+  height: 100%;
+}
