@@ -1,16 +1,20 @@
-import DefaultLayout from "./components/default-layout/Default-Layout"
-import MeetingList from "./components/Meeting/MeetingList/MeetingList"
-import MeetingShow from "./components/MeetingShow/test/MeetingShow"
-import Menubar from "./components/Menubar"
+import ProfilePage from './pages/Profile/ProfilePage';
+import NeighborCreatePostPage from './pages/Neighbor/NeighborCreatePostPage';
+import NeighborFeedPage from './pages/Neighbor/NeighborFeedPage';
+import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
 
+const neighborPages = {
+  '/neighbor': NeighborFeedPage,
+  '/neighbor/my': NeighborMyPostsPage,
+  '/neighbor/create': NeighborCreatePostPage,
+};
+
+/** 현재 주소에 해당하는 화면을 렌더링합니다. */
 function App() {
-  return (
-    <DefaultLayout>
-      <Menubar list1={'모임 보기'} list2={'내 모임'} list3={'모임 만들기'}/>
-      <MeetingShow/>
-      {/* <MeetingList/> */}
-    </DefaultLayout>
-  )
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+  const Page = neighborPages[currentPath] ?? ProfilePage;
+
+  return <Page />;
 }
 
-export default App
+export default App;
