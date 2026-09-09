@@ -50,7 +50,7 @@
   content: '';
   width: 250px;
   height: 0px;
-  background-color: #000;
+  background-color: #777;
   transition: all 0.2s ease;
   position: absolute;
   left: 0;
@@ -63,4 +63,13 @@
 
 #meeting-menu li.is-active::after {
   height: 4px;
+  background-color: #42b66b;
+}
+
+#meeting-menu li.is-active {
+  color: #42b66b;
+  font-weight: bold;
+  background-color: #dcffde;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
 }
