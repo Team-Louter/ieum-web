@@ -10,18 +10,15 @@ function PostCreateForm() {
   const [content, setContent] = useState('');
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
+  const previewUrlRef = useRef('');
 
   useEffect(() => {
-    if (!selectedFile) {
-      setPreviewUrl('');
-      return undefined;
-    }
-
-    const nextPreviewUrl = URL.createObjectURL(selectedFile);
-    setPreviewUrl(nextPreviewUrl);
-
-    return () => URL.revokeObjectURL(nextPreviewUrl);
-  }, [selectedFile]);
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
 
   /** 선택한 파일이 이미지 또는 동영상인지 확인하고 미리보기를 준비합니다. */
   function handleFileChange(event) {
@@ -41,13 +38,25 @@ function PostCreateForm() {
       return;
     }
 
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(nextFile);
+    previewUrlRef.current = nextPreviewUrl;
     setSelectedFile(nextFile);
+    setPreviewUrl(nextPreviewUrl);
     setErrors((currentErrors) => ({ ...currentErrors, media: '' }));
   }
 
   /** 파일 선택 창을 열어 이미 선택한 파일도 교체할 수 있게 합니다. */
   function handleFileSelectClick() {
-    fileInputRef.current?.click();
+    if (!fileInputRef.current) {
+      return;
+    }
+
+    fileInputRef.current.value = '';
+    fileInputRef.current.click();
   }
 
   /** 필수 입력값을 확인하고 유효하지 않은 항목에 오류 문구를 표시합니다. */
