@@ -1,0 +1,75 @@
+
+.input-container {
+  display: flex;
+  justify-content: space-between;
+
+  width: 1000px;
+  height: 300px;
+}
+
+.meeting-input-picture {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 300px;
+  height: 300px;
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+}
+
+.meeting-input-picture-guide {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  
+  gap: 20px;  
+  padding: 20px;
+
+  font-size: 20px;
+}
+
+.meeting-input-picture-guide-image {
+  width: 50px;
+  height: auto;
+}
+
+.meeting-input-picture-guide-text {
+  color: #767676;
+  font-size: 20px;
+}
+
+.meeting-input-subcontainer {
+  width: 650px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meeting-input-name {
+  width: 650px;
+  height: 60px;
+  padding: 20px;
+
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+
+  font-size: 20px;
+}
+
+.meeting-input-info {
+  resize: none;
+
+  width: 650px;
+  height: 200px;
+  padding: 20px;
+
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+
+  font-size: 20px;
+}
