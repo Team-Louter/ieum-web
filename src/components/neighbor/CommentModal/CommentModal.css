@@ -87,3 +87,14 @@
     width: calc(100vw - 86px);
   }
 }
+
+@media (max-height: 700px) {
+  .comment-modal {
+    top: 76px;
+  }
+
+  .comment-modal__panel {
+    height: calc(100vh - 100px);
+    padding-top: 44px;
+  }
+}
