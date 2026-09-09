@@ -1,8 +1,21 @@
+import { useEffect } from 'react';
 import './CommentModal.css';
 import closeImg from '../../../assets/images/close.png';
 
 /** 댓글 목록과 댓글 입력 영역을 표시하는 모달입니다. */
 function CommentModal({ children, onClose }) {
+  useEffect(() => {
+    /** Escape 키 입력 시 댓글 모달을 닫습니다. */
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
     <section className="comment-modal" aria-label="댓글">
       <div className="comment-modal__panel">
