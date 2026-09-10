@@ -1,12 +1,12 @@
 import './MyProfilePageFriend.css';
-import MyProfileInfo from '../../components/my profile/MyProfileInfo/MyProfileInfo';
+import MyProfileInfo from '../../components/profile/MyProfileInfo/MyProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
-import MyProfileEditButtons from '../../components/my profile/MyProfileEditButtons/MyProfileEditButtons';
+import MyProfileEditButtons from '../../components/profile/MyProfileEditButtons/MyProfileEditButtons';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 
 /** 사용자 프로필 화면을 표시합니다. */
-function ProfilePage() {
+function MyProfilePageFriend() {
   const menuItems = [
     { label: '내 게시물', href: '/profile', isActive: false },
     { label: '내 모임', href: '/profile/meetings', isActive: false },
@@ -16,17 +16,17 @@ function ProfilePage() {
   return (
     <Layout className="profile-layout">
       <div id="profile-box">
-        <MyProfileInfo></MyProfileInfo>
+        <MyProfileInfo />
         <MyProfileEditButtons />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <div id="content-container">
-          <MyPostCard></MyPostCard>
-          <MyPostCard></MyPostCard>
-          <MyPostCard></MyPostCard>
+          <MyPostCard />
+          <MyPostCard />
+          <MyPostCard />
         </div>
       </div>
     </Layout>
   );
 }
 
-export default ProfilePage;
+export default MyProfilePageFriend;

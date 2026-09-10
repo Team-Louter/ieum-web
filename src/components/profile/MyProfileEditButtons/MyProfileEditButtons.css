@@ -1,0 +1,15 @@
+#profile-info-button {
+  display: flex;
+  gap: 46px;
+}
+
+#profile-info-button > button {
+  flex: 1;
+  height: 54px;
+  border: none;
+  border-radius: 10px;
+  background: #42b66b;
+  color: #bbffbf;
+  font-size: 27px;
+  font-weight: bold;
+}
