@@ -1,0 +1,6 @@
+.my-content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(870px, 100%);
+  gap: 20px;
+}

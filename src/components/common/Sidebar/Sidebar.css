@@ -21,7 +21,6 @@ body {
   width: 70px;
   height: 100vh;
   padding: 50px 10px;
-  /* background-color: brown; */
   overflow: hidden;
   transition: all 0.2s ease;
   border-right: 1px solid #eee;
@@ -32,7 +31,7 @@ body {
   width: 250px;
 }
 
-#sidebar_profile_container {
+#sidebar-profile-container {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -41,30 +40,29 @@ body {
   width: 230px;
   height: 50px;
   overflow: hidden;
-  /* background-color: aqua; */
   transition: all 0.15s ease;
 }
 
-#sidebar_profile_container:hover {
+#sidebar-profile-container:hover {
   background-color: #eee;
 }
 
-#sidebar_profile_container > img {
+#sidebar-profile-container > img {
   width: 40px;
   height: 40px;
 }
 
-#sidebar_profile_container > p {
+#sidebar-profile-container > p {
   font-size: 20px;
 }
 
-#sidebar_menu {
+#sidebar-menu {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-#sidebar_menu_item {
+#sidebar-menu-item {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -77,16 +75,16 @@ body {
   /* background-color: aqua; */
 }
 
-#sidebar_menu_item:hover {
+#sidebar-menu-item:hover {
   background-color: #eee;
 }
 
-#sidebar_menu_item > img {
+#sidebar-menu-item > img {
   width: 40px;
   height: 40px;
 }
 
-#sidebar_menu_item > p {
+#sidebar-menu-item > p {
   font-size: 20px;
 }
 
@@ -94,6 +92,6 @@ main {
   padding-left: 70px;
   display: flex;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #fdfdfd;
 }
