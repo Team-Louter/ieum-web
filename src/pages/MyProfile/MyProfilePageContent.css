@@ -14,3 +14,8 @@
 #profile-box > .page-tab-navigation {
   margin-top: 18px;
 }
+
+#content-container {
+  display: flex;
+  gap: 30px;
+}

@@ -1,0 +1,21 @@
+#profile-box {
+  display: flex;
+  flex-direction: column;
+  gap: 46px;
+  width: min(916px, calc(100vw - 110px));
+}
+
+#default-layout.profile-layout main {
+  width: calc(100vw - 70px);
+  margin-left: 70px;
+  padding: 86px 0 50px;
+}
+
+#profile-box > .page-tab-navigation {
+  margin-top: 18px;
+}
+
+#content-container {
+  display: flex;
+  gap: 30px;
+}

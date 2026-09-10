@@ -1,8 +1,8 @@
-import './ProfileInfo.css';
+import './MyProfileInfo.css';
 import profileImg from '../../../assets/images/profile.png';
 
 /** 프로필 기본 정보를 표시합니다. */
-function ProfileInfo() {
+function MyProfileInfo() {
   return (
     <div id='profile-container'>
       <img src={profileImg} alt="프로필 사진" />
@@ -18,4 +18,4 @@ function ProfileInfo() {
   );
 }
 
-export default ProfileInfo;
+export default MyProfileInfo;
