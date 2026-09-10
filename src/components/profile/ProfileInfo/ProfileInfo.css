@@ -2,27 +2,27 @@
   display: flex;
   gap: 20px;
   align-items: center;
-  width: 1000px;
+  width: 100%;
 }
 
 #profile-container > img {
-  width: 150px;
-  height: 150px;
+  width: 136px;
+  height: 136px;
 }
 
 #profile-text-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 #profile-text-info > p:nth-child(1) {
-  font-size: 40px;
+  font-size: 34px;
   font-weight: bold;
 }
 
 #profile-text-info > p:nth-child(2) {
-  font-size: 25px;
+  font-size: 20px;
 }
 #user-info {
   display: flex;
@@ -30,5 +30,5 @@
 }
 
 #user-info > p {
-  font-size: 20px;
+  font-size: 18px;
 }

@@ -11,7 +11,7 @@ import settingIcon from '../../../assets/images/setting.svg';
 function Sidebar() {
   return (
     <aside id="sidebar">
-      <a href="#" id="sidebar-profile-container">
+      <a href="/profile" id="sidebar-profile-container">
         <img src={profileImg} alt="프로필 아이콘" />
         <p>프로필 아이디</p>
       </a>

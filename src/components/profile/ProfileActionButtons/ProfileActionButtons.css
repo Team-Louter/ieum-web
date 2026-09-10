@@ -1,12 +1,12 @@
 #profile-info-button {
   display: flex;
-  gap: 51px;
+  gap: 46px;
 }
 
 #profile-info-button > button {
-  width: 475px;
-  height: 60px;
-  font-size: 20px;
+  flex: 1;
+  height: 54px;
+  font-size: 27px;
   font-weight: bold;
   border-radius: 10px;
 }
