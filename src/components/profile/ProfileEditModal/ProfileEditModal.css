@@ -67,9 +67,16 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 20px;
   width: 250px;
   height: 250px;
+}
+
+#profile-image-input-container > img {
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
 }
 
 #profile-image-input-label {
