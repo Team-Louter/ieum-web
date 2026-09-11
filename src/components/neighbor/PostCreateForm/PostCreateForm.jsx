@@ -76,23 +76,19 @@ function PostCreateForm() {
     <form className="post-create-form" onSubmit={handleSubmit}>
       <div className="post-create-form__content">
         <div className="post-create-form__media-wrapper">
-          <button
-            type="button"
-            className="post-create-form__media-label"
-            onClick={handleFileSelectClick}
-          >
-          {previewUrl ? (
-            selectedFile.type.startsWith('image/') ? (
-              <img className="post-create-form__preview" src={previewUrl} alt="선택한 이미지 미리보기" />
+          <button type="button" className="post-create-form__media-label" onClick={handleFileSelectClick}>
+            {previewUrl ? (
+              selectedFile.type.startsWith('image/') ? (
+                <img className="post-create-form__preview" src={previewUrl} alt="선택한 이미지 미리보기" />
+              ) : (
+                <video className="post-create-form__preview" src={previewUrl} controls onClick={(event) => event.stopPropagation()} />
+              )
             ) : (
-              <video className="post-create-form__preview" src={previewUrl} controls onClick={(event) => event.stopPropagation()} />
-            )
-          ) : (
-            <>
-              <img src={uploadIcon} alt="" />
-              <p>동영상 또는 사진을 올려주세요.</p>
-            </>
-          )}
+              <>
+                <img src={uploadIcon} alt="" />
+                <p>동영상 또는 사진을 올려주세요.</p>
+              </>
+            )}
           </button>
           {previewUrl && (
             <button type="button" className="post-create-form__change-button" onClick={handleFileSelectClick}>
@@ -103,32 +99,16 @@ function PostCreateForm() {
             {errors.media}
           </p>
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          id="post-media"
-          accept="image/*,video/*"
-          hidden
-          onChange={handleFileChange}
-        />
+        <input ref={fileInputRef} type="file" id="post-media" accept="image/*,video/*" hidden onChange={handleFileChange} />
         <div className="post-create-form__text-fields">
           <div>
-            <input
-              type="text"
-              placeholder="제목을 입력해주세요"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-            />
+            <input type="text" placeholder="제목을 입력해주세요" value={title} onChange={(event) => setTitle(event.target.value)} />
             <p className="post-create-form__error" role={errors.title ? 'alert' : undefined}>
               {errors.title}
             </p>
           </div>
           <div>
-            <textarea
-              placeholder="내용을 입력해주세요."
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-            />
+            <textarea placeholder="내용을 입력해주세요." value={content} onChange={(event) => setContent(event.target.value)} />
             <p className="post-create-form__error" role={errors.content ? 'alert' : undefined}>
               {errors.content}
             </p>
