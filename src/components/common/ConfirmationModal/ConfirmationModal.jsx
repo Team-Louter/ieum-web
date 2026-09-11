@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import './ConfirmationModal.css';
+import closeIcon from '../../../assets/images/close.svg';
 
 /** 게시물 삭제 여부를 확인하는 모달을 표시합니다. */
 function ConfirmationModal({ onCancel, onConfirm }) {
@@ -25,6 +26,9 @@ function ConfirmationModal({ onCancel, onConfirm }) {
   return (
     <div className="confirmation-modal" onClick={handleBackdropClick} role="presentation">
       <section className="confirmation-modal__panel" role="dialog" aria-modal="true" aria-labelledby="confirmation-modal-title">
+        <button type="button" onClick={onCancel}>
+          <img src={closeIcon} alt="닫기 아이콘" />
+        </button>
         <p id="confirmation-modal-title">정말로 게시물을 삭제하시겠습니까?</p>
         <div className="confirmation-modal__button-group">
           <button type="button" onClick={onCancel}>

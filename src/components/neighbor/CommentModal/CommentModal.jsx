@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import './CommentModal.css';
-import closeImg from '../../../assets/images/close.png';
+import closeImg from '../../../assets/images/close.svg';
 
 /** 댓글 목록과 댓글 입력 영역을 표시하는 모달입니다. */
 function CommentModal({ children, onClose }) {
