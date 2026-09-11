@@ -1,6 +1,7 @@
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
+import FriendLocationPage from './pages/FriendLocation/FriendLocationPage';
 import NeighborCreatePostPage from './pages/Neighbor/NeighborCreatePostPage';
 import NeighborFeedPage from './pages/Neighbor/NeighborFeedPage';
 import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
@@ -10,6 +11,7 @@ const pageRoutes = {
   '/profile': MyProfilePageContent,
   '/profile/meetings': MyProfilePageMeeting,
   '/profile/friends': MyProfilePageFriend,
+  '/friends/location': FriendLocationPage,
   '/neighbor': NeighborFeedPage,
   '/neighbor/my': NeighborMyPostsPage,
   '/neighbor/create': NeighborCreatePostPage,

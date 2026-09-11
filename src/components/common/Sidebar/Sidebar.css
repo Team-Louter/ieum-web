@@ -25,6 +25,7 @@ body {
   transition: all 0.2s ease;
   border-right: 1px solid #eee;
   background-color: #fff;
+  z-index: 10000;
 }
 
 #sidebar:hover {
