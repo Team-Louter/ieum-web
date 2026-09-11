@@ -32,7 +32,7 @@ function Sidebar() {
           <img src={addfriendIcon} alt="아이콘" />
           <p>친구 추가</p>
         </a>
-        <a href="#" id="sidebar-menu-item">
+        <a href="/friends/location" id="sidebar-menu-item">
           <img src={mapfriendIcon} alt="아이콘" />
           <p>친구 위치</p>
         </a>
