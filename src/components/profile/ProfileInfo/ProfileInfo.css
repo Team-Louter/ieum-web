@@ -1,0 +1,35 @@
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.profile-info > img {
+  width: 136px;
+  height: 136px;
+}
+
+.profile-info__text {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-info__text > p:nth-child(1) {
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.profile-info__text > p:nth-child(2) {
+  font-size: 20px;
+}
+
+.profile-info__stats {
+  display: flex;
+  gap: 30px;
+}
+
+.profile-info__stats > p {
+  font-size: 18px;
+}
