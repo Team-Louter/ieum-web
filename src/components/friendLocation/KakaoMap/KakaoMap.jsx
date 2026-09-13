@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { dummyFriendLocations } from '../../../constants/dummy/dummyFriendLocations';
 import NearbyFriendPing from '../NearbyFriendPing/NearbyFriendPing';
 import createNearbyFriendPingElement from '../NearbyFriendPing/createNearbyFriendPingElement';
@@ -11,38 +11,75 @@ const DEFAULT_CENTER = { latitude: 35.8534, longitude: 128.4722 };
 function KakaoMap() {
   const mapContainerRef = useRef(null);
   const kakaoMapAppKey = import.meta.env.VITE_KAKAO_MAP_APP_KEY;
+  const [hasMapLoadFailed, setHasMapLoadFailed] = useState(false);
 
   useEffect(() => {
     if (!kakaoMapAppKey || !mapContainerRef.current) {
       return undefined;
     }
 
+    let isMounted = true;
+
+    /** 카카오 SDK 로드 실패 시 지도 미리보기로 전환합니다. */
+    function handleMapLoadError() {
+      if (isMounted) {
+        setHasMapLoadFailed(true);
+      }
+    }
+
     /** 카카오 지도와 친구 위치 마커를 초기화합니다. */
     function initializeMap() {
       const { kakao } = window;
 
-      kakao.maps.load(() => {
-        const map = new kakao.maps.Map(mapContainerRef.current, {
-          center: new kakao.maps.LatLng(DEFAULT_CENTER.latitude, DEFAULT_CENTER.longitude),
-          level: 5,
-        });
+      if (!kakao?.maps) {
+        handleMapLoadError();
+        return;
+      }
 
-        dummyFriendLocations.forEach(({ nickname, latitude, longitude }) => {
-          new kakao.maps.CustomOverlay({
-            content: createNearbyFriendPingElement(nickname),
-            map,
-            position: new kakao.maps.LatLng(latitude, longitude),
-            yAnchor: 1,
-          });
+      try {
+        kakao.maps.load(() => {
+          if (!mapContainerRef.current || !isMounted) {
+            return;
+          }
+
+          try {
+            const map = new kakao.maps.Map(mapContainerRef.current, {
+              center: new kakao.maps.LatLng(DEFAULT_CENTER.latitude, DEFAULT_CENTER.longitude),
+              level: 5,
+            });
+
+            dummyFriendLocations.forEach(({ nickname, latitude, longitude }) => {
+              new kakao.maps.CustomOverlay({
+                content: createNearbyFriendPingElement(nickname),
+                map,
+                position: new kakao.maps.LatLng(latitude, longitude),
+                yAnchor: 1,
+              });
+            });
+          } catch {
+            handleMapLoadError();
+          }
         });
-      });
+      } catch {
+        handleMapLoadError();
+      }
     }
 
     const existingScript = document.getElementById(KAKAO_MAP_SCRIPT_ID);
 
     if (existingScript) {
-      initializeMap();
-      return undefined;
+      if (window.kakao?.maps) {
+        initializeMap();
+      } else {
+        existingScript.addEventListener('load', initializeMap, { once: true });
+        existingScript.addEventListener('error', handleMapLoadError, { once: true });
+      }
+
+      return () => {
+        isMounted = false;
+        existingScript.removeEventListener('load', initializeMap);
+        existingScript.removeEventListener('error', handleMapLoadError);
+      };
     }
 
     const script = document.createElement('script');
@@ -50,12 +87,17 @@ function KakaoMap() {
     script.async = true;
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapAppKey}&autoload=false`;
     script.addEventListener('load', initializeMap);
+    script.addEventListener('error', handleMapLoadError);
     document.head.appendChild(script);
 
-    return () => script.removeEventListener('load', initializeMap);
+    return () => {
+      isMounted = false;
+      script.removeEventListener('load', initializeMap);
+      script.removeEventListener('error', handleMapLoadError);
+    };
   }, [kakaoMapAppKey]);
 
-  if (!kakaoMapAppKey) {
+  if (!kakaoMapAppKey || hasMapLoadFailed) {
     return (
       <div className="kakao-map kakao-map--fallback" aria-label="친구 위치 지도 미리보기">
         {dummyFriendLocations.map(({ id, nickname, latitude, longitude }) => (
