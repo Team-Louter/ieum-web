@@ -1,28 +1,34 @@
-import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
-import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
-import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
-import FriendLocationPage from './pages/FriendLocation/FriendLocationPage';
-import NeighborCreatePostPage from './pages/Neighbor/NeighborCreatePostPage';
-import NeighborFeedPage from './pages/Neighbor/NeighborFeedPage';
-import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
+import { useState } from 'react';
+import LoginPage from './pages/Loginpage/LoginPage';
+import SignupPage from './pages/SignupPage/SignupPage';
+import './App.css';
 
-const pageRoutes = {
-  '/': MyProfilePageContent,
-  '/profile': MyProfilePageContent,
-  '/profile/meetings': MyProfilePageMeeting,
-  '/profile/friends': MyProfilePageFriend,
-  '/friends/location': FriendLocationPage,
-  '/neighbor': NeighborFeedPage,
-  '/neighbor/my': NeighborMyPostsPage,
-  '/neighbor/create': NeighborCreatePostPage,
-};
+// 임시 커뮤니티 화면..
+function CommunityPage({ onNavigate }) {
+    return (
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h1>커뮤니티 (임시 화면)</h1>
+            <button onClick={() => onNavigate('login')} style={{ fontSize: '20px', padding: '10px', marginTop: '20px' }}>로그아웃</button>
+        </div>
+    );
+}
 
-/** 현재 주소에 해당하는 화면을 렌더링합니다. */
 function App() {
-  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-  const Page = pageRoutes[currentPath] ?? MyProfilePageContent;
+  const [currentPage, setCurrentPage] = useState('login');
 
-  return <Page />;
+  if (currentPage === 'community') {
+    return <CommunityPage onNavigate={setCurrentPage} />;
+  }
+
+  if (currentPage === 'signup-user') {
+    return <SignupPage accountType="user" onNavigate={setCurrentPage} />;
+  }
+  
+  if (currentPage === 'signup-guardian') {
+    return <SignupPage accountType="guardian" onNavigate={setCurrentPage} />;
+  }
+
+  return <LoginPage onNavigate={setCurrentPage} />;
 }
 
 export default App;
