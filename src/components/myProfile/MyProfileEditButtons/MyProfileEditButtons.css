@@ -1,0 +1,16 @@
+.my-profile-edit-buttons {
+  display: flex;
+  gap: 46px;
+}
+
+.my-profile-edit-buttons > button {
+  flex: 1;
+  height: 54px;
+  border: none;
+  border-radius: 10px;
+  background: #42b66b;
+  color: #bbffbf;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
