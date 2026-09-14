@@ -1,30 +1,30 @@
 import { useState } from 'react';
 import './MyProfileEditButtons.css';
-import ProfileEditModal from '../ProfileEditModal/ProfileEditModal';
+import MyProfileEditModal from '../MyProfileEditModal/MyProfileEditModal';
 
 /** 내 프로필을 수정하는 버튼을 표시합니다. */
 function MyProfileEditButtons() {
-  const [isProfileEditModalOpen, setIsProfileEditModalOpen] = useState(false);
+  const [isMyProfileEditModalOpen, setIsMyProfileEditModalOpen] = useState(false);
 
   /** 프로필 수정 모달을 엽니다. */
   function handleProfileEditClick() {
-    setIsProfileEditModalOpen(true);
+    setIsMyProfileEditModalOpen(true);
   }
 
   /** 프로필 수정 모달을 닫습니다. */
-  function handleProfileEditModalClose() {
-    setIsProfileEditModalOpen(false);
+  function handleMyProfileEditModalClose() {
+    setIsMyProfileEditModalOpen(false);
   }
 
   return (
     <>
-      <div id="profile-info-button">
+      <div className="my-profile-edit-buttons">
         <button type="button" onClick={handleProfileEditClick}>프로필 수정하기</button>
       </div>
-      {isProfileEditModalOpen && (
-        <ProfileEditModal
-          onCancel={handleProfileEditModalClose}
-          onConfirm={handleProfileEditModalClose}
+      {isMyProfileEditModalOpen && (
+        <MyProfileEditModal
+          onCancel={handleMyProfileEditModalClose}
+          onConfirm={handleMyProfileEditModalClose}
         />
       )}
     </>

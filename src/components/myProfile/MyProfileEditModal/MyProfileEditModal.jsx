@@ -1,9 +1,9 @@
-import './ProfileEditModal.css';
+import './MyProfileEditModal.css';
 import { useEffect } from 'react';
 import closeIcon from '../../../assets/images/close.svg';
 import profileImg from '../../../assets/images/profile.png';
 
-function ProfileEditModal({ onCancel, onConfirm }) {
+function MyProfileEditModal({ onCancel, onConfirm }) {
   useEffect(() => {
     /** Escape 키 입력 시 프로필 수정 모달을 닫습니다. */
     function handleKeyDown(event) {
@@ -64,4 +64,4 @@ function ProfileEditModal({ onCancel, onConfirm }) {
   );
 }
 
-export default ProfileEditModal;
+export default MyProfileEditModal;

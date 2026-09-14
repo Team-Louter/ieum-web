@@ -1,16 +1,16 @@
 import './MyProfilePageFriend.css';
-import MyProfileInfo from '../../components/profile/MyProfileInfo/MyProfileInfo';
+import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
-import MyProfileEditButtons from '../../components/profile/MyProfileEditButtons/MyProfileEditButtons';
+import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButtons/MyProfileEditButtons';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageFriend() {
   const menuItems = [
-    { label: '내 게시물', href: '/profile', isActive: false },
-    { label: '내 모임', href: '/profile/meetings', isActive: false },
-    { label: '내 친구', href: '/profile/friends', isActive: true },
+    { label: '내 게시물', href: '/myProfile', isActive: false },
+    { label: '내 모임', href: '/myProfile/meetings', isActive: false },
+    { label: '내 친구', href: '/myProfile/friends', isActive: true },
   ];
 
   return (

@@ -15,7 +15,7 @@ function PostCard({ contentImg, isCommentOpen, onCommentToggle }) {
           <img src={profileImg} alt="프로필 사진" />
           <p>아이디</p>
         </div>
-        <a href="#">
+        <a href="profile">
           <p>프로필 보기</p>
         </a>
       </div>
