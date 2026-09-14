@@ -1,0 +1,69 @@
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    height: 60px;
+    padding: 0 16px;
+    border: 2px solid #dfdfdf;
+    border-radius: 10px;
+    font-size: 20px;
+    color: #333333;
+    background: #ffffff;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #42b66b;
+}
+
+.input-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9f9f9f;
+    font-size: 20px;
+    pointer-events: none;
+    transition: all 0.15s ease;
+    background: #ffffff;
+    padding: 0 5px;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 14px;
+    color: #42b66b;
+}
+
+/* 비밀번호 입력 */
+.pw-wrap input {
+    padding-right: 50px;
+}
+
+
+/* 비밀번호 보기 */
+.pw-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.pw-toggle img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
