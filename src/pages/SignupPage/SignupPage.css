@@ -1,0 +1,126 @@
+/* 페이지 레이아웃 */
+.signup-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    color: #333333;
+}
+
+/* 로고 및 타이틀 */
+.signup-page #ieum-logo {
+    width: 150px;
+    height: 150px;
+}
+
+.signup-page h1 {
+    margin-top: 8px;
+    margin-bottom: 28px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #6f6f6f;
+}
+
+/* 폼 컨테이너 */
+.signup-page .signup-form {
+    width: 600px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* 인풋 및 버튼 */
+.signup-page .input-button-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
+.signup-page .input-button-row .input-group {
+    flex: 1;
+}
+
+/* 우측 소형 버튼 */
+.signup-page .small-button {
+    width: 120px;
+    height: 60px;
+    border: none;
+    border-radius: 10px;
+    background-color: #42b66b;
+    color: #bbffbf;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.signup-page .small-button:hover {
+    background-color: #369957;
+}
+
+/* 메시지 및 하단 버튼 */
+.signup-page .signup-message {
+    margin: 4px 0;
+    color: #c62424;
+    text-align: center;
+    font-size: 22px;
+}
+
+.signup-page .signup-message.success {
+    color: #248443;
+}
+
+.signup-page .signup-submit {
+    width: 100%;
+    height: 60px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #42b66b;
+    color: #bbffbf;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.signup-page .signup-submit:hover {
+    background-color: #369957;
+}
+
+.signup-page .back-to-login {
+    margin-top: 20px;
+    background: none;
+    border: none;
+    color: #6f6f6f;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-size: 22px;
+}
+
+.signup-page .back-to-login:hover {
+    color: #333333;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* 오류 메시지 */
+.input-error-msg {
+    color: #c62424;
+    font-size: 14px;
+    margin-top: -12px;
+    margin-bottom: 8px;
+    padding-left: 5px;
+    width: 100%;
+    text-align: left;
+}
+
+.input-success-msg{
+    color:#42B66B;
+}
