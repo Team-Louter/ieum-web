@@ -28,7 +28,7 @@ const pageRoutes = {
 
 /** 로그인 이후 기본 커뮤니티 화면으로 내 프로필을 표시합니다. */
 function CommunityPage() {
-  return <MyProfilePageContent />;
+  return <NeighborFeedPage />;
 }
 
 /** 로그인 상태와 URL 기반 서비스 화면을 함께 표시합니다. */
