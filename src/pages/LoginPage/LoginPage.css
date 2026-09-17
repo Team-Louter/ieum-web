@@ -6,16 +6,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 68px 20px 48px;
+    padding: 50px 20px 40px;
     color: #333333;
-    gap: 18px;
+    gap: 20px;
 }
 
 /* 로고 */
 .login-page #ieum-logo {
-    width: 100px;
-    height: auto;
-    margin-bottom: 12px;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 30px;
 }
 
 /* 로그인 입력 영역과 아래 버튼은 같은 폭을 사용한다. */
@@ -24,20 +24,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    width: 520px;
+    gap: 30px;
+    width: 600px;
     max-width: 100%;
 }
 
-.login-page .input-group input {
-    height: 58px;
-    border: 1px solid #dedede;
-    border-radius: 8px;
-    font-size: 18px;
+.login-page .input-group input,
+.login-page .input-group label {
+    font-size: 25px;
 }
 
 .login-page .input-group label {
-    font-size: 18px;
+    left: 21px;
+    transform: translateY(calc(-50% + 1px));
 }
 
 .login-page .pw-toggle:hover {
@@ -47,21 +46,22 @@
 /* 오류 메시지 */
 .login-page .error-msg {
     width: 100%;
-    font-size: 14px;
+    font-size: 20px;
     color: #c62424;
-    margin-top: -6px;
+    margin: 8px 0 8px;
+    font-weight: 600;
 }
 
 /* 로그인 버튼 */
 .login-page .login {
     width: 100%;
-    height: 58px;
-    font-size: 20px;
+    height: 60px;
+    font-size: 25px;
     background-color: #42b66b;
-    color: #ffffff;
-    border-radius: 8px;
+    color: #bbffbf;
+    border-radius: 10px;
     border: none;
-    font-weight: 700;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -73,16 +73,17 @@
 /* 구글 로그인 버튼 */
 .login-page .google-login {
     width: 100%;
-    height: 58px;
-    font-size: 18px;
+    height: 60px;
+    margin-top: -11px;
+    font-size: 27px;
     background-color: #ffffff;
     color: #2f2f2f;
-    border: 1px solid #dedede;
-    border-radius: 8px;
+    border: 2px solid #9f9f9f;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
@@ -97,8 +98,8 @@
 }
 
 .login-page .google-logo {
-    width: 22px;
-    height: 22px;
+    width: 35px;
+    height: 35px;
     mix-blend-mode: multiply;
 }
 
@@ -107,28 +108,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: -2px 0 12px;
+    width: 440px;
+    max-width: 100%;
+    margin-top: 21px;
+    margin-bottom: 0;
 }
 
 .login-page .find {
     border: none;
     background: transparent;
-    color: #7b7b7b;
-    font-size: 16px;
+    color: #6f6f6f;
+    font-size: 25px;
     cursor: pointer;
-    padding: 0 16px;
-    width: auto;
+    padding: 0;
+    width: 50%;
     height: auto;
     transition: color 0.2s ease;
 }
 
 .login-page .find:nth-child(1) {
-    border-right: 1px solid #b7b7b7;
-    padding-right: 16px;
+    border-right: 2px solid #6f6f6f;
+    padding-right: 20px;
 }
 
 .login-page .find:nth-child(2) {
-    padding-left: 16px;
+    padding-left: 20px;
 }
 
 .login-page .find:hover {
@@ -141,10 +145,11 @@
 .login-page .signup-group {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    width: 520px;
+    gap: 40px;
+    width: 600px;
     max-width: 100%;
-    margin-top: 0;
+    margin-top: auto;
+    margin-bottom: 47px;
 }
 
 .login-page .signup {
@@ -152,14 +157,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #42b66b;
-    border-radius: 8px;
+    border: 6px solid #42b66b;
+    border-radius: 10px;
     background: #ffffff;
     color: #42b66b;
-    font-size: 16px;
+    font-size: 25px;
     cursor: pointer;
     font-weight: 700;
-    height: 50px;
+    height: 60px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -170,19 +175,23 @@
 
 @media (max-width: 560px) {
     .login-page {
-        padding: 48px 20px 36px;
+        padding: 32px 20px;
     }
 
     .login-page #ieum-logo {
-        width: 92px;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 20px;
     }
 
     .login-page .signup-group {
         gap: 10px;
+        margin-top: 30px;
+        margin-bottom: 0;
     }
 
     .login-page .signup {
         padding: 0 8px;
-        font-size: 14px;
+        font-size: 20px;
     }
 }

@@ -28,8 +28,20 @@ function UserSignupPage({ onNavigate }) {
     }
 
     function handlePasswordChange(event) {
-        setPassword(event.target.value);
-        setPasswordError('');
+        const newPassword = event.target.value;
+        setPassword(newPassword);
+
+        const hasLetter = /[a-zA-Z]/.test(newPassword);
+        const hasNumber = /[0-9]/.test(newPassword);
+        const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(newPassword);
+
+        if (newPassword === '') {
+            setPasswordError('');
+        } else if (newPassword.length < 8 || !hasLetter || !hasNumber || !hasSpecialCharacter) {
+            setPasswordError('비밀번호는 8자 이상, 영문자/숫자/특수문자를 사용해주세요');
+        } else {
+            setPasswordError('');
+        }
     }
 
     function handlePasswordCheckChange(event) {
@@ -70,7 +82,7 @@ function UserSignupPage({ onNavigate }) {
         }
 
         if (!email.includes('@')) {
-            setEmailError('이메일 형식이 아닙니다.');
+            setEmailError('이메일 인증에 실패했습니다');
             return;
         }
 
@@ -96,20 +108,23 @@ function UserSignupPage({ onNavigate }) {
             setIdError('아이디를 입력해주세요.');
             hasError = true;
         }
-        if (password === '') {
-            setPasswordError('비밀번호를 입력해주세요.');
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(password);
+
+        if (password.length < 8 || !hasLetter || !hasNumber || !hasSpecialCharacter) {
+            setPasswordError('비밀번호는 8자 이상, 영문자/숫자/특수문자를 사용해주세요');
             hasError = true;
         }
         if (passwordCheck === '') {
-            setPasswordCheckError('비밀번호를 한번 더 입력해주세요.');
+            setPasswordCheckError('비밀번호를 한 번 더 입력해주세요.');
             hasError = true;
-        }
-        if (password !== '' && passwordCheck !== '' && password !== passwordCheck) {
+        } else if (password !== passwordCheck) {
             setPasswordCheckError('비밀번호가 일치하지 않습니다.');
             hasError = true;
         }
-        if (email === '') {
-            setEmailError('이메일을 입력해주세요.');
+        if (!emailSuccess) {
+            setEmailError('이메일 인증에 실패했습니다');
             hasError = true;
         }
         if (address === '') {
@@ -128,22 +143,32 @@ function UserSignupPage({ onNavigate }) {
             <h1>사용자 계정 만들기</h1>
 
             <form className="signup-form" onSubmit={handleSubmit} noValidate>
-                <FieldWithButton id="user-id" label="아이디" value={id} onChange={handleIdChange} buttonText="중복확인" onButtonClick={checkId} />
-                {idError && <p className="input-error-msg">{idError}</p>}
-                {idSuccess && <p className="input-success-msg">사용 가능한 아이디입니다.</p>}
+                <div className="signup-field">
+                    <FieldWithButton id="user-id" label="아이디" value={id} onChange={handleIdChange} buttonText="중복확인" onButtonClick={checkId} />
+                    {idError && <p className="input-error-msg">{idError}</p>}
+                    {idSuccess && <p className="input-success-msg">사용 가능한 아이디입니다.</p>}
+                </div>
 
-                <PasswordField id="user-password" label="비밀번호" value={password} onChange={handlePasswordChange} />
-                {passwordError && <p className="input-error-msg">{passwordError}</p>}
+                <div className="signup-field">
+                    <PasswordField id="user-password" label="비밀번호 (8자 이상, 영문자/숫자/특수문자 사용)" value={password} onChange={handlePasswordChange} />
+                    {passwordError && <p className="input-error-msg">{passwordError}</p>}
+                </div>
 
-                <PasswordField id="user-password-check" label="비밀번호 확인" value={passwordCheck} onChange={handlePasswordCheckChange} />
-                {passwordCheckError && <p className="input-error-msg">{passwordCheckError}</p>}
+                <div className="signup-field">
+                    <PasswordField id="user-password-check" label="비밀번호 확인 (비밀번호를 한 번 더 입력해 주세요)" value={passwordCheck} onChange={handlePasswordCheckChange} />
+                    {passwordCheckError && <p className="input-error-msg">{passwordCheckError}</p>}
+                </div>
 
-                <FieldWithButton id="user-email" label="이메일" type="email" value={email} onChange={handleEmailChange} buttonText={emailButtonText} onButtonClick={checkEmail} />
-                {emailError && <p className="input-error-msg">{emailError}</p>}
-                {emailSuccess && <p className="input-success-msg">이메일 인증에 성공했습니다.</p>}
+                <div className="signup-field">
+                    <FieldWithButton id="user-email" label="이메일" type="email" value={email} onChange={handleEmailChange} buttonText={emailButtonText} onButtonClick={checkEmail} />
+                    {emailError && <p className="input-error-msg">{emailError}</p>}
+                    {emailSuccess && <p className="input-success-msg">이메일 인증에 성공했습니다.</p>}
+                </div>
 
-                <FieldWithButton id="user-address" label="주소" value={address} onChange={handleAddressChange} buttonText="주소검색" onButtonClick={searchAddress} />
-                {addressError && <p className="input-error-msg">{addressError}</p>}
+                <div className="signup-field">
+                    <FieldWithButton id="user-address" label="주소" value={address} onChange={handleAddressChange} buttonText="주소검색" onButtonClick={searchAddress} />
+                    {addressError && <p className="input-error-msg">{addressError}</p>}
+                </div>
 
                 <button type="submit" className="signup-submit">계정 만들기</button>
             </form>
