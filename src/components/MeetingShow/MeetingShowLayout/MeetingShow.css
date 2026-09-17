@@ -1,9 +1,0 @@
-.contents-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
-}
-
-.contents-horizen {
-  border: 1px #eee solid;
-}
