@@ -32,6 +32,12 @@ function App() {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
   const Page = pageRoutes[currentPath];
 
+  /* 화면 이동 */
+  function movePage(pageName) {
+    window.scrollTo(0, 0);
+    setCurrentPage(pageName);
+  }
+
   if (Page) {
     return <Page />;
   }
@@ -41,14 +47,14 @@ function App() {
   }
 
   if (currentPage === 'signup-user') {
-    return <UserSignupPage onNavigate={setCurrentPage} />;
+    return <UserSignupPage onNavigate={movePage} />;
   }
 
   if (currentPage === 'signup-guardian') {
-    return <GuardianSignupPage onNavigate={setCurrentPage} />;
+    return <GuardianSignupPage onNavigate={movePage} />;
   }
 
-  return <LoginPage onNavigate={setCurrentPage} />;
+  return <LoginPage onNavigate={movePage} />;
 }
 
 export default App;
