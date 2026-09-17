@@ -113,7 +113,7 @@
 .input-error-msg {
     color: #c62424;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.4;
     margin: 0;
     padding-left: 4px;
@@ -124,7 +124,7 @@
 .input-success-msg {
     color: #42b66b;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.4;
     margin: 0;
     padding-left: 4px;
