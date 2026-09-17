@@ -17,11 +17,11 @@ function IDsearch({ type, onClose }) {
     const [emailError, setEmailError] = useState('');
     const [done, setDone] = useState(false);
     let title = '비밀번호 찾기';
-    let resultText = '비밀번호 재설정 링크';
+    let resultMessage = '이메일로 비밀번호 재설정 링크를 발송 했습니다.';
 
     if (type === 'id') {
         title = '아이디 찾기';
-        resultText = '가입된 아이디';
+        resultMessage = '입력하신 이메일로 가입된 아이디를 전송했습니다.';
     }
 
     function handleEmailChange(event) {
@@ -49,10 +49,11 @@ function IDsearch({ type, onClose }) {
         return (
             <div className="modal-overlay">
                 <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
-                    <button type="button" className="close-btn" onClick={onClose} aria-label="찾기 창 닫기">&times;</button>
                     <h2 id="find-modal-title">{title}</h2>
-                    <p className="result-msg" role="status">입력하신 이메일로 {resultText}를 전송했습니다.</p>
-                    <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
+                    <div className="modal-result">
+                        <p className="result-msg" role="status">{resultMessage}</p>
+                        <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
+                    </div>
                 </div>
             </div>
         );
@@ -61,7 +62,6 @@ function IDsearch({ type, onClose }) {
     return (
         <div className="modal-overlay">
             <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
-                <button type="button" className="close-btn" onClick={onClose} aria-label="찾기 창 닫기">&times;</button>
                 <h2 id="find-modal-title">{title}</h2>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="modal-email-row">
