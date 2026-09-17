@@ -4,6 +4,7 @@ import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 
+/* 이메일 형식 확인 */
 function isEmailFormatValid(emailValue) {
     const atPosition = emailValue.indexOf('@');
     const dotPosition = emailValue.lastIndexOf('.');
@@ -43,6 +44,7 @@ function GuardianSignupPage({ onNavigate }) {
         const newPassword = event.target.value;
         setPassword(newPassword);
 
+        /* 비밀번호 조건 확인 */
         const hasLetter = /[a-zA-Z]/.test(newPassword);
         const hasNumber = /[0-9]/.test(newPassword);
         const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(newPassword);
@@ -114,6 +116,7 @@ function GuardianSignupPage({ onNavigate }) {
             return;
         }
 
+        /* 임시 사용자 이메일 */
         if (userEmail !== 'ieum@ieum.com') {
             setUserEmailError('존재하지 않는 이메일입니다');
             return;
@@ -137,6 +140,7 @@ function GuardianSignupPage({ onNavigate }) {
             hasError = true;
         }
 
+        /* 비밀번호 조건 확인 */
         const hasLetter = /[a-zA-Z]/.test(password);
         const hasNumber = /[0-9]/.test(password);
         const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(password);

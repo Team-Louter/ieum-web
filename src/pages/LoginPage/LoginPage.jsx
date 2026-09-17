@@ -25,6 +25,7 @@ function LoginPage({ onNavigate = () => {} }) {
     function handleSubmit(e) {
         e.preventDefault();
 
+        /* 임시 Id, pw */
         if (id === 'ieum' && pw === 'ieum') {
             setShowError(false);
             onNavigate('community');
@@ -37,6 +38,7 @@ function LoginPage({ onNavigate = () => {} }) {
         <main className="login-page">
             <img src={ieumLogo} alt="이음 로고" id="ieum-logo" />
 
+            {/* 로그인 인풋 */}
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
                     <input
@@ -113,6 +115,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 </button>
             </div>
 
+            {/* 아이디/비밀번호 찾기 */}
             {findType && (
                 <IDsearch
                     type={findType}

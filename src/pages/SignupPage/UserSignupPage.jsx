@@ -4,6 +4,7 @@ import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 
+/* 이메일 형식 확인 */
 function isEmailFormatValid(emailValue) {
     const atPosition = emailValue.indexOf('@');
     const dotPosition = emailValue.lastIndexOf('.');
@@ -42,6 +43,7 @@ function UserSignupPage({ onNavigate }) {
         const newPassword = event.target.value;
         setPassword(newPassword);
 
+        /* 비밀번호 조건 확인 */
         const hasLetter = /[a-zA-Z]/.test(newPassword);
         const hasNumber = /[0-9]/.test(newPassword);
         const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(newPassword);
@@ -101,6 +103,7 @@ function UserSignupPage({ onNavigate }) {
         setEmailButtonText('인증완료');
     }
 
+    /* 카카오 주소검색 */
     function searchAddress() {
         new window.kakao.Postcode({
             oncomplete: function (data) {
@@ -126,6 +129,7 @@ function UserSignupPage({ onNavigate }) {
             hasError = true;
         }
 
+        /* 비밀번호 조건 확인 */
         const hasLetter = /[a-zA-Z]/.test(password);
         const hasNumber = /[0-9]/.test(password);
         const hasSpecialCharacter = /[^a-zA-Z0-9]/.test(password);

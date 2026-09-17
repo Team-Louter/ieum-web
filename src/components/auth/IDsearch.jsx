@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './IDsearch.css';
 
+/* 이메일 형식 확인 */
 function isEmailFormatValid(emailValue) {
     const atPosition = emailValue.indexOf('@');
     const dotPosition = emailValue.lastIndexOf('.');
