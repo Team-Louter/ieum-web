@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import LoginPage from './pages/Loginpage/LoginPage';
-import SignupPage from './pages/SignupPage/SignupPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import UserSignupPage from './pages/SignupPage/UserSignupPage';
+import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
@@ -26,34 +27,34 @@ const pageRoutes = {
   '/profile/friends': ProfilePageFriend,
 };
 
-/** 로그인 이후 기본 커뮤니티 화면으로 내 프로필을 표시합니다. */
-function CommunityPage() {
-  return <NeighborFeedPage />;
-}
-
-/** 로그인 상태와 URL 기반 서비스 화면을 함께 표시합니다. */
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
   const Page = pageRoutes[currentPath];
+
+  /* 화면 이동 */
+  function movePage(pageName) {
+    window.scrollTo(0, 0);
+    setCurrentPage(pageName);
+  }
 
   if (Page) {
     return <Page />;
   }
 
   if (currentPage === 'community') {
-    return <CommunityPage />;
+    return <NeighborFeedPage />;
   }
 
   if (currentPage === 'signup-user') {
-    return <SignupPage accountType="user" onNavigate={setCurrentPage} />;
+    return <UserSignupPage onNavigate={movePage} />;
   }
 
   if (currentPage === 'signup-guardian') {
-    return <SignupPage accountType="guardian" onNavigate={setCurrentPage} />;
+    return <GuardianSignupPage onNavigate={movePage} />;
   }
 
-  return <LoginPage onNavigate={setCurrentPage} />;
+  return <LoginPage onNavigate={movePage} />;
 }
 
 export default App;

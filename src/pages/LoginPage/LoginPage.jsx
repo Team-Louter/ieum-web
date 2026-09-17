@@ -3,15 +3,14 @@ import './LoginPage.css';
 
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import googleLogo from '../../assets/images/GoogleLogo.svg';
-import eyeIcon from '../../assets/images/Eye.svg';
-import eyeOffIcon from '../../assets/images/EyeOff.svg';
-import PasswordField from '../../components/PasswordField';
+import PasswordField from '../../components/auth/PasswordField';
+import IDsearch from '../../components/auth/IDsearch';
 
 function LoginPage({ onNavigate = () => {} }) {
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
-    const [showPw, setShowPw] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [findType, setFindType] = useState(null);
 
     function handleIdChange(e) {
         setId(e.target.value);
@@ -26,9 +25,9 @@ function LoginPage({ onNavigate = () => {} }) {
     function handleSubmit(e) {
         e.preventDefault();
 
+        /* 임시 Id, pw */
         if (id === 'ieum' && pw === 'ieum') {
             setShowError(false);
-// 로그인 성공 시 커뮤니티로 이동(회원가입에서와 마찬가지로 임시링크/뷰)
             onNavigate('community');
         } else {
             setShowError(true);
@@ -39,6 +38,7 @@ function LoginPage({ onNavigate = () => {} }) {
         <main className="login-page">
             <img src={ieumLogo} alt="이음 로고" id="ieum-logo" />
 
+            {/* 로그인 인풋 */}
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
                     <input
@@ -57,10 +57,6 @@ function LoginPage({ onNavigate = () => {} }) {
                     label="비밀번호"
                     value={pw}
                     onChange={handlePwChange}
-                    show={showPw}
-                    onToggle={() => setShowPw((isVisible) => !isVisible)}
-                    eyeIcon={eyeIcon}
-                    eyeOffIcon={eyeOffIcon}
                 />
 
                 {showError && (
@@ -87,7 +83,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="find"
-                    onClick={() => onNavigate('find-id')}
+                    onClick={() => setFindType('id')}
                 >
                     아이디 찾기
                 </button>
@@ -95,7 +91,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="find"
-                    onClick={() => onNavigate('find-pw')}
+                    onClick={() => setFindType('password')}
                 >
                     비밀번호 찾기
                 </button>
@@ -118,6 +114,14 @@ function LoginPage({ onNavigate = () => {} }) {
                     보호자 계정 만들기
                 </button>
             </div>
+
+            {/* 아이디/비밀번호 찾기 */}
+            {findType && (
+                <IDsearch
+                    type={findType}
+                    onClose={() => setFindType(null)}
+                />
+            )}
         </main>
     );
 }
