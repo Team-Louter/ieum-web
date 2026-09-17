@@ -63,8 +63,8 @@
     border-radius: 10px;
     background-color: #42b66b;
     color: #bbffbf;
-    font-size: 25px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 600;
     cursor: pointer;
     flex-shrink: 0;
     transition: background-color 0.2s ease;
@@ -130,34 +130,4 @@
     padding-left: 4px;
     width: 100%;
     text-align: left;
-}
-
-/* 휴대폰처럼 화면이 좁아지면 입력칸과 버튼이 자연스럽게 줄어든다. */
-@media (max-width: 560px) {
-    .signup-page {
-        padding: 32px 20px;
-    }
-
-    .signup-page #ieum-logo {
-        width: 120px;
-        height: 120px;
-    }
-
-    .signup-page h1 {
-        margin-bottom: 28px;
-        font-size: 24px;
-    }
-
-    .signup-page .input-button-row {
-        gap: 12px;
-    }
-
-    .signup-page .small-button {
-        width: 112px;
-        font-size: 21px;
-    }
-
-    .signup-page .signup-submit {
-        margin-top: 32px;
-    }
 }

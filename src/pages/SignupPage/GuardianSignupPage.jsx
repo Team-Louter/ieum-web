@@ -4,22 +4,26 @@ import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 
+function isEmailFormatValid(emailValue) {
+    return emailValue.includes('@') && emailValue.includes('.');
+}
+
 function GuardianSignupPage({ onNavigate }) {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
     const [email, setEmail] = useState('');
-    const [userId, setUserId] = useState('');
+    const [userEmail, setUserEmail] = useState('');
 
     const [idError, setIdError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordCheckError, setPasswordCheckError] = useState('');
     const [emailError, setEmailError] = useState('');
-    const [userIdError, setUserIdError] = useState('');
+    const [userEmailError, setUserEmailError] = useState('');
 
     const [idSuccess, setIdSuccess] = useState(false);
     const [emailSuccess, setEmailSuccess] = useState(false);
-    const [userIdSuccess, setUserIdSuccess] = useState(false);
+    const [userEmailSuccess, setUserEmailSuccess] = useState(false);
     const [emailButtonText, setEmailButtonText] = useState('인증하기');
 
     function handleIdChange(event) {
@@ -57,10 +61,10 @@ function GuardianSignupPage({ onNavigate }) {
         setEmailButtonText('인증하기');
     }
 
-    function handleUserIdChange(event) {
-        setUserId(event.target.value);
-        setUserIdError('');
-        setUserIdSuccess(false);
+    function handleUserEmailChange(event) {
+        setUserEmail(event.target.value);
+        setUserEmailError('');
+        setUserEmailSuccess(false);
     }
 
     function checkId() {
@@ -83,8 +87,8 @@ function GuardianSignupPage({ onNavigate }) {
             return;
         }
 
-        if (!email.includes('@')) {
-            setEmailError('이메일 인증에 실패했습니다');
+        if (!isEmailFormatValid(email)) {
+            setEmailError('올바르지 않은 형식입니다');
             return;
         }
 
@@ -92,18 +96,23 @@ function GuardianSignupPage({ onNavigate }) {
         setEmailButtonText('인증완료');
     }
 
-    function checkUserId() {
-        if (userId === '') {
-            setUserIdError('필수 입력정보 입니다');
+    function checkUserEmail() {
+        if (userEmail === '') {
+            setUserEmailError('필수 입력정보 입니다');
             return;
         }
 
-        if (userId !== 'ieum') {
-            setUserIdError('존재하지 않는 아이디입니다');
+        if (!isEmailFormatValid(userEmail)) {
+            setUserEmailError('올바르지 않은 형식입니다');
             return;
         }
 
-        setUserIdSuccess(true);
+        if (userEmail !== 'ieum@ieum.com') {
+            setUserEmailError('존재하지 않는 이메일입니다');
+            return;
+        }
+
+        setUserEmailSuccess(true);
     }
 
     function handleSubmit(event) {
@@ -138,16 +147,22 @@ function GuardianSignupPage({ onNavigate }) {
         if (email === '') {
             setEmailError('필수 입력정보 입니다');
             hasError = true;
+        } else if (!isEmailFormatValid(email)) {
+            setEmailError('올바르지 않은 형식입니다');
+            hasError = true;
         } else if (!emailSuccess) {
             setEmailError('이메일 인증에 실패했습니다');
             hasError = true;
         }
 
-        if (userId === '') {
-            setUserIdError('필수 입력정보 입니다');
+        if (userEmail === '') {
+            setUserEmailError('필수 입력정보 입니다');
             hasError = true;
-        } else if (!userIdSuccess) {
-            setUserIdError('존재하지 않는 아이디입니다');
+        } else if (!isEmailFormatValid(userEmail)) {
+            setUserEmailError('올바르지 않은 형식입니다');
+            hasError = true;
+        } else if (!userEmailSuccess) {
+            setUserEmailError('존재하지 않는 이메일입니다');
             hasError = true;
         }
         if (hasError) return;
@@ -185,9 +200,9 @@ function GuardianSignupPage({ onNavigate }) {
                 </div>
 
                 <div className="signup-field">
-                    <FieldWithButton id="linked-user-id" label="연결할 사용자 아이디" value={userId} onChange={handleUserIdChange} buttonText="사용자 확인" onButtonClick={checkUserId} />
-                    {userIdError && <p className="input-error-msg">{userIdError}</p>}
-                    {userIdSuccess && <p className="input-success-msg">사용자 아이디를 확인했습니다.</p>}
+                    <FieldWithButton id="linked-user-email" label="연결할 사용자 이메일" type="email" value={userEmail} onChange={handleUserEmailChange} buttonText="사용자 확인" onButtonClick={checkUserEmail} />
+                    {userEmailError && <p className="input-error-msg">{userEmailError}</p>}
+                    {userEmailSuccess && <p className="input-success-msg">사용자 이메일을 확인했습니다.</p>}
                 </div>
 
                 <button type="submit" className="signup-submit">계정 만들기</button>

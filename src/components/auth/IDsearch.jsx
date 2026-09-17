@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import './IDsearch.css';
 
+function isEmailFormatValid(emailValue) {
+    return emailValue.includes('@') && emailValue.includes('.');
+}
+
 function IDsearch({ type, onClose }) {
     const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [done, setDone] = useState(false);
     let title = '비밀번호 찾기';
     let resultText = '임시 비밀번호 발급 링크';
@@ -14,10 +19,22 @@ function IDsearch({ type, onClose }) {
 
     function handleEmailChange(event) {
         setEmail(event.target.value);
+        setEmailError('');
     }
 
     function handleSubmit(e) {
         e.preventDefault();
+
+        if (email === '') {
+            setEmailError('필수 입력정보 입니다');
+            return;
+        }
+
+        if (!isEmailFormatValid(email)) {
+            setEmailError('올바르지 않은 형식입니다');
+            return;
+        }
+
         setDone(true);
     }
 
@@ -39,7 +56,7 @@ function IDsearch({ type, onClose }) {
             <div className="modal-box">
                 <button type="button" className="close-btn" onClick={onClose}>&times;</button>
                 <h2>{title}</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <div className="modal-email-row">
                         <input
                             type="email"
@@ -50,7 +67,11 @@ function IDsearch({ type, onClose }) {
                         />
                         <button type="submit" className="modal-check-btn">인증하기</button>
                     </div>
-                    <p className="modal-desc">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
+                    {emailError ? (
+                        <p className="modal-error-msg">{emailError}</p>
+                    ) : (
+                        <p className="modal-desc">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
+                    )}
                     <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                 </form>
             </div>

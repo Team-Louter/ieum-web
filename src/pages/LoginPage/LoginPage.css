@@ -18,7 +18,6 @@
     margin-bottom: 30px;
 }
 
-/* 로그인 입력 영역과 아래 버튼은 같은 폭을 사용한다. */
 .login-page form {
     display: flex;
     flex-direction: column;
@@ -32,6 +31,10 @@
 .login-page .input-group input,
 .login-page .input-group label {
     font-size: 25px;
+}
+
+.login-page .input-group input {
+    font-weight: 400;
 }
 
 .login-page .input-group label {
@@ -149,7 +152,7 @@
     width: 600px;
     max-width: 100%;
     margin-top: auto;
-    margin-bottom: 47px;
+    margin-bottom: 20px;
 }
 
 .login-page .signup {
@@ -171,27 +174,4 @@
 .login-page .signup:hover {
     background-color: #42B66B;
     color: #ffffff;
-}
-
-@media (max-width: 560px) {
-    .login-page {
-        padding: 32px 20px;
-    }
-
-    .login-page #ieum-logo {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 20px;
-    }
-
-    .login-page .signup-group {
-        gap: 10px;
-        margin-top: 30px;
-        margin-bottom: 0;
-    }
-
-    .login-page .signup {
-        padding: 0 8px;
-        font-size: 20px;
-    }
 }

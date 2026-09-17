@@ -4,6 +4,10 @@ import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 
+function isEmailFormatValid(emailValue) {
+    return emailValue.includes('@') && emailValue.includes('.');
+}
+
 function UserSignupPage({ onNavigate }) {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
@@ -81,8 +85,8 @@ function UserSignupPage({ onNavigate }) {
             return;
         }
 
-        if (!email.includes('@')) {
-            setEmailError('이메일 인증에 실패했습니다');
+        if (!isEmailFormatValid(email)) {
+            setEmailError('올바르지 않은 형식입니다');
             return;
         }
 
@@ -131,6 +135,9 @@ function UserSignupPage({ onNavigate }) {
 
         if (email === '') {
             setEmailError('필수 입력정보 입니다');
+            hasError = true;
+        } else if (!isEmailFormatValid(email)) {
+            setEmailError('올바르지 않은 형식입니다');
             hasError = true;
         } else if (!emailSuccess) {
             setEmailError('이메일 인증에 실패했습니다');

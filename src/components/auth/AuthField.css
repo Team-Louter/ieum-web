@@ -9,9 +9,8 @@
     padding: 0 16px;
     border: 2px solid #dfdfdf;
     border-radius: 10px;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: 500;
-    color: #333333;
     background: #ffffff;
 }
 
@@ -28,7 +27,7 @@
     padding: 0 5px;
     background: #ffffff;
     color: #9f9f9f;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: 500;
     pointer-events: none;
     transition: all 0.15s ease;
@@ -38,7 +37,7 @@
 .input-group input:not(:placeholder-shown) + label {
     top: 0;
     color: #42b66b;
-    font-size: 20px;
+    font-size: 25px;
 }
 
 .pw-wrap input {
