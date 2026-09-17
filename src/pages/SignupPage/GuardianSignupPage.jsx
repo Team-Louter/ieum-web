@@ -87,6 +87,7 @@ function GuardianSignupPage({ onNavigate }) {
             return;
         }
 
+        setIdError('');
         setIdSuccess(true);
     }
 
@@ -101,6 +102,7 @@ function GuardianSignupPage({ onNavigate }) {
             return;
         }
 
+        setEmailError('');
         setEmailSuccess(true);
         setEmailButtonText('인증완료');
     }
@@ -122,6 +124,7 @@ function GuardianSignupPage({ onNavigate }) {
             return;
         }
 
+        setUserEmailError('');
         setUserEmailSuccess(true);
     }
 

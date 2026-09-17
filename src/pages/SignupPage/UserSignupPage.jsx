@@ -85,6 +85,7 @@ function UserSignupPage({ onNavigate }) {
             return;
         }
 
+        setIdError('');
         setIdSuccess(true);
     }
 
@@ -99,6 +100,7 @@ function UserSignupPage({ onNavigate }) {
             return;
         }
 
+        setEmailError('');
         setEmailSuccess(true);
         setEmailButtonText('인증완료');
     }
