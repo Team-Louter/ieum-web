@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import LoginPage from './pages/Loginpage/LoginPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 import UserSignupPage from './pages/SignupPage/UserSignupPage';
 import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
@@ -27,12 +27,6 @@ const pageRoutes = {
   '/profile/friends': ProfilePageFriend,
 };
 
-/** 로그인 이후 기본 커뮤니티 화면으로 내 프로필을 표시합니다. */
-function CommunityPage() {
-  return <NeighborFeedPage />;
-}
-
-/** 로그인 상태와 URL 기반 서비스 화면을 함께 표시합니다. */
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
@@ -43,7 +37,7 @@ function App() {
   }
 
   if (currentPage === 'community') {
-    return <CommunityPage />;
+    return <NeighborFeedPage />;
   }
 
   if (currentPage === 'signup-user') {
