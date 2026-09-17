@@ -5,7 +5,14 @@ import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 
 function isEmailFormatValid(emailValue) {
-    return emailValue.includes('@') && emailValue.includes('.');
+    const atPosition = emailValue.indexOf('@');
+    const dotPosition = emailValue.lastIndexOf('.');
+
+    const hasTextBeforeAt = atPosition > 0;
+    const hasTextBetweenAtAndDot = dotPosition > atPosition + 1;
+    const hasTextAfterDot = dotPosition < emailValue.length - 1;
+
+    return hasTextBeforeAt && hasTextBetweenAtAndDot && hasTextAfterDot;
 }
 
 function UserSignupPage({ onNavigate }) {
@@ -110,6 +117,12 @@ function UserSignupPage({ onNavigate }) {
 
         if (id === '') {
             setIdError('필수 입력정보 입니다');
+            hasError = true;
+        } else if (id === 'ieum') {
+            setIdError('중복된 아이디입니다.');
+            hasError = true;
+        } else if (!idSuccess) {
+            setIdError('아이디 중복확인을 해주세요.');
             hasError = true;
         }
 

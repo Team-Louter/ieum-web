@@ -2,7 +2,14 @@ import { useState } from 'react';
 import './IDsearch.css';
 
 function isEmailFormatValid(emailValue) {
-    return emailValue.includes('@') && emailValue.includes('.');
+    const atPosition = emailValue.indexOf('@');
+    const dotPosition = emailValue.lastIndexOf('.');
+
+    const hasTextBeforeAt = atPosition > 0;
+    const hasTextBetweenAtAndDot = dotPosition > atPosition + 1;
+    const hasTextAfterDot = dotPosition < emailValue.length - 1;
+
+    return hasTextBeforeAt && hasTextBetweenAtAndDot && hasTextAfterDot;
 }
 
 function IDsearch({ type, onClose }) {
@@ -10,7 +17,7 @@ function IDsearch({ type, onClose }) {
     const [emailError, setEmailError] = useState('');
     const [done, setDone] = useState(false);
     let title = '비밀번호 찾기';
-    let resultText = '임시 비밀번호 발급 링크';
+    let resultText = '비밀번호 재설정 링크';
 
     if (type === 'id') {
         title = '아이디 찾기';
@@ -41,10 +48,10 @@ function IDsearch({ type, onClose }) {
     if (done) {
         return (
             <div className="modal-overlay">
-                <div className="modal-box">
-                    <button type="button" className="close-btn" onClick={onClose}>&times;</button>
-                    <h2>{title}</h2>
-                    <p className="result-msg">입력하신 이메일로 {resultText}를 전송했습니다.</p>
+                <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
+                    <button type="button" className="close-btn" onClick={onClose} aria-label="찾기 창 닫기">&times;</button>
+                    <h2 id="find-modal-title">{title}</h2>
+                    <p className="result-msg" role="status">입력하신 이메일로 {resultText}를 전송했습니다.</p>
                     <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                 </div>
             </div>
@@ -53,14 +60,16 @@ function IDsearch({ type, onClose }) {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-box">
-                <button type="button" className="close-btn" onClick={onClose}>&times;</button>
-                <h2>{title}</h2>
+            <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
+                <button type="button" className="close-btn" onClick={onClose} aria-label="찾기 창 닫기">&times;</button>
+                <h2 id="find-modal-title">{title}</h2>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="modal-email-row">
                         <input
                             type="email"
                             placeholder="이메일"
+                            aria-label="이메일"
+                            aria-describedby="find-email-message"
                             value={email}
                             onChange={handleEmailChange}
                             required
@@ -68,9 +77,9 @@ function IDsearch({ type, onClose }) {
                         <button type="submit" className="modal-check-btn">인증하기</button>
                     </div>
                     {emailError ? (
-                        <p className="modal-error-msg">{emailError}</p>
+                        <p className="modal-error-msg" id="find-email-message" role="alert">{emailError}</p>
                     ) : (
-                        <p className="modal-desc">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
+                        <p className="modal-desc" id="find-email-message">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
                     )}
                     <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                 </form>

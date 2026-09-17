@@ -33,6 +33,8 @@ function PasswordField({ id, label, value, onChange }) {
                     type="button"
                     className="pw-toggle"
                     onClick={togglePassword}
+                    aria-label={show ? '비밀번호 숨기기' : '비밀번호 보이기'}
+                    aria-pressed={show}
                 >
                     <img src={icon} alt="" />
                 </button>
