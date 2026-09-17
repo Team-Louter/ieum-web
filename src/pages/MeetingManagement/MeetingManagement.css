@@ -1,0 +1,35 @@
+.meeting-management {
+  display: flex;
+  flex-direction: column;
+  width: 1000px;
+  gap: 50px;
+}
+
+.meeting-management-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meeting-management-divider {
+  width: 1000px;
+  border-top: 2px solid #dfdfdf;
+}
+
+.meeting-management-managers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 40px;
+}
+
+.meeting-management-managers h2 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.meeting-management-manager-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}

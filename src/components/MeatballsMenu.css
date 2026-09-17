@@ -1,0 +1,57 @@
+
+.meeting-card-dot-container {
+  display: flex;
+  flex-direction: column;
+
+  width: 28px;
+  height: 10px;
+
+  border: none;
+  background-color: white;
+  cursor: pointer;
+
+  position: relative;
+}
+
+
+
+.meeting-card-dot-setting {
+  width: auto;
+  height: auto;
+}
+
+
+.meeting-kabab-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  list-style: none;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  z-index: 1;
+  width: 180px;
+  padding: 16px 12px;
+  border: 3px solid #e1e1e1;
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.meeting-kabab-menu li {
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #e22a2a;
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.meeting-kabab-menu li:first-child {
+  color: #222222;
+}
+
+.meeting-kabab-menu li:hover {
+  background-color: #f0f0f0;
+}
