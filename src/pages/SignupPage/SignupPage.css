@@ -6,38 +6,38 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 72px 24px 48px;
+    padding: 64px 20px 48px;
     background: #ffffff;
     color: #333333;
 }
 
 /* 로고와 제목 */
 .signup-page #ieum-logo {
-    width: 120px;
+    width: 100px;
     height: auto;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .signup-page h1 {
-    margin: 0 0 42px;
-    font-size: 26px;
+    margin: 0 0 32px;
+    font-size: 22px;
     font-weight: 700;
     color: #333333;
 }
 
 /* 폼 전체 폭: 아래의 큰 버튼과 각 입력 줄이 같은 폭을 사용한다. */
 .signup-page .signup-form {
-    width: 680px;
+    width: 520px;
     max-width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 /* 입력칸 + 오른쪽 버튼 한 줄 */
 .signup-page .input-button-row {
     display: flex;
-    gap: 24px;
+    gap: 14px;
     width: 100%;
     align-items: center;
 }
@@ -50,6 +50,8 @@
 /* 회원가입 화면에서는 모든 입력칸 높이를 58px로 맞춘다. */
 .signup-page .input-group input {
     height: 58px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
     font-size: 18px;
 }
 
@@ -59,13 +61,13 @@
 
 /* 중복확인, 인증하기, 주소검색처럼 오른쪽에 붙는 버튼 */
 .signup-page .small-button {
-    width: 128px;
+    width: 100px;
     height: 58px;
     border: none;
     border-radius: 8px;
     background-color: #42b66b;
     color: #ffffff;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     flex-shrink: 0;
@@ -80,12 +82,12 @@
 .signup-page .signup-submit {
     width: 100%;
     height: 58px;
-    margin-top: 48px;
+    margin-top: 40px;
     border: none;
     border-radius: 8px;
     background-color: #42b66b;
     color: #ffffff;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -137,21 +139,21 @@
     }
 
     .signup-page #ieum-logo {
-        width: 100px;
+        width: 92px;
         margin-bottom: 16px;
     }
 
     .signup-page h1 {
-        margin-bottom: 32px;
-        font-size: 22px;
+        margin-bottom: 28px;
+        font-size: 20px;
     }
 
     .signup-page .input-button-row {
-        gap: 12px;
+        gap: 10px;
     }
 
     .signup-page .small-button {
-        width: 104px;
+        width: 92px;
         font-size: 15px;
     }
 

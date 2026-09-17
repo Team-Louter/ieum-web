@@ -1,4 +1,4 @@
-/* 페이지 레이아웃 */
+/* 로그인 페이지 전체 */
 .login-page {
     width: 100%;
     min-height: 100vh;
@@ -6,26 +6,38 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 40px 20px;
+    padding: 68px 20px 48px;
     color: #333333;
-    gap: 20px;
+    gap: 18px;
 }
 
 /* 로고 */
-#ieum-logo {
-    width: 150px;
-    height: 150px;
+.login-page #ieum-logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 12px;
 }
 
-/* 폼 */
+/* 로그인 입력 영역과 아래 버튼은 같은 폭을 사용한다. */
 .login-page form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 25px;
-    width: 600px;
+    gap: 16px;
+    width: 520px;
     max-width: 100%;
+}
+
+.login-page .input-group input {
+    height: 58px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.login-page .input-group label {
+    font-size: 18px;
 }
 
 .login-page .pw-toggle:hover {
@@ -34,21 +46,22 @@
 
 /* 오류 메시지 */
 .login-page .error-msg {
-    font-size: 16px;
-    color: #C62424;
-    margin-top: -10px;
+    width: 100%;
+    font-size: 14px;
+    color: #c62424;
+    margin-top: -6px;
 }
 
 /* 로그인 버튼 */
 .login-page .login {
     width: 100%;
-    height: 60px;
-    font-size: 22px;
-    background-color: #42B66B;
-    color: #BBFFBF;
-    border-radius: 10px;
+    height: 58px;
+    font-size: 20px;
+    background-color: #42b66b;
+    color: #ffffff;
+    border-radius: 8px;
     border: none;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -60,22 +73,22 @@
 /* 구글 로그인 버튼 */
 .login-page .google-login {
     width: 100%;
-    height: 60px;
-    font-size: 20px;
+    height: 58px;
+    font-size: 18px;
     background-color: #ffffff;
     color: #2f2f2f;
-    border: 2px solid #9F9F9F;
-    border-radius: 10px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .login-page .google-login span {
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .login-page .google-login:hover {
@@ -84,8 +97,8 @@
 }
 
 .login-page .google-logo {
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     mix-blend-mode: multiply;
 }
 
@@ -94,29 +107,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -10px;
-    margin-bottom: 20px;
+    margin: -2px 0 12px;
 }
 
 .login-page .find {
     border: none;
     background: transparent;
-    color: #6F6F6F;
-    font-size: 22px;
+    color: #7b7b7b;
+    font-size: 16px;
     cursor: pointer;
-    padding: 0 15px;
+    padding: 0 16px;
     width: auto;
     height: auto;
     transition: color 0.2s ease;
 }
 
 .login-page .find:nth-child(1) {
-    border-right: 2px solid #6F6F6F;
-    padding-right: 20px;
+    border-right: 1px solid #b7b7b7;
+    padding-right: 16px;
 }
 
 .login-page .find:nth-child(2) {
-    padding-left: 20px;
+    padding-left: 16px;
 }
 
 .login-page .find:hover {
@@ -129,10 +141,10 @@
 .login-page .signup-group {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    width: 600px;
+    gap: 12px;
+    width: 520px;
     max-width: 100%;
-    margin-top: 10px;
+    margin-top: 0;
 }
 
 .login-page .signup {
@@ -140,13 +152,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid #42B66B;
-    border-radius: 10px;
+    border: 2px solid #42b66b;
+    border-radius: 8px;
     background: #ffffff;
-    color: #42B66B;
-    font-size: 22px;
+    color: #42b66b;
+    font-size: 16px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
     height: 50px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -154,4 +166,23 @@
 .login-page .signup:hover {
     background-color: #42B66B;
     color: #ffffff;
+}
+
+@media (max-width: 560px) {
+    .login-page {
+        padding: 48px 20px 36px;
+    }
+
+    .login-page #ieum-logo {
+        width: 92px;
+    }
+
+    .login-page .signup-group {
+        gap: 10px;
+    }
+
+    .login-page .signup {
+        padding: 0 8px;
+        font-size: 14px;
+    }
 }

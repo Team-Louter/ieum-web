@@ -27,7 +27,6 @@ function LoginPage({ onNavigate = () => {} }) {
 
         if (id === 'ieum' && pw === 'ieum') {
             setShowError(false);
-// 로그인 성공 시 커뮤니티로 이동(회원가입에서와 마찬가지로 임시링크/뷰)
             onNavigate('community');
         } else {
             setShowError(true);

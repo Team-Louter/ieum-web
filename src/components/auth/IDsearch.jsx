@@ -5,12 +5,10 @@ function IDsearch({ type, onClose }) {
     const [email, setEmail] = useState('');
     const [done, setDone] = useState(false);
     let title = '비밀번호 찾기';
-    let buttonText = '비밀번호 찾기';
     let resultText = '임시 비밀번호 발급 링크';
 
     if (type === 'id') {
         title = '아이디 찾기';
-        buttonText = '아이디 찾기';
         resultText = '가입된 아이디';
     }
 
@@ -27,8 +25,10 @@ function IDsearch({ type, onClose }) {
         return (
             <div className="modal-overlay">
                 <div className="modal-box">
+                    <button type="button" className="close-btn" onClick={onClose}>&times;</button>
+                    <h2>{title}</h2>
                     <p className="result-msg">입력하신 이메일로 {resultText}를 전송했습니다.</p>
-                    <button type="button" className="modal-submit-btn" onClick={onClose}>확인</button>
+                    <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                 </div>
             </div>
         );
@@ -40,17 +40,18 @@ function IDsearch({ type, onClose }) {
                 <button type="button" className="close-btn" onClick={onClose}>&times;</button>
                 <h2>{title}</h2>
                 <form onSubmit={handleSubmit}>
-                    <p className="modal-desc">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
-                    <div className="modal-input-group">
+                    <div className="modal-email-row">
                         <input
                             type="email"
-                            placeholder="이메일 주소 입력"
+                            placeholder="이메일"
                             value={email}
                             onChange={handleEmailChange}
                             required
                         />
+                        <button type="submit" className="modal-check-btn">인증하기</button>
                     </div>
-                    <button type="submit" className="modal-submit-btn">{buttonText}</button>
+                    <p className="modal-desc">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
+                    <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                 </form>
             </div>
         </div>
