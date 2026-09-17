@@ -43,6 +43,7 @@
 
 .signup-page .input-button-row .input-group {
     flex: 1;
+    min-width: 0;
 }
 
 /* 우측 소형 버튼 */

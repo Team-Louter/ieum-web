@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import LoginPage from './pages/Loginpage/LoginPage';
-import SignupPage from './pages/SignupPage/SignupPage';
+import UserSignupPage from './pages/SignupPage/UserSignupPage';
+import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
@@ -46,11 +47,11 @@ function App() {
   }
 
   if (currentPage === 'signup-user') {
-    return <SignupPage accountType="user" onNavigate={setCurrentPage} />;
+    return <UserSignupPage onNavigate={setCurrentPage} />;
   }
 
   if (currentPage === 'signup-guardian') {
-    return <SignupPage accountType="guardian" onNavigate={setCurrentPage} />;
+    return <GuardianSignupPage onNavigate={setCurrentPage} />;
   }
 
   return <LoginPage onNavigate={setCurrentPage} />;

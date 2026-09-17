@@ -3,15 +3,14 @@ import './LoginPage.css';
 
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import googleLogo from '../../assets/images/GoogleLogo.svg';
-import eyeIcon from '../../assets/images/Eye.svg';
-import eyeOffIcon from '../../assets/images/EyeOff.svg';
-import PasswordField from '../../components/PasswordField';
+import PasswordField from '../../components/auth/PasswordField';
+import IDsearch from '../../components/auth/IDsearch';
 
 function LoginPage({ onNavigate = () => {} }) {
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
-    const [showPw, setShowPw] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [findType, setFindType] = useState(null);
 
     function handleIdChange(e) {
         setId(e.target.value);
@@ -57,10 +56,6 @@ function LoginPage({ onNavigate = () => {} }) {
                     label="비밀번호"
                     value={pw}
                     onChange={handlePwChange}
-                    show={showPw}
-                    onToggle={() => setShowPw((isVisible) => !isVisible)}
-                    eyeIcon={eyeIcon}
-                    eyeOffIcon={eyeOffIcon}
                 />
 
                 {showError && (
@@ -87,7 +82,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="find"
-                    onClick={() => onNavigate('find-id')}
+                    onClick={() => setFindType('id')}
                 >
                     아이디 찾기
                 </button>
@@ -95,7 +90,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="find"
-                    onClick={() => onNavigate('find-pw')}
+                    onClick={() => setFindType('password')}
                 >
                     비밀번호 찾기
                 </button>
@@ -118,6 +113,13 @@ function LoginPage({ onNavigate = () => {} }) {
                     보호자 계정 만들기
                 </button>
             </div>
+
+            {findType && (
+                <IDsearch
+                    type={findType}
+                    onClose={() => setFindType(null)}
+                />
+            )}
         </main>
     );
 }
