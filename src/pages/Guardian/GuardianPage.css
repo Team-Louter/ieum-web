@@ -1,0 +1,198 @@
+#default-layout.guardian-layout main {
+  width: calc(100vw - var(--sidebar-collapsed-width));
+  min-height: 100vh;
+  margin-left: var(--sidebar-collapsed-width);
+  padding: 60px clamp(24px, 7vw, 112px);
+  align-items: stretch;
+  background-color: #f5f5f5;
+}
+
+.guardian-page {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 64px);
+  border-radius: 2px;
+  background-color: #fff;
+}
+
+.guardian-page > h1 {
+  margin-bottom: 32px;
+  color: #222;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 700;
+}
+
+.guardian-status-banner {
+  display: grid;
+  gap: 10px;
+  padding: 23px 24px;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.guardian-status-banner p {
+  color: #333;
+  font-size: 16px;
+}
+
+.guardian-status-banner strong {
+  color: #222;
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 700;
+}
+
+.guardian-status-banner--warning strong,
+.guardian-location-status--warning strong {
+  color: #d93333;
+}
+
+.guardian-page__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.guardian-info-card {
+  min-height: 128px;
+  padding: 18px 20px;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.guardian-medication-list {
+  display: grid;
+  align-content: center;
+  gap: 9px;
+}
+
+.guardian-medication-list__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.guardian-medication-list__time {
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.guardian-medication-list__time--complete {
+  background-color: #42b66b;
+  color: #fff;
+}
+
+.guardian-medication-list__time--missed {
+  background-color: #d93333;
+  color: #fff;
+}
+
+.guardian-medication-list__time--upcoming {
+  background-color: #efefef;
+}
+
+.guardian-medication-list__name {
+  overflow: hidden;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guardian-medication-list__name--complete {
+  color: #42b66b;
+}
+
+.guardian-medication-list__name--missed {
+  color: #d93333;
+}
+
+.guardian-location-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+}
+
+.guardian-location-status h2 {
+  color: #222;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.guardian-location-status__address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+  font-size: 13px;
+}
+
+.guardian-location-status__address img {
+  width: 15px;
+  height: 15px;
+}
+
+.guardian-location-status strong {
+  color: #222;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.guardian-page__map {
+  position: relative;
+  height: clamp(260px, 32vw, 420px);
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #edf0ed;
+}
+
+.guardian-page__map-address {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 2;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background-color: #ffffffeb;
+  color: #333;
+  font-size: 13px;
+}
+
+.guardian-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 760px) {
+  #default-layout.guardian-layout main {
+    padding: 24px 16px;
+  }
+
+  .guardian-page {
+    padding: 28px 20px;
+  }
+
+  .guardian-page__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .guardian-page__map {
+    height: 300px;
+  }
+}
