@@ -11,6 +11,7 @@ import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
 import ProfilePageContent from './pages/Profile/ProfilePageContent';
 import ProfilePageFriend from './pages/Profile/ProfilePageFriend';
 import ProfilePageMeeting from './pages/Profile/ProfilePageMeeting';
+import GuardianPage from './pages/Guardian/GuardianPage';
 import './App.css';
 
 const pageRoutes = {
@@ -24,6 +25,7 @@ const pageRoutes = {
   '/profile': ProfilePageContent,
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
+  '/guardian': GuardianPage,
 };
 
 /** 로그인 이후 기본 커뮤니티 화면으로 내 프로필을 표시합니다. */
