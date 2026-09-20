@@ -1,3 +1,4 @@
+import { useState } from "react";
 import MeetingInputBox from "../../components/MeetingMake/MeetingInputBox";
 import MeetingMakeOption from "../../components/MeetingMake/MeetingMakeOption";
 import MeetingMakeOptionSelect from "../../components/MeetingMake/MeetingMakeOptionSelect";
@@ -5,6 +6,7 @@ import MeetingMyMemberProfile from "../../components/MeetingMy/MeetingMyMemberPr
 import "./MeetingManagement.css";
 
 export default function MeetingManagement() {
+  const [openManagerIndex, setOpenManagerIndex] = useState(null);
   const managers = [
     { id: "아이디", role: "개설자" },
     { id: "아이디", role: "관리자" },
@@ -47,6 +49,10 @@ export default function MeetingManagement() {
               key={`${manager.id}-${manager.role}-${index}`}
               id={manager.id}
               role={manager.role}
+              isMenuOpen={openManagerIndex === index}
+              onToggle={() => setOpenManagerIndex((openIndex) => (
+                openIndex === index ? null : index
+              ))}
             />
           ))}
         </div>

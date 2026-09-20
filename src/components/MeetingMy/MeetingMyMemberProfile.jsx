@@ -1,16 +1,13 @@
-import { useState } from 'react';
 import './MeetingMyMemberProfile.css'
 import default_image from '../../assets/profile_image.png'
 
-export default function MeetingMyMemberProfile( {profile_image, id, role }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+export default function MeetingMyMemberProfile({ profile_image, id, role, isMenuOpen, onToggle }) {
   return(
     <div className="member-profile-item">
       <button
         className="member-profile"
         type="button"
-        onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+        onClick={onToggle}
         aria-expanded={isMenuOpen}
         aria-label={`${id} 프로필 메뉴`}
       >
