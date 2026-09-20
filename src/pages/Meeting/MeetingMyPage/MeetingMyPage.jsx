@@ -1,12 +1,12 @@
-import MeetingMyAnnouncement from "../../components/MeetingMy/MeetingMyAnnouncement";
-import mulchongsae from '../../../Ieum-meetup/imgs/물총새1.jpg';
-import dot_setting from '../../assets/dot_setting.svg';
-import './MeetingMy.css';
-import MeatballsMenu from "../../components/MeatballsMenu";
-import MeetingMyMemberList from "../../components/MeetingMy/MeetingMyMemberList";
+import MeetingMyAnnouncement from '../../../components/meeting/MeetingMy/MeetingMyAnnouncement';
+import mulchongsae from '../../../assets/images/meeting-cover.jpg';
+import dotSetting from '../../../assets/dot_setting.svg';
+import './MeetingMyPage.css';
+import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
+import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 
 
-export default function MeetingMy() {
+export default function MeetingMyPage() {
 
   return (
     <div className="contents-layout">
@@ -19,7 +19,7 @@ export default function MeetingMy() {
             <p className="meeting-card-info-meta">모임 지역 • 회원수</p>
           </div>
         </div>
-        <MeatballsMenu image={dot_setting} />
+        <MeetingKebabMenu image={dotSetting} />
       </div>
       <div className="contents-horizen"></div>
       <MeetingMyAnnouncement/>

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import "./MeetingAnnouncementMake.css";
+import './MeetingAnnouncementCreatePage.css';
 
-export default function MeetingAnnouncementMake() {
+export default function MeetingAnnouncementCreatePage() {
   const navigate = useNavigate();
 
   function handleSubmit(event) {

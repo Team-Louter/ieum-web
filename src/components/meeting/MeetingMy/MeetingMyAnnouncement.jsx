@@ -1,5 +1,5 @@
-import './MeetingMyAnnouncement.css'
-import profile_image from '../../assets/images/profile.png'
+import './MeetingMyAnnouncement.css';
+import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
 
 export default function MeetingMyAnnouncement() {
@@ -23,7 +23,7 @@ export default function MeetingMyAnnouncement() {
       <div className="Announcement-card">
         <div className="Announcement-card-container">
           <div className='Announcement-profile'>
-            <img src={profile_image} alt="프로필 사진"/>
+            <img src={profileImage} alt="프로필 사진"/>
             <p>아이디</p>
           </div>
           <p className="announcement-card-title">공지 제목</p>

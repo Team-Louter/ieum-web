@@ -1,10 +1,10 @@
-import './MeetingMakeLayout.css'
-import MeetingInputBox from "../../components/MeetingMake/MeetingInputBox";
-import MeetingMakeOption from "../../components/MeetingMake/MeetingMakeOption";
-import MeetingMakeOptionSelect from '../../components/MeetingMake/MeetingMakeOptionSelect';
+import './MeetingCreatePage.css';
+import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
+import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
+import MeetingMakeOptionSelect from '../../../components/meeting/MeetingMake/MeetingMakeOptionSelect';
 
-export default function MeetingMakeLayout() {
-  return(
+export default function MeetingCreatePage() {
+  return (
     <div className="meeting-make-layout">
       <MeetingInputBox/>
       <div className="meeting-make-option-list">
