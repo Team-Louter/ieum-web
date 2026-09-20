@@ -15,7 +15,7 @@ const sidebarMenuItems = [
   { id: 'meeting', href: '/meeting-show', icon: meetingIcon, label: '만남의 장' },
   { id: 'add-friend', href: '#', icon: addfriendIcon, label: '친구 추가' },
   { id: 'friend-location', href: '/friends/location', icon: mapfriendIcon, label: '친구 위치' },
-  { id: 'chat', href: '#', icon: chattingIcon, label: '채팅' },
+  { id: 'chat', href: '/chatting', icon: chattingIcon, label: '채팅' },
   { id: 'setting', href: '#', icon: settingIcon, label: '설정' },
 ];
 
