@@ -5,10 +5,11 @@ import PostCreateForm from '../../components/neighbor/PostCreateForm/PostCreateF
 
 /** 새 이웃마당 게시물을 작성하는 화면입니다. */
 function NeighborCreatePostPage() {
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
-    { label: '게시물 보기', href: '/neighbor', isActive: false },
-    { label: '내 게시물', href: '/neighbor/my', isActive: false },
-    { label: '게시물 만들기', href: '/neighbor/create', isActive: true },
+    { label: '게시물 보기', href: '/neighbor', isActive: currentPath === '/neighbor' },
+    { label: '내 게시물', href: '/neighbor/my', isActive: currentPath === '/neighbor/my' },
+    { label: '게시물 만들기', href: '/neighbor/create', isActive: currentPath === '/neighbor/create' },
   ];
 
   return (
