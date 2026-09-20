@@ -1,5 +1,5 @@
 import './MeetingMyMemberProfile.css'
-import default_image from '../../assets/profile_image.png'
+import default_image from '../../assets/images/profile.png'
 
 export default function MeetingMyMemberProfile({ profile_image, id, role, isMenuOpen, onToggle }) {
   return(

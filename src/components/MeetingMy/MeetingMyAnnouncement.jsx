@@ -1,5 +1,5 @@
 import './MeetingMyAnnouncement.css'
-import profile_image from '../../assets/profile_image.png'
+import profile_image from '../../assets/images/profile.png'
 import { useNavigate } from 'react-router-dom';
 
 export default function MeetingMyAnnouncement() {

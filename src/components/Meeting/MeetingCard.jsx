@@ -1,5 +1,5 @@
 import './MeetingCard.css'
-import mulchongsae from '../../assets/mulchongsae.jpg'
+import mulchongsae from '../../../Ieum-meetup/imgs/물총새1.jpg'
 
 export default function MeetingCard() {
   return (

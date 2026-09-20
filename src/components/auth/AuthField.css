@@ -1,0 +1,67 @@
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    height: 60px;
+    padding: 0 16px;
+    border: 2px solid #dfdfdf;
+    border-radius: 10px;
+    font-size: 25px;
+    font-weight: 500;
+    background: #ffffff;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #42b66b;
+}
+
+.input-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 5px;
+    background: #ffffff;
+    color: #9f9f9f;
+    font-size: 25px;
+    font-weight: 500;
+    pointer-events: none;
+    transition: all 0.15s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0;
+    color: #42b66b;
+    font-size: 25px;
+}
+
+.pw-wrap input {
+    padding-right: 50px;
+}
+
+.pw-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.pw-toggle img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}

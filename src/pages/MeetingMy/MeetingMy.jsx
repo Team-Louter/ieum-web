@@ -1,5 +1,5 @@
 import MeetingMyAnnouncement from "../../components/MeetingMy/MeetingMyAnnouncement";
-import mulchongsae from '../../assets/mulchongsae.jpg';
+import mulchongsae from '../../../Ieum-meetup/imgs/물총새1.jpg';
 import dot_setting from '../../assets/dot_setting.svg';
 import './MeetingMy.css';
 import MeatballsMenu from "../../components/MeatballsMenu";
