@@ -5,10 +5,11 @@ import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 
 /** 사용자가 작성한 게시물 목록을 표시합니다. */
 function NeighborMyPostsPage() {
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
-    { label: '게시물 보기', href: '/neighbor', isActive: false },
-    { label: '내 게시물', href: '/neighbor/my', isActive: true },
-    { label: '게시물 만들기', href: '/neighbor/create', isActive: false },
+    { label: '게시물 보기', href: '/neighbor', isActive: currentPath === '/neighbor' },
+    { label: '내 게시물', href: '/neighbor/my', isActive: currentPath === '/neighbor/my' },
+    { label: '게시물 만들기', href: '/neighbor/create', isActive: currentPath === '/neighbor/create' },
   ];
 
   return (

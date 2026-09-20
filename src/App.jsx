@@ -13,16 +13,18 @@ import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
 import ProfilePageContent from './pages/Profile/ProfilePageContent';
 import ProfilePageFriend from './pages/Profile/ProfilePageFriend';
 import ProfilePageMeeting from './pages/Profile/ProfilePageMeeting';
-import MeetingShow from './pages/MeetingShow/MeetingShow';
-import MeetingMakeLayout from './pages/MeetingMake/MeetingMakeLayout';
-import MeetingMy from './pages/MeetingMy/MeetingMy';
-import MeetingMyMemberList from './pages/MeetingMyMemberList/MeetingMyMembers';
-import MeetingAnnouncementMake from './pages/MeetingAnnouncementMake/MeetingAnnouncementMake';
-import MeetingManagement from './pages/MeetingManagement/MeetingManagement';
+import MeetingShowPage from './pages/Meeting/MeetingShowPage/MeetingShowPage';
+import MeetingCreatePage from './pages/Meeting/MeetingCreatePage/MeetingCreatePage';
+import MeetingMyPage from './pages/Meeting/MeetingMyPage/MeetingMyPage';
+import MeetingMemberListPage from './pages/Meeting/MeetingMemberListPage/MeetingMemberListPage';
+import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCreatePage/MeetingAnnouncementCreatePage';
+import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
 import Layout from './components/common/Layout/Layout';
 import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
 import ChattingPage from './pages/Chatting/ChattingPage';
-
+import MarketFeedPage from './pages/market/MarketFeedPage';
+import MarketMyPostPage from './pages/market/MarketMyPostPage';
+import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
 import './App.css';
 
 const pageRoutes = {
@@ -36,12 +38,15 @@ const pageRoutes = {
   '/profile': ProfilePageContent,
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
-  '/meeting-show': MeetingShow,
-  '/meeting-my': MeetingMy,
-  '/meeting-make': MeetingMakeLayout,
-  '/meeting-my-member-list': MeetingMyMemberList,
-  '/meeting-announcement-make': MeetingAnnouncementMake,
-  '/meeting-management': MeetingManagement,
+  '/meeting-show': MeetingShowPage,
+  '/meeting-my': MeetingMyPage,
+  '/meeting-make': MeetingCreatePage,
+  '/meeting-my-member-list': MeetingMemberListPage,
+  '/meeting-announcement-make': MeetingAnnouncementCreatePage,
+  '/meeting-management': MeetingManagementPage,
+  '/market': MarketFeedPage,
+  '/market/my': MarketMyPostPage,
+  '/market/create': MarketPostCreatePage,
   '/chatting': ChattingPage,
 };
 

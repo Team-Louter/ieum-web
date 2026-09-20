@@ -1,0 +1,43 @@
+.market-post-card {
+  width: 270px;
+  height: 370px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+}
+
+.market-post-card:hover {
+  background-color: #dfdfdf;
+}
+
+.market-post-card > img {
+  width: 250px;
+  height: 250px;
+  border-radius: 10px;
+}
+
+.market-post-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.market-post-card__info > p:nth-child(1) {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.market-post-card__info > p:nth-child(2) {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.market-post-card__info > p:nth-child(3) {
+  color: #555;
+}
