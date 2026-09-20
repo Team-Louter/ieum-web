@@ -21,6 +21,9 @@ import MeetingAnnouncementMake from './pages/MeetingAnnouncementMake/MeetingAnno
 import MeetingManagement from './pages/MeetingManagement/MeetingManagement';
 import Layout from './components/common/Layout/Layout';
 import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
+import MarketFeedPage from './pages/market/MarketFeedPage';
+import MarketMyPostPage from './pages/market/MarketMyPostPage';
+import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
 import './App.css';
 
 const pageRoutes = {
@@ -40,6 +43,9 @@ const pageRoutes = {
   '/meeting-my-member-list': MeetingMyMemberList,
   '/meeting-announcement-make': MeetingAnnouncementMake,
   '/meeting-management': MeetingManagement,
+  '/market': MarketFeedPage,
+  '/market/my': MarketMyPostPage,
+  '/market/create': MarketPostCreatePage,
 };
 
 function MeetingLayout({ children, currentPath }) {
