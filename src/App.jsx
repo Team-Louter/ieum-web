@@ -21,6 +21,8 @@ import MeetingAnnouncementMake from './pages/MeetingAnnouncementMake/MeetingAnno
 import MeetingManagement from './pages/MeetingManagement/MeetingManagement';
 import Layout from './components/common/Layout/Layout';
 import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
+import ChattingPage from './pages/Chatting/ChattingPage';
+
 import './App.css';
 
 const pageRoutes = {
@@ -40,6 +42,7 @@ const pageRoutes = {
   '/meeting-my-member-list': MeetingMyMemberList,
   '/meeting-announcement-make': MeetingAnnouncementMake,
   '/meeting-management': MeetingManagement,
+  '/chatting': ChattingPage,
 };
 
 function MeetingLayout({ children, currentPath }) {
