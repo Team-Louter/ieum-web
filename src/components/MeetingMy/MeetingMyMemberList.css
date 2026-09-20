@@ -1,0 +1,15 @@
+.member-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.member-list {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 20px;
+
+  height: auto;
+  width: 700px;
+}
+

@@ -1,0 +1,50 @@
+.announcement-make {
+  display: flex;
+  flex-direction: column;
+  width: 700px;
+  gap: 24px;
+}
+
+.announcement-make-title,
+.announcement-make-content {
+  width: 100%;
+  border: 1px solid #dddddd;
+  border-radius: 7px;
+  padding: 14px 16px;
+  color: #333333;
+  font-family: inherit;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+.announcement-make-title {
+  height: 56px;
+}
+
+.announcement-make-content {
+  height: 314px;
+  resize: none;
+}
+
+.announcement-make-title::placeholder,
+.announcement-make-content::placeholder {
+  color: #888888;
+}
+
+.announcement-make-submit {
+  width: 100%;
+  height: 56px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 6px;
+  background-color: #42b86b;
+  color: #d8f5df;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.announcement-make-submit:hover,
+.announcement-make-submit:focus-visible {
+  background-color: #369b59;
+  outline: none;
+}
