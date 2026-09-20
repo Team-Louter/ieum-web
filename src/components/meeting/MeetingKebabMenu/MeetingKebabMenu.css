@@ -21,7 +21,7 @@
 }
 
 
-.meeting-kabab-menu {
+.meeting-kebab-menu {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -39,7 +39,7 @@
   box-sizing: border-box;
 }
 
-.meeting-kabab-menu li {
+.meeting-kebab-menu li {
   padding: 8px 12px;
   border-radius: 10px;
   color: #e22a2a;
@@ -48,10 +48,10 @@
   cursor: pointer;
 }
 
-.meeting-kabab-menu li:first-child {
+.meeting-kebab-menu li:first-child {
   color: #222222;
 }
 
-.meeting-kabab-menu li:hover {
+.meeting-kebab-menu li:hover {
   background-color: #f0f0f0;
 }

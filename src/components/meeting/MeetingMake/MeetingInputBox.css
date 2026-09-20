@@ -1,6 +1,9 @@
 
 .input-container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
   justify-content: space-between;
 
   width: 1000px;

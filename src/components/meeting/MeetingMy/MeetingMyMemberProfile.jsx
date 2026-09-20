@@ -1,5 +1,5 @@
-import './MeetingMyMemberProfile.css'
-import default_image from '../../assets/images/profile.png'
+import './MeetingMyMemberProfile.css';
+import defaultImage from '../../../assets/images/profile.png';
 
 export default function MeetingMyMemberProfile({ profile_image, id, role, isMenuOpen, onToggle }) {
   return(
@@ -11,7 +11,7 @@ export default function MeetingMyMemberProfile({ profile_image, id, role, isMenu
         aria-expanded={isMenuOpen}
         aria-label={`${id} 프로필 메뉴`}
       >
-        <img  src={profile_image ?? default_image} alt="프로필 사진"/>
+        <img src={profile_image ?? defaultImage} alt="프로필 사진"/>
         <p>{id} ({role})</p>
       </button>
       {isMenuOpen && (

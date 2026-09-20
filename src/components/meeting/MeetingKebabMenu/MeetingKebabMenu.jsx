@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./MeatballsMenu.css";
+import './MeetingKebabMenu.css';
 
-export default function MeatballsMenu( { image } ) {
+export default function MeetingKebabMenu({ image }) {
 
   const [ isKebabMenu, setIsKebabMenu ] = useState(false);
   const navigate = useNavigate();
   
   return (
     <button className="meeting-card-dot-container" onClick={() => {setIsKebabMenu(!isKebabMenu);}}>
-      <img className="meeting-card-dot-setting" src={image} alt="세팅 이미지"/>
+      <img className="meeting-card-dot-setting" src={image} alt="세팅 이미지" />
       {isKebabMenu && (
-        <ul className="meeting-kabab-menu">
+        <ul className="meeting-kebab-menu">
           <li
             className="delete"
             onClick={(event) => {

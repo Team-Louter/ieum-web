@@ -1,5 +1,5 @@
 import './MeetingInputBox.css';
-import upload from "../../assets/upload_image.png"
+import upload from '../../../assets/images/meeting-upload.png';
 
 export default function MeetingInputBox() {
   return(
