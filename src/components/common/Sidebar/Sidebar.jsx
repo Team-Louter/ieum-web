@@ -11,7 +11,7 @@ import settingIcon from '../../../assets/images/setting.svg';
 
 const sidebarMenuItems = [
   { id: 'neighbor', href: '/neighbor', icon: neighborIcon, label: '이웃마당' },
-  { id: 'market', href: '#', icon: marketIcon, label: '중고장터' },
+  { id: 'market', href: '/market', icon: marketIcon, label: '중고장터' },
   { id: 'meeting', href: '/meeting-show', icon: meetingIcon, label: '만남의 장' },
   { id: 'add-friend', href: '#', icon: addfriendIcon, label: '친구 추가' },
   { id: 'friend-location', href: '/friends/location', icon: mapfriendIcon, label: '친구 위치' },
