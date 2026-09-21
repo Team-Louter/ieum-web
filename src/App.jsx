@@ -38,12 +38,12 @@ const pageRoutes = {
   '/profile': ProfilePageContent,
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
-  '/meeting-show': MeetingShowPage,
-  '/meeting-my': MeetingMyPage,
-  '/meeting-make': MeetingCreatePage,
-  '/meeting-my-member-list': MeetingMemberListPage,
-  '/meeting-announcement-make': MeetingAnnouncementCreatePage,
-  '/meeting-management': MeetingManagementPage,
+  '/meeting/show': MeetingShowPage,
+  '/meeting/my': MeetingMyPage,
+  '/meeting/make': MeetingCreatePage,
+  '/meeting/my/member-list': MeetingMemberListPage,
+  '/meeting/announcement/make': MeetingAnnouncementCreatePage,
+  '/meeting/management': MeetingManagementPage,
   '/market': MarketFeedPage,
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
@@ -52,9 +52,9 @@ const pageRoutes = {
 
 function MeetingLayout({ children, currentPath }) {
   const menuItems = [
-    { label: '모임 보기', href: '/meeting-show', isActive: currentPath === '/meeting-show' },
-    { label: '내 모임', href: '/meeting-my', isActive: currentPath.startsWith('/meeting-my') || currentPath === '/meeting-announcement-make' || currentPath === '/meeting-management' },
-    { label: '모임 만들기', href: '/meeting-make', isActive: currentPath === '/meeting-make' },
+    { label: '모임 보기', href: '/meeting/show', isActive: currentPath === '/meeting/show' },
+    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') || currentPath === '/meeting/announcement/make' || currentPath === '/meeting/management' },
+    { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
 
   return (

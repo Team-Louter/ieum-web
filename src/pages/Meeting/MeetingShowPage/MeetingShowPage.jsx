@@ -7,6 +7,8 @@ export default function MeetingShowPage() {
       <MeetingCard/>
       <MeetingCard/>
       <MeetingCard/>
+      <MeetingCard/>
+      <MeetingCard/>
     </div>
   )
 }

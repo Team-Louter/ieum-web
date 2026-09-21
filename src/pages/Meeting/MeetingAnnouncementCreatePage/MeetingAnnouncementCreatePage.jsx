@@ -6,7 +6,7 @@ export default function MeetingAnnouncementCreatePage() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    navigate("/meeting-my");
+    navigate("/meeting/my");
   }
 
   return (
