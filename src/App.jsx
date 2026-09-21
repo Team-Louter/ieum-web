@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation, useNavigate, } from 'react-router-dom';
 import LoginPage from './pages/LoginPage/LoginPage';
 import UserSignupPage from './pages/SignupPage/UserSignupPage';
 import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
@@ -48,6 +47,9 @@ const pageRoutes = {
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
   '/chatting': ChattingPage,
+  '/login': LoginPage,
+  '/signup/user': UserSignupPage,
+  '/signup/guardian': GuardianSignupPage,
 };
 
 function MeetingLayout({ children, currentPath }) {
@@ -66,37 +68,23 @@ function MeetingLayout({ children, currentPath }) {
 }
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const currentPath = useLocation().pathname.replace(/\/$/, '') || '/';
+  const navigate = useNavigate();
+  const currentPath = useLocation().pathname.replace(/\/$/, '') || '/login';
   const Page = pageRoutes[currentPath];
 
   /* 화면 이동 */
   function movePage(pageName) {
     window.scrollTo(0, 0);
-    setCurrentPage(pageName);
+    navigate(pageName);
   }
 
-  if (Page) {
-    const pageContent = <Page />;
+  if (!Page) return <LoginPage onNavigate={movePage} />;
 
-    return currentPath.startsWith('/meeting') ? (
-      <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
-    ) : pageContent;
-  }
+  const pageContent = <Page onNavigate={movePage} />;
 
-  if (currentPage === 'community') {
-    return <NeighborFeedPage />;
-  }
-
-  if (currentPage === 'signup-user') {
-    return <UserSignupPage onNavigate={movePage} />;
-  }
-
-  if (currentPage === 'signup-guardian') {
-    return <GuardianSignupPage onNavigate={movePage} />;
-  }
-
-  return <LoginPage onNavigate={movePage} />;
+  return currentPath.startsWith('/meeting') ? (
+    <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
+  ) : pageContent;
 }
 
 function App() {

@@ -170,7 +170,7 @@ function UserSignupPage({ onNavigate }) {
         if (hasError) return;
 
         alert('회원가입이 완료되었습니다!');
-        onNavigate('community');
+        onNavigate('/community');
     }
 
     return (
@@ -209,7 +209,7 @@ function UserSignupPage({ onNavigate }) {
                 <button type="submit" className="signup-submit">계정 만들기</button>
             </form>
 
-            <button type="button" className="back-to-login" onClick={() => onNavigate('login')}>
+            <button type="button" className="back-to-login" onClick={() => onNavigate('/login')}>
                 로그인으로 돌아가기
             </button>
         </main>
