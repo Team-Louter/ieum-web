@@ -7,26 +7,26 @@
   font-size: 20px;
 }
 
-/* 왼쪽 채팅 목록 */
-.chat-list-section {
-  width: 320px;
+/* 사용자 목록 */
+.user-list-section {
+  width: 350px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 24px 20px;
+  padding: 25px 20px;
   border-right: 1px solid #e5e5e5;
   box-sizing: border-box;
 }
 
 /* 검색창 */
-.chat-search {
+.user-search {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+
   width: 100%;
-  height: 48px;
-  padding: 0 16px;
-  margin-bottom: 20px;
+  height: 50px;
+  margin-bottom: 30px;
 
   background-color: #f2f2f2;
   border-radius: 24px;
@@ -35,9 +35,10 @@
   box-sizing: border-box;
 
   flex-shrink: 0;
+  padding:15px 20px;
 }
 
-.chat-search input {
+.user-search input {
   flex: 1;
 
   border: none;
@@ -47,56 +48,56 @@
   font-size: 20px;
 }
 
-.chat-search input::placeholder {
+.user-search input::placeholder {
   font-size: 20px;
   font-weight: 300;
   color: #999999;
 }
 
-.chat-search img {
+.user-search img {
   width: 24px;
   height: 24px;
 }
 
-/* 사용자 목록 */
-.chat-list {
+/* 사용자 목록 내용들 */
+.user-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 30px;
 
-  flex:1;
+  flex: 1;
   min-height: 0;
-  overflow-y:auto;
+  overflow-y: auto;
+  padding: 15px 0;
+  box-sizing: border-box;
 }
 
-.chat-list-item {
+.user-list-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-
   width: 100%;
-  height: 64px;
+  height: 50px;
 
-  padding: 8px;
+  gap: 10px;
   border-radius: 10px;
 
   cursor: pointer;
   box-sizing: border-box;
 }
 
-.chat-list-item:hover {
+.user-list-item:hover {
   background-color: #f5f5f5;
 }
 
-.chat-list-item img {
-  width: 42px;
-  height: 42px;
+.user-list-item img {
+  width: 50px;
+  height: 50px;
 
   border-radius: 50%;
   object-fit: cover;
 }
 
-.chat-list-item span {
+.user-list-item span {
   font-size: 20px;
 }
 
@@ -142,7 +143,7 @@
 
   flex: 1;
 
-  padding: 32px 24px;
+  padding: 20px 10px;
   box-sizing: border-box;
 
   overflow-y:auto;
@@ -175,7 +176,7 @@
 }
 
 /* 프로필 사진 */
-.chat-list-item img, .chat-room-header img{
+.user-list-item img, .chat-room-header img{
   width:50px;
   height:50px;
 }
