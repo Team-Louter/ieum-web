@@ -21,6 +21,7 @@ import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/Meeting
 import Layout from './components/common/Layout/Layout';
 import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
 import ChattingPage from './pages/Chatting/ChattingPage';
+import SettingsPage from './pages/setting/SettingsPage/SettingsPage';
 import MarketFeedPage from './pages/market/MarketFeedPage';
 import MarketMyPostPage from './pages/market/MarketMyPostPage';
 import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
@@ -49,6 +50,7 @@ const pageRoutes = {
   '/market/create': MarketPostCreatePage,
   '/market/feedin': MarketFeedInPage,
   '/chatting': ChattingPage,
+  '/settings': SettingsPage,
   '/login': LoginPage,
   '/signup/user': UserSignupPage,
   '/signup/guardian': GuardianSignupPage,
