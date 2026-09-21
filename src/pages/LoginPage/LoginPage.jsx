@@ -28,7 +28,7 @@ function LoginPage({ onNavigate = () => {} }) {
         /* 임시 Id, pw */
         if (id === 'ieum' && pw === 'ieum') {
             setShowError(false);
-            onNavigate('/community');
+            onNavigate('/neighbor');
         } else {
             setShowError(true);
         }
