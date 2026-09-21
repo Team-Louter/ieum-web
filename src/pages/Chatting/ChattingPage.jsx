@@ -20,10 +20,7 @@ function ChattingPage() {
 
         <div className="user-search">
           <img src={searchIcon} alt="검색하기" />
-          <input
-            type="text"
-            placeholder="검색하기"
-          />
+          <input type="text" placeholder="검색하기"/>
         </div>
 
         <div className="user-list">
