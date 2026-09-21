@@ -24,6 +24,7 @@ import ChattingPage from './pages/Chatting/ChattingPage';
 import MarketFeedPage from './pages/market/MarketFeedPage';
 import MarketMyPostPage from './pages/market/MarketMyPostPage';
 import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
+import MarketFeedInPage from './pages/market/MarketFeedInPage';
 import './App.css';
 
 const pageRoutes = {
@@ -46,6 +47,7 @@ const pageRoutes = {
   '/market': MarketFeedPage,
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
+  '/market/feedin': MarketFeedInPage,
   '/chatting': ChattingPage,
   '/login': LoginPage,
   '/signup/user': UserSignupPage,
