@@ -16,7 +16,7 @@ const sidebarMenuItems = [
   { id: 'add-friend', href: '#', icon: addfriendIcon, label: '친구 추가' },
   { id: 'friend-location', href: '/friends/location', icon: mapfriendIcon, label: '친구 위치' },
   { id: 'chat', href: '/chatting', icon: chattingIcon, label: '채팅' },
-  { id: 'setting', href: '#', icon: settingIcon, label: '설정' },
+  { id: 'setting', href: '/settings', icon: settingIcon, label: '설정' },
 ];
 
 /** 현재 주소와 일치하는 메뉴의 식별자를 반환합니다. */
