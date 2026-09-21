@@ -21,6 +21,7 @@ import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCr
 import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
 import Layout from './components/common/Layout/Layout';
 import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
+import ChattingPage from './pages/Chatting/ChattingPage';
 import MarketFeedPage from './pages/market/MarketFeedPage';
 import MarketMyPostPage from './pages/market/MarketMyPostPage';
 import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
@@ -46,6 +47,7 @@ const pageRoutes = {
   '/market': MarketFeedPage,
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
+  '/chatting': ChattingPage,
 };
 
 function MeetingLayout({ children, currentPath }) {
