@@ -188,7 +188,7 @@ function GuardianSignupPage({ onNavigate }) {
         if (hasError) return;
 
         alert('보호자 회원가입이 완료되었습니다!');
-        onNavigate('/community');
+        onNavigate('/neighbor');
     }
 
     return (
