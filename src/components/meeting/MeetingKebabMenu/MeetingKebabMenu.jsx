@@ -16,7 +16,7 @@ export default function MeetingKebabMenu({ image }) {
             className="delete"
             onClick={(event) => {
               event.stopPropagation();
-              navigate("/meeting-management");
+              navigate("/meeting/management");
             }}
           >
             모임 관리하기

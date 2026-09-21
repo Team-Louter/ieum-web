@@ -11,7 +11,7 @@ export default function MeetingMyMemberTitle( { HowManyUser } ) {
         <button
           className="member-more"
           type="button"
-          onClick={() => navigate("/meeting-my-member-list")}
+          onClick={() => navigate("/meeting/my/member-list")}
         >
           더보기
         </button>

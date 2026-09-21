@@ -13,7 +13,7 @@ export default function MeetingMyAnnouncement() {
           <button
             className="Announcement-write"
             type="button"
-            onClick={() => navigate('/meeting-announcement-make')}
+            onClick={() => navigate('/meeting/announcement/make')}
           >
             공지 올리기
           </button>
