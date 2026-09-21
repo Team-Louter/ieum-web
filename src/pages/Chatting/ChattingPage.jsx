@@ -1,6 +1,7 @@
 import './ChattingPage.css';
 import profileImage from '../../assets/images/profile.png';
 import searchIcon from '../../assets/images/search.svg';
+import Sidebar from '../../components/common/Sidebar/Sidebar'
 
 function ChattingPage() {
   const chatUsers = [
@@ -13,6 +14,9 @@ function ChattingPage() {
   ];
 
   return (
+    <>
+    <Sidebar />
+
     <div className="chatting-page">
 
       {/* 채팅 목록 */}
@@ -57,6 +61,7 @@ function ChattingPage() {
       </div>
 
     </div>
+    </>
   );
 }
 
