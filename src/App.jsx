@@ -7,6 +7,7 @@ import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
 import FriendLocationPage from './pages/FriendLocation/FriendLocationPage';
+import AddFriendPage from './pages/AddFriend/AddFriendPage';
 import NeighborCreatePostPage from './pages/Neighbor/NeighborCreatePostPage';
 import NeighborFeedPage from './pages/Neighbor/NeighborFeedPage';
 import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
@@ -16,11 +17,10 @@ import ProfilePageMeeting from './pages/Profile/ProfilePageMeeting';
 import MeetingShowPage from './pages/Meeting/MeetingShowPage/MeetingShowPage';
 import MeetingCreatePage from './pages/Meeting/MeetingCreatePage/MeetingCreatePage';
 import MeetingMyPage from './pages/Meeting/MeetingMyPage/MeetingMyPage';
+import MeetingMyListPage from './pages/Meeting/MeetingMyListPage/MeetingMyListPage';
 import MeetingMemberListPage from './pages/Meeting/MeetingMemberListPage/MeetingMemberListPage';
 import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCreatePage/MeetingAnnouncementCreatePage';
 import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
-import Layout from './components/common/Layout/Layout';
-import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
 import MarketFeedPage from './pages/market/MarketFeedPage';
 import MarketMyPostPage from './pages/market/MarketMyPostPage';
 import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
@@ -31,14 +31,16 @@ const pageRoutes = {
   '/myProfile/meetings': MyProfilePageMeeting,
   '/myProfile/friends': MyProfilePageFriend,
   '/friends/location': FriendLocationPage,
+  '/addfriend': AddFriendPage,
   '/neighbor': NeighborFeedPage,
   '/neighbor/my': NeighborMyPostsPage,
   '/neighbor/create': NeighborCreatePostPage,
   '/profile': ProfilePageContent,
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
-  '/meeting/show': MeetingShowPage,
-  '/meeting/my': MeetingMyPage,
+  '/meeting': MeetingShowPage,
+  '/meeting/my': MeetingMyListPage,
+  '/meeting/my/detail': MeetingMyPage,
   '/meeting/make': MeetingCreatePage,
   '/meeting/my/member-list': MeetingMemberListPage,
   '/meeting/announcement/make': MeetingAnnouncementCreatePage,
@@ -47,21 +49,6 @@ const pageRoutes = {
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
 };
-
-function MeetingLayout({ children, currentPath }) {
-  const menuItems = [
-    { label: '모임 보기', href: '/meeting/show', isActive: currentPath === '/meeting/show' },
-    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') || currentPath === '/meeting/announcement/make' || currentPath === '/meeting/management' },
-    { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
-  ];
-
-  return (
-    <Layout className="meeting-layout">
-      <PageTabNavigation ariaLabel="모임 메뉴" isFixed items={menuItems} />
-      {children}
-    </Layout>
-  );
-}
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -75,11 +62,7 @@ function AppContent() {
   }
 
   if (Page) {
-    const pageContent = <Page />;
-
-    return currentPath.startsWith('/meeting') ? (
-      <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
-    ) : pageContent;
+    return <Page />;
   }
 
   if (currentPage === 'community') {
