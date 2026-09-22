@@ -71,9 +71,10 @@ function AppContent() {
     navigate(pageName);
   }
 
-  if (!Page) return <LoginPage onNavigate={movePage} />;
 
-  const pageContent = <Page onNavigate={movePage} />;
+  if (Page) {
+    return <Page />;
+  }
 
   return currentPath.startsWith('/meeting') ? (
     <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
