@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation, useNavigate, } from 'react-router-dom';
 import LoginPage from './pages/LoginPage/LoginPage';
 import UserSignupPage from './pages/SignupPage/UserSignupPage';
 import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
@@ -21,9 +20,14 @@ import MeetingMyListPage from './pages/Meeting/MeetingMyListPage/MeetingMyListPa
 import MeetingMemberListPage from './pages/Meeting/MeetingMemberListPage/MeetingMemberListPage';
 import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCreatePage/MeetingAnnouncementCreatePage';
 import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
+import Layout from './components/common/Layout/Layout';
+import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
+import ChattingPage from './pages/Chatting/ChattingPage';
+import SettingsPage from './pages/setting/SettingsPage/SettingsPage';
 import MarketFeedPage from './pages/market/MarketFeedPage';
 import MarketMyPostPage from './pages/market/MarketMyPostPage';
 import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
+import MarketFeedInPage from './pages/market/MarketFeedInPage';
 import './App.css';
 
 const pageRoutes = {
@@ -48,36 +52,32 @@ const pageRoutes = {
   '/market': MarketFeedPage,
   '/market/my': MarketMyPostPage,
   '/market/create': MarketPostCreatePage,
+  '/market/feedin': MarketFeedInPage,
+  '/chatting': ChattingPage,
+  '/settings': SettingsPage,
+  '/login': LoginPage,
+  '/signup/user': UserSignupPage,
+  '/signup/guardian': GuardianSignupPage,
 };
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const currentPath = useLocation().pathname.replace(/\/$/, '') || '/';
+  const navigate = useNavigate();
+  const currentPath = useLocation().pathname.replace(/\/$/, '') || '/login';
   const Page = pageRoutes[currentPath];
 
   /* 화면 이동 */
   function movePage(pageName) {
     window.scrollTo(0, 0);
-    setCurrentPage(pageName);
+    navigate(pageName);
   }
 
-  if (Page) {
-    return <Page />;
-  }
+  if (!Page) return <LoginPage onNavigate={movePage} />;
 
-  if (currentPage === 'community') {
-    return <NeighborFeedPage />;
-  }
+  const pageContent = <Page onNavigate={movePage} />;
 
-  if (currentPage === 'signup-user') {
-    return <UserSignupPage onNavigate={movePage} />;
-  }
-
-  if (currentPage === 'signup-guardian') {
-    return <GuardianSignupPage onNavigate={movePage} />;
-  }
-
-  return <LoginPage onNavigate={movePage} />;
+  return currentPath.startsWith('/meeting') ? (
+    <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
+  ) : pageContent;
 }
 
 function App() {

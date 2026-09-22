@@ -28,7 +28,7 @@ function LoginPage({ onNavigate = () => {} }) {
         /* 임시 Id, pw */
         if (id === 'ieum' && pw === 'ieum') {
             setShowError(false);
-            onNavigate('community');
+            onNavigate('/neighbor');
         } else {
             setShowError(true);
         }
@@ -101,7 +101,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="signup"
-                    onClick={() => onNavigate('signup-user')}
+                    onClick={() => onNavigate('/signup/user')}
                 >
                     사용자 계정 만들기
                 </button>
@@ -109,7 +109,7 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="signup"
-                    onClick={() => onNavigate('signup-guardian')}
+                    onClick={() => onNavigate('/signup/guardian')}
                 >
                     보호자 계정 만들기
                 </button>

@@ -188,7 +188,7 @@ function GuardianSignupPage({ onNavigate }) {
         if (hasError) return;
 
         alert('보호자 회원가입이 완료되었습니다!');
-        onNavigate('community');
+        onNavigate('/neighbor');
     }
 
     return (
@@ -228,7 +228,7 @@ function GuardianSignupPage({ onNavigate }) {
                 <button type="submit" className="signup-submit">계정 만들기</button>
             </form>
 
-            <button type="button" className="back-to-login" onClick={() => onNavigate('login')}>
+            <button type="button" className="back-to-login" onClick={() => onNavigate('/login')}>
                 로그인으로 돌아가기
             </button>
         </main>

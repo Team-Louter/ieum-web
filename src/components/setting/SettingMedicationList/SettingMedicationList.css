@@ -1,0 +1,27 @@
+.setting-medication-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 8px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.setting-medication-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #444;
+  font-size: 15px;
+}
+
+.setting-medication-list__time {
+  min-width: 80px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #e6f9ed;
+  color: #25834a;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
