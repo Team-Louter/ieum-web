@@ -19,8 +19,6 @@ import MeetingMyListPage from './pages/Meeting/MeetingMyListPage/MeetingMyListPa
 import MeetingMemberListPage from './pages/Meeting/MeetingMemberListPage/MeetingMemberListPage';
 import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCreatePage/MeetingAnnouncementCreatePage';
 import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
-import Layout from './components/common/Layout/Layout';
-import PageTabNavigation from './components/common/PageTabNavigation/PageTabNavigation';
 import ChattingPage from './pages/Chatting/ChattingPage';
 import SettingsPage from './pages/setting/SettingsPage/SettingsPage';
 import MarketFeedPage from './pages/market/MarketFeedPage';
@@ -74,9 +72,7 @@ function AppContent() {
     return <Page />;
   }
 
-  return currentPath.startsWith('/meeting') ? (
-    <MeetingLayout currentPath={currentPath}>{pageContent}</MeetingLayout>
-  ) : pageContent;
+  return <LoginPage onNavigate={movePage} />;
 }
 
 function App() {
