@@ -68,11 +68,11 @@ function AppContent() {
   }
 
 
-  if (Page) {
-    return <Page />;
+  if (!Page) {
+    return <LoginPage onNavigate={movePage} />;
   }
 
-  return <LoginPage onNavigate={movePage} />;
+  return <Page onNavigate={movePage} />;
 }
 
 function App() {
