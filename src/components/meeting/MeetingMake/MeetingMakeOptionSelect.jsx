@@ -1,7 +1,7 @@
 import './MeetingMakeOptionSelect.css'
 import { useState } from 'react';
 
-export default function MeetingMakeOptionSelect( {title, desc, selectTitle, option1, option2, option3} ) {
+export default function MeetingMakeOptionSelect( {title, desc, option1, option2, option3} ) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState( option1 );

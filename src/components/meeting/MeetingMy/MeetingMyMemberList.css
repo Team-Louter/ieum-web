@@ -6,10 +6,41 @@
 .member-list {
   display: flex;
   flex-wrap: wrap;
-
-  gap: 20px;
-
-  height: auto;
+  gap: 18px 20px;
   width: 700px;
+}
+
+.member-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.member-pagination-button {
+  min-width: 24px;
+  height: 28px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.member-pagination-button.is-active {
+  color: #222;
+  font-weight: 700;
+}
+
+.member-pagination-button:disabled {
+  color: #bbb;
+  cursor: default;
+}
+
+.member-pagination-arrow {
+  color: #888;
+  font-size: 18px;
 }
 
