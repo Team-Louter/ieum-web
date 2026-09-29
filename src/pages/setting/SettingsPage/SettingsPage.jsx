@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Layout from '../../../components/common/Layout/Layout';
+import Sidebar from '../../../components/common/Sidebar/Sidebar';
 import SettingSidebar from '../../../components/setting/SettingSidebar/SettingSidebar';
 import SettingAccountPage from '../SettingAccountPage/SettingAccountPage';
 import SettingFeaturePage from '../SettingFeaturePage/SettingFeaturePage';
@@ -39,12 +39,15 @@ function SettingsPage() {
   };
 
   return (
-    <Layout className="settings-layout">
-      <section className="settings-page" aria-label="설정">
-        <SettingSidebar activeSection={activeSection} onSelect={setActiveSection} />
-        <div className="settings-page__content">{pages[activeSection]}</div>
-      </section>
-    </Layout>
+    <div className="settings-layout">
+      <Sidebar />
+      <div className="settings-layout__main">
+        <section className="settings-page" aria-label="설정">
+          <SettingSidebar activeSection={activeSection} onSelect={setActiveSection} />
+          <div className="settings-page__content">{pages[activeSection]}</div>
+        </section>
+      </div>
+    </div>
   );
 }
 
