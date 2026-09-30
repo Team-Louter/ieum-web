@@ -12,9 +12,9 @@ function SettingItem({ title, description, actionLabel, onAction, trailing, chil
           <button type="button" onClick={onAction}>
             {actionLabel} <span aria-hidden="true">↗</span>
           </button>
-        ) : (
-          trailing
-        )}
+        ) : trailing ? (
+          <div className="setting-item__trailing">{trailing}</div>
+        ) : null}
       </header>
       {children && <div className="setting-item__content">{children}</div>}
     </section>

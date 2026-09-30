@@ -1,22 +1,26 @@
 import './SettingSidebar.css';
-import profileIcon from '../../../assets/images/profile.png';
-import meetingIcon from '../../../assets/images/meeting.svg';
-import settingIcon from '../../../assets/images/setting.svg';
+import myAccountIcon from '../../../assets/images/myAccount.svg';
+import guardianSettingIcon from '../../../assets/images/guardianSetting.svg';
+import generalSettingsIcon from '../../../assets/images/generalSettings.svg';
+import newFeatureIcon from '../../../assets/images/newFeature.svg';
+import customerSupportIcon from '../../../assets/images/customerSupport.svg';
+import logoutIcon from '../../../assets/images/logout.svg'
+import deleteAccountIcon from '../../../assets/images/trashcan.svg'
 
 const settingMenuGroups = [
   {
     title: '설정',
     items: [
-      { id: 'account', label: '내 계정', icon: profileIcon },
-      { id: 'guardian', label: '보호자 설정', icon: meetingIcon },
-      { id: 'general', label: '일반 설정', icon: settingIcon },
+      { id: 'account', label: '내 계정', icon: myAccountIcon },
+      { id: 'guardian', label: '보호자 설정', icon: guardianSettingIcon },
+      { id: 'general', label: '일반 설정', icon: generalSettingsIcon },
     ],
   },
   {
     title: '도움',
     items: [
-      { id: 'feature', label: '새로운 기능', symbol: '✦' },
-      { id: 'notification', label: '알림 설정', symbol: '♩' },
+      { id: 'feature', label: '새로운 기능', icon: newFeatureIcon },
+      { id: 'notification', label: '고객센터', icon: customerSupportIcon },
     ],
   },
 ];
@@ -32,14 +36,8 @@ function SettingSidebar({ activeSection, onSelect }) {
               const isActive = activeSection === item.id;
 
               return (
-                <button
-                  className={`setting-sidebar__menu-button${isActive ? ' is-active' : ''}`}
-                  type="button"
-                  key={item.id}
-                  onClick={() => onSelect(item.id)}
-                  aria-pressed={isActive}
-                >
-                  {item.icon ? <img src={item.icon} alt="" /> : <span aria-hidden="true">{item.symbol}</span>}
+                <button className={`setting-sidebar__menu-button${isActive ? ' is-active' : ''}`} type="button" key={item.id} onClick={() => onSelect(item.id)} aria-pressed={isActive}>
+                  <img src={item.icon} alt="" />
                   {item.label}
                 </button>
               );
@@ -50,11 +48,11 @@ function SettingSidebar({ activeSection, onSelect }) {
 
       <div className="setting-sidebar__account-actions">
         <button className="setting-sidebar__account-action" type="button">
-          <span aria-hidden="true">⇥</span>
+          <img src={logoutIcon} alt="로그아웃 아이콘" />
           로그아웃 하기
         </button>
         <button className="setting-sidebar__account-action setting-sidebar__account-action--danger" type="button">
-          <span aria-hidden="true">♜</span>
+          <img src={deleteAccountIcon} alt="계정 삭제 아이콘" />
           계정 삭제하기
         </button>
       </div>
