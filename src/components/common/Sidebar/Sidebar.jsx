@@ -7,6 +7,7 @@ import meetingIcon from '../../../assets/images/meeting.svg';
 import addfriendIcon from '../../../assets/images/addfriend.svg';
 import mapfriendIcon from '../../../assets/images/mapfriend.svg';
 import chattingIcon from '../../../assets/images/chatting.svg';
+import guardianIcon from '../../../assets/images/guardian.svg';
 import settingIcon from '../../../assets/images/setting.svg';
 
 const sidebarMenuItems = [
@@ -16,6 +17,7 @@ const sidebarMenuItems = [
   { id: 'add-friend', href: '/addfriend', icon: addfriendIcon, label: '친구 추가' },
   { id: 'friend-location', href: '/friends/location', icon: mapfriendIcon, label: '친구 위치' },
   { id: 'chat', href: '/chatting', icon: chattingIcon, label: '채팅' },
+  { id: 'guardian', href: '/guardian', icon: guardianIcon, label: '보호자 기능' },
   { id: 'setting', href: '/settings', icon: settingIcon, label: '설정' },
 ];
 

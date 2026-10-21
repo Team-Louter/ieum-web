@@ -13,6 +13,7 @@ import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
 import ProfilePageContent from './pages/Profile/ProfilePageContent';
 import ProfilePageFriend from './pages/Profile/ProfilePageFriend';
 import ProfilePageMeeting from './pages/Profile/ProfilePageMeeting';
+import GuardianPage from './pages/Guardian/GuardianPage';
 import MeetingShowPage from './pages/Meeting/MeetingShowPage/MeetingShowPage';
 import MeetingCreatePage from './pages/Meeting/MeetingCreatePage/MeetingCreatePage';
 import MeetingMyPage from './pages/Meeting/MeetingMyPage/MeetingMyPage';
@@ -40,6 +41,7 @@ const pageRoutes = {
   '/profile': ProfilePageContent,
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
+  '/guardian': GuardianPage,
   '/meeting': MeetingShowPage,
   '/meeting/my': MeetingMyListPage,
   '/meeting/my/detail': MeetingMyPage,

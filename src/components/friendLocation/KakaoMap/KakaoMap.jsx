@@ -7,8 +7,13 @@ import './KakaoMap.css';
 const KAKAO_MAP_SCRIPT_ID = 'kakao-map-sdk';
 const DEFAULT_CENTER = { latitude: 35.8534, longitude: 128.4722 };
 
-/** 카카오 지도 SDK를 불러와 친구 위치 마커를 표시합니다. */
-function KakaoMap() {
+/** 카카오 지도 SDK를 불러와 전달받은 위치 마커를 표시합니다. */
+function KakaoMap({
+  locations = dummyFriendLocations,
+  center = DEFAULT_CENTER,
+  level = 5,
+  ariaLabel = '친구 위치 지도',
+}) {
   const mapContainerRef = useRef(null);
   const kakaoMapAppKey = import.meta.env.VITE_KAKAO_MAP_APP_KEY;
   const [hasMapLoadFailed, setHasMapLoadFailed] = useState(false);
@@ -44,11 +49,11 @@ function KakaoMap() {
 
           try {
             const map = new kakao.maps.Map(mapContainerRef.current, {
-              center: new kakao.maps.LatLng(DEFAULT_CENTER.latitude, DEFAULT_CENTER.longitude),
-              level: 5,
+              center: new kakao.maps.LatLng(center.latitude, center.longitude),
+              level,
             });
 
-            dummyFriendLocations.forEach(({ nickname, latitude, longitude }) => {
+            locations.forEach(({ nickname, latitude, longitude }) => {
               new kakao.maps.CustomOverlay({
                 content: createNearbyFriendPingElement(nickname),
                 map,
@@ -95,12 +100,12 @@ function KakaoMap() {
       script.removeEventListener('load', initializeMap);
       script.removeEventListener('error', handleMapLoadError);
     };
-  }, [kakaoMapAppKey]);
+  }, [ariaLabel, center.latitude, center.longitude, kakaoMapAppKey, level, locations]);
 
   if (!kakaoMapAppKey || hasMapLoadFailed) {
     return (
-      <div className="kakao-map kakao-map--fallback" aria-label="친구 위치 지도 미리보기">
-        {dummyFriendLocations.map(({ id, nickname, latitude, longitude }) => (
+      <div className="kakao-map kakao-map--fallback" aria-label={`${ariaLabel} 미리보기`}>
+        {locations.map(({ id, nickname, latitude, longitude }) => (
           <div
             className="kakao-map__fallback-ping"
             key={id}
@@ -114,7 +119,7 @@ function KakaoMap() {
     );
   }
 
-  return <div className="kakao-map" ref={mapContainerRef} aria-label="친구 위치 지도" />;
+  return <div className="kakao-map" ref={mapContainerRef} aria-label={ariaLabel} />;
 }
 
 export default KakaoMap;
