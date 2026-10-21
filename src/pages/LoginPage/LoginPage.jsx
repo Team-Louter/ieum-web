@@ -101,17 +101,9 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="signup"
-                    onClick={() => onNavigate('/signup/user')}
+                    onClick={() => onNavigate('/signup')}
                 >
-                    사용자 계정 만들기
-                </button>
-
-                <button
-                    type="button"
-                    className="signup"
-                    onClick={() => onNavigate('/signup/guardian')}
-                >
-                    보호자 계정 만들기
+                    회원가입하기
                 </button>
             </div>
 

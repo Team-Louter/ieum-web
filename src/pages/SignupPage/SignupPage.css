@@ -55,7 +55,29 @@
     min-width: 0;
 }
 
-/* 중복확인, 인증하기, 주소검색처럼 오른쪽에 붙는 버튼 */
+/* 사용자, 보호자 선택 */
+.signup-page .account-type-select {
+    width: 100%;
+    height: 60px;
+    padding: 0 16px;
+    border: 2px solid #dfdfdf;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.signup-page .account-type-select:invalid {
+    color: #9f9f9f;
+}
+
+.signup-page .account-type-select:focus {
+    outline: none;
+    border-color: #42b66b;
+}
+
+/* 중복확인, 인증하기처럼 오른쪽에 붙는 버튼 */
 .signup-page .small-button {
     width: 125px;
     height: 60px;

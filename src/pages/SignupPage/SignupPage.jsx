@@ -16,22 +16,21 @@ function isEmailFormatValid(emailValue) {
     return hasTextBeforeAt && hasTextBetweenAtAndDot && hasTextAfterDot;
 }
 
-function GuardianSignupPage({ onNavigate }) {
+function SignupPage({ onNavigate }) {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
     const [email, setEmail] = useState('');
-    const [userEmail, setUserEmail] = useState('');
+    const [accountType, setAccountType] = useState('');
 
     const [idError, setIdError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordCheckError, setPasswordCheckError] = useState('');
     const [emailError, setEmailError] = useState('');
-    const [userEmailError, setUserEmailError] = useState('');
+    const [accountTypeError, setAccountTypeError] = useState('');
 
     const [idSuccess, setIdSuccess] = useState(false);
     const [emailSuccess, setEmailSuccess] = useState(false);
-    const [userEmailSuccess, setUserEmailSuccess] = useState(false);
     const [emailButtonText, setEmailButtonText] = useState('인증하기');
 
     function handleIdChange(event) {
@@ -70,10 +69,9 @@ function GuardianSignupPage({ onNavigate }) {
         setEmailButtonText('인증하기');
     }
 
-    function handleUserEmailChange(event) {
-        setUserEmail(event.target.value);
-        setUserEmailError('');
-        setUserEmailSuccess(false);
+    function handleAccountTypeChange(event) {
+        setAccountType(event.target.value);
+        setAccountTypeError('');
     }
 
     function checkId() {
@@ -105,27 +103,6 @@ function GuardianSignupPage({ onNavigate }) {
         setEmailError('');
         setEmailSuccess(true);
         setEmailButtonText('인증완료');
-    }
-
-    function checkUserEmail() {
-        if (userEmail === '') {
-            setUserEmailError('필수 입력정보 입니다');
-            return;
-        }
-
-        if (!isEmailFormatValid(userEmail)) {
-            setUserEmailError('올바르지 않은 형식입니다');
-            return;
-        }
-
-        /* 임시 사용자 이메일 */
-        if (userEmail !== 'ieum@ieum.com') {
-            setUserEmailError('존재하지 않는 이메일입니다');
-            return;
-        }
-
-        setUserEmailError('');
-        setUserEmailSuccess(true);
     }
 
     function handleSubmit(event) {
@@ -175,54 +152,61 @@ function GuardianSignupPage({ onNavigate }) {
             hasError = true;
         }
 
-        if (userEmail === '') {
-            setUserEmailError('필수 입력정보 입니다');
-            hasError = true;
-        } else if (!isEmailFormatValid(userEmail)) {
-            setUserEmailError('올바르지 않은 형식입니다');
-            hasError = true;
-        } else if (!userEmailSuccess) {
-            setUserEmailError('존재하지 않는 이메일입니다');
+        if (accountType === '') {
+            setAccountTypeError('계정 유형을 선택해 주세요');
             hasError = true;
         }
+
         if (hasError) return;
 
-        alert('보호자 회원가입이 완료되었습니다!');
+        /* 백엔드 연결 시 accountType도 같이 전달 */
+        alert('회원가입이 완료되었습니다!');
         onNavigate('/neighbor');
     }
 
     return (
         <main className="signup-page">
             <img src={ieumLogo} alt="이음 로고" id="ieum-logo" />
-            <h1>보호자 계정 만들기</h1>
+            <h1>계정 만들기</h1>
 
             <form className="signup-form" onSubmit={handleSubmit} noValidate>
                 <div className="signup-field">
-                    <FieldWithButton id="guardian-id" label="아이디" value={id} onChange={handleIdChange} buttonText="중복확인" onButtonClick={checkId} />
+                    <FieldWithButton id="signup-id" label="아이디" value={id} onChange={handleIdChange} buttonText="중복확인" onButtonClick={checkId} />
                     {idError && <p className="input-error-msg">{idError}</p>}
                     {idSuccess && <p className="input-success-msg">사용 가능한 아이디입니다.</p>}
                 </div>
 
                 <div className="signup-field">
-                    <PasswordField id="guardian-password" label="비밀번호 (8자 이상, 영문자/숫자/특수문자 사용)" value={password} onChange={handlePasswordChange} />
+                    <PasswordField id="signup-password" label="비밀번호 (8자 이상, 영문자/숫자/특수문자 사용)" value={password} onChange={handlePasswordChange} />
                     {passwordError && <p className="input-error-msg">{passwordError}</p>}
                 </div>
 
                 <div className="signup-field">
-                    <PasswordField id="guardian-password-check" label="비밀번호 확인 (비밀번호를 한 번 더 입력해 주세요)" value={passwordCheck} onChange={handlePasswordCheckChange} />
+                    <PasswordField id="signup-password-check" label="비밀번호 확인 (비밀번호를 한 번 더 입력해 주세요)" value={passwordCheck} onChange={handlePasswordCheckChange} />
                     {passwordCheckError && <p className="input-error-msg">{passwordCheckError}</p>}
                 </div>
 
                 <div className="signup-field">
-                    <FieldWithButton id="guardian-email" label="이메일" type="email" value={email} onChange={handleEmailChange} buttonText={emailButtonText} onButtonClick={checkEmail} />
+                    <FieldWithButton id="signup-email" label="이메일" type="email" value={email} onChange={handleEmailChange} buttonText={emailButtonText} onButtonClick={checkEmail} />
                     {emailError && <p className="input-error-msg">{emailError}</p>}
                     {emailSuccess && <p className="input-success-msg">이메일 인증에 성공했습니다.</p>}
                 </div>
 
                 <div className="signup-field">
-                    <FieldWithButton id="linked-user-email" label="연결할 사용자 이메일" type="email" value={userEmail} onChange={handleUserEmailChange} buttonText="사용자 확인" onButtonClick={checkUserEmail} />
-                    {userEmailError && <p className="input-error-msg">{userEmailError}</p>}
-                    {userEmailSuccess && <p className="input-success-msg">사용자 이메일을 확인했습니다.</p>}
+                    <select
+                        id="account-type"
+                        name="accountType"
+                        className="account-type-select"
+                        value={accountType}
+                        onChange={handleAccountTypeChange}
+                        aria-label="계정 유형"
+                        required
+                    >
+                        <option value="">계정 유형을 선택해 주세요</option>
+                        <option value="user">사용자</option>
+                        <option value="guardian">보호자</option>
+                    </select>
+                    {accountTypeError && <p className="input-error-msg">{accountTypeError}</p>}
                 </div>
 
                 <button type="submit" className="signup-submit">계정 만들기</button>
@@ -235,4 +219,4 @@ function GuardianSignupPage({ onNavigate }) {
     );
 }
 
-export default GuardianSignupPage;
+export default SignupPage;

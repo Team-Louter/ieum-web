@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, useLocation, useNavigate, } from 'react-router-dom';
 import LoginPage from './pages/LoginPage/LoginPage';
-import UserSignupPage from './pages/SignupPage/UserSignupPage';
-import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
+import SignupPage from './pages/SignupPage/SignupPage';
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
@@ -56,8 +55,7 @@ const pageRoutes = {
   '/chatting': ChattingPage,
   '/settings': SettingsPage,
   '/login': LoginPage,
-  '/signup/user': UserSignupPage,
-  '/signup/guardian': GuardianSignupPage,
+  '/signup': SignupPage,
 };
 
 function AppContent() {
