@@ -34,6 +34,13 @@
   align-items: center;
   justify-content: center;
   background-color: #eee;
+  color: #000;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.content-profile-container > a:hover {
+  background-color: #ddd;
 }
 
 .content-video {

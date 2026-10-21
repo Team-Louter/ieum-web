@@ -1,0 +1,27 @@
+.meeting-make-layout {
+  display: flex;
+  flex-direction: column;
+  width: 1000px;
+  height: auto;
+  gap: 50px;
+}
+
+.meeting-make-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 1000px;
+}
+
+.meeting-make-button {
+  width: 1000px;
+  height: 60px;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 20px;
+
+  color: #BBFFBF;
+  background-color: #42B66B;
+}

@@ -50,7 +50,7 @@
   text-align: center;
 }
 
-form {
+.profile-edit-modal form {
   display: flex;
   flex-direction: column;
   gap: 30px;

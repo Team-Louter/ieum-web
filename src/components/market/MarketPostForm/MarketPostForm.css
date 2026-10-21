@@ -1,0 +1,133 @@
+.market-post-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.market-post-create-form__content {
+  display: flex;
+  gap: 50px;
+}
+
+.market-post-create-form__media-wrapper {
+  position: relative;
+}
+
+.market-post-create-form__media-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 23px;
+  width: 404px;
+  height: 568px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+  cursor: pointer;
+  overflow: hidden;
+  background-color: #fff;
+  padding: 0;
+}
+
+.market-post-create-form__media-label > img:not(.market-post-create-form__preview) {
+  width: 75px;
+  height: 75px;
+}
+
+.market-post-create-form__media-label > p {
+  font-size: 20px;
+  color: #6f6f6f;
+}
+
+.market-post-create-form__preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.market-post-create-form__change-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.market-post-create-form__text-fields {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 37px;
+}
+
+.market-post-create-form__text-fields > input {
+  padding: 0 20px;
+  width: 550px;
+  height: 60px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+}
+
+.market-post-create-form__text-fields > div {
+  position: relative;
+  width: 550px;
+}
+
+.market-post-create-form__text-fields > div > input,
+.market-post-create-form__text-fields > div > textarea {
+  width: 100%;
+}
+
+.market-post-create-form__text-fields > div > input {
+  width: 550px;
+  height: 60px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+  padding: 20px;
+}
+
+.market-post-create-form__text-fields > div > textarea {
+  width: 550px;
+  height: 374px;
+  resize: none;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+  padding: 20px;
+}
+
+.market-post-create-form__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: #c62424;
+  font-size: 16px;
+  line-height: 19px;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+.market-post-create-form__submit {
+  width: 1004px;
+  height: 50px;
+  background: #42b66b;
+  color: #bbffbf;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.market-post-create-form__submit:hover {
+  background: #329153;
+}

@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import LoginPage from './pages/Loginpage/LoginPage';
-import SignupPage from './pages/SignupPage/SignupPage';
+import { BrowserRouter as Router, useLocation, useNavigate, } from 'react-router-dom';
+import LoginPage from './pages/LoginPage/LoginPage';
+import UserSignupPage from './pages/SignupPage/UserSignupPage';
+import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
 import MyProfilePageContent from './pages/MyProfile/MyProfilePageContent';
 import MyProfilePageFriend from './pages/MyProfile/MyProfilePageFriend';
 import MyProfilePageMeeting from './pages/MyProfile/MyProfilePageMeeting';
 import FriendLocationPage from './pages/FriendLocation/FriendLocationPage';
+import AddFriendPage from './pages/AddFriend/AddFriendPage';
 import NeighborCreatePostPage from './pages/Neighbor/NeighborCreatePostPage';
 import NeighborFeedPage from './pages/Neighbor/NeighborFeedPage';
 import NeighborMyPostsPage from './pages/Neighbor/NeighborMyPostsPage';
@@ -12,6 +14,19 @@ import ProfilePageContent from './pages/Profile/ProfilePageContent';
 import ProfilePageFriend from './pages/Profile/ProfilePageFriend';
 import ProfilePageMeeting from './pages/Profile/ProfilePageMeeting';
 import GuardianPage from './pages/Guardian/GuardianPage';
+import MeetingShowPage from './pages/Meeting/MeetingShowPage/MeetingShowPage';
+import MeetingCreatePage from './pages/Meeting/MeetingCreatePage/MeetingCreatePage';
+import MeetingMyPage from './pages/Meeting/MeetingMyPage/MeetingMyPage';
+import MeetingMyListPage from './pages/Meeting/MeetingMyListPage/MeetingMyListPage';
+import MeetingMemberListPage from './pages/Meeting/MeetingMemberListPage/MeetingMemberListPage';
+import MeetingAnnouncementCreatePage from './pages/Meeting/MeetingAnnouncementCreatePage/MeetingAnnouncementCreatePage';
+import MeetingManagementPage from './pages/Meeting/MeetingManagementPage/MeetingManagementPage';
+import ChattingPage from './pages/Chatting/ChattingPage';
+import SettingsPage from './pages/setting/SettingsPage/SettingsPage';
+import MarketFeedPage from './pages/market/MarketFeedPage';
+import MarketMyPostPage from './pages/market/MarketMyPostPage';
+import MarketPostCreatePage from './pages/market/MarketPostCreatePage';
+import MarketFeedInPage from './pages/market/MarketFeedInPage';
 import './App.css';
 
 const pageRoutes = {
@@ -19,6 +34,7 @@ const pageRoutes = {
   '/myProfile/meetings': MyProfilePageMeeting,
   '/myProfile/friends': MyProfilePageFriend,
   '/friends/location': FriendLocationPage,
+  '/addfriend': AddFriendPage,
   '/neighbor': NeighborFeedPage,
   '/neighbor/my': NeighborMyPostsPage,
   '/neighbor/create': NeighborCreatePostPage,
@@ -26,36 +42,49 @@ const pageRoutes = {
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
   '/guardian': GuardianPage,
+  '/meeting': MeetingShowPage,
+  '/meeting/my': MeetingMyListPage,
+  '/meeting/my/detail': MeetingMyPage,
+  '/meeting/make': MeetingCreatePage,
+  '/meeting/my/member-list': MeetingMemberListPage,
+  '/meeting/announcement/make': MeetingAnnouncementCreatePage,
+  '/meeting/management': MeetingManagementPage,
+  '/market': MarketFeedPage,
+  '/market/my': MarketMyPostPage,
+  '/market/create': MarketPostCreatePage,
+  '/market/feedin': MarketFeedInPage,
+  '/chatting': ChattingPage,
+  '/settings': SettingsPage,
+  '/login': LoginPage,
+  '/signup/user': UserSignupPage,
+  '/signup/guardian': GuardianSignupPage,
 };
 
-/** 로그인 이후 기본 커뮤니티 화면으로 내 프로필을 표시합니다. */
-function CommunityPage() {
-  return <NeighborFeedPage />;
-}
-
-/** 로그인 상태와 URL 기반 서비스 화면을 함께 표시합니다. */
-function App() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+function AppContent() {
+  const navigate = useNavigate();
+  const currentPath = useLocation().pathname.replace(/\/$/, '') || '/login';
   const Page = pageRoutes[currentPath];
 
-  if (Page) {
-    return <Page />;
+  /* 화면 이동 */
+  function movePage(pageName) {
+    window.scrollTo(0, 0);
+    navigate(pageName);
   }
 
-  if (currentPage === 'community') {
-    return <CommunityPage />;
+
+  if (!Page) {
+    return <LoginPage onNavigate={movePage} />;
   }
 
-  if (currentPage === 'signup-user') {
-    return <SignupPage accountType="user" onNavigate={setCurrentPage} />;
-  }
+  return <Page onNavigate={movePage} />;
+}
 
-  if (currentPage === 'signup-guardian') {
-    return <SignupPage accountType="guardian" onNavigate={setCurrentPage} />;
-  }
-
-  return <LoginPage onNavigate={setCurrentPage} />;
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
 }
 
 export default App;
