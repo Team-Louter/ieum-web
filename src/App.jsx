@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, useLocation, useNavigate, } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage/LoginPage';
 import UserSignupPage from './pages/SignupPage/UserSignupPage';
 import GuardianSignupPage from './pages/SignupPage/GuardianSignupPage';
@@ -70,7 +70,6 @@ function AppContent() {
     window.scrollTo(0, 0);
     navigate(pageName);
   }
-
 
   if (!Page) {
     return <LoginPage onNavigate={movePage} />;

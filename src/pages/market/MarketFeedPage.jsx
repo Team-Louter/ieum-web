@@ -2,9 +2,10 @@ import './MarketFeedPage.css';
 import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MarketPostCard from '../../components/market/MarketPostCard/MarketPostCard';
-import img from '../../assets/images/comment.png';
+import { dummyMarketProducts } from '../../constants/dummy/dummyMarketProducts';
 
-function MarketFeedPage() {
+function MarketFeedPage({ products = dummyMarketProducts, onProductSelect }) {
+  const productItems = products ?? [];
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/market';
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: currentPath === '/market' },
@@ -16,12 +17,9 @@ function MarketFeedPage() {
     <Layout>
       <PageTabNavigation ariaLabel="나눔마당 메뉴" isFixed items={menuItems} />
       <div id="post-card-list">
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
-        <MarketPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketPostCard>
+        {productItems.map((product) => (
+          <MarketPostCard key={product.id} post={product} onClick={onProductSelect} />
+        ))}
       </div>
     </Layout>
   );

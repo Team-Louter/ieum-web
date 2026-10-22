@@ -15,13 +15,12 @@
   font-size: 15px;
 }
 
-.setting-guardian-list span {
-  display: inline-grid;
+.setting-guardian-list__avatar {
+  display: block;
   width: 30px;
   height: 30px;
-  place-items: center;
+  flex: 0 0 30px;
   border-radius: 50%;
   background: #f1f1f1;
-  color: #616161;
-  font-size: 15px;
+  object-fit: cover;
 }

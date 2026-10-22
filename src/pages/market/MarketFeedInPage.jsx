@@ -5,9 +5,9 @@ import './MarketFeedInPage.css';
 import MarketFeedInfo from '../../components/market/MarketFeedInfo/MarketFeedInfo';
 import profileImage from '../../assets/images/profile.png';
 
-function MarketFeedInPage() {
+function MarketFeedInPage({ selectedPost, onChat }) {
   const location = useLocation();
-  const post = location.state?.post ?? {
+  const post = selectedPost ?? location.state?.post ?? {
     image: '',
     title: '제목',
     price: '가격',
@@ -26,10 +26,11 @@ function MarketFeedInPage() {
         img={post.image}
         title={post.title}
         price={post.price}
-        content="게시물 내용"
-        userImg={profileImage}
-        userId="아이디"
-        address={post.address}
+        content={post.description ?? ''}
+        userImg={post.seller?.profileImage ?? profileImage}
+        userId={post.seller?.id ?? '아이디'}
+        address={post.address ?? post.location ?? ''}
+        onChat={() => onChat?.(post)}
       />
     </Layout>
   );

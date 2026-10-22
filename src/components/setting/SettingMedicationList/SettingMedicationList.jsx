@@ -1,18 +1,13 @@
 import './SettingMedicationList.css';
 
-const medicationSchedule = [
-  { time: '오전 8:00', label: '아침 복약 알림' },
-  { time: '오후 1:00', label: '점심 복약 알림' },
-  { time: '오후 8:00', label: '저녁 복약 알림' },
-];
-
-function SettingMedicationList() {
+function SettingMedicationList({ schedule = [] }) {
+  const scheduleItems = schedule ?? [];
   return (
     <ul className="setting-medication-list">
-      {medicationSchedule.map(({ time, label }) => (
-        <li key={time}>
+      {scheduleItems.map(({ id, time, label, medicationName }) => (
+        <li key={id ?? `${time}-${label}`}>
           <span className="setting-medication-list__time">{time}</span>
-          {label}
+          <span>{label ?? medicationName}</span>
         </li>
       ))}
     </ul>

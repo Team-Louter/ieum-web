@@ -2,8 +2,14 @@ import './MeetingMyAnnouncement.css';
 import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
 
-export default function MeetingMyAnnouncement() {
+export default function MeetingMyAnnouncement({
+  announcement = {},
+  onCreate,
+  onMore,
+}) {
   const navigate = useNavigate();
+  const author = announcement.author ?? {};
+  const handleCreate = onCreate ?? (() => navigate('/meeting/announcement/make'));
 
   return (
     <div className="Announcement-container">
@@ -13,21 +19,23 @@ export default function MeetingMyAnnouncement() {
           <button
             className="Announcement-write"
             type="button"
-            onClick={() => navigate('/meeting/announcement/make')}
+            onClick={handleCreate}
           >
             공지 올리기
           </button>
-          <p className="Announcement-more">더보기</p>
+          <button className="Announcement-more" type="button" onClick={onMore}>
+            더보기
+          </button>
         </div>
       </div>
       <div className="Announcement-card">
         <div className="Announcement-card-container">
           <div className='Announcement-profile'>
-            <img src={profileImage} alt="프로필 사진"/>
-            <p>아이디</p>
+            <img src={author.profileImage ?? author.profile_image ?? profileImage} alt="프로필 사진"/>
+            <p>{author.id ?? author.nickname ?? ''}</p>
           </div>
-          <p className="announcement-card-title">공지 제목</p>
-          <p className="announcement-card-info">공지 내용</p>
+          <p className="announcement-card-title">{announcement.title ?? ''}</p>
+          <p className="announcement-card-info">{announcement.content ?? ''}</p>
         </div>
       </div>
     </div>

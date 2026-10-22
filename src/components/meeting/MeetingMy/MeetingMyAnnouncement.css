@@ -45,8 +45,11 @@
 }
 
 .Announcement-more {
+  border: 0;
+  background: transparent;
   font-size: 0.8em;
   color: #6f6f6f;
+  cursor: pointer;
 }
 
 

@@ -3,10 +3,17 @@ import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInf
 import Layout from '../../components/common/Layout/Layout';
 import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButtons/MyProfileEditButtons';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
-import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
+import profileImage from '../../assets/images/profile.png';
+import { dummyFriendLocations } from '../../constants/dummy/dummyFriendLocations';
+import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
+import { dummyMyProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
-function MyProfilePageFriend() {
+function MyProfilePageFriend({
+  profile = dummyMyProfile,
+  friends = dummyFriendLocations,
+  onProfileUpdate,
+}) {
   const menuItems = [
     { label: '내 게시물', href: '/myProfile', isActive: false },
     { label: '내 모임', href: '/myProfile/meetings', isActive: false },
@@ -16,14 +23,21 @@ function MyProfilePageFriend() {
   return (
     <Layout className="profile-layout">
       <div id="profile-box">
-        <MyProfileInfo />
-        <MyProfileEditButtons />
+        <MyProfileInfo profile={profile} />
+        <MyProfileEditButtons profile={profile} onProfileUpdate={onProfileUpdate} />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
-        <div id="content-container">
-          <MyPostCard />
-          <MyPostCard />
-          <MyPostCard />
-        </div>
+        <ul className="my-profile-friend-list">
+          {friends.map((friend, index) => (
+            <li key={friend.id ?? index}>
+              <MeetingMyMemberProfile
+                profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
+                id={friend.nickname ?? friend.name ?? friend.id ?? ''}
+                role="회원"
+                interactive={false}
+              />
+            </li>
+          ))}
+        </ul>
       </div>
     </Layout>
   );

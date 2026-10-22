@@ -2,35 +2,52 @@ import './PostCard.css';
 import LikeButton from '../LikeButton/LikeButton';
 import CommentButton from '../CommentButton/CommentButton';
 import profileImg from '../../../assets/images/profile.png';
+import { Link } from 'react-router-dom';
 
 /** 게시물의 작성자, 미디어, 반응 버튼을 표시합니다. */
-function PostCard({ contentImg, isCommentOpen, onCommentToggle }) {
-  const postTitle = '게시물 제목';
-  const postText = '게시물 내용';
+function PostCard({
+  post = {},
+  contentImg,
+  isCommentOpen,
+  onCommentToggle,
+  onLikeToggle,
+  onSubmitComment,
+}) {
+  const author = post.author ?? {};
+  const image = contentImg ?? post.image;
 
   return (
     <div className="content-container">
       <div className="content-profile-container">
         <div>
-          <img src={profileImg} alt="프로필 사진" />
-          <p>아이디</p>
+          <img src={author.profileImage ?? author.profile_image ?? profileImg} alt="프로필 사진" />
+          <p>{author.id ?? author.nickname ?? ''}</p>
         </div>
-        <a href="profile">
+        <Link to={post.profileHref ?? '/profile'}>
           <p>프로필 보기</p>
-        </a>
+        </Link>
       </div>
-      {contentImg ? (
-        <img src={contentImg} className="content-video" alt="게시물 이미지" />
+      {image ? (
+        <img src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
       ) : (
         <div className="content-video content-placeholder" aria-label="게시물 미리보기" />
       )}
       <div className="content-info-icon-container">
-        <LikeButton />
-        <CommentButton isOpen={isCommentOpen} onToggle={onCommentToggle} />
+        <LikeButton
+          isLiked={post.isLiked}
+          likeCount={post.likeCount}
+          onToggle={onLikeToggle}
+        />
+        <CommentButton
+          isOpen={isCommentOpen}
+          onToggle={onCommentToggle}
+          comments={post.comments}
+          onSubmitComment={onSubmitComment}
+        />
       </div>
       <div className="content-info-p">
-        <p>{postTitle}</p>
-        <p>{postText}</p>
+        <p>{post.title ?? ''}</p>
+        <p>{post.content ?? ''}</p>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-import './MarketFeedPage.css';
+import './MarketPostCreatePage.css';
 import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MarketPostCreateForm from '../../components/market/MarketPostForm/MarketPostForm';
 
-function MarketFeedPage() {
+function MarketPostCreatePage({ initialValues, onSubmit }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/market';
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: currentPath === '/market' },
@@ -14,9 +14,9 @@ function MarketFeedPage() {
   return (
     <Layout>
       <PageTabNavigation ariaLabel="나눔마당 메뉴" isFixed items={menuItems} />
-      <MarketPostCreateForm></MarketPostCreateForm>
+      <MarketPostCreateForm initialValues={initialValues} onSubmit={onSubmit} />
     </Layout>
   );
 }
 
-export default MarketFeedPage;
+export default MarketPostCreatePage;

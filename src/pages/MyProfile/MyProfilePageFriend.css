@@ -19,3 +19,31 @@
   display: flex;
   gap: 30px;
 }
+
+.my-profile-friend-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 18px 20px;
+  width: min(700px, 100%);
+  min-height: 500px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.my-profile-friend-list li {
+  width: 220px;
+}
+
+@media (max-width: 850px) {
+  .my-profile-friend-list {
+    gap: 18px 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .my-profile-friend-list {
+    gap: 16px;
+  }
+}

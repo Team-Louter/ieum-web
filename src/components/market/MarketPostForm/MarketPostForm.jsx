@@ -3,11 +3,12 @@ import './MarketPostForm.css'
 import uploadIcon from '../../../assets/images/upload.svg';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
-function MarketPostCreateForm() {
+function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(initialValues.title ?? '');
+  const [price, setPrice] = useState(initialValues.price ?? '');
+  const [content, setContent] = useState(initialValues.content ?? '');
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
@@ -66,10 +67,17 @@ function MarketPostCreateForm() {
     const nextErrors = {
       media: selectedFile ? '' : '필수 입력 정보입니다.',
       title: title.trim() ? '' : '필수 입력 정보입니다.',
+      price: price.trim() ? '' : '필수 입력 정보입니다.',
       content: content.trim() ? '' : '필수 입력 정보입니다.',
     };
 
     setErrors(nextErrors);
+
+    if (Object.values(nextErrors).some(Boolean)) {
+      return;
+    }
+
+    onSubmit?.({ title: title.trim(), price: price.trim(), content: content.trim(), media: selectedFile });
   }
 
   return (
@@ -108,9 +116,9 @@ function MarketPostCreateForm() {
             </p>
           </div>
           <div>
-            <input type="text" placeholder="가격을 입력해주세요 (숫자만 입력해주세요)" value={title} onChange={(event) => setTitle(event.target.value)} />
-            <p className="market-post-create-form__error" role={errors.title ? 'alert' : undefined}>
-              {errors.title}
+            <input type="text" inputMode="numeric" placeholder="가격을 입력해주세요 (숫자만 입력해주세요)" value={price} onChange={(event) => setPrice(event.target.value)} />
+            <p className="market-post-create-form__error" role={errors.price ? 'alert' : undefined}>
+              {errors.price}
             </p>
           </div>
           <div>

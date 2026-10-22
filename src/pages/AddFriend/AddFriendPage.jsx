@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
+import { dummyAddFriends } from '../../constants/dummy/dummyAddFriends';
 import './AddFriendPage.css';
 
-const friends = Array.from({ length: 47 }, (_, index) => ({
-  id: index + 1,
-  name: '아이디',
-}));
 const pageSize = 30;
 
-function AddFriendPage() {
+function AddFriendPage({ friends = dummyAddFriends, onAddFriend }) {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [openFriendId, setOpenFriendId] = useState(null);
   const filteredFriends = friends.filter((friend) => (
-    friend.name.toLowerCase().includes(searchText.toLowerCase())
+    String(friend.name ?? friend.nickname ?? friend.id ?? '')
+      .toLowerCase()
+      .includes(searchText.toLowerCase())
   ));
   const totalPages = Math.ceil(filteredFriends.length / pageSize);
   const visibleFriends = filteredFriends.slice(
@@ -43,13 +42,15 @@ function AddFriendPage() {
           {visibleFriends.map((friend) => (
             <div className="add-friend-profile" key={friend.id}>
               <MeetingMyMemberProfile
-                id={friend.name}
+                id={friend.name ?? friend.nickname ?? friend.id ?? ''}
                 role="회원"
+                profile_image={friend.profileImage ?? friend.profile_image}
                 isMenuOpen={openFriendId === friend.id}
                 onToggle={() => setOpenFriendId((openId) => (
                   openId === friend.id ? null : friend.id
                 ))}
                 actionItems={['친구 추가하기']}
+                onAction={() => onAddFriend?.(friend)}
               />
             </div>
           ))}

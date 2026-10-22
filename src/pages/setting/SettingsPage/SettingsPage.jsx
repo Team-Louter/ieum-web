@@ -18,24 +18,38 @@ const initialSettings = {
   guardianLocation: false,
 };
 
-function SettingsPage() {
+function SettingsPage({
+  guardians,
+  medicationSchedule,
+  onMedicationScheduleEdit,
+  settings: settingsFromProps,
+  onSettingChange,
+}) {
   const [activeSection, setActiveSection] = useState('general');
-  const [settings, setSettings] = useState(initialSettings);
+  const [localSettings, setLocalSettings] = useState(initialSettings);
+  const settings = { ...initialSettings, ...(settingsFromProps ?? localSettings) };
 
   const toggle = (key) => {
-    setSettings((currentSettings) => ({
-      ...currentSettings,
-      [key]: !currentSettings[key],
-    }));
+    const nextValue = !settings[key];
+    if (!settingsFromProps) {
+      setLocalSettings((currentSettings) => ({ ...currentSettings, [key]: nextValue }));
+    }
+    onSettingChange?.(key, nextValue);
   };
 
   const pageProps = { settings, onToggle: toggle };
   const pages = {
     account: <SettingAccountPage />,
-    guardian: <SettingGuardianPage {...pageProps} />,
+    guardian: <SettingGuardianPage {...pageProps} guardians={guardians} />,
     general: <SettingGeneralPage {...pageProps} />,
     feature: <SettingFeaturePage />,
-    notification: <SettingNotificationPage {...pageProps} />,
+    notification: (
+      <SettingNotificationPage
+        {...pageProps}
+        medicationSchedule={medicationSchedule}
+        onMedicationScheduleEdit={onMedicationScheduleEdit}
+      />
+    ),
   };
 
   return (

@@ -3,11 +3,11 @@ import './PostCreateForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
-function PostCreateForm() {
+function PostCreateForm({ initialValues = {}, onSubmit }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(initialValues.title ?? '');
+  const [content, setContent] = useState(initialValues.content ?? '');
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
@@ -70,6 +70,12 @@ function PostCreateForm() {
     };
 
     setErrors(nextErrors);
+
+    if (Object.values(nextErrors).some(Boolean)) {
+      return;
+    }
+
+    onSubmit?.({ title: title.trim(), content: content.trim(), media: selectedFile });
   }
 
   return (
