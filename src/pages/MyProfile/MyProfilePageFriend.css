@@ -36,6 +36,14 @@
   width: 220px;
 }
 
+.my-profile-friend-list li.my-profile-friend-list__empty {
+  width: 100%;
+}
+
+#profile-box.profile-box--empty > .my-profile-friend-list.my-profile-friend-list--empty {
+  margin: 0;
+}
+
 @media (max-width: 850px) {
   .my-profile-friend-list {
     gap: 18px 20px;

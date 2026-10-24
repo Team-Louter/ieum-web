@@ -31,7 +31,14 @@ export default function MeetingMyAnnouncement({
       <div className="Announcement-card">
         <div className="Announcement-card-container">
           <div className='Announcement-profile'>
-            <img src={author.profileImage ?? author.profile_image ?? profileImage} alt="프로필 사진"/>
+            <img
+              src={author.profileImage || author.profile_image || author.profileImageUrl || profileImage}
+              alt="프로필 사진"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = profileImage;
+              }}
+            />
             <p>{author.id ?? author.nickname ?? ''}</p>
           </div>
           <p className="announcement-card-title">{announcement.title ?? ''}</p>

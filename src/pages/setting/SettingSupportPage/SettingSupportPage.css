@@ -1,0 +1,288 @@
+.setting-support-page__card .setting-item__content {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.setting-dialog--support-inquiry {
+  width: min(860px, 100%);
+  max-height: calc(100dvh - 64px);
+  padding: 28px 32px;
+  border-radius: 14px;
+}
+
+.setting-dialog--support-inquiry .setting-dialog__header h2 {
+  font-size: 30px;
+}
+
+.setting-dialog--support-inquiry .setting-dialog__header p {
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.setting-dialog--support-inquiry .setting-dialog__content {
+  margin-top: 22px;
+}
+
+.setting-support-page__questions {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-support-page__question {
+  padding: 15px 0;
+  border-bottom: 1px solid #e5e5e5;
+  color: #333;
+}
+
+.setting-support-page__question:first-child {
+  padding-top: 4px;
+}
+
+.setting-support-page__question:last-child {
+  padding-bottom: 4px;
+  border-bottom: 0;
+}
+
+.setting-support-page__question summary {
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.setting-support-page__question p,
+.setting-support-page__notice {
+  margin-top: 10px;
+  color: #666;
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+}
+
+.setting-support-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.setting-support-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.setting-support-page__field input,
+.setting-support-page__field select,
+.setting-support-page__field textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 16px;
+  border: 1px solid #d8d8d8;
+  border-radius: 9px;
+  background: #fff;
+  color: #333;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.setting-support-page__field textarea {
+  min-height: 190px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.setting-support-page__field input::placeholder,
+.setting-support-page__field textarea::placeholder {
+  color: #888;
+}
+
+.setting-support-page__field input:focus,
+.setting-support-page__field select:focus,
+.setting-support-page__field textarea:focus {
+  border-color: #42b66b;
+  outline: 3px solid rgb(66 182 107 / 16%);
+}
+
+.setting-support-page__form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #777;
+  font-size: 18px;
+}
+
+.setting-support-page__form-footer button {
+  min-width: 144px;
+  min-height: 54px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 9px;
+  background: #42b66b;
+  color: #fff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.setting-support-page__form-footer button:hover {
+  background: #319b57;
+}
+
+.setting-support-page__form-footer button:focus-visible {
+  outline: 3px solid rgb(66 182 107 / 30%);
+  outline-offset: 2px;
+}
+
+.setting-support-page__notice {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background: #eef9f1;
+  color: #26834a;
+  font-size: var(--font-size-small);
+}
+
+.setting-support-page__notice--error {
+  background: #fff1ef;
+  color: #ba3b2b;
+}
+
+.setting-support-page__history {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.setting-support-page__history h3 {
+  margin: 0 0 12px;
+  color: #333;
+  font-size: var(--font-size-small);
+}
+
+.setting-support-page__history ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setting-support-page__history li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.setting-support-page__history li > div {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 5px 10px;
+}
+
+.setting-support-page__history-category,
+.setting-support-page__history time {
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+.setting-support-page__history strong {
+  overflow: hidden;
+  color: #333;
+  font-size: var(--font-size-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.setting-support-page__history time {
+  grid-column: 2;
+}
+
+.setting-support-page__history-status {
+  flex: none;
+  color: #26834a;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+}
+
+.settings-layout--dark .setting-support-page__field,
+.settings-layout--dark .setting-support-page__history h3,
+.settings-layout--dark .setting-support-page__history strong {
+  color: #ededed;
+}
+
+.settings-layout--dark .setting-support-page__field input,
+.settings-layout--dark .setting-support-page__field select,
+.settings-layout--dark .setting-support-page__field textarea {
+  border-color: #454a47;
+  background: #303532;
+  color: #ededed;
+}
+
+.settings-layout--dark .setting-support-page__history,
+.settings-layout--dark .setting-support-page__history li {
+  border-color: #3d423f;
+}
+
+@media (max-width: 600px) {
+  .setting-dialog--support-inquiry {
+    max-height: calc(100dvh - 32px);
+    padding: 22px 18px;
+  }
+
+  .setting-dialog--support-inquiry .setting-dialog__header h2 {
+    font-size: 24px;
+  }
+
+  .setting-dialog--support-inquiry .setting-dialog__header p {
+    font-size: var(--font-size-small);
+  }
+
+  .setting-support-page__field {
+    font-size: var(--font-size-small);
+  }
+
+  .setting-support-page__field input,
+  .setting-support-page__field select,
+  .setting-support-page__field textarea {
+    min-height: 58px;
+    padding: 12px 14px;
+    font-size: var(--font-size-small);
+  }
+
+  .setting-support-page__field textarea {
+    min-height: 160px;
+  }
+
+  .setting-support-page__form-footer,
+  .setting-support-page__form-footer button {
+    font-size: var(--font-size-small);
+  }
+
+  .setting-support-page__form-footer button {
+    min-width: 120px;
+    min-height: 48px;
+  }
+
+  .setting-support-page__history li {
+    align-items: flex-start;
+  }
+
+  .setting-support-page__history li > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .setting-support-page__history time {
+    grid-column: 1;
+  }
+}

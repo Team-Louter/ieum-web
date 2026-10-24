@@ -43,7 +43,7 @@
   padding: 8px 12px;
   border-radius: 10px;
   color: #e22a2a;
-  font-size: 18px;
+  font-size: var(--font-size-small);
   text-align: left;
   cursor: pointer;
 }

@@ -31,7 +31,7 @@ export default function MeetingMyMemberList({
             key={member.id ?? `${firstMemberIndex + memberIndex}`}
             id={member.nickname ?? member.name ?? member.id ?? ''}
             role={member.role ?? '회원'}
-            profile_image={member.profileImage ?? member.profile_image}
+            profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
             isMenuOpen={openMemberIndex === memberIndex}
             onToggle={() => setOpenMemberIndex((openIndex) => (
               openIndex === memberIndex ? null : memberIndex

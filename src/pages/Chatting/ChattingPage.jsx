@@ -1,8 +1,12 @@
-import { useMemo, useState } from 'react';
+import { Client } from '@stomp/stompjs';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './ChattingPage.css';
 import searchIcon from '../../assets/images/search.svg';
-import Sidebar from '../../components/common/Sidebar/Sidebar';
+import profileImage from '../../assets/images/profile.png';
 import { dummyChatContacts, dummyChatThreads } from '../../constants/dummy/dummyChats';
+import { getValidAccessToken } from '../../api/client';
+
+const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
 
 const EMPTY_CONTACTS = [];
 
@@ -12,26 +16,95 @@ function ChattingPage({
   messages,
   onSelectContact,
   onSendMessage,
+  accessToken,
+  currentUserId,
+  onChatReconnected,
 }) {
   const contactItems = contacts ?? EMPTY_CONTACTS;
   const [searchTerm, setSearchTerm] = useState('');
   const [localActiveContactId, setLocalActiveContactId] = useState(null);
   const [messageDraft, setMessageDraft] = useState('');
   const [localThreads, setLocalThreads] = useState(dummyChatThreads);
+  const [realtimeThreads, setRealtimeThreads] = useState({});
+  const [socketStatus, setSocketStatus] = useState('연결 중');
+  const [sendError, setSendError] = useState('');
+  const onChatReconnectedRef = useRef(onChatReconnected);
+  useEffect(() => {
+    onChatReconnectedRef.current = onChatReconnected;
+  }, [onChatReconnected]);
   const selectedContactId = activeContactId ?? localActiveContactId ?? contactItems[0]?.id ?? null;
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
   const visibleContacts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
     return contactItems.filter((contact) => (contact.name ?? '').toLocaleLowerCase().includes(normalizedSearch));
   }, [contactItems, searchTerm]);
-  const selectedMessages = messages ?? localThreads[selectedContactId] ?? [];
+  const selectedMessages = useMemo(() => {
+    const merged = new Map();
+    [...(messages ?? localThreads[selectedContactId] ?? []), ...(realtimeThreads[selectedContactId] ?? [])]
+      .forEach((message) => merged.set(message.id, message));
+    return [...merged.values()];
+  }, [messages, localThreads, realtimeThreads, selectedContactId]);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return undefined;
+    }
+    let client;
+    let isMounted = true;
+    client = new Client({
+      brokerURL: CHAT_WS_URL,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 0,
+      heartbeatOutgoing: 0,
+      beforeConnect: async () => {
+        const validToken = await getValidAccessToken();
+        if (!validToken) throw new Error('채팅 인증 토큰을 확인할 수 없습니다.');
+        client.connectHeaders = { Authorization: `Bearer ${validToken}` };
+      },
+      onConnect: () => {
+        if (!isMounted) return;
+        setSocketStatus('실시간 연결됨');
+        client.subscribe('/user/queue/chat', (frame) => {
+          try {
+            const message = JSON.parse(frame.body);
+            const roomId = Number(message.roomId);
+            const normalized = {
+              id: message.id,
+              sender: Number(message.senderId) === Number(currentUserId) ? 'me' : 'them',
+              content: message.content,
+              time: message.createdAt ? new Date(message.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
+            };
+            setRealtimeThreads((threads) => {
+              const roomMessages = threads[roomId] ?? [];
+              if (roomMessages.some((item) => item.id === normalized.id)) return threads;
+              return { ...threads, [roomId]: [...roomMessages, normalized] };
+            });
+          } catch {
+            setSocketStatus('실시간 메시지를 읽지 못했습니다.');
+          }
+        });
+        onChatReconnectedRef.current?.();
+      },
+      onWebSocketError: () => {
+        if (isMounted) setSocketStatus('실시간 연결 대기 중');
+      },
+      onStompError: () => {
+        if (isMounted) setSocketStatus('실시간 연결 오류');
+      },
+    });
+    client.activate();
+    return () => {
+      isMounted = false;
+      void client.deactivate();
+    };
+  }, [accessToken, currentUserId]);
 
   function selectContact(contactId) {
     setLocalActiveContactId(contactId);
     onSelectContact?.(contactId);
   }
 
-  function submitMessage(event) {
+  async function submitMessage(event) {
     event.preventDefault();
     const content = messageDraft.trim();
     if (!content || !selectedContactId) return;
@@ -42,8 +115,25 @@ function ChattingPage({
       content,
       time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     };
-    onSendMessage?.({ contactId: selectedContactId, message });
-    if (!onSendMessage) {
+    if (onSendMessage) {
+      try {
+        setSendError('');
+        const savedMessage = await onSendMessage({ contactId: selectedContactId, message });
+        const normalized = savedMessage ? {
+          id: savedMessage.id,
+          sender: Number(savedMessage.senderId) === Number(currentUserId) ? 'me' : 'them',
+          content: savedMessage.content,
+          time: savedMessage.createdAt ? new Date(savedMessage.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : message.time,
+        } : message;
+        setRealtimeThreads((threads) => ({
+          ...threads,
+          [selectedContactId]: [...(threads[selectedContactId] ?? []).filter((item) => item.id !== normalized.id), normalized],
+        }));
+      } catch (error) {
+        setSendError(error?.message ?? '메시지를 보내지 못했습니다.');
+        return;
+      }
+    } else {
       setLocalThreads((currentThreads) => ({
         ...currentThreads,
         [selectedContactId]: [...(currentThreads[selectedContactId] ?? []), message],
@@ -53,9 +143,6 @@ function ChattingPage({
   }
 
   return (
-    <>
-    <Sidebar />
-
     <div className="chatting-page">
 
       {/* 채팅 목록 */}
@@ -74,7 +161,7 @@ function ChattingPage({
               type="button"
               onClick={() => selectContact(contact.id)}
             >
-              <img src={contact.profileImage ?? ''} alt="" />
+              <img src={contact.profileImage || profileImage} alt="" />
               <span>{contact.name}</span>
             </button>
           ))}
@@ -88,8 +175,11 @@ function ChattingPage({
         {selectedContact ? (
           <>
             <div className="chat-room-header">
-              <img src={selectedContact.profileImage ?? ''} alt="" />
+              <img src={selectedContact.profileImage || profileImage} alt="" />
               <span>{selectedContact.name}</span>
+              {socketStatus !== '실시간 연결됨' && (
+                <span className="chat-socket-status" aria-live="polite">{socketStatus}</span>
+              )}
             </div>
 
             <div className="chat-messages" aria-live="polite">
@@ -102,6 +192,7 @@ function ChattingPage({
                 );
               })}
             </div>
+            {sendError && <p className="chat-send-error" role="alert">{sendError}</p>}
 
             <form className="chat-composer" onSubmit={submitMessage}>
               <input
@@ -120,7 +211,6 @@ function ChattingPage({
       </div>
 
     </div>
-    </>
   );
 }
 

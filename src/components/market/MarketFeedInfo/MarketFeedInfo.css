@@ -14,7 +14,7 @@
   height: 35px;
   background-color: transparent;
   border: none;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   color: #555;
 }
 
@@ -45,17 +45,17 @@
 }
 
 #feed-info > div > div > p:nth-child(1) {
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: 500;
 }
 
 #feed-info > div > div > p:nth-child(2) {
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
 }
 
 #feed-info > div > div > p:nth-child(3) {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 
 #feed-info > div > button {
@@ -69,7 +69,7 @@
   height: 50px;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -97,11 +97,11 @@
 }
 
 #user-info > div > p:nth-child(1) {
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
 }
 
 #user-info > div > p:nth-child(2) {
-  font-size: 20px;
+  font-size: var(--font-size-body);
   color: #555;
 }

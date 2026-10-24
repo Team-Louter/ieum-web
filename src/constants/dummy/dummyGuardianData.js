@@ -8,7 +8,7 @@ export const dummyGuardian = {
 };
 
 export const dummyGuardianMedications = [
-  { id: 'morning', time: '오전 00:00', name: '복용할 약 (녹용환)', status: 'complete' },
+  { id: 'morning', time: '오전 00:00', name: '복용할 약 (복용완료)', status: 'complete' },
   { id: 'noon', time: '오전 00:00', name: '복용할 약 (미복용)', status: 'missed' },
   { id: 'night', time: '오전 00:00', name: '복용할 약 (0시간 남음)', status: 'upcoming' },
 ];

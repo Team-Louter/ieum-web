@@ -30,7 +30,7 @@ function MyProfilePageMeeting({
             <MeetingCard
               key={meeting.id ?? index}
               meeting={meeting}
-              to={meeting.href ?? '/meeting/my/detail'}
+              to={meeting.href ?? (meeting.id != null ? `/meeting/my/detail/${meeting.id}` : '/meeting/my/detail')}
             />
           ))}
         </div>

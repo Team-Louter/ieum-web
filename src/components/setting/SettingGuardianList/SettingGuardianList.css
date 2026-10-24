@@ -12,7 +12,36 @@
   align-items: center;
   gap: 11px;
   color: #3d3d3d;
-  font-size: 15px;
+  font-size: var(--font-size-small);
+}
+
+.setting-guardian-list li > span {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.setting-guardian-list__empty {
+  margin: 8px 0 2px;
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+.setting-guardian-list__remove {
+  flex: none;
+  padding: 6px 9px;
+  border: 1px solid #e6c1bc;
+  border-radius: 7px;
+  background: #fff;
+  color: #bd3c2b;
+  font: inherit;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.setting-guardian-list__remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .setting-guardian-list__avatar {

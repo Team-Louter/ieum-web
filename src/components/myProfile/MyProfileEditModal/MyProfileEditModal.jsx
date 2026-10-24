@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import closeIcon from '../../../assets/images/close.svg';
 import profileImg from '../../../assets/images/profile.png';
 
-function MyProfileEditModal({ profile = {}, onCancel, onConfirm }) {
+function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = '' }) {
   useEffect(() => {
     /** Escape 키 입력 시 프로필 수정 모달을 닫습니다. */
     function handleKeyDown(event) {
@@ -31,6 +31,7 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm }) {
       id: formData.get('id'),
       introduction: formData.get('introduction'),
       profileImage: selectedProfileImage?.size ? selectedProfileImage : undefined,
+      profileImageUrl: profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
     });
   }
 
@@ -44,7 +45,14 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm }) {
         <form onSubmit={handleSubmit}>
           <div id="input-container">
             <div id="profile-image-input-container">
-              <img src={profile.profileImage ?? profile.profile_image ?? profileImg} alt="프로필 사진" />
+              <img
+                src={profile.profileImage || profile.profile_image || profileImg}
+                alt="프로필 사진"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = profileImg;
+                }}
+              />
               <label htmlFor="profile-image-input">
                 <div id="profile-image-input-label">프로필 사진 수정하기</div>
               </label>
@@ -61,6 +69,7 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm }) {
               </div>
             </div>
           </div>
+          {errorMessage && <p className="profile-edit-modal__error" role="alert">{errorMessage}</p>}
           <div className="profile-edit-modal__button-group">
             <button type="button" onClick={onCancel}>
               취소하기

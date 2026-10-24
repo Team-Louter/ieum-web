@@ -25,7 +25,7 @@
 
 .meeting-management-managers h2 {
   margin: 0;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
 }
 
 .meeting-management-manager-list {

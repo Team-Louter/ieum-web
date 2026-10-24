@@ -22,7 +22,7 @@
   border-radius: 8px;
   background: #ffffffdd;
   color: #555;
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 .kakao-map__fallback-ping {

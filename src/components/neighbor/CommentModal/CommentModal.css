@@ -62,7 +62,7 @@
   min-width: 0;
   height: 40px;
   padding: 0 10px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: 1.5px solid #ccc;
 }
@@ -72,7 +72,7 @@
   width: 75px;
   height: 40px;
   padding: 0 10px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: 1.5px solid #ccc;
 }

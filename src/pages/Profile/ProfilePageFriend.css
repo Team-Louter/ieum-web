@@ -35,3 +35,11 @@
 .public-profile-friend-list li {
   width: 220px;
 }
+
+.public-profile-friend-list li.public-profile-friend-list__empty {
+  width: 100%;
+}
+
+#profile-box.profile-box--empty > .public-profile-friend-list.public-profile-friend-list--empty {
+  margin: 0;
+}

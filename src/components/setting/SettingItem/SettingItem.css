@@ -16,14 +16,14 @@
 .setting-item__header h2 {
   margin: 0;
   color: #5f5f5f;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: 700;
 }
 
 .setting-item__header p {
   margin: 5px 0 0;
   color: #505050;
-  font-size: 17px;
+  font-size: var(--font-size-small);
   line-height: 1.4;
 }
 
@@ -34,7 +34,7 @@
   background: transparent;
   color: #666;
   font: inherit;
-  font-size: 15px;
+  font-size: var(--font-size-small);
   cursor: pointer;
 }
 
@@ -54,11 +54,11 @@
   }
 
   .setting-item__header h2 {
-    font-size: 21px;
+    font-size: var(--font-size-subtitle);
   }
 
   .setting-item__header p {
-    font-size: 16px;
+    font-size: var(--font-size-small);
   }
 }
 .setting-item__trailing {

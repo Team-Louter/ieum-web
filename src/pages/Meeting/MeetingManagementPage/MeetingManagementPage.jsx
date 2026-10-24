@@ -57,7 +57,7 @@ export default function MeetingManagementPage({
               <MeetingMyMemberProfile
                 key={`${manager.id}-${manager.role}-${index}`}
                 id={manager.nickname ?? manager.name ?? manager.id ?? ''}
-                profile_image={manager.profileImage ?? manager.profile_image}
+                profile_image={manager.profileImage ?? manager.profile_image ?? manager.profileImageUrl}
                 role={manager.role ?? '회원'}
                 isMenuOpen={openManagerIndex === index}
                 onToggle={() => setOpenManagerIndex((openIndex) => (

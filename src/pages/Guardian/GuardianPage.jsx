@@ -55,8 +55,20 @@ function GuardianPage({
   medications = dummyGuardianMedications,
   onLocationRefresh,
 }) {
-  const guardianData = { ...dummyGuardian, ...(guardian ?? {}) };
-  const medicationItems = medications ?? [];
+  const guardianSource = guardian ?? {};
+  const guardianData = {
+    ...dummyGuardian,
+    ...guardianSource,
+    elderName: guardianSource.elderName?.trim() || dummyGuardian.elderName,
+    homeAddress: guardianSource.homeAddress?.trim() || '',
+    homeCoordinates: guardianSource.homeCoordinates ?? null,
+    homeRadiusMeters: guardianSource.homeRadiusMeters ?? dummyGuardian.homeRadiusMeters,
+    lastLoginText: guardianSource.lastLoginText?.trim() || dummyGuardian.lastLoginText,
+    statusMessage: guardianSource.statusMessage?.trim() || dummyGuardian.statusMessage,
+  };
+  const medicationItems = Array.isArray(medications) && medications.length > 0
+    ? medications
+    : dummyGuardianMedications;
   const [isKakaoMapReady, setIsKakaoMapReady] = useState(false);
   const [resolvedHome, setResolvedHome] = useState(null);
   const homeLocation = guardianData.homeCoordinates ?? (
@@ -79,7 +91,7 @@ function GuardianPage({
 
     let isMounted = true;
 
-    if (guardianData.homeCoordinates) return undefined;
+    if (guardianData.homeCoordinates || !guardianData.homeAddress) return undefined;
 
     findAddressCoordinates(guardianData.homeAddress).then((resolvedHome) => {
       if (isMounted && resolvedHome) {

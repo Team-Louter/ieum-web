@@ -36,8 +36,12 @@ export default function MeetingMyPage({
           <div className="meeting-my-contents">
             <img
               className="meeting-card-img"
-              src={meeting.image ?? mulchongsae}
+              src={meeting.image || mulchongsae}
               alt={`${meeting.title ?? '모임'} 대표 이미지`}
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = mulchongsae;
+              }}
             />
             <div className="meeting-card-info">
               <p className="meeting-card-info-title">{meeting.title ?? ''}</p>

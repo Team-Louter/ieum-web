@@ -13,7 +13,14 @@ export default function MeetingMyMemberProfile({
 }) {
   const profileContent = (
     <>
-      <img src={profile_image ?? defaultImage} alt="프로필 사진" />
+      <img
+        src={profile_image || defaultImage}
+        alt="프로필 사진"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = defaultImage;
+        }}
+      />
       <p>{role === '회원' ? id : `${id} (${role})`}</p>
     </>
   );

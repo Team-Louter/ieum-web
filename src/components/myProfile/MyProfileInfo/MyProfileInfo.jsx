@@ -13,7 +13,14 @@ function MyProfileInfo({ profile = {} }) {
 
   return (
     <div className="my-profile-info">
-      <img src={profileImage} alt={`${id || '사용자'} 프로필 사진`} />
+      <img
+        src={profileImage || profileImg}
+        alt={`${id || '사용자'} 프로필 사진`}
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = profileImg;
+        }}
+      />
       <div className="my-profile-info__text">
         <p>{id}</p>
         <p>{introduction}</p>

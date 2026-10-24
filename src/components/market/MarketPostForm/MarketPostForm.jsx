@@ -9,40 +9,26 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
   const [title, setTitle] = useState(initialValues.title ?? '');
   const [price, setPrice] = useState(initialValues.price ?? '');
   const [content, setContent] = useState(initialValues.content ?? '');
+  const [region, setRegion] = useState(initialValues.region ?? '');
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
 
-  useEffect(() => {
-    return () => {
-      if (previewUrlRef.current) {
-        URL.revokeObjectURL(previewUrlRef.current);
-      }
-    };
+  useEffect(() => () => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
   }, []);
 
-  /** 선택한 파일이 이미지 또는 동영상인지 확인하고 미리보기를 준비합니다. */
   function handleFileChange(event) {
     const [nextFile] = event.target.files;
-
-    if (!nextFile) {
-      return;
-    }
-
+    if (!nextFile) return;
     if (!nextFile.type.startsWith('image/') && !nextFile.type.startsWith('video/')) {
       setSelectedFile(null);
-      setErrors((currentErrors) => ({
-        ...currentErrors,
-        media: '이미지 또는 동영상 파일만 선택할 수 있습니다.',
-      }));
+      setErrors((currentErrors) => ({ ...currentErrors, media: '이미지 또는 동영상 파일만 선택할 수 있습니다.' }));
       event.target.value = '';
       return;
     }
-
-    if (previewUrlRef.current) {
-      URL.revokeObjectURL(previewUrlRef.current);
-    }
-
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     const nextPreviewUrl = URL.createObjectURL(nextFile);
     previewUrlRef.current = nextPreviewUrl;
     setSelectedFile(nextFile);
@@ -50,34 +36,40 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
     setErrors((currentErrors) => ({ ...currentErrors, media: '' }));
   }
 
-  /** 파일 선택 창을 열어 이미 선택한 파일도 교체할 수 있게 합니다. */
   function handleFileSelectClick() {
-    if (!fileInputRef.current) {
-      return;
-    }
-
+    if (!fileInputRef.current) return;
     fileInputRef.current.value = '';
     fileInputRef.current.click();
   }
 
   /** 필수 입력값을 확인하고 유효하지 않은 항목에 오류 문구를 표시합니다. */
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const nextErrors = {
       media: selectedFile ? '' : '필수 입력 정보입니다.',
       title: title.trim() ? '' : '필수 입력 정보입니다.',
-      price: price.trim() ? '' : '필수 입력 정보입니다.',
+      price: !price.trim()
+        ? '필수 입력 정보입니다.'
+        : /^\d+$/.test(price.trim())
+          ? ''
+          : '가격은 숫자만 입력해 주세요.',
       content: content.trim() ? '' : '필수 입력 정보입니다.',
+      region: region.trim() ? '' : '거주 지역을 입력해 주세요.',
     };
 
     setErrors(nextErrors);
+    setSubmitError('');
 
     if (Object.values(nextErrors).some(Boolean)) {
       return;
     }
 
-    onSubmit?.({ title: title.trim(), price: price.trim(), content: content.trim(), media: selectedFile });
+    try {
+      await onSubmit?.({ title: title.trim(), price: price.trim(), content: content.trim(), region: region.trim(), media: selectedFile });
+    } catch (error) {
+      setSubmitError(error?.message ?? '게시물을 등록하지 못했습니다.');
+    }
   }
 
   return (
@@ -122,6 +114,12 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
             </p>
           </div>
           <div>
+            <input type="text" placeholder="거주 지역을 입력해 주세요" value={region} onChange={(event) => setRegion(event.target.value)} />
+            <p className="market-post-create-form__error" role={errors.region ? 'alert' : undefined}>
+              {errors.region}
+            </p>
+          </div>
+          <div>
             <textarea placeholder="내용을 입력해주세요." value={content} onChange={(event) => setContent(event.target.value)} />
             <p className="market-post-create-form__error" role={errors.content ? 'alert' : undefined}>
               {errors.content}
@@ -132,6 +130,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
       <button type="submit" className="market-post-create-form__submit">
         게시물 만들기
       </button>
+      {submitError && <p className="market-post-create-form__submit-error" role="alert">{submitError}</p>}
     </form>
   );
 }

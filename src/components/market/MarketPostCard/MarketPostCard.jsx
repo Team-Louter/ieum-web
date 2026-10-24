@@ -9,7 +9,7 @@ function MarketPostCard({ post = {}, postImg, postTitle, postPrice, postAddress,
 
   return (
     <Link
-      to="/market/feedin"
+      to={post.id != null ? `/market/feedin/${post.id}` : '/market/feedin'}
       className="market-post-card"
       onClick={() => onClick?.(post)}
       state={{

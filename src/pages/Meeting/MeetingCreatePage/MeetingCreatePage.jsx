@@ -1,10 +1,10 @@
 import './MeetingCreatePage.css';
+import { useState } from 'react';
 import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
 import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
 import MeetingMakeOptionSelect from '../../../components/meeting/MeetingMake/MeetingMakeOptionSelect';
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
-import { useState } from 'react';
 
 const defaultMeetingValues = {
   title: '',
@@ -18,6 +18,7 @@ const defaultMeetingValues = {
 
 export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
   const [values, setValues] = useState(() => ({ ...defaultMeetingValues, ...initialValues }));
+  const [submitError, setSubmitError] = useState('');
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -29,9 +30,14 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
     setValues((currentValues) => ({ ...currentValues, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    onSubmit?.(values);
+    setSubmitError('');
+    try {
+      await onSubmit?.(values);
+    } catch (error) {
+      setSubmitError(error?.message ?? '모임을 만들지 못했습니다.');
+    }
   }
 
   return (
@@ -74,6 +80,7 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
           />
         </div>
         <button className="meeting-make-button" type="submit">모임 만들기</button>
+        {submitError && <p className="meeting-make-error" role="alert">{submitError}</p>}
       </form>
     </Layout>
   )

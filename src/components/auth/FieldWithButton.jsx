@@ -22,9 +22,11 @@ function FieldWithButton({
                 />
                 <label htmlFor={id}>{label}</label>
             </div>
-            <button type="button" className="small-button" onClick={onButtonClick}>
-                {buttonText}
-            </button>
+            {buttonText && (
+                <button type="button" className="small-button" onClick={onButtonClick}>
+                    {buttonText}
+                </button>
+            )}
         </div>
     );
 }
