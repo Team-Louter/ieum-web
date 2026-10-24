@@ -5,7 +5,7 @@
 }
 
 .Announcement-container {
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   /* padding: 25px */
 }
 
@@ -34,7 +34,7 @@
   border-radius: 8px;
   background-color: #42B66B;
   color: #BBFFBF;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   cursor: pointer;
 }
 
@@ -45,15 +45,18 @@
 }
 
 .Announcement-more {
-  font-size: 0.8em;
+  border: 0;
+  background: transparent;
+  font-size: var(--font-size-small);
   color: #6f6f6f;
+  cursor: pointer;
 }
 
 
 .Announcement-card {
   width: 700px;
   height: 250px;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   border-radius: 15px;
   border: 2px #eee solid;
   padding: 15px;
@@ -79,7 +82,7 @@
 } 
 
 .Announcement-profile > p {
-  font-size: 0.8em;
+  font-size: var(--font-size-small);
 } 
 
 .announcement-card-title {

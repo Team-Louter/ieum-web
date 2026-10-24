@@ -1,10 +1,18 @@
 import './MeetingMakeOptionSelect.css'
 import { useState } from 'react';
 
-export default function MeetingMakeOptionSelect( {title, desc, option1, option2, option3} ) {
+export default function MeetingMakeOptionSelect({ title, desc, option1, option2, option3, value, onChange }) {
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState( option1 );
+  const [localSelected, setLocalSelected] = useState(option1);
+  const options = [option1, option2, option3].filter(Boolean);
+  const selected = value ?? localSelected;
+
+  function selectOption(option) {
+    setLocalSelected(option);
+    onChange?.(option);
+    setIsOpen(false);
+  }
 
   return (
 
@@ -14,14 +22,14 @@ export default function MeetingMakeOptionSelect( {title, desc, option1, option2,
         <p className="meeting-make-option-desc">{desc}</p>
       </div>
       <div style={{ position: 'relative', width: '120px' }}>
-        <button className="select-button" onClick={() => setIsOpen(!isOpen)}>
+        <button className="select-button" type="button" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)}>
           {selected}
         </button>
         {isOpen && (
-          <ul className="select-list">
-            <li onClick={() => { setSelected(option1); setIsOpen(false); }} className="select-list-card">{option1}</li>
-            <li onClick={() => { setSelected(option2); setIsOpen(false); }} className="select-list-card">{option2}</li>
-            <li onClick={() => { setSelected(option3); setIsOpen(false); }} className="select-list-card">{option3}</li>
+          <ul className="select-list" role="listbox">
+            {options.map((option) => (
+              <li key={option} role="option" aria-selected={selected === option} onClick={() => selectOption(option)} className="select-list-card">{option}</li>
+            ))}
           </ul>
         )}
       </div>

@@ -1,18 +1,23 @@
 import './SettingMedicationList.css';
 
-const medicationSchedule = [
-  { time: '오전 8:00', label: '아침 복약 알림' },
-  { time: '오후 1:00', label: '점심 복약 알림' },
-  { time: '오후 8:00', label: '저녁 복약 알림' },
-];
+function SettingMedicationList({ schedule = [], onDelete }) {
+  const scheduleItems = schedule ?? [];
 
-function SettingMedicationList() {
+  if (!scheduleItems.length) {
+    return <p className="setting-medication-list__empty">등록된 복약 정보가 없습니다.</p>;
+  }
+
   return (
     <ul className="setting-medication-list">
-      {medicationSchedule.map(({ time, label }) => (
-        <li key={time}>
+      {scheduleItems.map(({ id, time, label, medicationName }) => (
+        <li key={id ?? `${time}-${label}`}>
           <span className="setting-medication-list__time">{time}</span>
-          {label}
+          <span className="setting-medication-list__name">{label ?? medicationName}</span>
+          {onDelete && (
+            <button type="button" className="setting-medication-list__delete" onClick={() => onDelete(id)} disabled={id == null}>
+              삭제
+            </button>
+          )}
         </li>
       ))}
     </ul>

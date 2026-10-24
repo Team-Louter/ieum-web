@@ -20,7 +20,7 @@
 .signup-page h1 {
     margin-top: 8px;
     margin-bottom: 28px;
-    font-size: 28px;
+    font-size: var(--font-size-title);
     font-weight: bold;
     color: #6f6f6f;
 }
@@ -63,7 +63,7 @@
     border-radius: 10px;
     background-color: #42b66b;
     color: #bbffbf;
-    font-size: 20px;
+    font-size: var(--font-size-body);
     font-weight: 600;
     cursor: pointer;
     flex-shrink: 0;
@@ -83,7 +83,7 @@
     border-radius: 10px;
     background-color: #42b66b;
     color: #bbffbf;
-    font-size: 22px;
+    font-size: var(--font-size-subtitle);
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -100,7 +100,7 @@
     color: #6f6f6f;
     cursor: pointer;
     transition: color 0.2s ease;
-    font-size: 22px;
+    font-size: var(--font-size-subtitle);
 }
 
 .signup-page .back-to-login:hover {
@@ -112,7 +112,7 @@
 /* 입력칸 아래에 보여 주는 오류 또는 성공 메시지 */
 .input-error-msg {
     color: #c62424;
-    font-size: 20px;
+    font-size: var(--font-size-body);
     font-weight: 400;
     line-height: 1.4;
     margin: 0;
@@ -123,7 +123,7 @@
 
 .input-success-msg {
     color: #42b66b;
-    font-size: 20px;
+    font-size: var(--font-size-body);
     font-weight: 400;
     line-height: 1.4;
     margin: 0;

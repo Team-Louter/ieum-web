@@ -46,7 +46,7 @@
 }
 
 .profile-edit-modal__panel > p {
-  font-size: 30px;
+  font-size: var(--font-size-display);
   text-align: center;
 }
 
@@ -79,7 +79,7 @@
   width: 200px;
   margin: 0 auto;
   height: 40px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border: 2px solid #dfdfdf;
   border-radius: 10px;
   cursor: pointer;
@@ -92,11 +92,11 @@
 }
 
 #id-input-container > p {
-  font-size: 16px;
+  font-size: var(--font-size-small);
 }
 
 #nickname-input {
-  font-size: 20px;
+  font-size: var(--font-size-body);
   padding: 0 20px;
   width: 500px;
   height: 60px;
@@ -111,12 +111,12 @@
 }
 
 #my-introduce-input-container > p {
-  font-size: 16px;
+  font-size: var(--font-size-small);
 }
 
 #my-introduce-textarea {
   padding: 20px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   width: 500px;
   height: 200px;
   resize: none;
@@ -132,12 +132,18 @@
   margin-top: 50px;
 }
 
+.profile-edit-modal__error {
+  margin: 0;
+  color: #c62424;
+  font-size: var(--font-size-small);
+}
+
 .profile-edit-modal__button-group > button {
   width: 400px;
   height: 60px;
   border: none;
   border-radius: 10px;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
   cursor: pointer;
 }
@@ -154,11 +160,11 @@
 
 @media (max-width: 600px) {
   .profile-edit-modal__panel > p {
-    font-size: 22px;
+    font-size: var(--font-size-subtitle);
   }
 
   .profile-edit-modal__button-group > button {
     height: 48px;
-    font-size: 18px;
+    font-size: var(--font-size-small);
   }
 }

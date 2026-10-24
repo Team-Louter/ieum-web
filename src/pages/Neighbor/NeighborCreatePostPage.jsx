@@ -4,7 +4,7 @@ import PageTabNavigation from '../../components/common/PageTabNavigation/PageTab
 import PostCreateForm from '../../components/neighbor/PostCreateForm/PostCreateForm';
 
 /** 새 이웃마당 게시물을 작성하는 화면입니다. */
-function NeighborCreatePostPage() {
+function NeighborCreatePostPage({ initialValues, onSubmit }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
     { label: '게시물 보기', href: '/neighbor', isActive: currentPath === '/neighbor' },
@@ -15,7 +15,7 @@ function NeighborCreatePostPage() {
   return (
     <Layout>
       <PageTabNavigation ariaLabel="이웃마당 메뉴" isFixed items={menuItems} />
-      <PostCreateForm />
+      <PostCreateForm initialValues={initialValues} onSubmit={onSubmit} />
     </Layout>
   );
 }

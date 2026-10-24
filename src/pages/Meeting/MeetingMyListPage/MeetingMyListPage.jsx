@@ -1,9 +1,10 @@
 import Layout from '../../../components/common/Layout/Layout';
 import MeetingCard from '../../../components/meeting/MeetingCard/MeetingCard';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
+import { dummyMyMeetings } from '../../../constants/dummy/dummyMeetings';
 import './MeetingMyListPage.css';
 
-export default function MeetingMyListPage() {
+export default function MeetingMyListPage({ meetings = dummyMyMeetings, onMeetingSelect }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -15,10 +16,12 @@ export default function MeetingMyListPage() {
     <Layout>
       <PageTabNavigation ariaLabel="모임 메뉴" isFixed items={menuItems} />
       <div className="meeting-my-list">
-        {[1, 2, 3, 4, 5].map((meeting) => (
+        {meetings.map((meeting, index) => (
           <MeetingCard
-            key={meeting}
-            to="/meeting/my/detail"
+            key={meeting.id ?? index}
+            meeting={meeting}
+            to={meeting.href ?? (meeting.id != null ? `/meeting/my/detail/${meeting.id}` : '/meeting/my/detail')}
+            onClick={() => onMeetingSelect?.(meeting)}
           />
         ))}
       </div>

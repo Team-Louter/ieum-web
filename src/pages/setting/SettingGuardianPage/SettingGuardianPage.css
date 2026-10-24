@@ -2,3 +2,27 @@
   padding-top: 0;
   border-top: 0;
 }
+
+.setting-guardian-page__permission-card {
+  display: none;
+}
+
+.setting-dialog--guardian-manager {
+  width: min(560px, 100%);
+}
+
+.setting-guardian-manager__list {
+  max-height: min(280px, 35dvh);
+  overflow-y: auto;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.setting-guardian-manager__form {
+  gap: 12px;
+}
+
+.setting-guardian-manager__actions {
+  justify-content: flex-end;
+}

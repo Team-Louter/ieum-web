@@ -3,18 +3,19 @@ import MeetingMyMemberProfile from "./MeetingMyMemberProfile";
 import MeetingMyMemberTitle from "./MeetingMyMemberTitle";
 import './MeetingMyMemberList.css';
 
-export default function MeetingMyMemberList({ maxVisible }) {
+export default function MeetingMyMemberList({
+  members = [],
+  maxVisible,
+  onMemberAction,
+}) {
   const [openMemberIndex, setOpenMemberIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const members = Array.from({ length: 30
-   }, (_, memberIndex) => ({
-    id: '아이디',
-    role: memberIndex === 0 ? '회장' : memberIndex < 3 ? '관리자' : '회원',
-  }));
   const pageSize = maxVisible ?? 24;
   const totalPages = maxVisible ? 1 : Math.ceil(members.length / pageSize);
   const firstMemberIndex = (currentPage - 1) * pageSize;
-  const visibleMembers = members.slice(firstMemberIndex, firstMemberIndex + pageSize);
+  const visibleMembers = maxVisible
+    ? members.slice(0, maxVisible)
+    : members.slice(firstMemberIndex, firstMemberIndex + pageSize);
 
   function moveToPage(page) {
     setCurrentPage(page);
@@ -27,13 +28,15 @@ export default function MeetingMyMemberList({ maxVisible }) {
       <div className="member-list">
         {visibleMembers.map((member, memberIndex) => (
           <MeetingMyMemberProfile
-            key={`${member.id}-${firstMemberIndex + memberIndex}`}
-            id={member.id}
-            role={member.role}
+            key={member.id ?? `${firstMemberIndex + memberIndex}`}
+            id={member.nickname ?? member.name ?? member.id ?? ''}
+            role={member.role ?? '회원'}
+            profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
             isMenuOpen={openMemberIndex === memberIndex}
             onToggle={() => setOpenMemberIndex((openIndex) => (
               openIndex === memberIndex ? null : memberIndex
             ))}
+            onAction={(action) => onMemberAction?.(member, action)}
           />
         ))}
       </div>

@@ -6,9 +6,21 @@ import './MeetingMyPage.css';
 import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
+import {
+  dummyMeetingAnnouncement,
+  dummyMeetingMembers,
+  dummyMyMeetings,
+} from '../../../constants/dummy/dummyMeetings';
 
 
-export default function MeetingMyPage() {
+export default function MeetingMyPage({
+  meeting = dummyMyMeetings[0],
+  announcement = dummyMeetingAnnouncement,
+  members = dummyMeetingMembers,
+  onMemberAction,
+  onAnnouncementCreate,
+  onAnnouncementMore,
+}) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -22,19 +34,39 @@ export default function MeetingMyPage() {
       <div className="contents-layout">
         <div className="meeting-my-card">
           <div className="meeting-my-contents">
-            <img className="meeting-card-img" src={mulchongsae} alt="예시 이미지"/>
+            <img
+              className="meeting-card-img"
+              src={meeting.image || mulchongsae}
+              alt={`${meeting.title ?? '모임'} 대표 이미지`}
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = mulchongsae;
+              }}
+            />
             <div className="meeting-card-info">
-              <p className="meeting-card-info-title">모임 이름</p>
-              <p className="meeting-card-info-desc">모임 소개</p>
-              <p className="meeting-card-info-meta">모임 지역 • 회원수</p>
+              <p className="meeting-card-info-title">{meeting.title ?? ''}</p>
+              <p className="meeting-card-info-desc">{meeting.description ?? ''}</p>
+              <p className="meeting-card-info-meta">
+                {[meeting.region, meeting.memberCount == null ? '' : `${meeting.memberCount}명`]
+                  .filter(Boolean)
+                  .join(' • ')}
+              </p>
             </div>
           </div>
           <MeetingKebabMenu image={dotSetting} />
         </div>
         <div className="contents-horizen"></div>
-        <MeetingMyAnnouncement/>
+        <MeetingMyAnnouncement
+          announcement={announcement}
+          onCreate={onAnnouncementCreate}
+          onMore={onAnnouncementMore}
+        />
         <div className="contents-horizen"></div>
-        <MeetingMyMemberList maxVisible={6}/>
+        <MeetingMyMemberList
+          members={members}
+          maxVisible={6}
+          onMemberAction={onMemberAction}
+        />
       </div>
     </Layout>
   )

@@ -3,10 +3,16 @@ import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInf
 import Layout from '../../components/common/Layout/Layout';
 import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButtons/MyProfileEditButtons';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
-import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
+import MeetingCard from '../../components/meeting/MeetingCard/MeetingCard';
+import { dummyMyMeetings } from '../../constants/dummy/dummyMeetings';
+import { dummyMyProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
-function MyProfilePageMeeting() {
+function MyProfilePageMeeting({
+  profile = dummyMyProfile,
+  meetings = dummyMyMeetings,
+  onProfileUpdate,
+}) {
   const menuItems = [
     { label: '내 게시물', href: '/myProfile', isActive: false },
     { label: '내 모임', href: '/myProfile/meetings', isActive: true },
@@ -16,13 +22,17 @@ function MyProfilePageMeeting() {
   return (
     <Layout className="profile-layout">
       <div id="profile-box">
-        <MyProfileInfo />
-        <MyProfileEditButtons />
+        <MyProfileInfo profile={profile} />
+        <MyProfileEditButtons profile={profile} onProfileUpdate={onProfileUpdate} />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
-        <div id="content-container">
-          <MyPostCard />
-          <MyPostCard />
-          <MyPostCard />
+        <div className="my-profile-meeting-list">
+          {meetings.map((meeting, index) => (
+            <MeetingCard
+              key={meeting.id ?? index}
+              meeting={meeting}
+              to={meeting.href ?? (meeting.id != null ? `/meeting/my/detail/${meeting.id}` : '/meeting/my/detail')}
+            />
+          ))}
         </div>
       </div>
     </Layout>

@@ -1,11 +1,21 @@
 import './MarketMyPostPage.css';
 import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
+import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MarketMyPostCard from '../../components/market/MarketMyPostCard/MarketMyPostCard';
-import img from '../../assets/images/comment.png';
+import { dummyMyMarketProducts } from '../../constants/dummy/dummyMarketProducts';
 
 /** 사용자가 등록한 중고장터 게시물을 표시합니다. */
-function MarketMyPostPage() {
+function MarketMyPostPage({
+  posts = dummyMyMarketProducts,
+  onMarkSold,
+  onDeletePost,
+  onNavigate,
+  isLoading = false,
+  apiError = '',
+}) {
+  const postItems = Array.isArray(posts) ? posts : [];
+  const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/market';
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: currentPath === '/market' },
@@ -16,13 +26,17 @@ function MarketMyPostPage() {
   return (
     <Layout>
       <PageTabNavigation ariaLabel="나눔마당 메뉴" isFixed items={menuItems} />
-      <div id="post-card-list">
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
-        <MarketMyPostCard postImg={img} postTitle={"제목"} postPrice={"가격"} postAddress={"몰라요"}></MarketMyPostCard>
+      <div id="post-card-list" className={isEmpty ? 'empty-state-page--centered' : undefined}>
+        {postItems.length > 0 ? postItems.map((post) => (
+          <MarketMyPostCard key={post.id} post={post} onMarkSold={onMarkSold} onDelete={onDeletePost} />
+        )) : isEmpty ? (
+          <EmptyState
+            title="등록한 게시물이 없어요"
+            description="내가 올린 상품을 등록하면 이곳에서 관리할 수 있어요."
+            actionLabel="게시물 만들기"
+            onAction={() => onNavigate?.('/market/create')}
+          />
+        ) : null}
       </div>
     </Layout>
   );

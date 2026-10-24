@@ -20,12 +20,12 @@ const settingMenuGroups = [
     title: '도움',
     items: [
       { id: 'feature', label: '새로운 기능', icon: newFeatureIcon },
-      { id: 'notification', label: '고객센터', icon: customerSupportIcon },
+      { id: 'support', label: '고객센터', icon: customerSupportIcon },
     ],
   },
 ];
 
-function SettingSidebar({ activeSection, onSelect }) {
+function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) {
   return (
     <aside className="setting-sidebar" aria-label="설정 메뉴">
       {settingMenuGroups.map((group) => (
@@ -47,11 +47,11 @@ function SettingSidebar({ activeSection, onSelect }) {
       ))}
 
       <div className="setting-sidebar__account-actions">
-        <button className="setting-sidebar__account-action" type="button">
+        <button className="setting-sidebar__account-action" type="button" onClick={onLogout}>
           <img src={logoutIcon} alt="로그아웃 아이콘" />
           로그아웃 하기
         </button>
-        <button className="setting-sidebar__account-action setting-sidebar__account-action--danger" type="button">
+        <button className="setting-sidebar__account-action setting-sidebar__account-action--danger" type="button" onClick={onAccountDelete}>
           <img src={deleteAccountIcon} alt="계정 삭제 아이콘" />
           계정 삭제하기
         </button>

@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css';
+import { getCurrentUser } from '../../../api/client';
 import profileImg from '../../../assets/images/profile.png';
 import neighborIcon from '../../../assets/images/neighbor.svg';
 import marketIcon from '../../../assets/images/market.svg';
@@ -34,8 +36,11 @@ function getActiveMenuId(currentPath) {
 function Sidebar() {
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
-  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-  const [activeMenuId, setActiveMenuId] = useState(() => getActiveMenuId(currentPath));
+  const location = useLocation();
+  const currentPath = location.pathname.replace(/\/$/, '') || '/';
+  const loginId = getCurrentUser().loginId;
+  const profileLabel = loginId || '내 프로필';
+  const activeMenuId = getActiveMenuId(currentPath);
   const isExpanded = isHovered || hasKeyboardFocus;
   const isMyProfileActive = currentPath === '/myProfile' || currentPath.startsWith('/myProfile/');
 
@@ -43,15 +48,6 @@ function Sidebar() {
   function handleBlur(event) {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       setHasKeyboardFocus(false);
-    }
-  }
-
-  /** 메뉴 클릭 상태를 유지하고, 준비 중인 메뉴의 기본 이동을 막습니다. */
-  function handleMenuClick(event, menuItem) {
-    setActiveMenuId(menuItem.id);
-
-    if (menuItem.href === '#') {
-      event.preventDefault();
     }
   }
 
@@ -68,10 +64,10 @@ function Sidebar() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <a className={`sidebar__profile${isMyProfileActive ? ' is-active' : ''}`} href="/myProfile" aria-current={isMyProfileActive ? 'page' : undefined} aria-label="내 프로필" title="내 프로필">
+      <Link className={`sidebar__profile${isMyProfileActive ? ' is-active' : ''}`} to="/myProfile" aria-current={isMyProfileActive ? 'page' : undefined} aria-label={loginId ? `내 프로필: ${loginId}` : '내 프로필'} title={profileLabel}>
         <img className="sidebar__icon" src={profileImg} alt="" />
-        <span className="sidebar__label">프로필 아이디</span>
-      </a>
+        <span className="sidebar__label">{profileLabel}</span>
+      </Link>
 
       <nav className="sidebar__menu" aria-label="서비스 메뉴">
         {sidebarMenuItems.map((menuItem) => {
@@ -79,10 +75,10 @@ function Sidebar() {
           const isActive = activeMenuId === menuItem.id;
 
           return (
-            <a className={`sidebar__menu-item${isActive ? ' is-active' : ''}`} href={href} key={label} aria-current={isActive ? 'page' : undefined} aria-label={label} title={label} onClick={(event) => handleMenuClick(event, menuItem)}>
+            <Link className={`sidebar__menu-item${isActive ? ' is-active' : ''}`} to={href} key={label} aria-current={isActive ? 'page' : undefined} aria-label={label} title={label}>
               <img className="sidebar__icon" src={icon} alt="" />
               <span className="sidebar__label">{label}</span>
-            </a>
+            </Link>
           );
         })}
       </nav>

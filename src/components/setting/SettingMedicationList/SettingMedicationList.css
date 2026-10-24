@@ -12,7 +12,36 @@
   align-items: center;
   gap: 12px;
   color: #444;
-  font-size: 15px;
+  font-size: var(--font-size-small);
+}
+
+.setting-medication-list__name {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.setting-medication-list__delete {
+  flex: none;
+  padding: 5px 9px;
+  border: 1px solid #e6c1bc;
+  border-radius: 7px;
+  background: #fff;
+  color: #bd3c2b;
+  font: inherit;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.setting-medication-list__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.setting-medication-list__empty {
+  margin: 8px 0 2px;
+  color: #777;
+  font-size: var(--font-size-small);
 }
 
 .setting-medication-list__time {
@@ -21,7 +50,7 @@
   border-radius: 8px;
   background: #e6f9ed;
   color: #25834a;
-  font-size: 13px;
+  font-size: var(--font-size-small);
   font-weight: 700;
   text-align: center;
 }

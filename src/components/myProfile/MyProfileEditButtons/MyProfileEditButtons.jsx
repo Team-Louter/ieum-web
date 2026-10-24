@@ -3,17 +3,28 @@ import './MyProfileEditButtons.css';
 import MyProfileEditModal from '../MyProfileEditModal/MyProfileEditModal';
 
 /** 내 프로필을 수정하는 버튼을 표시합니다. */
-function MyProfileEditButtons() {
+function MyProfileEditButtons({ profile = {}, onProfileUpdate }) {
   const [isMyProfileEditModalOpen, setIsMyProfileEditModalOpen] = useState(false);
+  const [updateError, setUpdateError] = useState('');
 
   /** 프로필 수정 모달을 엽니다. */
   function handleProfileEditClick() {
+    setUpdateError('');
     setIsMyProfileEditModalOpen(true);
   }
 
   /** 프로필 수정 모달을 닫습니다. */
   function handleMyProfileEditModalClose() {
     setIsMyProfileEditModalOpen(false);
+  }
+
+  async function handleProfileConfirm(updatedProfile) {
+    try {
+      await onProfileUpdate?.(updatedProfile);
+      handleMyProfileEditModalClose();
+    } catch (error) {
+      setUpdateError(error?.message ?? '프로필을 수정하지 못했습니다.');
+    }
   }
 
   return (
@@ -23,8 +34,10 @@ function MyProfileEditButtons() {
       </div>
       {isMyProfileEditModalOpen && (
         <MyProfileEditModal
+          profile={profile}
           onCancel={handleMyProfileEditModalClose}
-          onConfirm={handleMyProfileEditModalClose}
+          onConfirm={handleProfileConfirm}
+          errorMessage={updateError}
         />
       )}
     </>

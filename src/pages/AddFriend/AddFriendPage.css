@@ -19,7 +19,7 @@
   border: 0;
   border-radius: 24px;
   background: #eee;
-  font-size: 16px;
+  font-size: var(--font-size-small);
 }
 
 .add-friend-search input:focus {
@@ -46,18 +46,40 @@
   gap: 10px;
   margin-top: 12px;
   color: #555;
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 .add-friend-pagination button {
+  min-width: 24px;
+  padding: 3px 2px;
   border: 0;
+  border-radius: 4px;
   background: transparent;
   color: #777;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--font-size-small);
+}
+
+.add-friend-pagination button.is-current {
+  color: #42b66b;
+  font-weight: 700;
+}
+
+.add-friend-pagination button:not(:disabled):hover {
+  color: #319b57;
+}
+
+.add-friend-pagination button:focus-visible {
+  outline: 2px solid #8ad5a4;
+  outline-offset: 2px;
 }
 
 .add-friend-pagination button:disabled {
   color: #bbb;
   cursor: default;
+}
+
+.add-friend-pagination-gap {
+  color: #888;
+  user-select: none;
 }

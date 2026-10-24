@@ -13,7 +13,7 @@
 
 .nearby-friend-list > h2 {
   margin-bottom: 16px;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
 }
 .nearby-friend-list ul {
   display: flex;
@@ -33,7 +33,7 @@
   height: 38px;
 }
 .nearby-friend-list li > span {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 @media (max-width: 700px) {
   .nearby-friend-list {

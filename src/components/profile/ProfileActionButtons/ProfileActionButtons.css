@@ -9,7 +9,7 @@
   align-items: center;
   width: 475px;
   height: 60px;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
   border-radius: 10px;
 }

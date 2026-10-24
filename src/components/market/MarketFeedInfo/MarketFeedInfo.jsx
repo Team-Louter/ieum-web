@@ -2,7 +2,7 @@ import './MarketFeedInfo.css';
 import { useNavigate } from 'react-router-dom';
 import backIcon from '../../../assets/images/arrow.svg';
 
-function MarketFeedInfo({ img, title, price, content, userImg, userId, address }) {
+function MarketFeedInfo({ img, title, price, content, userImg, userId, address, onChat }) {
   const navigate = useNavigate();
 
   return (
@@ -19,7 +19,7 @@ function MarketFeedInfo({ img, title, price, content, userImg, userId, address }
             <p>{price}</p>
             <p>{content}</p>
           </div>
-          <button>채팅하기</button>
+          <button type="button" onClick={onChat}>채팅하기</button>
         </div>
       </div>
       <div id="user-info">

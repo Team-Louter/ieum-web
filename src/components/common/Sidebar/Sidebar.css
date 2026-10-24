@@ -50,9 +50,12 @@
   color: #42b66b;
 }
 
-.sidebar__profile.is-active .sidebar__icon,
 .sidebar__menu-item.is-active .sidebar__icon {
   filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg) brightness(88%) contrast(87%);
+}
+
+.sidebar__profile.is-active .sidebar__icon {
+  filter: none;
 }
 
 .sidebar__icon {

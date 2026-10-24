@@ -6,12 +6,22 @@ import { dummyComments } from '../../../constants/dummy/dummyComments';
 import './CommentButton.css';
 
 /** 게시물별 댓글 모달을 열거나 닫는 버튼입니다. */
-function CommentButton({ isOpen = false, onToggle }) {
+function CommentButton({
+  isOpen = false,
+  onToggle,
+  comments = dummyComments,
+  onSubmitComment,
+}) {
   const commentModal =
     isOpen ? (
-      <CommentModal onClose={onToggle}>
-        {dummyComments.map(({ id, profileId, content }) => (
-          <CommentItem key={id} profileImg={profileImg} profileId={profileId} comment={content} />
+      <CommentModal onClose={onToggle} onSubmit={onSubmitComment}>
+        {comments.map((comment, index) => (
+          <CommentItem
+            key={comment.id ?? index}
+            profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
+            profileId={comment.profileId ?? comment.author?.id ?? comment.nickname ?? ''}
+            comment={comment.content ?? comment.text ?? ''}
+          />
         ))}
       </CommentModal>
     ) : null;

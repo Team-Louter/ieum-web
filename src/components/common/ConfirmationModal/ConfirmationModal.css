@@ -41,7 +41,7 @@
 }
 
 .confirmation-modal__panel > p {
-  font-size: 30px;
+  font-size: var(--font-size-display);
   text-align: center;
 }
 
@@ -57,7 +57,7 @@
   height: 60px;
   border: none;
   border-radius: 10px;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
   cursor: pointer;
 }
@@ -74,11 +74,11 @@
 
 @media (max-width: 600px) {
   .confirmation-modal__panel > p {
-    font-size: 22px;
+    font-size: var(--font-size-subtitle);
   }
 
   .confirmation-modal__button-group > button {
     height: 48px;
-    font-size: 18px;
+    font-size: var(--font-size-small);
   }
 }

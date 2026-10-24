@@ -6,8 +6,12 @@ import MeetingMyMemberProfile from '../../../components/meeting/MeetingMy/Meetin
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import './MeetingManagementPage.css';
 import Layout from "../../../components/common/Layout/Layout";
+import { dummyMeetingManagers } from '../../../constants/dummy/dummyMeetings';
 
-export default function MeetingManagementPage() {
+export default function MeetingManagementPage({
+  managers = dummyMeetingManagers,
+  onManagerAction,
+}) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -15,11 +19,6 @@ export default function MeetingManagementPage() {
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
   const [openManagerIndex, setOpenManagerIndex] = useState(null);
-  const managers = [
-    { id: "아이디", role: "개설자" },
-    { id: "아이디", role: "관리자" },
-    { id: "아이디", role: "관리자" },
-  ];
 
   return (
     <Layout>
@@ -57,12 +56,14 @@ export default function MeetingManagementPage() {
             {managers.map((manager, index) => (
               <MeetingMyMemberProfile
                 key={`${manager.id}-${manager.role}-${index}`}
-                id={manager.id}
-                role={manager.role}
+                id={manager.nickname ?? manager.name ?? manager.id ?? ''}
+                profile_image={manager.profileImage ?? manager.profile_image ?? manager.profileImageUrl}
+                role={manager.role ?? '회원'}
                 isMenuOpen={openManagerIndex === index}
                 onToggle={() => setOpenManagerIndex((openIndex) => (
                   openIndex === index ? null : index
                 ))}
+                onAction={(action) => onManagerAction?.(manager, action)}
               />
             ))}
           </div>

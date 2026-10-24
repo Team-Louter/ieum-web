@@ -20,8 +20,12 @@
   border: none;
   border-radius: 10px;
 
-  font-size: 20px;
+  font-size: var(--font-size-body);
 
   color: #BBFFBF;
   background-color: #42B66B;
+}
+.meeting-make-error {
+  color: #c62424;
+  text-align: center;
 }

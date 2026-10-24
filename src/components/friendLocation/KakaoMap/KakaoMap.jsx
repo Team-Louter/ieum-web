@@ -13,6 +13,7 @@ function KakaoMap({
   center = DEFAULT_CENTER,
   level = 5,
   ariaLabel = '친구 위치 지도',
+  onMapReady,
 }) {
   const mapContainerRef = useRef(null);
   const kakaoMapAppKey = import.meta.env.VITE_KAKAO_MAP_APP_KEY;
@@ -61,6 +62,7 @@ function KakaoMap({
                 yAnchor: 1,
               });
             });
+            onMapReady?.();
           } catch {
             handleMapLoadError();
           }
@@ -90,7 +92,7 @@ function KakaoMap({
     const script = document.createElement('script');
     script.id = KAKAO_MAP_SCRIPT_ID;
     script.async = true;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapAppKey}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapAppKey}&autoload=false&libraries=services`;
     script.addEventListener('load', initializeMap);
     script.addEventListener('error', handleMapLoadError);
     document.head.appendChild(script);
@@ -100,7 +102,7 @@ function KakaoMap({
       script.removeEventListener('load', initializeMap);
       script.removeEventListener('error', handleMapLoadError);
     };
-  }, [ariaLabel, center.latitude, center.longitude, kakaoMapAppKey, level, locations]);
+  }, [ariaLabel, center.latitude, center.longitude, kakaoMapAppKey, level, locations, onMapReady]);
 
   if (!kakaoMapAppKey || hasMapLoadFailed) {
     return (

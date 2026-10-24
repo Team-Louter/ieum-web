@@ -19,3 +19,15 @@
   display: flex;
   gap: 30px;
 }
+
+.public-profile-meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: min(700px, 100%);
+  margin: 0 auto;
+}
+
+.public-profile-meeting-list .meeting-card {
+  max-width: 100%;
+}

@@ -17,12 +17,12 @@
 }
 
 .my-profile-info__text > p:nth-child(1) {
-  font-size: 34px;
+  font-size: var(--font-size-display);
   font-weight: bold;
 }
 
 .my-profile-info__text > p:nth-child(2) {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 
 .my-profile-info__stats {
@@ -31,5 +31,5 @@
 }
 
 .my-profile-info__stats > p {
-  font-size: 18px;
+  font-size: var(--font-size-small);
 }

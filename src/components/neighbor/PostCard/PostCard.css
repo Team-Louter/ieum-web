@@ -23,7 +23,7 @@
 }
 
 .content-profile-container > div > p {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 
 .content-profile-container > a {
@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 17.5px;
+  font-size: var(--font-size-small);
   cursor: pointer;
 }
 
@@ -83,12 +83,12 @@
 .content-info-p {
   display: flex;
   flex-direction: column;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   gap: 10px;
 }
 
 .content-info-p p {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 
 .content-info-p p:nth-child(1) {
