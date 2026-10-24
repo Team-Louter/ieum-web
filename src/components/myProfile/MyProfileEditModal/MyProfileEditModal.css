@@ -1,0 +1,164 @@
+.profile-edit-modal {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background-color: #00000066;
+}
+
+.profile-edit-modal__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  width: 1000px;
+  height: 600px;
+  padding: 32px;
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+#profile-edit-modal-title {
+  margin-right: auto;
+  padding: 20px 10px;
+}
+
+.profile-edit-modal__panel > button {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
+}
+
+.profile-edit-modal__panel > button > img {
+  width: 30px;
+  height: 30px;
+}
+
+.profile-edit-modal__panel > p {
+  font-size: 30px;
+  text-align: center;
+}
+
+.profile-edit-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+#input-container {
+  display: flex;
+  align-items: center;
+  gap: 75px;
+}
+
+#profile-image-input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  width: 250px;
+  height: 250px;
+}
+
+#profile-image-input-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  margin: 0 auto;
+  height: 40px;
+  font-size: 20px;
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#id-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#id-input-container > p {
+  font-size: 16px;
+}
+
+#nickname-input {
+  font-size: 20px;
+  padding: 0 20px;
+  width: 500px;
+  height: 60px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+}
+
+#my-introduce-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#my-introduce-input-container > p {
+  font-size: 16px;
+}
+
+#my-introduce-textarea {
+  padding: 20px;
+  font-size: 20px;
+  width: 500px;
+  height: 200px;
+  resize: none;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+}
+
+.profile-edit-modal__button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.profile-edit-modal__button-group > button {
+  width: 400px;
+  height: 60px;
+  border: none;
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.profile-edit-modal__button-group > button:first-child {
+  background: #dfdfdf;
+  color: #000;
+}
+
+.profile-edit-modal__button-group > button:last-child {
+  background: #42b66b;
+  color: #bbffbf;
+}
+
+@media (max-width: 600px) {
+  .profile-edit-modal__panel > p {
+    font-size: 22px;
+  }
+
+  .profile-edit-modal__button-group > button {
+    height: 48px;
+    font-size: 18px;
+  }
+}

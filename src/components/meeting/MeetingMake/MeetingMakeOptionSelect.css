@@ -1,0 +1,59 @@
+
+.meeting-make-option-container {
+  display: flex;
+  justify-content: space-between;
+
+  width: 1000px;
+  height: auto;
+}
+
+.meeting-make-option-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 20px;
+}
+
+.meeting-make-option-title {
+  font-weight: 600;
+}
+
+.meeting-make-option-desc {
+  font-weight: 300;
+}
+
+
+/* ===============
+체크ㅏ스 스타일 바꾸는겅ㅇㅇㅇㅇ
+=============== */
+
+.select-button {
+  width: 120px;
+  height: 40px;
+
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+
+  color: #6F6F6F;
+  background-color: white;
+
+  font-size: 20px;
+}
+
+.select-list {
+  width:100%;
+  position: absolute;
+  border: 1px solid #DFDFDF;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  background-color: #FFF;
+  z-index: 999;
+}
+
+.select-list-card {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}

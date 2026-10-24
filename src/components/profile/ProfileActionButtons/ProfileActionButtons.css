@@ -1,0 +1,27 @@
+.profile-action-buttons {
+  display: flex;
+  gap: 51px;
+}
+
+.profile-action-buttons > button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 475px;
+  height: 60px;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.profile-action-buttons > button:nth-child(1) {
+  background: #42b66b;
+  color: #bbffbf;
+  border: none;
+}
+
+.profile-action-buttons > button:nth-child(2) {
+  background: transparent;
+  color: #42b66b;
+  border: 3px solid #42b66b;
+}

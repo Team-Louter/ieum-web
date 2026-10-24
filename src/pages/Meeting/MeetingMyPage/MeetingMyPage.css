@@ -1,0 +1,29 @@
+.contents-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.contents-horizen {
+  border: 1px #eee solid;
+}
+
+
+
+
+.meeting-my-card {
+  display: flex;
+  justify-content: space-between;
+  width: 700px;
+
+  font-size: 25px;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.meeting-my-contents {
+  display: flex;
+
+}
+
+

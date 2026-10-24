@@ -1,0 +1,65 @@
+.setting-toggle {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 62px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.setting-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.setting-toggle span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: #dedede;
+  transition: background-color 160ms ease;
+}
+
+.setting-toggle span::after {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 16%);
+  content: '';
+  transition: transform 160ms ease;
+}
+
+.setting-toggle input:checked + span {
+  background: #42b66b;
+}
+
+.setting-toggle input:checked + span::after {
+  transform: translateX(28px);
+}
+
+.setting-toggle input:focus-visible + span {
+  outline: 3px solid rgb(66 182 107 / 30%);
+  outline-offset: 3px;
+}
+
+@media (max-width: 500px) {
+  .setting-toggle {
+    width: 56px;
+    height: 31px;
+  }
+
+  .setting-toggle span::after {
+    width: 23px;
+    height: 23px;
+  }
+
+  .setting-toggle input:checked + span::after {
+    transform: translateX(25px);
+  }
+}

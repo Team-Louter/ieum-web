@@ -1,0 +1,116 @@
+.setting-sidebar {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: var(--sidebar-collapsed-width);
+  z-index: 5;
+  width: 304px;
+  padding: 80px 26px 78px;
+  overflow-y: auto;
+  background: #fff;
+  border-right: 2px solid #dfdfdf;
+}
+
+.setting-sidebar__group + .setting-sidebar__group {
+  margin-top: 18px;
+}
+
+.setting-sidebar__group h2 {
+  margin: 0 0 8px;
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.setting-sidebar__menu-list {
+  overflow: hidden;
+  border: 2px solid #dfdfdf;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.setting-sidebar__menu-button,
+.setting-sidebar__account-action {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  gap: 14px;
+  padding: 10px 18px;
+  border: 0;
+  background: transparent;
+  color: #252525;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.setting-sidebar__menu-button:hover {
+  background: #eee;
+}
+
+.setting-sidebar__menu-button.is-active {
+  background: #e6f9ed;
+  color: #42b66b;
+}
+
+.setting-sidebar__menu-button img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.setting-sidebar__menu-button.is-active img {
+  filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg) brightness(88%) contrast(87%);
+}
+
+.setting-sidebar__menu-button span,
+.setting-sidebar__account-action span {
+  display: inline-flex;
+  width: 30px;
+  justify-content: center;
+  color: currentColor;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.setting-sidebar__account-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.setting-sidebar__account-action {
+  min-height: 58px;
+  border: 2px solid #dfdfdf;
+  border-radius: 12px;
+  color: #d9472b;
+  transition: all 0.2s ease;
+}
+
+.setting-sidebar__account-action:hover {
+  background: #ffc2c2;
+}
+
+@media (max-width: 900px) {
+  .setting-sidebar {
+    width: 100%;
+    min-height: auto;
+    padding: 0;
+    position: static;
+    border-right: 0;
+  }
+
+  .setting-sidebar__account-actions {
+    margin-top: 18px;
+  }
+}
+.setting-sidebar__account-action > img {
+  width: 30px;
+  height: 30px;
+}
