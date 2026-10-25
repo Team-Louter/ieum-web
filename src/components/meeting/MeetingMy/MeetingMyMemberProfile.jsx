@@ -10,6 +10,7 @@ export default function MeetingMyMemberProfile({
   onAction,
   interactive = true,
   actionItems = ['관리자 임명', '추방하기', '차단하기'],
+  dangerActionItems = [],
 }) {
   const profileContent = (
     <>
@@ -46,6 +47,7 @@ export default function MeetingMyMemberProfile({
             <button
               type="button"
               key={actionItem}
+              className={dangerActionItems.includes(actionItem) ? 'member-action-menu__danger' : undefined}
               onClick={() => onAction?.(actionItem)}
             >
               {actionItem}
