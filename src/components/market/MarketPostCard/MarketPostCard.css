@@ -19,6 +19,8 @@
 .market-post-card > img {
   width: 250px;
   height: 250px;
+  flex-shrink: 0;
+  object-fit: cover;
   border-radius: 10px;
 }
 
