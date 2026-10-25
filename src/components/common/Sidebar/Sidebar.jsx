@@ -33,7 +33,7 @@ function getActiveMenuId(currentPath) {
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
-function Sidebar() {
+function Sidebar({ role }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const location = useLocation();
@@ -43,6 +43,9 @@ function Sidebar() {
   const activeMenuId = getActiveMenuId(currentPath);
   const isExpanded = isHovered || hasKeyboardFocus;
   const isMyProfileActive = currentPath === '/myProfile' || currentPath.startsWith('/myProfile/');
+  const visibleMenuItems = sidebarMenuItems.filter(
+    (menuItem) => menuItem.id !== 'guardian' || role === 'ROLE_GUARDIAN',
+  );
 
   /** 키보드 사용자가 사이드바를 벗어났는지 확인합니다. */
   function handleBlur(event) {
@@ -70,7 +73,7 @@ function Sidebar() {
       </Link>
 
       <nav className="sidebar__menu" aria-label="서비스 메뉴">
-        {sidebarMenuItems.map((menuItem) => {
+        {visibleMenuItems.map((menuItem) => {
           const { href, icon, label } = menuItem;
           const isActive = activeMenuId === menuItem.id;
 

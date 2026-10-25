@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import LoginPage from './pages/LoginPage/LoginPage';
 import { getAccessToken, userApi } from './api/client';
@@ -275,9 +275,13 @@ function AppContent() {
     return <LoginPage onNavigate={movePage} onLogin={accountActions.login} />;
   }
 
+  if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {
+    return <Navigate to={accessToken ? '/neighbor' : '/login'} replace />;
+  }
+
   return (
     <>
-      {!publicRoutes.includes(routeKey) && <Sidebar />}
+      {!publicRoutes.includes(routeKey) && <Sidebar role={user.role} />}
       <Page {...commonProps} />
 
       {loading && accessToken && <LoadingMessage />}
