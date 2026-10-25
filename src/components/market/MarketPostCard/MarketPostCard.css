@@ -55,12 +55,14 @@
 
 .market-post-card__status {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
+  top: 12px;
+  right: 12px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgb(35 41 37 / 82%);
-  color: #fff;
+  border: 1px solid #cdebd6;
+  background: rgb(240 251 243 / 96%);
+  color: #287344;
   font-size: var(--font-size-small, 18px);
   font-weight: 700;
+  box-shadow: 0 2px 8px rgb(30 90 50 / 12%);
 }
