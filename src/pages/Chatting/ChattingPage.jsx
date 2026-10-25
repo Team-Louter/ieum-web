@@ -14,6 +14,7 @@ function ChattingPage({
   contacts = dummyChatContacts,
   activeContactId,
   messages,
+  messagesRoomId,
   onSelectContact,
   onSendMessage,
   accessToken,
@@ -28,6 +29,7 @@ function ChattingPage({
   const [realtimeThreads, setRealtimeThreads] = useState({});
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
+  const messagesContainerRef = useRef(null);
   const onChatReconnectedRef = useRef(onChatReconnected);
   useEffect(() => {
     onChatReconnectedRef.current = onChatReconnected;
@@ -40,10 +42,19 @@ function ChattingPage({
   }, [contactItems, searchTerm]);
   const selectedMessages = useMemo(() => {
     const merged = new Map();
-    [...(messages ?? localThreads[selectedContactId] ?? []), ...(realtimeThreads[selectedContactId] ?? [])]
+    const selectedRoomHistory = messagesRoomId == null
+      || String(messagesRoomId) === String(selectedContactId)
+      ? messages
+      : [];
+    [...(selectedRoomHistory ?? localThreads[selectedContactId] ?? []), ...(realtimeThreads[selectedContactId] ?? [])]
       .forEach((message) => merged.set(message.id, message));
     return [...merged.values()];
-  }, [messages, localThreads, realtimeThreads, selectedContactId]);
+  }, [messages, messagesRoomId, localThreads, realtimeThreads, selectedContactId]);
+
+  useEffect(() => {
+    const messageList = messagesContainerRef.current;
+    if (messageList) messageList.scrollTop = messageList.scrollHeight;
+  }, [selectedContactId, selectedMessages]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -182,7 +193,7 @@ function ChattingPage({
               )}
             </div>
 
-            <div className="chat-messages" aria-live="polite">
+            <div className="chat-messages" aria-live="polite" ref={messagesContainerRef}>
               {selectedMessages.map((message) => {
                 const isMine = message.sender === 'me' || message.isMine;
                 return (

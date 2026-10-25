@@ -5,6 +5,7 @@ import profileImg from '../../../assets/images/profile.png';
 function MyProfileInfo({ profile = {} }) {
   const {
     id = '',
+    nickname = '',
     introduction = '',
     postCount = 0,
     friendCount = 0,
@@ -23,6 +24,7 @@ function MyProfileInfo({ profile = {} }) {
       />
       <div className="my-profile-info__text">
         <p>{id}</p>
+        {nickname && nickname !== id && <p className="my-profile-info__nickname">{nickname}</p>}
         <p>{introduction}</p>
         <div className="my-profile-info__stats">
           <p>게시물 {postCount}</p>

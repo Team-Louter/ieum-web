@@ -28,16 +28,22 @@
   gap: 5px;
 }
 
-.market-post-card__info > p:nth-child(1) {
+.market-post-card__title {
   font-size: var(--font-size-body);
   font-weight: 500;
 }
 
-.market-post-card__info > p:nth-child(2) {
+.market-post-card__price {
   font-size: var(--font-size-body);
   font-weight: bold;
 }
 
-.market-post-card__info > p:nth-child(3) {
+.market-post-card__address {
   color: #555;
+}
+
+.market-post-card__status {
+  color: #329153;
+  font-size: var(--font-size-body);
+  font-weight: bold;
 }

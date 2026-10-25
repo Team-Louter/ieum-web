@@ -6,8 +6,8 @@ export default function MeetingInputBox({ values = {}, onChange }) {
     <div className="input-container">
       <label htmlFor="input-img" className="meeting-input-picture">
         <div className='meeting-input-picture-guide'>
-          {typeof values.image === 'string' ? (
-            <img className="meeting-input-picture-guide-image" src={values.image} alt="모임 미리보기" />
+          {typeof values.image === 'string' && values.image ? (
+            <img className="meeting-input-picture-guide-image meeting-input-picture-guide-image--preview" src={values.image} alt="모임 미리보기" />
           ) : values.image ? (
             <p className="meeting-input-picture-guide-text">{values.image.name}</p>
           ) : (

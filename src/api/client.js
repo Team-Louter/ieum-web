@@ -4,6 +4,37 @@ const REFRESH_TOKEN_KEY = 'ieum.refreshToken';
 
 let refreshPromise;
 
+function isFormData(value) {
+  return typeof FormData !== 'undefined' && value instanceof FormData;
+}
+
+function serializeBody(body) {
+  return isFormData(body) ? body : JSON.stringify(body);
+}
+
+function makeRequestWithFile(request, file) {
+  const formData = new FormData();
+  formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+  formData.append('file', file);
+  return formData;
+}
+
+/** API에서 내려주는 이미지 경로를 브라우저에서 열 수 있는 URL로 바꿉니다. */
+export function resolveApiAssetUrl(imageUrl) {
+  if (!imageUrl) return '';
+
+  try {
+    const apiUrl = new URL(API_BASE_URL, window.location.href);
+    const assetUrl = new URL(imageUrl, apiUrl);
+    if (assetUrl.hostname === apiUrl.hostname && assetUrl.protocol === 'http:' && window.location.protocol === 'https:') {
+      assetUrl.protocol = 'https:';
+    }
+    return assetUrl.href;
+  } catch {
+    return imageUrl;
+  }
+}
+
 export class ApiError extends Error {
   constructor(message, status, payload) {
     super(message);
@@ -103,7 +134,7 @@ export async function apiRequest(path, options = {}) {
   const { auth = true, retryAuth = true, ...requestOptions } = options;
   const headers = new Headers(requestOptions.headers ?? {});
   const hasBody = requestOptions.body !== undefined && requestOptions.body !== null;
-  if (hasBody && !(requestOptions.body instanceof FormData) && !headers.has('Content-Type')) {
+  if (hasBody && !isFormData(requestOptions.body) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
   if (auth && getAccessToken()) headers.set('Authorization', `Bearer ${getAccessToken()}`);
@@ -133,19 +164,19 @@ export const apiPost = (path, body, options) =>
   apiRequest(path, {
     ...options,
     method: 'POST',
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    ...(body === undefined ? {} : { body: serializeBody(body) }),
   });
 export const apiPatch = (path, body, options) =>
   apiRequest(path, {
     ...options,
     method: 'PATCH',
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    ...(body === undefined ? {} : { body: serializeBody(body) }),
   });
 export const apiPut = (path, body, options) =>
   apiRequest(path, {
     ...options,
     method: 'PUT',
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    ...(body === undefined ? {} : { body: serializeBody(body) }),
   });
 export const apiDelete = (path, options) => apiRequest(path, { ...options, method: 'DELETE' });
 
@@ -163,7 +194,16 @@ export const authApi = {
 
 export const profileApi = {
   get: () => apiGet('/api/profile'),
-  update: (profile) => apiPatch('/api/profile', profile),
+  update: (profile, profileImage) => {
+    if (!profileImage) return apiPatch('/api/profile', profile);
+
+    const query = new URLSearchParams();
+    if (profile.nickname != null) query.set('nickname', profile.nickname);
+    if (profile.bio != null) query.set('bio', profile.bio);
+    const formData = new FormData();
+    formData.append('file', profileImage);
+    return apiPatch(`/api/profile?${query.toString()}`, formData);
+  },
 };
 
 export const familyApi = {
@@ -187,23 +227,11 @@ export const notificationApi = {
 };
 
 export const friendApi = {
-  list: (myId) => apiGet(`/api/friends?myId=${encodeURIComponent(myId)}`, { auth: false }),
-  received: (myId) =>
-    apiGet(`/api/friends/requests/received?myId=${encodeURIComponent(myId)}`, { auth: false }),
-  request: (targetId, myId) =>
-    apiPost(
-      `/api/friends/requests/${encodeURIComponent(targetId)}?myId=${encodeURIComponent(myId)}`,
-      undefined,
-      { auth: false },
-    ),
-  accept: (friendshipId, myId) =>
-    apiPost(
-      `/api/friends/requests/${friendshipId}/accept?myId=${encodeURIComponent(myId)}`,
-      undefined,
-      { auth: false },
-    ),
-  remove: (friendshipId, myId) =>
-    apiDelete(`/api/friends/${friendshipId}?myId=${encodeURIComponent(myId)}`, { auth: false }),
+  list: () => apiGet('/api/friends'),
+  received: () => apiGet('/api/friends/requests/received'),
+  request: (targetId) => apiPost(`/api/friends/requests/${encodeURIComponent(targetId)}`),
+  accept: (friendshipId) => apiPost(`/api/friends/requests/${friendshipId}/accept`),
+  remove: (friendshipId) => apiDelete(`/api/friends/${friendshipId}`),
 };
 
 export const meetingApi = {
@@ -220,8 +248,14 @@ export const meetingApi = {
 export const sharingApi = {
   list: () => apiGet('/api/community/sharings'),
   get: (id) => apiGet(`/api/community/sharings/${id}`),
-  create: (sharing) => apiPost('/api/community/sharings', sharing),
-  update: (id, sharing) => apiPut(`/api/community/sharings/${id}`, sharing),
+  create: (sharing, imageFile) => apiPost(
+    '/api/community/sharings',
+    imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
+  ),
+  update: (id, sharing, imageFile) => apiPut(
+    `/api/community/sharings/${id}`,
+    imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
+  ),
   remove: (id) => apiDelete(`/api/community/sharings/${id}`),
   complete: (id) => apiPatch(`/api/community/sharings/${id}/complete`),
 };

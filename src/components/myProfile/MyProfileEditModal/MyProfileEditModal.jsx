@@ -28,7 +28,7 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
     const formData = new FormData(event.currentTarget);
     const selectedProfileImage = formData.get('profileImage');
     onConfirm?.({
-      id: formData.get('id'),
+      nickname: formData.get('nickname'),
       introduction: formData.get('introduction'),
       profileImage: selectedProfileImage?.size ? selectedProfileImage : undefined,
       profileImageUrl: profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
@@ -60,8 +60,8 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
             </div>
             <div>
               <div id="id-input-container">
-                <p>아이디</p>
-                <input type="text" id="nickname-input" name="id" defaultValue={profile.id ?? ''} />
+                <p>닉네임</p>
+                <input type="text" id="nickname-input" name="nickname" defaultValue={profile.nickname ?? profile.id ?? ''} />
               </div>
               <div id="my-introduce-input-container">
                 <p>내 소개</p>

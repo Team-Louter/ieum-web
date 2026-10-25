@@ -65,10 +65,11 @@ export const publicRoutes = ['/login', '/signup/user', '/signup/guardian'];
 export function getRouteKey(path) {
   if (/^\/market\/feedin\/\d+$/.test(path)) return '/market/feedin';
   if (/^\/meeting\/my\/detail\/\d+$/.test(path)) return '/meeting/my/detail';
+  if (/^\/meeting\/management\/\d+$/.test(path)) return '/meeting/management';
   return path;
 }
 
 export function getRouteId(path) {
-  const match = path.match(/^\/(?:market\/feedin|meeting\/my\/detail)\/(\d+)$/);
+  const match = path.match(/^\/(?:market\/feedin|meeting\/my\/detail|meeting\/management)\/(\d+)$/);
   return match ? Number(match[1]) : null;
 }

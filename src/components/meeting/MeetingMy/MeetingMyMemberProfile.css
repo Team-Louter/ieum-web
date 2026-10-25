@@ -74,3 +74,8 @@
   background-color: #f0f0f0;
   outline: none;
 }
+
+.member-action-menu button.member-action-menu__danger,
+.member-action-menu button.member-action-menu__danger:first-child {
+  color: #e22a2a;
+}

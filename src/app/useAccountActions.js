@@ -65,32 +65,49 @@ export default function useAccountActions({
   async function updateProfile(updatedProfile) {
     return runAction(async () => {
       const previousProfile = readDemoValue('profile', {}, demoScope);
-      const isNewImage = updatedProfile.profileImage instanceof File;
-      const image = isNewImage
-        ? await fileToDataUrl(updatedProfile.profileImage)
-        : updatedProfile.profileImageUrl || previousProfile.profileImageUrl || '';
+      const profileImage = updatedProfile.profileImage instanceof File
+        ? updatedProfile.profileImage
+        : null;
+      let serverProfile = null;
 
+      try {
+        const response = await profileApi.update({
+          nickname: updatedProfile.nickname ?? updatedProfile.id ?? previousProfile.nickname ?? user.loginId,
+          bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
+        }, profileImage);
+        // 수정 응답이 안내 문자열이면 프로필을 다시 읽어 서버에 저장된 이미지 경로를 받습니다.
+        serverProfile = response && typeof response === 'object'
+          ? response
+          : await profileApi.get();
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+      }
+
+      const fallbackImage = profileImage && !serverProfile?.profileImageUrl
+        ? await fileToDataUrl(profileImage)
+        : previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '';
+      const image = serverProfile?.profileImageUrl ?? fallbackImage;
       const profile = {
         ...previousProfile,
-        nickname: updatedProfile.nickname ?? updatedProfile.id ?? previousProfile.nickname ?? user.loginId,
-        bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
+        ...serverProfile,
+        nickname: serverProfile?.nickname
+          ?? updatedProfile.nickname
+          ?? previousProfile.nickname
+          ?? user.loginId,
+        bio: serverProfile?.bio
+          ?? updatedProfile.bio
+          ?? updatedProfile.introduction
+          ?? previousProfile.bio
+          ?? '',
         profileImageUrl: image,
         id: updatedProfile.id ?? previousProfile.id,
-        introduction: updatedProfile.introduction ?? previousProfile.introduction,
+        introduction: serverProfile?.bio
+          ?? updatedProfile.introduction
+          ?? updatedProfile.bio
+          ?? previousProfile.introduction
+          ?? '',
         profileImage: image,
       };
-
-      if (!isNewImage) {
-        try {
-          await profileApi.update({
-            nickname: profile.nickname,
-            bio: profile.bio,
-            profileImageUrl: profile.profileImageUrl || null,
-          });
-        } catch (error) {
-          if (!isDemoFallbackError(error)) throw error;
-        }
-      }
 
       writeDemoValue('profile', profile, demoScope);
       return profile;

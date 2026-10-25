@@ -76,7 +76,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
     <form className="market-post-create-form" onSubmit={handleSubmit}>
       <div className="market-post-create-form__content">
         <div className="market-post-create-form__media-wrapper">
-          <button type="button" className="market-post-create-form__media-label" onClick={handleFileSelectClick}>
+          <button type="button" className="market-post-create-form__media-label" onClick={handleFileSelectClick} aria-label="사진 또는 동영상 선택">
             {previewUrl ? (
               selectedFile.type.startsWith('image/') ? (
                 <img className="market-post-create-form__preview" src={previewUrl} alt="선택한 이미지 미리보기" />
@@ -84,10 +84,11 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
                 <video className="market-post-create-form__preview" src={previewUrl} controls onClick={(event) => event.stopPropagation()} />
               )
             ) : (
-              <>
+              <span className="market-post-create-form__upload-prompt">
                 <img src={uploadIcon} alt="" />
-                <p>동영상 또는 사진을 올려주세요.</p>
-              </>
+                <strong>사진 또는 동영상 추가</strong>
+                <span>클릭해서 파일을 선택해 주세요</span>
+              </span>
             )}
           </button>
           {previewUrl && (
@@ -101,26 +102,30 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
         </div>
         <input ref={fileInputRef} type="file" id="market-post-media" accept="image/*,video/*" hidden onChange={handleFileChange} />
         <div className="market-post-create-form__text-fields">
-          <div>
-            <input type="text" placeholder="제목을 입력해주세요" value={title} onChange={(event) => setTitle(event.target.value)} />
+          <div className="market-post-create-form__field">
+            <label htmlFor="market-post-title">제목</label>
+            <input id="market-post-title" type="text" placeholder="예: 사용하지 않은 생활용품" value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} />
             <p className="market-post-create-form__error" role={errors.title ? 'alert' : undefined}>
               {errors.title}
             </p>
           </div>
-          <div>
-            <input type="text" inputMode="numeric" placeholder="가격을 입력해주세요 (숫자만 입력해주세요)" value={price} onChange={(event) => setPrice(event.target.value)} />
+          <div className="market-post-create-form__field">
+            <label htmlFor="market-post-price">가격</label>
+            <input id="market-post-price" type="text" inputMode="numeric" placeholder="숫자만 입력해 주세요" value={price} onChange={(event) => setPrice(event.target.value)} aria-invalid={Boolean(errors.price)} />
             <p className="market-post-create-form__error" role={errors.price ? 'alert' : undefined}>
               {errors.price}
             </p>
           </div>
-          <div>
-            <input type="text" placeholder="거주 지역을 입력해 주세요" value={region} onChange={(event) => setRegion(event.target.value)} />
+          <div className="market-post-create-form__field">
+            <label htmlFor="market-post-region">거래 지역</label>
+            <input id="market-post-region" type="text" placeholder="예: 대구 북구" value={region} onChange={(event) => setRegion(event.target.value)} aria-invalid={Boolean(errors.region)} />
             <p className="market-post-create-form__error" role={errors.region ? 'alert' : undefined}>
               {errors.region}
             </p>
           </div>
-          <div>
-            <textarea placeholder="내용을 입력해주세요." value={content} onChange={(event) => setContent(event.target.value)} />
+          <div className="market-post-create-form__field market-post-create-form__field--content">
+            <label htmlFor="market-post-content">상세 설명</label>
+            <textarea id="market-post-content" placeholder="상품 상태와 거래 방법을 알려주세요." value={content} onChange={(event) => setContent(event.target.value)} aria-invalid={Boolean(errors.content)} />
             <p className="market-post-create-form__error" role={errors.content ? 'alert' : undefined}>
               {errors.content}
             </p>

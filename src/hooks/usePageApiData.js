@@ -52,7 +52,13 @@ export default function usePageApiData({
         });
 
         if (!isActive) return;
-        setSavedResource({ path, data: nextData });
+        setSavedResource((current) => ({
+          path,
+          data: {
+            ...(current.path === path ? current.data : {}),
+            ...nextData,
+          },
+        }));
         setSavedError({ path, message: '' });
       } catch (loadError) {
         if (!isActive) return;

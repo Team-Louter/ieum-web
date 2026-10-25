@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
-import { dummyAddFriends } from '../../constants/dummy/dummyAddFriends';
+import FriendRequestsModal from '../../components/friends/FriendRequestsModal/FriendRequestsModal';
 import './AddFriendPage.css';
 
 const pageSize = 30;
@@ -20,32 +20,48 @@ function normalizeId(value) {
 }
 
 function AddFriendPage({
-  friends = dummyAddFriends,
-  friendDirectory = friends,
+  friends = [],
+  friendDirectory = [],
+  friendRequests = [],
   currentLoginId = '',
   currentUserId = null,
   onAddFriend,
+  onAcceptFriendRequest,
+  onRejectFriendRequest,
+  onRefreshFriendRequests,
 }) {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [openFriendId, setOpenFriendId] = useState(null);
+  const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
   const normalizedSearchText = searchText.trim().toLowerCase();
-  const sourceDirectory = Array.isArray(friendDirectory) && friendDirectory.length > 0
-    ? friendDirectory
-    : dummyAddFriends;
+  const sourceDirectory = Array.isArray(friendDirectory) ? friendDirectory : [];
   const visibleDirectory = useMemo(() => {
     const ownLoginId = normalizeId(currentLoginId);
     const ownUserId = normalizeId(currentUserId);
+    const existingFriendIds = new Set(friends.map((friend) => (
+      normalizeId(friend.userId ?? friend.id)
+    )));
     const otherAccounts = sourceDirectory.filter((friend) => {
       const isOwnLogin = ownLoginId && normalizeId(friend.loginId) === ownLoginId;
       const isOwnUser = ownUserId && [friend.userId, friend.memberId, friend.id]
         .some((value) => normalizeId(value) === ownUserId);
-      return !isOwnLogin && !isOwnUser;
+      const isAlreadyFriend = existingFriendIds.has(normalizeId(friend.userId ?? friend.id));
+      return !isOwnLogin && !isOwnUser && !isAlreadyFriend;
     });
 
     return shuffle(otherAccounts);
-  }, [sourceDirectory, currentLoginId, currentUserId]);
+  }, [sourceDirectory, currentLoginId, currentUserId, friends]);
+  const numericSearchId = /^\d+$/.test(normalizedSearchText)
+    ? Number(normalizedSearchText)
+    : null;
+  const isOwnNumericId = numericSearchId != null
+    && String(currentUserId) === String(numericSearchId);
   const filteredFriends = visibleDirectory.filter((friend) => {
+    if (numericSearchId != null) {
+      return String(friend.userId ?? friend.memberId ?? friend.id) === String(numericSearchId);
+    }
+
     const searchableValues = [
       friend.loginId,
       friend.name,
@@ -58,7 +74,8 @@ function AddFriendPage({
       String(value ?? '').toLowerCase().includes(normalizedSearchText)
     ));
   });
-  const totalPages = Math.ceil(filteredFriends.length / pageSize);
+  const searchResults = isOwnNumericId ? [] : filteredFriends;
+  const totalPages = Math.ceil(searchResults.length / pageSize);
   const page = Math.min(currentPage, totalPages || 1);
   const pageNumbers = [...new Set([
     1,
@@ -72,7 +89,7 @@ function AddFriendPage({
       ? [`ellipsis-${pageNumber}`, pageNumber]
       : [pageNumber]
   ));
-  const visibleFriends = filteredFriends.slice(
+  const visibleFriends = searchResults.slice(
     (page - 1) * pageSize,
     page * pageSize,
   );
@@ -85,24 +102,59 @@ function AddFriendPage({
 
   async function handleAddFriend(friend) {
     try {
-      if (friend.isRequested) return;
+      if (friend.isRequested || friend.isFriend || friend.isCurrentUser) return;
       await onAddFriend?.(friend);
     } catch {
       // App의 공통 API 오류 알림을 표시합니다.
     }
   }
 
+  async function handleAcceptRequest(friendshipId) {
+    try {
+      await onAcceptFriendRequest?.(friendshipId);
+    } catch {
+      // App의 공통 API 오류 알림을 표시합니다.
+    }
+  }
+
+  async function handleRejectRequest(friendshipId) {
+    try {
+      await onRejectFriendRequest?.(friendshipId);
+    } catch {
+      // App의 공통 API 오류 알림을 표시합니다.
+    }
+  }
+
+  function friendActionLabel(friend) {
+    if (friend.isCurrentUser) return '내 계정';
+    if (friend.isFriend) return '이미 친구';
+    return friend.isRequested ? '신청 완료' : '친구 추가하기';
+  }
+
   return (
     <Layout className="add-friend-layout">
       <section className="add-friend-page">
-        <label className="add-friend-search">
-          <input
-            type="search"
-            value={searchText}
-            onChange={handleSearch}
-            placeholder="검색하기"
-          />
-        </label>
+        <div className="add-friend-toolbar">
+          <label className="add-friend-search">
+            <input
+              type="search"
+              value={searchText}
+              onChange={handleSearch}
+              placeholder="사용자 아이디 검색"
+            />
+          </label>
+          <button
+            className="add-friend-requests-button"
+            type="button"
+            onClick={() => {
+              setIsRequestsModalOpen(true);
+              onRefreshFriendRequests?.();
+            }}
+          >
+            받은 친구 신청
+            <span aria-label={`${friendRequests.length}건`}>{friendRequests.length}</span>
+          </button>
+        </div>
         <div className="add-friend-list">
           {visibleFriends.map((friend) => (
             <div className="add-friend-profile" key={friend.id ?? friend.userId ?? friend.loginId}>
@@ -116,13 +168,19 @@ function AddFriendPage({
                     ? null
                     : (friend.id ?? friend.userId ?? friend.loginId)
                 ))}
-                actionItems={[friend.isRequested ? '신청 완료' : '친구 추가하기']}
+                actionItems={[friendActionLabel(friend)]}
                 onAction={() => handleAddFriend(friend)}
               />
             </div>
           ))}
-          {filteredFriends.length === 0 && (
-            <p className="add-friend-empty">검색 결과가 없습니다.</p>
+          {searchResults.length === 0 && (
+            <p className="add-friend-empty">
+              {isOwnNumericId
+                ? '내 계정은 친구 목록에 표시되지 않습니다.'
+                : normalizedSearchText
+                  ? '계정 검색 API가 없어 입력한 아이디의 가입 여부를 확인할 수 없습니다.'
+                  : '계정 검색 API가 없어 가입 계정 목록을 표시할 수 없습니다.'}
+            </p>
           )}
         </div>
         {totalPages > 1 && (
@@ -169,6 +227,14 @@ function AddFriendPage({
           </nav>
         )}
       </section>
+      {isRequestsModalOpen && (
+        <FriendRequestsModal
+          requests={friendRequests}
+          onAccept={handleAcceptRequest}
+          onReject={handleRejectRequest}
+          onClose={() => setIsRequestsModalOpen(false)}
+        />
+      )}
     </Layout>
   );
 }

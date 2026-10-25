@@ -1,4 +1,5 @@
 import profileFallback from '../assets/images/profile.png';
+import { resolveApiAssetUrl } from './client';
 
 export function toMeetingCard(meeting = {}) {
   return {
@@ -12,15 +13,23 @@ export function toMeetingCard(meeting = {}) {
 }
 
 export function toSharingCard(sharing = {}) {
+  const sellerId = sharing.sellerId ?? null;
+
   return {
     ...sharing,
     id: sharing.id,
+    sellerId,
     title: sharing.name ?? sharing.title ?? '',
     description: sharing.description ?? '',
     address: sharing.region ?? sharing.address ?? '',
     price: sharing.price == null ? '나눔' : `${Number(sharing.price).toLocaleString('ko-KR')}원`,
-    image: sharing.imageUrl ?? sharing.image ?? '',
-    seller: { id: sharing.owner ?? '작성자', profileImage: profileFallback },
+    image: resolveApiAssetUrl(sharing.imageUrl ?? sharing.image ?? ''),
+    seller: {
+      id: sellerId == null
+        ? sharing.owner ?? '판매자 정보 없음'
+        : `판매자 ID ${sellerId}`,
+      profileImage: profileFallback,
+    },
   };
 }
 

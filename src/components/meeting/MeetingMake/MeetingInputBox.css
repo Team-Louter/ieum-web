@@ -39,6 +39,13 @@
   height: auto;
 }
 
+.meeting-input-picture-guide-image--preview {
+  width: 220px;
+  height: 220px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
 .meeting-input-picture-guide-text {
   color: #767676;
   font-size: var(--font-size-body);

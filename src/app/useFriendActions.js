@@ -8,68 +8,30 @@ export default function useFriendActions({
   runAction,
   movePage,
   setChatSelection,
-  setFeedback,
-  setFeedbackIsError,
-  setReloadKey,
 }) {
   async function sendFriendRequest(target) {
     const friend = typeof target === 'object' && target ? target : null;
     const targetId = friend?.userId ?? friend?.id ?? target;
 
-    function saveDemoRequest() {
-      updateDemoValue('friend.sentIds', (ids) => [...new Set([...ids, String(targetId)])], [], demoScope);
-      updateDemoValue('friend.sentRequests', (requests) => [
-        {
-          id: Date.now(),
-          targetId,
-          loginId: friend?.loginId ?? '',
-          nickname: friend?.nickname ?? '',
-        },
-        ...requests,
-      ], [], demoScope);
-    }
-
-    if (friend?.demoOnly || !user.userId) {
-      saveDemoRequest();
-      setFeedback('친구 신청을 보냈습니다.');
-      setFeedbackIsError(false);
-      setReloadKey((current) => current + 1);
-      return;
-    }
-
     await runAction(async () => {
-      try {
-        await friendApi.request(targetId, user.userId);
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-      }
-      saveDemoRequest();
+      await friendApi.request(targetId);
     }, '친구 신청을 보냈습니다.');
   }
 
   async function acceptFriendRequest(friendshipId) {
     await runAction(async () => {
-      try {
-        await friendApi.accept(friendshipId, user.userId);
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-
-        const requests = readDemoValue('friendRequests', [], demoScope);
-        const acceptedFriend = requests.find((request) => (
-          String(request.id ?? request.friendshipId) === String(friendshipId)
-        ));
-
-        if (acceptedFriend) {
-          updateDemoValue('friends', (friends) => [...friends, acceptedFriend], [], demoScope);
-        }
-        updateDemoValue(
-          'friendRequests',
-          (items) => items.filter((request) => String(request.id ?? request.friendshipId) !== String(friendshipId)),
-          [],
-          demoScope,
-        );
-      }
+      await friendApi.accept(friendshipId);
     }, '친구 신청을 수락했습니다.');
+  }
+
+  async function rejectFriendRequest(friendshipId) {
+    return removeFriend(friendshipId, '친구 신청을 거절했습니다.');
+  }
+
+  async function removeFriend(friendshipId, successMessage = '친구를 삭제했습니다.') {
+    await runAction(async () => {
+      await friendApi.remove(friendshipId);
+    }, successMessage);
   }
 
   async function startChat(targetUserId) {
@@ -122,5 +84,12 @@ export default function useFriendActions({
     }, '메시지를 보냈습니다.');
   }
 
-  return { sendFriendRequest, acceptFriendRequest, startChat, sendChatMessage };
+  return {
+    sendFriendRequest,
+    acceptFriendRequest,
+    rejectFriendRequest,
+    removeFriend,
+    startChat,
+    sendChatMessage,
+  };
 }
