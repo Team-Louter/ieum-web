@@ -1,6 +1,7 @@
 .market-post-card {
   width: 270px;
-  height: 370px;
+  min-height: 370px;
+  height: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
