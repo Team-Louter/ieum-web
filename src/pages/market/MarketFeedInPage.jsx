@@ -13,9 +13,14 @@ function MarketFeedInPage({ selectedPost, onChat, currentUserId, currentLoginId 
     price: '가격',
     address: '거주 지역',
   };
+  const postOwnerLoginId =
+    post.sellerLoginId ?? post.seller?.loginId ?? post.loginId ?? post.owner ?? '';
   const isOwnPost = post.sellerId != null
     ? String(post.sellerId) === String(currentUserId)
-    : Boolean(post.owner && currentLoginId && post.owner === currentLoginId);
+    : Boolean(postOwnerLoginId && currentLoginId && postOwnerLoginId === currentLoginId);
+  const sellerLoginId = isOwnPost && currentLoginId
+    ? currentLoginId
+    : postOwnerLoginId;
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: true },
     { label: '내 게시물', href: '/market/my', isActive: false },
@@ -31,7 +36,7 @@ function MarketFeedInPage({ selectedPost, onChat, currentUserId, currentLoginId 
         price={post.price}
         content={post.description ?? ''}
         userImg={post.seller?.profileImage ?? profileImage}
-        userId={post.seller?.id ?? '아이디'}
+        sellerLoginId={sellerLoginId || '판매자 정보 없음'}
         address={post.address ?? post.location ?? ''}
         complete={post.complete}
         showChat={!isOwnPost}

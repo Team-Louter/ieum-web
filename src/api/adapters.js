@@ -14,6 +14,8 @@ export function toMeetingCard(meeting = {}) {
 
 export function toSharingCard(sharing = {}) {
   const sellerId = sharing.sellerId ?? null;
+  const sellerLoginId =
+    sharing.sellerLoginId ?? sharing.seller?.loginId ?? sharing.loginId ?? sharing.owner ?? '';
 
   return {
     ...sharing,
@@ -25,9 +27,8 @@ export function toSharingCard(sharing = {}) {
     price: sharing.price == null ? '나눔' : `${Number(sharing.price).toLocaleString('ko-KR')}원`,
     image: resolveApiAssetUrl(sharing.imageUrl ?? sharing.image ?? ''),
     seller: {
-      id: sellerId == null
-        ? sharing.owner ?? '판매자 정보 없음'
-        : `판매자 ID ${sellerId}`,
+      id: sellerLoginId || '판매자 정보 없음',
+      loginId: sellerLoginId,
       profileImage: profileFallback,
     },
   };

@@ -39,12 +39,18 @@ export async function loadChatPage({ demoScope, userId, onDefaultChatRoom }) {
       if (timeA != null && timeB != null && timeA !== timeB) return timeB - timeA;
       return Number(roomB.id) - Number(roomA.id);
     })
-    .map((room) => ({
-      id: Number(room.id),
-      partnerId: Number(room.partnerId),
-      name: friendById.get(Number(room.partnerId))?.nickname ?? room.name ?? `사용자 ${room.partnerId}`,
-      profileImage: friendById.get(Number(room.partnerId))?.profileImageUrl ?? '',
-    }));
+    .map((room) => {
+      const friend = friendById.get(Number(room.partnerId));
+      const loginId = friend?.loginId ?? room.partnerLoginId ?? '';
+
+      return {
+        id: Number(room.id),
+        partnerId: Number(room.partnerId),
+        loginId,
+        name: loginId || friend?.nickname || room.name || `사용자 ${room.partnerId}`,
+        profileImage: friend?.profileImageUrl ?? '',
+      };
+    });
 
   onDefaultChatRoom?.(contacts[0]?.id ?? null, contacts.map((contact) => contact.id));
   return { contacts };

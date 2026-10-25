@@ -8,7 +8,7 @@ function MarketFeedInfo({
   price,
   content,
   userImg,
-  userId,
+  sellerLoginId,
   address,
   complete = false,
   showChat = true,
@@ -37,7 +37,7 @@ function MarketFeedInfo({
       <div id="user-info">
         <img src={userImg} alt="" />
         <div>
-          <p>{userId}</p>
+          <p>{sellerLoginId}</p>
           <p>{address}</p>
         </div>
       </div>
