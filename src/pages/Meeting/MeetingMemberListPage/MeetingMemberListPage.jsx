@@ -4,7 +4,6 @@ import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import { dummyMeetingMembers } from '../../../constants/dummy/dummyMeetings';
 
-
 export default function MeetingMemberListPage({ members = dummyMeetingMembers, onMemberAction }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
@@ -20,5 +19,5 @@ export default function MeetingMemberListPage({ members = dummyMeetingMembers, o
         <MemberList members={members} onMemberAction={onMemberAction} />
       </div>
     </Layout>
-  )
+  );
 }

@@ -66,14 +66,13 @@ function GuardianPage({
     lastLoginText: guardianSource.lastLoginText?.trim() || dummyGuardian.lastLoginText,
     statusMessage: guardianSource.statusMessage?.trim() || dummyGuardian.statusMessage,
   };
-  const medicationItems = Array.isArray(medications) && medications.length > 0
-    ? medications
-    : dummyGuardianMedications;
+  const medicationItems =
+    Array.isArray(medications) && medications.length > 0 ? medications : dummyGuardianMedications;
   const [isKakaoMapReady, setIsKakaoMapReady] = useState(false);
   const [resolvedHome, setResolvedHome] = useState(null);
-  const homeLocation = guardianData.homeCoordinates ?? (
-    resolvedHome?.address === guardianData.homeAddress ? resolvedHome.coordinates : null
-  );
+  const homeLocation =
+    guardianData.homeCoordinates ??
+    (resolvedHome?.address === guardianData.homeAddress ? resolvedHome.coordinates : null);
   const handleMapReady = useCallback(() => setIsKakaoMapReady(true), []);
   const {
     coordinates: deviceCoordinates,
@@ -106,7 +105,8 @@ function GuardianPage({
 
   const isOutsideHome = deviceCoordinates
     ? homeLocation
-      ? getDistanceInMeters(deviceCoordinates, homeLocation) > (guardianData.homeRadiusMeters ?? 100)
+      ? getDistanceInMeters(deviceCoordinates, homeLocation) >
+        (guardianData.homeRadiusMeters ?? 100)
       : null
     : null;
   const mapLocations = useMemo(

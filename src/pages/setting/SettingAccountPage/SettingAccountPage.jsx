@@ -6,10 +6,30 @@ import './SettingLegalDocument.css';
 
 const accountItems = [
   { id: 'loginId', title: '아이디', description: '회원가입할 때 설정한 로그인 아이디입니다.' },
-  { id: 'email', title: '이메일', description: '계정에 표시할 이메일을 관리할 수 있습니다.', actionLabel: '수정하기' },
-  { id: 'password', title: '비밀번호', description: '이메일 인증 후 비밀번호를 변경할 수 있습니다.', actionLabel: '변경하기' },
-  { id: 'terms', title: '이용약관', description: '이음 서비스의 이용약관을 확인할 수 있습니다.', actionLabel: '확인하기' },
-  { id: 'privacy', title: '개인정보 처리방침', description: '이음 서비스의 개인정보 처리방침을 확인할 수 있습니다.', actionLabel: '확인하기' },
+  {
+    id: 'email',
+    title: '이메일',
+    description: '계정에 표시할 이메일을 관리할 수 있습니다.',
+    actionLabel: '수정하기',
+  },
+  {
+    id: 'password',
+    title: '비밀번호',
+    description: '이메일 인증 후 비밀번호를 변경할 수 있습니다.',
+    actionLabel: '변경하기',
+  },
+  {
+    id: 'terms',
+    title: '이용약관',
+    description: '이음 서비스의 이용약관을 확인할 수 있습니다.',
+    actionLabel: '확인하기',
+  },
+  {
+    id: 'privacy',
+    title: '개인정보 처리방침',
+    description: '이음 서비스의 개인정보 처리방침을 확인할 수 있습니다.',
+    actionLabel: '확인하기',
+  },
 ];
 
 function SettingAccountPage({
@@ -99,7 +119,12 @@ function SettingAccountPage({
       setMessageIsError(true);
       return;
     }
-    if (await runPasswordStep(() => onSendRecoveryCode(email.trim()), '인증 코드를 이메일로 발송했습니다.')) {
+    if (
+      await runPasswordStep(
+        () => onSendRecoveryCode(email.trim()),
+        '인증 코드를 이메일로 발송했습니다.',
+      )
+    ) {
       setCodeSent(true);
     }
   };
@@ -110,7 +135,12 @@ function SettingAccountPage({
       setMessageIsError(true);
       return;
     }
-    if (await runPasswordStep(() => onVerifyRecoveryCode(email.trim(), code.trim()), '이메일 인증이 완료되었습니다.')) {
+    if (
+      await runPasswordStep(
+        () => onVerifyRecoveryCode(email.trim(), code.trim()),
+        '이메일 인증이 완료되었습니다.',
+      )
+    ) {
       setVerified(true);
     }
   };
@@ -122,7 +152,10 @@ function SettingAccountPage({
       setMessageIsError(true);
       return;
     }
-    const succeeded = await runPasswordStep(() => onResetPassword(email.trim(), newPassword), '비밀번호가 변경되었습니다.');
+    const succeeded = await runPasswordStep(
+      () => onResetPassword(email.trim(), newPassword),
+      '비밀번호가 변경되었습니다.',
+    );
     if (succeeded) closeDialog();
   };
 
@@ -132,7 +165,13 @@ function SettingAccountPage({
         <SettingItem
           key={item.id}
           title={item.title}
-          description={item.id === 'loginId' && currentLoginId ? `가입 아이디: ${currentLoginId}` : item.id === 'email' && displayEmail ? `이메일: ${displayEmail}` : item.description}
+          description={
+            item.id === 'loginId' && currentLoginId
+              ? `가입 아이디: ${currentLoginId}`
+              : item.id === 'email' && displayEmail
+                ? `이메일: ${displayEmail}`
+                : item.description
+          }
           actionLabel={item.actionLabel}
           onAction={() => openDialog(item.id)}
         />
@@ -140,14 +179,34 @@ function SettingAccountPage({
 
       {activeDialog === 'email' && (
         <SettingDialog title="이메일" onClose={closeDialog}>
-          <form className="setting-dialog__form" onSubmit={(event) => saveLocalAccountField(event, 'email')}>
+          <form
+            className="setting-dialog__form"
+            onSubmit={(event) => saveLocalAccountField(event, 'email')}
+          >
             <label className="setting-dialog__field">
               이메일
-              <input type="email" value={fieldValue} onChange={(event) => setFieldValue(event.target.value)} required />
+              <input
+                type="email"
+                value={fieldValue}
+                onChange={(event) => setFieldValue(event.target.value)}
+                required
+              />
             </label>
-            {message && <p className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`} role="status">{message}</p>}
+            {message && (
+              <p
+                className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`}
+                role="status"
+              >
+                {message}
+              </p>
+            )}
             <div className="setting-dialog__actions">
-              <button className="setting-dialog__button setting-dialog__button--primary" type="submit">저장하기</button>
+              <button
+                className="setting-dialog__button setting-dialog__button--primary"
+                type="submit"
+              >
+                저장하기
+              </button>
             </div>
           </form>
         </SettingDialog>
@@ -176,7 +235,12 @@ function SettingAccountPage({
               />
             </label>
             <div className="setting-dialog__actions">
-              <button className="setting-dialog__button" type="button" onClick={handleSendCode} disabled={busy}>
+              <button
+                className="setting-dialog__button"
+                type="button"
+                onClick={handleSendCode}
+                disabled={busy}
+              >
                 {codeSent ? '인증 코드 다시 받기' : '인증 코드 받기'}
               </button>
             </div>
@@ -184,10 +248,20 @@ function SettingAccountPage({
               <>
                 <label className="setting-dialog__field">
                   이메일 인증 코드
-                  <input inputMode="numeric" value={code} onChange={(event) => setCode(event.target.value)} autoComplete="one-time-code" />
+                  <input
+                    inputMode="numeric"
+                    value={code}
+                    onChange={(event) => setCode(event.target.value)}
+                    autoComplete="one-time-code"
+                  />
                 </label>
                 <div className="setting-dialog__actions">
-                  <button className="setting-dialog__button" type="button" onClick={handleVerifyCode} disabled={busy || verified}>
+                  <button
+                    className="setting-dialog__button"
+                    type="button"
+                    onClick={handleVerifyCode}
+                    disabled={busy || verified}
+                  >
                     {verified ? '인증 완료' : '이메일 인증'}
                   </button>
                 </div>
@@ -196,13 +270,30 @@ function SettingAccountPage({
             {verified && (
               <label className="setting-dialog__field">
                 새 비밀번호
-                <input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" required />
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  autoComplete="new-password"
+                  required
+                />
               </label>
             )}
-            {message && <p className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`} role="status">{message}</p>}
+            {message && (
+              <p
+                className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`}
+                role="status"
+              >
+                {message}
+              </p>
+            )}
             {verified && (
               <div className="setting-dialog__actions">
-                <button className="setting-dialog__button setting-dialog__button--primary" type="submit" disabled={busy || !newPassword}>
+                <button
+                  className="setting-dialog__button setting-dialog__button--primary"
+                  type="submit"
+                  disabled={busy || !newPassword}
+                >
                   {busy ? '변경 중…' : '비밀번호 변경'}
                 </button>
               </div>
@@ -212,7 +303,11 @@ function SettingAccountPage({
       )}
 
       {(activeDialog === 'terms' || activeDialog === 'privacy') && (
-        <SettingDialog title={activeDialog === 'terms' ? '이용약관' : '개인정보 처리방침'} onClose={closeDialog} className="setting-dialog--document">
+        <SettingDialog
+          title={activeDialog === 'terms' ? '이용약관' : '개인정보 처리방침'}
+          onClose={closeDialog}
+          className="setting-dialog--document"
+        >
           <SettingLegalDocument type={activeDialog} />
         </SettingDialog>
       )}

@@ -8,7 +8,11 @@ import { dummyMeetings } from '../../constants/dummy/dummyMeetings';
 import { dummyOtherProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
-function ProfilePageMeeting({ meetings = dummyMeetings, profile = dummyOtherProfile, onMeetingSelect }) {
+function ProfilePageMeeting({
+  meetings = dummyMeetings,
+  profile = dummyOtherProfile,
+  onMeetingSelect,
+}) {
   const menuItems = [
     { label: '게시물', href: '/profile', isActive: false },
     { label: '모임', href: '/profile/meetings', isActive: true },

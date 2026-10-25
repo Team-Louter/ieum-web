@@ -12,7 +12,6 @@ import {
   dummyMyMeetings,
 } from '../../../constants/dummy/dummyMeetings';
 
-
 export default function MeetingMyPage({
   meeting = dummyMyMeetings[0],
   announcement = dummyMeetingAnnouncement,
@@ -62,12 +61,8 @@ export default function MeetingMyPage({
           onMore={onAnnouncementMore}
         />
         <div className="contents-horizen"></div>
-        <MeetingMyMemberList
-          members={members}
-          maxVisible={6}
-          onMemberAction={onMemberAction}
-        />
+        <MeetingMyMemberList members={members} maxVisible={6} onMemberAction={onMemberAction} />
       </div>
     </Layout>
-  )
+  );
 }

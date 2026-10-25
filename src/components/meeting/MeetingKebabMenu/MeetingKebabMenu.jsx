@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './MeetingKebabMenu.css';
 
 export default function MeetingKebabMenu({ image, meeting }) {
-
-  const [ isKebabMenu, setIsKebabMenu ] = useState(false);
+  const [isKebabMenu, setIsKebabMenu] = useState(false);
   const navigate = useNavigate();
-  
+
   return (
-    <button className="meeting-card-dot-container" onClick={() => {setIsKebabMenu(!isKebabMenu);}}>
+    <button
+      className="meeting-card-dot-container"
+      onClick={() => {
+        setIsKebabMenu(!isKebabMenu);
+      }}
+    >
       <img className="meeting-card-dot-setting" src={image} alt="세팅 이미지" />
       {isKebabMenu && (
         <ul className="meeting-kebab-menu">
@@ -18,10 +22,9 @@ export default function MeetingKebabMenu({ image, meeting }) {
               event.stopPropagation();
               const meetingId = meeting?.id;
               const hasNumericId = meetingId != null && /^\d+$/.test(String(meetingId));
-              navigate(
-                hasNumericId ? `/meeting/management/${meetingId}` : '/meeting/management',
-                { state: { meeting } },
-              );
+              navigate(hasNumericId ? `/meeting/management/${meetingId}` : '/meeting/management', {
+                state: { meeting },
+              });
             }}
           >
             모임 관리하기
@@ -31,5 +34,5 @@ export default function MeetingKebabMenu({ image, meeting }) {
         </ul>
       )}
     </button>
-  )
+  );
 }

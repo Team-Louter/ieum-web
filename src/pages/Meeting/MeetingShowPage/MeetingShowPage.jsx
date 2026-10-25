@@ -25,5 +25,5 @@ export default function MeetingShowPage({ meetings = dummyMeetings, onMeetingSel
         ))}
       </div>
     </Layout>
-  )
+  );
 }

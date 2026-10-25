@@ -25,7 +25,12 @@ function ConfirmationModal({ onCancel, onConfirm }) {
 
   return (
     <div className="confirmation-modal" onClick={handleBackdropClick} role="presentation">
-      <section className="confirmation-modal__panel" role="dialog" aria-modal="true" aria-labelledby="confirmation-modal-title">
+      <section
+        className="confirmation-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmation-modal-title"
+      >
         <button type="button" onClick={onCancel}>
           <img src={closeIcon} alt="닫기 아이콘" />
         </button>

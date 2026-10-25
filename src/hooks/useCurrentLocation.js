@@ -38,11 +38,11 @@ function useCurrentLocation(isMapReady) {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      handleLocationSuccess,
-      handleLocationFailure,
-      { enableHighAccuracy: true, maximumAge: 30_000, timeout: 15_000 },
-    );
+    navigator.geolocation.getCurrentPosition(handleLocationSuccess, handleLocationFailure, {
+      enableHighAccuracy: true,
+      maximumAge: 30_000,
+      timeout: 15_000,
+    });
   }, [handleLocationFailure, handleLocationSuccess]);
 
   const refresh = useCallback(() => {

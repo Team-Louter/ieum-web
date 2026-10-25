@@ -24,7 +24,9 @@ function MyProfileInfo({ profile = {} }) {
       />
       <div className="my-profile-info__text">
         <p>{loginId}</p>
-        {nickname && nickname !== loginId && <p className="my-profile-info__nickname">{nickname}</p>}
+        {nickname && nickname !== loginId && (
+          <p className="my-profile-info__nickname">{nickname}</p>
+        )}
         <p>{introduction}</p>
         <div className="my-profile-info__stats">
           <p>게시물 {postCount}</p>

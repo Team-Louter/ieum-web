@@ -1,4 +1,3 @@
-
 .meeting-card-dot-container {
   display: flex;
   flex-direction: column;
@@ -13,13 +12,10 @@
   position: relative;
 }
 
-
-
 .meeting-card-dot-setting {
   width: auto;
   height: auto;
 }
-
 
 .meeting-kebab-menu {
   display: flex;

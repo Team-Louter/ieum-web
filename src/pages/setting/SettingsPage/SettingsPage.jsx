@@ -68,12 +68,7 @@ function SettingsPage({
         onResetPassword={onResetPassword}
       />
     ),
-    guardian: (
-      <SettingGuardianPage
-        {...pageProps}
-        guardians={guardians}
-      />
-    ),
+    guardian: <SettingGuardianPage {...pageProps} guardians={guardians} />,
     general: (
       <SettingGeneralPage
         {...pageProps}
@@ -84,7 +79,13 @@ function SettingsPage({
       />
     ),
     feature: <SettingFeaturePage />,
-    support: <SettingSupportPage accountEmail={accountEmail} signupEmail={signupEmail} currentLoginId={currentLoginId} />,
+    support: (
+      <SettingSupportPage
+        accountEmail={accountEmail}
+        signupEmail={signupEmail}
+        currentLoginId={currentLoginId}
+      />
+    ),
   };
 
   return (

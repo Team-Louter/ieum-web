@@ -5,12 +5,7 @@ import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import SettingToggleRow from '../../../components/setting/SettingToggleRow/SettingToggleRow';
 import './SettingGuardianPage.css';
 
-function SettingGuardianPage({
-  settings = {},
-  onToggle,
-  guardians = [],
-  role,
-}) {
+function SettingGuardianPage({ settings = {}, onToggle, guardians = [], role }) {
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [accountIdentifier, setAccountIdentifier] = useState('');
   const sourceGuardians = Array.isArray(guardians) ? guardians : [];
@@ -22,9 +17,8 @@ function SettingGuardianPage({
   const [formMessage, setFormMessage] = useState('');
   const canEditPermissions = role === 'ROLE_SENIOR';
   const isGuardian = role === 'ROLE_GUARDIAN';
-  const managedGuardians = management.signature === guardianSignature
-    ? management.items
-    : sourceGuardians;
+  const managedGuardians =
+    management.signature === guardianSignature ? management.items : sourceGuardians;
 
   const handleAddAccount = async (event) => {
     event.preventDefault();
@@ -32,10 +26,16 @@ function SettingGuardianPage({
     if (!identifier) return;
     const normalizedIdentifier = identifier.toLowerCase();
     const duplicate = managedGuardians.some((guardian) => {
-      const values = typeof guardian === 'string'
-        ? [guardian]
-        : [guardian.loginId, guardian.email, guardian.nickname, guardian.name, guardian.id];
-      return values.some((value) => String(value ?? '').trim().toLowerCase() === normalizedIdentifier);
+      const values =
+        typeof guardian === 'string'
+          ? [guardian]
+          : [guardian.loginId, guardian.email, guardian.nickname, guardian.name, guardian.id];
+      return values.some(
+        (value) =>
+          String(value ?? '')
+            .trim()
+            .toLowerCase() === normalizedIdentifier,
+      );
     });
     if (duplicate) {
       setFormMessage('이미 목록에 있는 계정입니다.');
@@ -53,7 +53,10 @@ function SettingGuardianPage({
     };
     setManagement((current) => ({
       signature: guardianSignature,
-      items: [...(current.signature === guardianSignature ? current.items : sourceGuardians), newAccount],
+      items: [
+        ...(current.signature === guardianSignature ? current.items : sourceGuardians),
+        newAccount,
+      ],
     }));
     setAccountIdentifier('');
     setFormMessage('목록에 추가했습니다.');
@@ -63,12 +66,15 @@ function SettingGuardianPage({
     if (!loginId) return;
     setManagement((current) => ({
       signature: guardianSignature,
-      items: (current.signature === guardianSignature ? current.items : sourceGuardians).filter((guardian) => {
-        const identifier = typeof guardian === 'string'
-          ? guardian
-          : guardian.loginId ?? guardian.email ?? guardian.id;
-        return String(identifier) !== String(loginId);
-      }),
+      items: (current.signature === guardianSignature ? current.items : sourceGuardians).filter(
+        (guardian) => {
+          const identifier =
+            typeof guardian === 'string'
+              ? guardian
+              : (guardian.loginId ?? guardian.email ?? guardian.id);
+          return String(identifier) !== String(loginId);
+        },
+      ),
     }));
     setFormMessage('목록에서 삭제했습니다.');
   };
@@ -77,7 +83,11 @@ function SettingGuardianPage({
     <div className="setting-page-section">
       <SettingItem
         title={isGuardian ? '연결된 어르신' : '보호자 명단'}
-        description={isGuardian ? '연결된 어르신 계정을 확인하고 관리할 수 있습니다.' : '연결된 보호자 계정을 확인하고 관리할 수 있습니다.'}
+        description={
+          isGuardian
+            ? '연결된 어르신 계정을 확인하고 관리할 수 있습니다.'
+            : '연결된 보호자 계정을 확인하고 관리할 수 있습니다.'
+        }
         actionLabel="수정하기"
         onAction={() => {
           setFormMessage('');
@@ -97,14 +107,22 @@ function SettingGuardianPage({
       >
         <SettingToggleRow
           title="활동 현황 확인 설정"
-          description={canEditPermissions ? '어르신이 12시간 동안 앱을 사용하지 않거나 활동이 없을 때 보호자에게 알림을 보냅니다.' : '어르신 계정에서 변경할 수 있는 설정입니다.'}
+          description={
+            canEditPermissions
+              ? '어르신이 12시간 동안 앱을 사용하지 않거나 활동이 없을 때 보호자에게 알림을 보냅니다.'
+              : '어르신 계정에서 변경할 수 있는 설정입니다.'
+          }
           checked={settings.guardianActivity ?? false}
           onChange={() => onToggle?.('guardianActivity')}
           disabled={!canEditPermissions}
         />
         <SettingToggleRow
           title="복약 미이행 알림 수신 여부"
-          description={canEditPermissions ? '어르신이 복약 알림을 확인하지 않고 30분이 지났을 때 보호자에게 알림을 보냅니다.' : '어르신 계정에서 변경할 수 있는 설정입니다.'}
+          description={
+            canEditPermissions
+              ? '어르신이 복약 알림을 확인하지 않고 30분이 지났을 때 보호자에게 알림을 보냅니다.'
+              : '어르신 계정에서 변경할 수 있는 설정입니다.'
+          }
           checked={settings.guardianMedication ?? false}
           onChange={() => onToggle?.('guardianMedication')}
           disabled={!canEditPermissions}
@@ -120,9 +138,11 @@ function SettingGuardianPage({
       {isManageDialogOpen && (
         <SettingDialog
           title={isGuardian ? '연결된 어르신 관리' : '보호자 명단 관리'}
-          description={isGuardian
-            ? '어르신 계정을 연결하거나 기존 연결을 해제할 수 있습니다.'
-            : '보호자 계정을 추가하거나 기존 연결을 해제할 수 있습니다.'}
+          description={
+            isGuardian
+              ? '어르신 계정을 연결하거나 기존 연결을 해제할 수 있습니다.'
+              : '보호자 계정을 추가하거나 기존 연결을 해제할 수 있습니다.'
+          }
           className="setting-dialog--guardian-manager"
           onClose={() => setIsManageDialogOpen(false)}
         >
@@ -134,7 +154,10 @@ function SettingGuardianPage({
               onRemove={handleDisconnect}
             />
           </div>
-          <form className="setting-dialog__form setting-guardian-manager__form" onSubmit={handleAddAccount}>
+          <form
+            className="setting-dialog__form setting-guardian-manager__form"
+            onSubmit={handleAddAccount}
+          >
             <label className="setting-dialog__field">
               {isGuardian ? '어르신 가입 이메일' : '보호자 계정 이메일 또는 아이디'}
               <input
@@ -145,7 +168,11 @@ function SettingGuardianPage({
                 required
               />
             </label>
-            {formMessage && <p className="setting-dialog__note" role="status">{formMessage}</p>}
+            {formMessage && (
+              <p className="setting-dialog__note" role="status">
+                {formMessage}
+              </p>
+            )}
             <div className="setting-dialog__actions setting-guardian-manager__actions">
               <button
                 className="setting-dialog__button setting-dialog__button--primary"
@@ -154,7 +181,11 @@ function SettingGuardianPage({
               >
                 {isGuardian ? '어르신 추가' : '보호자 추가'}
               </button>
-              <button className="setting-dialog__button" type="button" onClick={() => setIsManageDialogOpen(false)}>
+              <button
+                className="setting-dialog__button"
+                type="button"
+                onClick={() => setIsManageDialogOpen(false)}
+              >
                 완료
               </button>
             </div>

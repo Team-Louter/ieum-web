@@ -36,7 +36,9 @@
   border-radius: 10px;
   color: #000;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .sidebar__profile:hover,
@@ -51,7 +53,8 @@
 }
 
 .sidebar__menu-item.is-active .sidebar__icon {
-  filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg) brightness(88%) contrast(87%);
+  filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg)
+    brightness(88%) contrast(87%);
 }
 
 .sidebar__profile.is-active .sidebar__icon {

@@ -30,17 +30,21 @@ function ProfilePageFriend({
         <ProfileInfo profile={profile} />
         <ProfileActionButtons />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
-        <ul className={`public-profile-friend-list${isEmpty ? ' public-profile-friend-list--empty' : ''}`}>
-          {friendItems.length > 0 ? friendItems.map((friend, index) => (
-            <li key={friend.id ?? index}>
-              <MeetingMyMemberProfile
-                profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
-                id={friend.loginId ?? friend.nickname ?? friend.name ?? friend.id ?? ''}
-                role="회원"
-                interactive={false}
-              />
-            </li>
-          )) : isEmpty ? (
+        <ul
+          className={`public-profile-friend-list${isEmpty ? ' public-profile-friend-list--empty' : ''}`}
+        >
+          {friendItems.length > 0 ? (
+            friendItems.map((friend, index) => (
+              <li key={friend.id ?? index}>
+                <MeetingMyMemberProfile
+                  profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
+                  id={friend.loginId ?? friend.nickname ?? friend.name ?? friend.id ?? ''}
+                  role="회원"
+                  interactive={false}
+                />
+              </li>
+            ))
+          ) : isEmpty ? (
             <li className="public-profile-friend-list__empty">
               <EmptyState
                 title="친구 목록이 비어 있어요"

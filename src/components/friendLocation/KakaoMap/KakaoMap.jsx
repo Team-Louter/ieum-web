@@ -111,7 +111,10 @@ function KakaoMap({
           <div
             className="kakao-map__fallback-ping"
             key={id}
-            style={{ left: `${44 + (longitude - 128.46) * 1200}%`, top: `${56 - (latitude - 35.84) * 1350}%` }}
+            style={{
+              left: `${44 + (longitude - 128.46) * 1200}%`,
+              top: `${56 - (latitude - 35.84) * 1350}%`,
+            }}
           >
             <NearbyFriendPing nickname={nickname} />
           </div>

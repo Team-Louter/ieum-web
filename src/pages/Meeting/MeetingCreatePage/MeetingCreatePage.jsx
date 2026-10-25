@@ -79,9 +79,15 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
             desc="모임 초대 링크의 사용 기한을 설정합니다."
           />
         </div>
-        <button className="meeting-make-button" type="submit">모임 만들기</button>
-        {submitError && <p className="meeting-make-error" role="alert">{submitError}</p>}
+        <button className="meeting-make-button" type="submit">
+          모임 만들기
+        </button>
+        {submitError && (
+          <p className="meeting-make-error" role="alert">
+            {submitError}
+          </p>
+        )}
       </form>
     </Layout>
-  )
+  );
 }

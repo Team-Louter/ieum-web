@@ -5,9 +5,9 @@
   background-color: #ffffff;
   color: #222222;
   font-size: var(--font-size-body);
-  padding-left:92px;
-  padding-right:20px;
-  box-sizing:border-box;
+  padding-left: 92px;
+  padding-right: 20px;
+  box-sizing: border-box;
 }
 
 /* 사용자 목록 */
@@ -38,7 +38,7 @@
   box-sizing: border-box;
 
   flex-shrink: 0;
-  padding:15px 20px;
+  padding: 15px 20px;
 }
 
 .user-search input {
@@ -159,7 +159,7 @@
   padding: 20px 30px;
   box-sizing: border-box;
 
-  overflow-y:auto;
+  overflow-y: auto;
 }
 
 /* 공통 메시지 */
@@ -181,7 +181,6 @@
 .received {
   align-self: flex-start;
 }
-
 
 /* 내 메시지 */
 .sent {
@@ -239,7 +238,8 @@
 }
 
 /* 프로필 사진 */
-.user-list-item img, .chat-room-header img{
-  width:50px;
-  height:50px;
+.user-list-item img,
+.chat-room-header img {
+  width: 50px;
+  height: 50px;
 }

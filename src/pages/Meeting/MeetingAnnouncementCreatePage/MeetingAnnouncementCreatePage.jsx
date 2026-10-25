@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import './MeetingAnnouncementCreatePage.css';
-import Layout from "../../../components/common/Layout/Layout";
+import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 
 export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSubmit }) {
   const navigate = useNavigate();
-  const [values, setValues] = useState(() => ({ title: initialValues.title ?? '', content: initialValues.content ?? '' }));
+  const [values, setValues] = useState(() => ({
+    title: initialValues.title ?? '',
+    content: initialValues.content ?? '',
+  }));
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -31,7 +34,9 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
           aria-label="공지 제목"
           required
           value={values.title}
-          onChange={(event) => setValues((currentValues) => ({ ...currentValues, title: event.target.value }))}
+          onChange={(event) =>
+            setValues((currentValues) => ({ ...currentValues, title: event.target.value }))
+          }
         />
         <textarea
           className="announcement-make-content"
@@ -39,7 +44,9 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
           aria-label="공지 내용"
           required
           value={values.content}
-          onChange={(event) => setValues((currentValues) => ({ ...currentValues, content: event.target.value }))}
+          onChange={(event) =>
+            setValues((currentValues) => ({ ...currentValues, content: event.target.value }))
+          }
         />
         <button className="announcement-make-submit" type="submit">
           공지사항 올리기

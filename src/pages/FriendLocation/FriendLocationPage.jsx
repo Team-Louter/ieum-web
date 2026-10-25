@@ -26,16 +26,14 @@ function FriendLocationPage() {
       return dummyFriendLocations;
     }
 
-    return [
-      { id: 'current-device', nickname: '내 위치', ...coordinates },
-      ...dummyFriendLocations,
-    ];
+    return [{ id: 'current-device', nickname: '내 위치', ...coordinates }, ...dummyFriendLocations];
   }, [coordinates]);
   const center = coordinates || DEFAULT_CENTER;
-  const addressText = address
-    || locationError
-    || addressError
-    || (isLoading ? '현재 위치를 확인하는 중입니다.' : '현재 주소를 확인하는 중입니다.');
+  const addressText =
+    address ||
+    locationError ||
+    addressError ||
+    (isLoading ? '현재 위치를 확인하는 중입니다.' : '현재 주소를 확인하는 중입니다.');
 
   return (
     <Layout className="friend-location-layout">

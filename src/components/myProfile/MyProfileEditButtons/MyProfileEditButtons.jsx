@@ -30,7 +30,9 @@ function MyProfileEditButtons({ profile = {}, onProfileUpdate }) {
   return (
     <>
       <div className="my-profile-edit-buttons">
-        <button type="button" onClick={handleProfileEditClick}>프로필 수정하기</button>
+        <button type="button" onClick={handleProfileEditClick}>
+          프로필 수정하기
+        </button>
       </div>
       {isMyProfileEditModalOpen && (
         <MyProfileEditModal

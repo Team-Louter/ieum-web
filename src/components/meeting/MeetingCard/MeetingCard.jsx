@@ -3,17 +3,8 @@ import { Link } from 'react-router-dom';
 import mulchongsae from '../../../assets/images/meeting-cover.jpg';
 
 export default function MeetingCard({ meeting = {}, onClick, to }) {
-  const {
-    title = '',
-    description = '',
-    region = '',
-    memberCount,
-    image,
-  } = meeting;
-  const meta = [
-    region,
-    memberCount == null ? '' : `${memberCount}명`,
-  ].filter(Boolean).join(' • ');
+  const { title = '', description = '', region = '', memberCount, image } = meeting;
+  const meta = [region, memberCount == null ? '' : `${memberCount}명`].filter(Boolean).join(' • ');
 
   const cardContent = (
     <>

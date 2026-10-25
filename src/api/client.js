@@ -26,7 +26,11 @@ export function resolveApiAssetUrl(imageUrl) {
   try {
     const apiUrl = new URL(API_BASE_URL, window.location.href);
     const assetUrl = new URL(imageUrl, apiUrl);
-    if (assetUrl.hostname === apiUrl.hostname && assetUrl.protocol === 'http:' && window.location.protocol === 'https:') {
+    if (
+      assetUrl.hostname === apiUrl.hostname &&
+      assetUrl.protocol === 'http:' &&
+      window.location.protocol === 'https:'
+    ) {
       assetUrl.protocol = 'https:';
     }
     return assetUrl.href;
@@ -234,10 +238,6 @@ export const friendApi = {
   remove: (friendshipId) => apiDelete(`/api/friends/${friendshipId}`),
 };
 
-export const meetingApi = {
-  list: () => apiGet('/api/community/meetings'),
-  get: (id) => apiGet(`/api/community/meetings/${id}`),
-  create: (meeting) => apiPost('/api/community/meetings', meeting),
 export const userApi = {
   search: (loginId, page = 0, size = 30) => {
     const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
@@ -245,6 +245,10 @@ export const userApi = {
   },
 };
 
+export const meetingApi = {
+  list: () => apiGet('/api/community/meetings'),
+  get: (id) => apiGet(`/api/community/meetings/${id}`),
+  create: (meeting) => apiPost('/api/community/meetings', meeting),
   update: (id, meeting) => apiPut(`/api/community/meetings/${id}`, meeting),
   remove: (id) => apiDelete(`/api/community/meetings/${id}`),
   getLike: (id) => apiGet(`/api/contents/MEETING/${id}/like`),
@@ -255,14 +259,16 @@ export const userApi = {
 export const sharingApi = {
   list: () => apiGet('/api/community/sharings'),
   get: (id) => apiGet(`/api/community/sharings/${id}`),
-  create: (sharing, imageFile) => apiPost(
-    '/api/community/sharings',
-    imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
-  ),
-  update: (id, sharing, imageFile) => apiPut(
-    `/api/community/sharings/${id}`,
-    imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
-  ),
+  create: (sharing, imageFile) =>
+    apiPost(
+      '/api/community/sharings',
+      imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
+    ),
+  update: (id, sharing, imageFile) =>
+    apiPut(
+      `/api/community/sharings/${id}`,
+      imageFile ? makeRequestWithFile(sharing, imageFile) : sharing,
+    ),
   remove: (id) => apiDelete(`/api/community/sharings/${id}`),
   complete: (id) => apiPatch(`/api/community/sharings/${id}/complete`),
 };

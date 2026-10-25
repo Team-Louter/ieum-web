@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
 import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
 import MeetingMakeOptionSelect from '../../../components/meeting/MeetingMake/MeetingMakeOptionSelect';
 import MeetingMyMemberProfile from '../../../components/meeting/MeetingMy/MeetingMyMemberProfile';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import './MeetingManagementPage.css';
-import Layout from "../../../components/common/Layout/Layout";
+import Layout from '../../../components/common/Layout/Layout';
 import { dummyMeetingManagers } from '../../../constants/dummy/dummyMeetings';
 
 function getMeetingFormValues(meeting = {}) {
@@ -89,12 +89,14 @@ export default function MeetingManagementPage({
               <MeetingMyMemberProfile
                 key={`${manager.id}-${manager.role}-${index}`}
                 id={manager.nickname ?? manager.name ?? manager.id ?? ''}
-                profile_image={manager.profileImage ?? manager.profile_image ?? manager.profileImageUrl}
+                profile_image={
+                  manager.profileImage ?? manager.profile_image ?? manager.profileImageUrl
+                }
                 role={manager.role ?? '회원'}
                 isMenuOpen={openManagerIndex === index}
-                onToggle={() => setOpenManagerIndex((openIndex) => (
-                  openIndex === index ? null : index
-                ))}
+                onToggle={() =>
+                  setOpenManagerIndex((openIndex) => (openIndex === index ? null : index))
+                }
                 onAction={(action) => onManagerAction?.(manager, action)}
               />
             ))}

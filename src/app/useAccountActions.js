@@ -65,47 +65,56 @@ export default function useAccountActions({
   async function updateProfile(updatedProfile) {
     return runAction(async () => {
       const previousProfile = readDemoValue('profile', {}, demoScope);
-      const profileImage = updatedProfile.profileImage instanceof File
-        ? updatedProfile.profileImage
-        : null;
+      const profileImage =
+        updatedProfile.profileImage instanceof File ? updatedProfile.profileImage : null;
       let serverProfile = null;
 
       try {
-        const response = await profileApi.update({
-          nickname: updatedProfile.nickname ?? updatedProfile.id ?? previousProfile.nickname ?? user.loginId,
-          bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
-        }, profileImage);
+        const response = await profileApi.update(
+          {
+            nickname:
+              updatedProfile.nickname ??
+              updatedProfile.id ??
+              previousProfile.nickname ??
+              user.loginId,
+            bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
+          },
+          profileImage,
+        );
         // 수정 응답이 안내 문자열이면 프로필을 다시 읽어 서버에 저장된 이미지 경로를 받습니다.
-        serverProfile = response && typeof response === 'object'
-          ? response
-          : await profileApi.get();
+        serverProfile =
+          response && typeof response === 'object' ? response : await profileApi.get();
       } catch (error) {
         if (!isDemoFallbackError(error)) throw error;
       }
 
-      const fallbackImage = profileImage && !serverProfile?.profileImageUrl
-        ? await fileToDataUrl(profileImage)
-        : previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '';
+      const fallbackImage =
+        profileImage && !serverProfile?.profileImageUrl
+          ? await fileToDataUrl(profileImage)
+          : (previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '');
       const image = serverProfile?.profileImageUrl ?? fallbackImage;
       const profile = {
         ...previousProfile,
         ...serverProfile,
-        nickname: serverProfile?.nickname
-          ?? updatedProfile.nickname
-          ?? previousProfile.nickname
-          ?? user.loginId,
-        bio: serverProfile?.bio
-          ?? updatedProfile.bio
-          ?? updatedProfile.introduction
-          ?? previousProfile.bio
-          ?? '',
+        nickname:
+          serverProfile?.nickname ??
+          updatedProfile.nickname ??
+          previousProfile.nickname ??
+          user.loginId,
+        bio:
+          serverProfile?.bio ??
+          updatedProfile.bio ??
+          updatedProfile.introduction ??
+          previousProfile.bio ??
+          '',
         profileImageUrl: image,
         id: updatedProfile.id ?? previousProfile.id,
-        introduction: serverProfile?.bio
-          ?? updatedProfile.introduction
-          ?? updatedProfile.bio
-          ?? previousProfile.introduction
-          ?? '',
+        introduction:
+          serverProfile?.bio ??
+          updatedProfile.introduction ??
+          updatedProfile.bio ??
+          previousProfile.introduction ??
+          '',
         profileImage: image,
       };
 
@@ -138,7 +147,10 @@ export default function useAccountActions({
   }
 
   async function sendRecoveryCode(email) {
-    return runAction(() => authApi.sendEmailCode(email, true), '인증 코드를 이메일로 발송했습니다.');
+    return runAction(
+      () => authApi.sendEmailCode(email, true),
+      '인증 코드를 이메일로 발송했습니다.',
+    );
   }
 
   async function verifyRecoveryCode(email, code) {

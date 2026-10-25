@@ -22,8 +22,8 @@
 
   font-size: var(--font-size-body);
 
-  color: #BBFFBF;
-  background-color: #42B66B;
+  color: #bbffbf;
+  background-color: #42b66b;
 }
 .meeting-make-error {
   color: #c62424;

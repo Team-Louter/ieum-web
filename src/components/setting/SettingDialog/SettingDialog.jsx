@@ -17,13 +17,25 @@ function SettingDialog({ title, description, onClose, children, className = '' }
         if (event.target === event.currentTarget) onClose?.();
       }}
     >
-      <section className={`setting-dialog${className ? ` ${className}` : ''}`} role="dialog" aria-modal="true" aria-labelledby="setting-dialog-title">
+      <section
+        className={`setting-dialog${className ? ` ${className}` : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="setting-dialog-title"
+      >
         <header className="setting-dialog__header">
           <div>
             <h2 id="setting-dialog-title">{title}</h2>
             {description && <p>{description}</p>}
           </div>
-          <button type="button" className="setting-dialog__close" onClick={onClose} aria-label="닫기">×</button>
+          <button
+            type="button"
+            className="setting-dialog__close"
+            onClick={onClose}
+            aria-label="닫기"
+          >
+            ×
+          </button>
         </header>
         <div className="setting-dialog__content">{children}</div>
       </section>

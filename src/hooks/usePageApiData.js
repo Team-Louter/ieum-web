@@ -34,7 +34,9 @@ export default function usePageApiData({
     let isActive = true;
 
     if (!isPublicPage && !accessToken) {
-      return () => { isActive = false; };
+      return () => {
+        isActive = false;
+      };
     }
 
     async function loadCurrentPage() {
@@ -72,8 +74,21 @@ export default function usePageApiData({
     }
 
     loadCurrentPage();
-    return () => { isActive = false; };
-  }, [path, isPublicPage, selectedId, accessToken, reloadKey, onDefaultChatRoom, user.role, user.userId, user.loginId, demoScope]);
+    return () => {
+      isActive = false;
+    };
+  }, [
+    path,
+    isPublicPage,
+    selectedId,
+    accessToken,
+    reloadKey,
+    onDefaultChatRoom,
+    user.role,
+    user.userId,
+    user.loginId,
+    demoScope,
+  ]);
 
   useEffect(() => {
     let isActive = true;
@@ -107,7 +122,9 @@ export default function usePageApiData({
     }
 
     loadMessages();
-    return () => { isActive = false; };
+    return () => {
+      isActive = false;
+    };
   }, [path, activeChatRoomId, accessToken, reloadKey, user.userId, demoScope]);
 
   return { data, error, loading, user };

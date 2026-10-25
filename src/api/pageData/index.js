@@ -30,9 +30,10 @@ export default async function loadPageData({
   if (path === '/neighbor' || path === '/neighbor/my') {
     const posts = asArray(readDemoValue('neighbor.posts', [], demoScope));
     return {
-      posts: path === '/neighbor/my'
-        ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
-        : posts,
+      posts:
+        path === '/neighbor/my'
+          ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
+          : posts,
     };
   }
 

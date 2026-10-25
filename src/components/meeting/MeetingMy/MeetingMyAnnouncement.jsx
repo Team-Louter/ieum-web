@@ -2,11 +2,7 @@ import './MeetingMyAnnouncement.css';
 import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
 
-export default function MeetingMyAnnouncement({
-  announcement = {},
-  onCreate,
-  onMore,
-}) {
+export default function MeetingMyAnnouncement({ announcement = {}, onCreate, onMore }) {
   const navigate = useNavigate();
   const author = announcement.author ?? {};
   const handleCreate = onCreate ?? (() => navigate('/meeting/announcement/make'));
@@ -16,11 +12,7 @@ export default function MeetingMyAnnouncement({
       <div className="Announcement-header">
         <p className="Announcement-title">공지사항</p>
         <div className="Announcement-actions">
-          <button
-            className="Announcement-write"
-            type="button"
-            onClick={handleCreate}
-          >
+          <button className="Announcement-write" type="button" onClick={handleCreate}>
             공지 올리기
           </button>
           <button className="Announcement-more" type="button" onClick={onMore}>
@@ -30,9 +22,14 @@ export default function MeetingMyAnnouncement({
       </div>
       <div className="Announcement-card">
         <div className="Announcement-card-container">
-          <div className='Announcement-profile'>
+          <div className="Announcement-profile">
             <img
-              src={author.profileImage || author.profile_image || author.profileImageUrl || profileImage}
+              src={
+                author.profileImage ||
+                author.profile_image ||
+                author.profileImageUrl ||
+                profileImage
+              }
               alt="프로필 사진"
               onError={(event) => {
                 event.currentTarget.onerror = null;
@@ -46,5 +43,5 @@ export default function MeetingMyAnnouncement({
         </div>
       </div>
     </div>
-  )
+  );
 }

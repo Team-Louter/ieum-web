@@ -89,13 +89,16 @@ function AddFriendPage({
   const visibleDirectory = useMemo(() => {
     const ownLoginId = normalizeId(currentLoginId);
     const ownUserId = normalizeId(currentUserId);
-    const existingFriendIds = new Set(friends.map((friend) => (
-      normalizeId(friend.userId ?? friend.id)
-    )));
+    const existingFriendIds = new Set(
+      friends.map((friend) => normalizeId(friend.userId ?? friend.id)),
+    );
     const otherAccounts = sourceDirectory.filter((friend) => {
       const isOwnLogin = ownLoginId && normalizeId(friend.loginId) === ownLoginId;
-      const isOwnUser = ownUserId && [friend.userId, friend.memberId, friend.id]
-        .some((value) => normalizeId(value) === ownUserId);
+      const isOwnUser =
+        ownUserId &&
+        [friend.userId, friend.memberId, friend.id].some(
+          (value) => normalizeId(value) === ownUserId,
+        );
       const isAlreadyFriend = existingFriendIds.has(normalizeId(friend.userId ?? friend.id));
       return !isOwnLogin && !isOwnUser && !isAlreadyFriend;
     });
@@ -115,10 +118,10 @@ function AddFriendPage({
       ? [`ellipsis-${pageNumber}`, pageNumber]
       : [pageNumber],
   );
+  const visibleFriends = isSearching ? [] : visibleDirectory;
 
   function handleSearch(event) {
     setSearchText(event.target.value);
-  const visibleFriends = isSearching ? [] : visibleDirectory;
     setCurrentPage(1);
     setOpenFriendId(null);
   }
@@ -128,11 +131,11 @@ function AddFriendPage({
       const userId = friend.userId ?? friend.id;
       if (friend.isRequested || requestedUserIds.has(userId) || friend.isFriend || friend.isCurrentUser) return;
       await onAddFriend?.(friend);
+      setRequestedUserIds((current) => new Set(current).add(userId));
+      setOpenFriendId(null);
     } catch {
       // App의 공통 API 오류 알림을 표시합니다.
     }
-      setRequestedUserIds((current) => new Set(current).add(userId));
-      setOpenFriendId(null);
   }
 
   async function handleAcceptRequest(friendshipId) {
@@ -193,11 +196,13 @@ function AddFriendPage({
                   friend.profileImageUrl ?? friend.profileImage ?? friend.profile_image,
                 )}
                 isMenuOpen={openFriendId === (friend.id ?? friend.userId ?? friend.loginId)}
-                onToggle={() => setOpenFriendId((openId) => (
-                  openId === (friend.id ?? friend.userId ?? friend.loginId)
-                    ? null
-                    : (friend.id ?? friend.userId ?? friend.loginId)
-                ))}
+                onToggle={() =>
+                  setOpenFriendId((openId) =>
+                    openId === (friend.id ?? friend.userId ?? friend.loginId)
+                      ? null
+                      : (friend.id ?? friend.userId ?? friend.loginId),
+                  )
+                }
                 actionItems={[friendActionLabel(friend)]}
                 onAction={() => handleAddFriend(friend)}
               />

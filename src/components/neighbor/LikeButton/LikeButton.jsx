@@ -18,7 +18,10 @@ function LikeButton({ isLiked: controlledIsLiked, likeCount, onToggle }) {
   return (
     <button type="button" onClick={handleLikeToggle} className={isLiked ? 'is-active' : ''}>
       <img src={goodImg} alt="좋아요 아이콘"></img>
-      <p>{likeLabel}{likeCount == null ? '' : ` ${likeCount}`}</p>
+      <p>
+        {likeLabel}
+        {likeCount == null ? '' : ` ${likeCount}`}
+      </p>
     </button>
   );
 }

@@ -26,7 +26,8 @@ export default function useMedicationActions({ demoScope, runAction, setCheckedM
 
         updateDemoValue(
           'medications',
-          (items) => items.filter((item) => String(item.medicationId ?? item.id) !== String(medicationId)),
+          (items) =>
+            items.filter((item) => String(item.medicationId ?? item.id) !== String(medicationId)),
           [],
           demoScope,
         );
@@ -45,19 +46,20 @@ export default function useMedicationActions({ demoScope, runAction, setCheckedM
 
         updateDemoValue(
           'medications',
-          (items) => items.map((item) => (
-            String(item.medicationId ?? item.id) === String(medicationId)
-              ? { ...item, taken: true }
-              : item
-          )),
+          (items) =>
+            items.map((item) =>
+              String(item.medicationId ?? item.id) === String(medicationId)
+                ? { ...item, taken: true }
+                : item,
+            ),
           [],
           demoScope,
         );
       }
 
-      setCheckedMedicationIds((ids) => (
-        ids.some((id) => String(id) === String(medicationId)) ? ids : [...ids, medicationId]
-      ));
+      setCheckedMedicationIds((ids) =>
+        ids.some((id) => String(id) === String(medicationId)) ? ids : [...ids, medicationId],
+      );
     }, '오늘 복용을 확인했습니다.');
   }
 

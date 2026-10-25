@@ -31,7 +31,11 @@ function MarketFeedInfo({
             <p className="market-feed-info__price">{price}</p>
             <p className="market-feed-info__content">{content}</p>
           </div>
-          {showChat && <button type="button" onClick={onChat}>채팅하기</button>}
+          {showChat && (
+            <button type="button" onClick={onChat}>
+              채팅하기
+            </button>
+          )}
         </div>
       </div>
       <div id="user-info">

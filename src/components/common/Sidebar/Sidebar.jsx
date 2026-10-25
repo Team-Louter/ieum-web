@@ -25,11 +25,13 @@ const sidebarMenuItems = [
 
 /** 현재 주소와 일치하는 메뉴의 식별자를 반환합니다. */
 function getActiveMenuId(currentPath) {
-  return sidebarMenuItems.find((menuItem) => (
-    menuItem.href !== '#' && (
-      currentPath === menuItem.href || currentPath.startsWith(`${menuItem.href}/`)
-    )
-  ))?.id ?? null;
+  return (
+    sidebarMenuItems.find(
+      (menuItem) =>
+        menuItem.href !== '#' &&
+        (currentPath === menuItem.href || currentPath.startsWith(`${menuItem.href}/`)),
+    )?.id ?? null
+  );
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
@@ -67,7 +69,13 @@ function Sidebar({ role }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link className={`sidebar__profile${isMyProfileActive ? ' is-active' : ''}`} to="/myProfile" aria-current={isMyProfileActive ? 'page' : undefined} aria-label={loginId ? `내 프로필: ${loginId}` : '내 프로필'} title={profileLabel}>
+      <Link
+        className={`sidebar__profile${isMyProfileActive ? ' is-active' : ''}`}
+        to="/myProfile"
+        aria-current={isMyProfileActive ? 'page' : undefined}
+        aria-label={loginId ? `내 프로필: ${loginId}` : '내 프로필'}
+        title={profileLabel}
+      >
         <img className="sidebar__icon" src={profileImg} alt="" />
         <span className="sidebar__label">{profileLabel}</span>
       </Link>
@@ -78,7 +86,14 @@ function Sidebar({ role }) {
           const isActive = activeMenuId === menuItem.id;
 
           return (
-            <Link className={`sidebar__menu-item${isActive ? ' is-active' : ''}`} to={href} key={label} aria-current={isActive ? 'page' : undefined} aria-label={label} title={label}>
+            <Link
+              className={`sidebar__menu-item${isActive ? ' is-active' : ''}`}
+              to={href}
+              key={label}
+              aria-current={isActive ? 'page' : undefined}
+              aria-label={label}
+              title={label}
+            >
               <img className="sidebar__icon" src={icon} alt="" />
               <span className="sidebar__label">{label}</span>
             </Link>

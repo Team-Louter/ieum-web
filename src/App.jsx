@@ -74,9 +74,9 @@ function AppContent() {
   useEffect(() => {
     if (routeKey === '/chatting') return;
     window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
-    setChatSelection((current) => (
-      current.path === '/chatting' ? { path: '', roomId: null } : current
-    ));
+    setChatSelection((current) =>
+      current.path === '/chatting' ? { path: '', roomId: null } : current,
+    );
   }, [routeKey]);
 
   const activeChatRoomId = chatSelection.path === routeKey ? chatSelection.roomId : null;

@@ -31,13 +31,19 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
       nickname: formData.get('nickname'),
       introduction: formData.get('introduction'),
       profileImage: selectedProfileImage?.size ? selectedProfileImage : undefined,
-      profileImageUrl: profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
+      profileImageUrl:
+        profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
     });
   }
 
   return (
     <div className="profile-edit-modal" onClick={handleBackdropClick} role="presentation">
-      <section className="profile-edit-modal__panel" role="dialog" aria-modal="true" aria-labelledby="profile-edit-modal-title">
+      <section
+        className="profile-edit-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-edit-modal-title"
+      >
         <button type="button" onClick={onCancel}>
           <img src={closeIcon} alt="닫기 아이콘" />
         </button>
@@ -56,27 +62,44 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
               <label htmlFor="profile-image-input">
                 <div id="profile-image-input-label">프로필 사진 수정하기</div>
               </label>
-              <input type="file" accept="image/*" hidden id="profile-image-input" name="profileImage" />
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                id="profile-image-input"
+                name="profileImage"
+              />
             </div>
             <div>
               <div id="id-input-container">
                 <p>닉네임</p>
-                <input type="text" id="nickname-input" name="nickname" defaultValue={profile.nickname ?? profile.id ?? ''} />
+                <input
+                  type="text"
+                  id="nickname-input"
+                  name="nickname"
+                  defaultValue={profile.nickname ?? profile.id ?? ''}
+                />
               </div>
               <div id="my-introduce-input-container">
                 <p>내 소개</p>
-                <textarea id="my-introduce-textarea" name="introduction" defaultValue={profile.introduction ?? ''} />
+                <textarea
+                  id="my-introduce-textarea"
+                  name="introduction"
+                  defaultValue={profile.introduction ?? ''}
+                />
               </div>
             </div>
           </div>
-          {errorMessage && <p className="profile-edit-modal__error" role="alert">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="profile-edit-modal__error" role="alert">
+              {errorMessage}
+            </p>
+          )}
           <div className="profile-edit-modal__button-group">
             <button type="button" onClick={onCancel}>
               취소하기
             </button>
-            <button type="submit">
-              수정하기
-            </button>
+            <button type="submit">수정하기</button>
           </div>
         </form>
       </section>

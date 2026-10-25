@@ -5,9 +5,8 @@ import { fileToDataUrl, isDemoFallbackError, updateDemoValue } from '../api/demo
 export default function useMeetingActions({ demoScope, user, runAction, movePage }) {
   async function createMeeting(values) {
     const result = await runAction(async () => {
-      const imageUrl = values.image instanceof File
-        ? await fileToDataUrl(values.image)
-        : values.image ?? '';
+      const imageUrl =
+        values.image instanceof File ? await fileToDataUrl(values.image) : (values.image ?? '');
 
       const meeting = {
         id: Date.now(),

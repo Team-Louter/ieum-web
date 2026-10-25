@@ -50,25 +50,29 @@ function MyProfilePageFriend({
         <MyProfileEditButtons profile={profile} onProfileUpdate={onProfileUpdate} />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <ul className={`my-profile-friend-list${isEmpty ? ' my-profile-friend-list--empty' : ''}`}>
-          {friendItems.length > 0 ? friendItems.map((friend, index) => (
-            <li key={friend.friendshipId ?? friend.id ?? index}>
-              <MeetingMyMemberProfile
-                profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
-                id={friend.loginId ?? friend.nickname ?? friend.name ?? friend.id ?? ''}
-                role="회원"
-                isMenuOpen={openFriendId === (friend.friendshipId ?? friend.id ?? index)}
-                onToggle={() => setOpenFriendId((openId) => (
-                  openId === (friend.friendshipId ?? friend.id ?? index)
-                    ? null
-                    : (friend.friendshipId ?? friend.id ?? index)
-                ))}
-                actionItems={friend.friendshipId == null ? [] : ['친구 삭제']}
-                dangerActionItems={['친구 삭제']}
-                onAction={() => handleRemoveFriend(friend)}
-                interactive={friend.friendshipId != null}
-              />
-            </li>
-          )) : isEmpty ? (
+          {friendItems.length > 0 ? (
+            friendItems.map((friend, index) => (
+              <li key={friend.friendshipId ?? friend.id ?? index}>
+                <MeetingMyMemberProfile
+                  profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
+                  id={friend.loginId ?? friend.nickname ?? friend.name ?? friend.id ?? ''}
+                  role="회원"
+                  isMenuOpen={openFriendId === (friend.friendshipId ?? friend.id ?? index)}
+                  onToggle={() =>
+                    setOpenFriendId((openId) =>
+                      openId === (friend.friendshipId ?? friend.id ?? index)
+                        ? null
+                        : (friend.friendshipId ?? friend.id ?? index),
+                    )
+                  }
+                  actionItems={friend.friendshipId == null ? [] : ['친구 삭제']}
+                  dangerActionItems={['친구 삭제']}
+                  onAction={() => handleRemoveFriend(friend)}
+                  interactive={friend.friendshipId != null}
+                />
+              </li>
+            ))
+          ) : isEmpty ? (
             <li className="my-profile-friend-list__empty">
               <EmptyState
                 title="아직 친구가 없어요"

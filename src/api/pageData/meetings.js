@@ -8,22 +8,22 @@ export async function loadMeetingListPage({ path, demoScope, loginId }) {
   const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
 
   const meetings = [...localMeetings, ...remoteMeetings]
-    .filter((meeting, index, list) => list.findIndex((candidate) => (
-      String(candidate.id) === String(meeting.id)
-    )) === index)
+    .filter(
+      (meeting, index, list) =>
+        list.findIndex((candidate) => String(candidate.id) === String(meeting.id)) === index,
+    )
     .map(toMeetingCard);
 
   return {
-    meetings: path === '/meeting/my'
-      ? meetings.filter((meeting) => meeting.owner === loginId)
-      : meetings,
+    meetings:
+      path === '/meeting/my' ? meetings.filter((meeting) => meeting.owner === loginId) : meetings,
   };
 }
 
 export async function loadMeetingDetailPage({ selectedId, demoScope }) {
   const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
   const localMeeting = localMeetings.find((meeting) => String(meeting.id) === String(selectedId));
-  const meeting = toMeetingCard(localMeeting ?? await meetingApi.get(selectedId));
+  const meeting = toMeetingCard(localMeeting ?? (await meetingApi.get(selectedId)));
 
   return { meeting, announcement: null, members: [] };
 }

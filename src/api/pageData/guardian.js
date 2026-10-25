@@ -4,12 +4,9 @@ import { readDemoValue } from '../demoStore';
 import { asArray, loadApiOrDemo } from './common';
 
 export async function loadGuardianPage({ demoScope }) {
-  const elders = asArray(await loadApiOrDemo(
-    () => guardianApi.dashboard(),
-    'guardian.dashboard',
-    [],
-    demoScope,
-  ));
+  const elders = asArray(
+    await loadApiOrDemo(() => guardianApi.dashboard(), 'guardian.dashboard', [], demoScope),
+  );
   const elder = elders[0];
 
   if (!elder) {
@@ -48,10 +45,14 @@ export async function loadSettingsPage({ role, demoScope }) {
 
   const localSettings = readDemoValue('settings', {}, demoScope);
   const savedMedications = readDemoValue('medications', [], demoScope);
-  const uniqueMedications = [...asArray(medications), ...asArray(savedMedications)]
-    .filter((medication, index, list) => list.findIndex((candidate) => (
-      String(candidate.medicationId ?? candidate.id) === String(medication.medicationId ?? medication.id)
-    )) === index);
+  const uniqueMedications = [...asArray(medications), ...asArray(savedMedications)].filter(
+    (medication, index, list) =>
+      list.findIndex(
+        (candidate) =>
+          String(candidate.medicationId ?? candidate.id) ===
+          String(medication.medicationId ?? medication.id),
+      ) === index,
+  );
 
   return {
     settings: {

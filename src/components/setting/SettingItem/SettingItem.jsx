@@ -1,6 +1,14 @@
 import './SettingItem.css';
 
-function SettingItem({ title, description, actionLabel, onAction, trailing, children, className = '' }) {
+function SettingItem({
+  title,
+  description,
+  actionLabel,
+  onAction,
+  trailing,
+  children,
+  className = '',
+}) {
   return (
     <section className={`setting-item ${className}`}>
       <header className="setting-item__header">

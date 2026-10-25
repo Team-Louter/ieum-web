@@ -1,13 +1,9 @@
-import { useState } from "react";
-import MeetingMyMemberProfile from "./MeetingMyMemberProfile";
-import MeetingMyMemberTitle from "./MeetingMyMemberTitle";
+import { useState } from 'react';
+import MeetingMyMemberProfile from './MeetingMyMemberProfile';
+import MeetingMyMemberTitle from './MeetingMyMemberTitle';
 import './MeetingMyMemberList.css';
 
-export default function MeetingMyMemberList({
-  members = [],
-  maxVisible,
-  onMemberAction,
-}) {
+export default function MeetingMyMemberList({ members = [], maxVisible, onMemberAction }) {
   const [openMemberIndex, setOpenMemberIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = maxVisible ?? 24;
@@ -24,7 +20,7 @@ export default function MeetingMyMemberList({
 
   return (
     <div className="member-list-container">
-      <MeetingMyMemberTitle HowManyUser={members.length}/>
+      <MeetingMyMemberTitle HowManyUser={members.length} />
       <div className="member-list">
         {visibleMembers.map((member, memberIndex) => (
           <MeetingMyMemberProfile
@@ -33,9 +29,9 @@ export default function MeetingMyMemberList({
             role={member.role ?? '회원'}
             profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
             isMenuOpen={openMemberIndex === memberIndex}
-            onToggle={() => setOpenMemberIndex((openIndex) => (
-              openIndex === memberIndex ? null : memberIndex
-            ))}
+            onToggle={() =>
+              setOpenMemberIndex((openIndex) => (openIndex === memberIndex ? null : memberIndex))
+            }
             onAction={(action) => onMemberAction?.(member, action)}
           />
         ))}
@@ -78,5 +74,5 @@ export default function MeetingMyMemberList({
         </nav>
       )}
     </div>
-  )
+  );
 }
