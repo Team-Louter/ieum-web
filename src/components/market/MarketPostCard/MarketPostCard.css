@@ -59,8 +59,7 @@
   right: 12px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #cdebd6;
-  background: rgb(240 251 243 / 96%);
+  background: #f0fbf3;
   color: #287344;
   font-size: var(--font-size-small, 18px);
   font-weight: 700;
