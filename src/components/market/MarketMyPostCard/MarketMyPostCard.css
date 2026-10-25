@@ -42,6 +42,16 @@
   color: #555;
 }
 
+.market-my-post-card__status {
+  color: #555;
+  font-size: var(--font-size-body);
+}
+
+.market-my-post-card__status.is-complete {
+  color: #329153;
+  font-weight: bold;
+}
+
 .market-my-post-card__button-container {
   display: none;
   flex-direction: column;
@@ -67,6 +77,11 @@
 .market-my-post-card__button-container > button:nth-child(2) {
   background-color: #c62424;
   color: #ffc2c2;
+}
+
+.market-my-post-card__button-container > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .market-my-post-card:hover > .market-my-post-card__info {

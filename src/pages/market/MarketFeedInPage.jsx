@@ -5,7 +5,7 @@ import './MarketFeedInPage.css';
 import MarketFeedInfo from '../../components/market/MarketFeedInfo/MarketFeedInfo';
 import profileImage from '../../assets/images/profile.png';
 
-function MarketFeedInPage({ selectedPost, onChat }) {
+function MarketFeedInPage({ selectedPost, onChat, currentUserId, currentLoginId }) {
   const location = useLocation();
   const post = selectedPost ?? location.state?.post ?? {
     image: '',
@@ -13,6 +13,9 @@ function MarketFeedInPage({ selectedPost, onChat }) {
     price: '가격',
     address: '거주 지역',
   };
+  const isOwnPost = post.sellerId != null
+    ? String(post.sellerId) === String(currentUserId)
+    : Boolean(post.owner && currentLoginId && post.owner === currentLoginId);
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: true },
     { label: '내 게시물', href: '/market/my', isActive: false },
@@ -30,6 +33,8 @@ function MarketFeedInPage({ selectedPost, onChat }) {
         userImg={post.seller?.profileImage ?? profileImage}
         userId={post.seller?.id ?? '아이디'}
         address={post.address ?? post.location ?? ''}
+        complete={post.complete}
+        showChat={!isOwnPost}
         onChat={() => onChat?.(post)}
       />
     </Layout>

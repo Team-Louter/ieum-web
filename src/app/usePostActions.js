@@ -1,5 +1,11 @@
 import { sharingApi } from '../api/client';
-import { fileToDataUrl, isDemoFallbackError, readDemoValue, updateDemoValue } from '../api/demoStore';
+import {
+  fileToDataUrl,
+  isDemoFallbackError,
+  readDemoValue,
+  updateDemoValue,
+  writeDemoValue,
+} from '../api/demoStore';
 
 // 동네 게시물과 나눔 게시물의 동작입니다.
 export default function usePostActions({
@@ -13,23 +19,41 @@ export default function usePostActions({
 }) {
   async function createSharing(values) {
     const result = await runAction(async () => {
-      const imageUrl = values.media instanceof File
-        ? await fileToDataUrl(values.media)
-        : values.imageUrl ?? '';
-      const sharing = {
-        id: Date.now(),
+      const imageFile = values.media instanceof File ? values.media : null;
+      const request = {
         name: values.title,
-        title: values.title,
         description: values.content,
         region: values.region,
-        imageUrl,
         price: Number(values.price),
-        owner: user.loginId,
         complete: false,
       };
 
-      updateDemoValue('market.posts', (posts) => [sharing, ...posts], [], demoScope);
-      return sharing;
+      if (!imageFile && values.imageUrl) request.imageUrl = values.imageUrl;
+
+      try {
+        const createdSharing = await sharingApi.create(request, imageFile);
+        if (createdSharing?.id != null) {
+          const ownersById = readDemoValue('market.owners', {}, demoScope);
+          writeDemoValue('market.owners', {
+            ...ownersById,
+            [String(createdSharing.id)]: user.loginId,
+          }, demoScope);
+        }
+        return createdSharing;
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+
+        const imageUrl = imageFile ? await fileToDataUrl(imageFile) : values.imageUrl ?? '';
+        const localSharing = {
+          ...request,
+          id: Date.now(),
+          title: values.title,
+          imageUrl,
+          owner: user.loginId,
+        };
+        updateDemoValue('market.posts', (posts) => [localSharing, ...posts], [], demoScope);
+        return localSharing;
+      }
     }, '나눔 게시물을 등록했습니다.');
 
     movePage('/market');
@@ -101,9 +125,9 @@ export default function usePostActions({
   async function markSharingComplete(productId) {
     await runAction(async () => {
       try {
-        await sharingApi.complete(productId);
+        return await sharingApi.complete(productId);
       } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
+        if (![405, 501].includes(error?.status)) throw error;
 
         updateDemoValue('market.posts', (posts) => posts.map((post) => (
           String(post.id) === String(productId) ? { ...post, complete: true } : post
@@ -117,7 +141,7 @@ export default function usePostActions({
       try {
         await sharingApi.remove(productId);
       } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
+        if (![405, 501].includes(error?.status)) throw error;
 
         updateDemoValue(
           'market.posts',
@@ -125,13 +149,14 @@ export default function usePostActions({
           [],
           demoScope,
         );
-        updateDemoValue(
-          'market.deletedIds',
-          (ids) => [...new Set([...ids, String(productId)])],
-          [],
-          demoScope,
-        );
       }
+
+      updateDemoValue(
+        'market.deletedIds',
+        (ids) => [...new Set([...ids, String(productId)])],
+        [],
+        demoScope,
+      );
     }, '나눔 게시물을 삭제했습니다.');
   }
 

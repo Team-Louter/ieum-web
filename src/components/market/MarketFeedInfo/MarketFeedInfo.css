@@ -44,18 +44,24 @@
   gap: 10px;
 }
 
-#feed-info > div > div > p:nth-child(1) {
+#feed-info .market-feed-info__title {
   font-size: var(--font-size-subtitle);
   font-weight: 500;
 }
 
-#feed-info > div > div > p:nth-child(2) {
+#feed-info .market-feed-info__price {
   font-size: var(--font-size-subtitle);
   font-weight: bold;
 }
 
-#feed-info > div > div > p:nth-child(3) {
+#feed-info .market-feed-info__content {
   font-size: var(--font-size-body);
+}
+
+.market-feed-info__status {
+  color: #329153;
+  font-size: var(--font-size-body);
+  font-weight: bold;
 }
 
 #feed-info > div > button {
