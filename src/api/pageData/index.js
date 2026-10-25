@@ -48,15 +48,19 @@ export default async function loadPageData({
     return loadMeetingDetailPage({ selectedId, demoScope });
   }
 
+  if (path === '/meeting/management' && selectedId) {
+    return loadMeetingDetailPage({ selectedId, demoScope });
+  }
+
   if (path === '/market' || path === '/market/my') {
-    return loadMarketListPage({ path, demoScope, loginId });
+    return loadMarketListPage({ path, demoScope, loginId, userId });
   }
 
   if (path === '/market/feedin' && selectedId) {
     return loadMarketDetailPage({ selectedId, demoScope });
   }
 
-  if (path === '/addfriend') return loadAddFriendPage({ demoScope, userId });
+  if (path === '/addfriend') return loadAddFriendPage({ demoScope });
 
   if (path === '/chatting') return loadChatPage({ demoScope, userId, onDefaultChatRoom });
 

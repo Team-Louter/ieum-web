@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -20,6 +20,8 @@ import {
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
+const CHAT_SELECTION_STORAGE_KEY = 'ieum.chatRoomId';
+
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,9 +35,49 @@ function AppContent() {
   const [accessToken, setAccessToken] = useState(() => getAccessToken());
   const [reloadKey, setReloadKey] = useState(0);
   const [checkedMedicationIds, setCheckedMedicationIds] = useState([]);
-  const [chatSelection, setChatSelection] = useState({ path: '', roomId: null });
-  const [feedback, setFeedback] = useState('');
+  const [chatSelection, setChatSelection] = useState(() => {
+    if (routeKey !== '/chatting') return { path: '', roomId: null };
+
+    const savedRoomId = Number(window.localStorage.getItem(CHAT_SELECTION_STORAGE_KEY));
+    return Number.isSafeInteger(savedRoomId) && savedRoomId > 0
+      ? { path: '/chatting', roomId: savedRoomId }
+      : { path: '', roomId: null };
+  });
+  const [feedback, setFeedbackState] = useState('');
+  const [feedbackVersion, setFeedbackVersion] = useState(0);
   const [feedbackIsError, setFeedbackIsError] = useState(false);
+
+  const setFeedback = useCallback((message) => {
+    setFeedbackState(message);
+    setFeedbackVersion((version) => version + 1);
+  }, []);
+
+  useEffect(() => {
+    if (!feedback) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setFeedbackState('');
+      setFeedbackIsError(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [feedback, feedbackVersion]);
+
+  useEffect(() => {
+    if (chatSelection.path === '/chatting' && chatSelection.roomId != null) {
+      window.localStorage.setItem(CHAT_SELECTION_STORAGE_KEY, String(chatSelection.roomId));
+    } else {
+      window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
+    }
+  }, [chatSelection]);
+
+  useEffect(() => {
+    if (routeKey === '/chatting') return;
+    window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
+    setChatSelection((current) => (
+      current.path === '/chatting' ? { path: '', roomId: null } : current
+    ));
+  }, [routeKey]);
 
   const activeChatRoomId = chatSelection.path === routeKey ? chatSelection.roomId : null;
 
@@ -47,10 +89,15 @@ function AppContent() {
   );
 
   const selectDefaultChatRoom = useCallback(
-    (roomId) => {
+    (roomId, availableRoomIds = []) => {
       setChatSelection((current) => {
-        if (current.path === routeKey && current.roomId != null) return current;
-        return { path: routeKey, roomId };
+        const selectedRoomExists = availableRoomIds.some(
+          (availableRoomId) => String(availableRoomId) === String(current.roomId),
+        );
+        if (current.path === routeKey && current.roomId != null && selectedRoomExists) {
+          return current;
+        }
+        return { path: routeKey, roomId: roomId ?? null };
       });
     },
     [routeKey],
@@ -112,9 +159,6 @@ function AppContent() {
     runAction,
     movePage,
     setChatSelection,
-    setFeedback,
-    setFeedbackIsError,
-    setReloadKey,
   });
 
   const meetingActions = useMeetingActions({ demoScope, user, runAction, movePage });
@@ -141,6 +185,7 @@ function AppContent() {
     onNavigate: movePage,
     isLoading: loading,
     apiError: error,
+    onRefreshFriendRequests: () => setReloadKey((value) => value + 1),
 
     onLogin: accountActions.login,
     onSignup: accountActions.signup,
@@ -166,13 +211,14 @@ function AppContent() {
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],
     meetings: data.meetings ?? [],
-    meeting: data.meeting ?? defaultMeeting,
+    meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
     announcement: data.announcement ?? {},
     members: data.members ?? [],
     products: data.products ?? [],
     selectedPost: data.selectedPost ?? location.state?.post ?? defaultSelectedPost,
     contacts: data.contacts ?? [],
     activeContactId: activeChatRoomId ?? data.activeContactId,
+    messagesRoomId: data.activeContactId,
     messages: data.messages ?? [],
 
     onSettingChange: accountActions.changeSetting,
@@ -184,6 +230,8 @@ function AppContent() {
 
     onAddFriend: friendActions.sendFriendRequest,
     onAcceptFriendRequest: friendActions.acceptFriendRequest,
+    onRejectFriendRequest: friendActions.rejectFriendRequest,
+    onRemoveFriend: friendActions.removeFriend,
     onStartChat: friendActions.startChat,
     onSendMessage: friendActions.sendChatMessage,
     onSelectContact: selectChatRoom,
@@ -200,11 +248,22 @@ function AppContent() {
         : postActions.deleteSharing,
     onSubmit: submitHandlers[routeKey],
     onMarkSold: postActions.markSharingComplete,
-    onChat: () => {
-      setFeedback(
-        '나눔 API 응답에 판매자 숫자 사용자 ID가 없어 채팅을 시작할 수 없습니다. 백엔드에서 작성자 ID를 제공해야 합니다.',
-      );
-      setFeedbackIsError(true);
+    onChat: (post) => {
+      const sellerId = post?.sellerId;
+
+      if (sellerId == null) {
+        setFeedback('판매자 정보를 확인할 수 없어 채팅을 시작할 수 없습니다.');
+        setFeedbackIsError(true);
+        return;
+      }
+
+      if (String(sellerId) === String(user.userId)) {
+        setFeedback('내 게시물에는 채팅을 시작할 수 없습니다.');
+        setFeedbackIsError(true);
+        return;
+      }
+
+      return friendActions.startChat(sellerId);
     },
 
     accessToken,
@@ -227,6 +286,10 @@ function AppContent() {
           message={error || feedback}
           isError={Boolean(error || feedbackIsError)}
           onRetry={error ? () => setReloadKey((value) => value + 1) : null}
+          onClose={() => {
+            setFeedbackState('');
+            setFeedbackIsError(false);
+          }}
         />
       )}
     </>
@@ -244,17 +307,25 @@ function LoadingMessage() {
   );
 }
 
-function FeedbackMessage({ message, isError, onRetry }) {
+function FeedbackMessage({ message, isError, onRetry, onClose }) {
   const className = `app-api-notice${isError ? ' app-api-notice--error' : ''}`;
 
   return (
     <div className={className} role="status" aria-live="polite">
-      {message}
+      <span className="app-api-notice__message">{message}</span>
       {onRetry && (
-        <button type="button" onClick={onRetry}>
+        <button className="app-api-notice__retry" type="button" onClick={onRetry}>
           다시 시도
         </button>
       )}
+      <button
+        className="app-api-notice__close"
+        type="button"
+        aria-label="알림 닫기"
+        onClick={onClose}
+      >
+        ×
+      </button>
     </div>
   );
 }
