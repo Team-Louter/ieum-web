@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { resolveApiAssetUrl } from '../../api/client';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
 import FriendRequestsModal from '../../components/friends/FriendRequestsModal/FriendRequestsModal';
 import './AddFriendPage.css';
 
 const pageSize = 30;
+const emptyUsers = [];
 
 function shuffle(items) {
   const shuffled = [...items];
@@ -21,21 +23,69 @@ function normalizeId(value) {
 
 function AddFriendPage({
   friends = [],
-  friendDirectory = [],
   friendRequests = [],
   currentLoginId = '',
   currentUserId = null,
   onAddFriend,
+  onSearchUsers,
   onAcceptFriendRequest,
   onRejectFriendRequest,
   onRefreshFriendRequests,
 }) {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchState, setSearchState] = useState({
+    query: '',
+    page: 1,
+    users: [],
+    hasNext: false,
+    loading: true,
+    error: '',
+  });
   const [openFriendId, setOpenFriendId] = useState(null);
+  const [requestedUserIds, setRequestedUserIds] = useState(() => new Set());
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
-  const normalizedSearchText = searchText.trim().toLowerCase();
-  const sourceDirectory = Array.isArray(friendDirectory) ? friendDirectory : [];
+  const normalizedSearchText = searchText.trim();
+  const isCurrentSearch =
+    searchState.query === normalizedSearchText && searchState.page === currentPage;
+  const isSearching = !isCurrentSearch || searchState.loading;
+  const sourceDirectory = isCurrentSearch ? searchState.users : emptyUsers;
+
+  useEffect(() => {
+    let isActive = true;
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        const result = await onSearchUsers?.(normalizedSearchText, currentPage - 1, pageSize);
+        if (!isActive) return;
+        setSearchState({
+          query: normalizedSearchText,
+          page: currentPage,
+          users: Array.isArray(result?.users)
+            ? normalizedSearchText ? result.users : shuffle(result.users)
+            : [],
+          hasNext: Boolean(result?.hasNext),
+          loading: false,
+          error: '',
+        });
+      } catch (error) {
+        if (!isActive) return;
+        setSearchState({
+          query: normalizedSearchText,
+          page: currentPage,
+          users: [],
+          hasNext: false,
+          loading: false,
+          error: error?.message ?? '계정을 검색하지 못했습니다.',
+        });
+      }
+    }, normalizedSearchText ? 250 : 0);
+
+    return () => {
+      isActive = false;
+      window.clearTimeout(timeoutId);
+    };
+  }, [normalizedSearchText, currentPage, onSearchUsers]);
+
   const visibleDirectory = useMemo(() => {
     const ownLoginId = normalizeId(currentLoginId);
     const ownUserId = normalizeId(currentUserId);
@@ -50,63 +100,39 @@ function AddFriendPage({
       return !isOwnLogin && !isOwnUser && !isAlreadyFriend;
     });
 
-    return shuffle(otherAccounts);
+    return otherAccounts;
   }, [sourceDirectory, currentLoginId, currentUserId, friends]);
-  const numericSearchId = /^\d+$/.test(normalizedSearchText)
-    ? Number(normalizedSearchText)
-    : null;
-  const isOwnNumericId = numericSearchId != null
-    && String(currentUserId) === String(numericSearchId);
-  const filteredFriends = visibleDirectory.filter((friend) => {
-    if (numericSearchId != null) {
-      return String(friend.userId ?? friend.memberId ?? friend.id) === String(numericSearchId);
-    }
-
-    const searchableValues = [
-      friend.loginId,
-      friend.name,
-      friend.nickname,
-      friend.userId,
-      friend.id,
-    ];
-
-    return searchableValues.some((value) => (
-      String(value ?? '').toLowerCase().includes(normalizedSearchText)
-    ));
-  });
-  const searchResults = isOwnNumericId ? [] : filteredFriends;
-  const totalPages = Math.ceil(searchResults.length / pageSize);
-  const page = Math.min(currentPage, totalPages || 1);
-  const pageNumbers = [...new Set([
-    1,
-    page - 1,
-    page,
-    page + 1,
-    totalPages,
-  ].filter((pageNumber) => pageNumber >= 1 && pageNumber <= totalPages))].sort((a, b) => a - b);
-  const paginationItems = pageNumbers.flatMap((pageNumber, index) => (
+  const hasNextPage = isCurrentSearch && searchState.hasNext;
+  const pageNumbers = [
+    ...new Set(
+      [1, currentPage - 1, currentPage, ...(hasNextPage ? [currentPage + 1] : [])].filter(
+        (pageNumber) => pageNumber >= 1,
+      ),
+    ),
+  ].sort((a, b) => a - b);
+  const paginationItems = pageNumbers.flatMap((pageNumber, index) =>
     index > 0 && pageNumber - pageNumbers[index - 1] > 1
       ? [`ellipsis-${pageNumber}`, pageNumber]
-      : [pageNumber]
-  ));
-  const visibleFriends = searchResults.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
+      : [pageNumber],
   );
 
   function handleSearch(event) {
     setSearchText(event.target.value);
+  const visibleFriends = isSearching ? [] : visibleDirectory;
     setCurrentPage(1);
     setOpenFriendId(null);
   }
 
   async function handleAddFriend(friend) {
     try {
-      if (friend.isRequested || friend.isFriend || friend.isCurrentUser) return;
+      const userId = friend.userId ?? friend.id;
+      if (friend.isRequested || requestedUserIds.has(userId) || friend.isFriend || friend.isCurrentUser) return;
       await onAddFriend?.(friend);
     } catch {
       // App의 공통 API 오류 알림을 표시합니다.
     }
+      setRequestedUserIds((current) => new Set(current).add(userId));
+      setOpenFriendId(null);
   }
 
   async function handleAcceptRequest(friendshipId) {
@@ -128,7 +154,9 @@ function AddFriendPage({
   function friendActionLabel(friend) {
     if (friend.isCurrentUser) return '내 계정';
     if (friend.isFriend) return '이미 친구';
-    return friend.isRequested ? '신청 완료' : '친구 추가하기';
+    return friend.isRequested || requestedUserIds.has(friend.userId ?? friend.id)
+      ? '신청 완료'
+      : '친구 추가하기';
   }
 
   return (
@@ -155,13 +183,15 @@ function AddFriendPage({
             <span aria-label={`${friendRequests.length}건`}>{friendRequests.length}</span>
           </button>
         </div>
-        <div className="add-friend-list">
+        <div className={`add-friend-list${isSearching ? ' add-friend-list--loading' : ''}`}>
           {visibleFriends.map((friend) => (
             <div className="add-friend-profile" key={friend.id ?? friend.userId ?? friend.loginId}>
               <MeetingMyMemberProfile
                 id={friend.loginId ?? friend.name ?? friend.nickname ?? friend.id ?? ''}
                 role="회원"
-                profile_image={friend.profileImage ?? friend.profile_image}
+                profile_image={resolveApiAssetUrl(
+                  friend.profileImageUrl ?? friend.profileImage ?? friend.profile_image,
+                )}
                 isMenuOpen={openFriendId === (friend.id ?? friend.userId ?? friend.loginId)}
                 onToggle={() => setOpenFriendId((openId) => (
                   openId === (friend.id ?? friend.userId ?? friend.loginId)
@@ -173,53 +203,63 @@ function AddFriendPage({
               />
             </div>
           ))}
-          {searchResults.length === 0 && (
+          {isSearching ? (
+            <p className="add-friend-empty" role="status">계정을 불러오는 중입니다.</p>
+          ) : searchState.error ? (
+            <p className="add-friend-empty" role="alert">
+              {normalizedSearchText
+                ? '계정을 검색하지 못했습니다. 잠시 후 다시 시도해 주세요.'
+                : '계정 목록을 불러오지 못했습니다. 아이디로 검색해 보세요.'}
+            </p>
+          ) : visibleFriends.length === 0 && (
             <p className="add-friend-empty">
-              {isOwnNumericId
-                ? '내 계정은 친구 목록에 표시되지 않습니다.'
-                : normalizedSearchText
-                  ? '계정 검색 API가 없어 입력한 아이디의 가입 여부를 확인할 수 없습니다.'
-                  : '계정 검색 API가 없어 가입 계정 목록을 표시할 수 없습니다.'}
+              {normalizedSearchText
+                ? '검색 결과가 없습니다.'
+                : '표시할 계정이 없습니다. 아이디로 검색해 보세요.'}
             </p>
           )}
         </div>
-        {totalPages > 1 && (
+        {!isSearching && (currentPage > 1 || hasNextPage) && (
           <nav className="add-friend-pagination" aria-label="친구 목록 페이지 이동">
             <button
               type="button"
               onClick={() => {
-                setCurrentPage(page - 1);
+                setCurrentPage(currentPage - 1);
                 setOpenFriendId(null);
               }}
-              disabled={page === 1}
+              disabled={currentPage === 1}
               aria-label="이전 페이지"
             >
               &lt;
             </button>
-            {paginationItems.map((item) => typeof item === 'string' ? (
-              <span className="add-friend-pagination-gap" key={item} aria-hidden="true">…</span>
-            ) : (
-              <button
-                type="button"
-                key={item}
-                className={item === page ? 'is-current' : ''}
-                onClick={() => {
-                  setCurrentPage(item);
-                  setOpenFriendId(null);
-                }}
-                aria-label={`${item}페이지`}
-                aria-current={item === page ? 'page' : undefined}
-              >
-                {item}
-              </button>
-            ))}
+            {paginationItems.map((item) =>
+              typeof item === 'string' ? (
+                <span className="add-friend-pagination-gap" key={item} aria-hidden="true">
+                  …
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  key={item}
+                  className={item === currentPage ? 'is-current' : ''}
+                  onClick={() => {
+                    setCurrentPage(item);
+                    setOpenFriendId(null);
+                  }}
+                  aria-label={`${item}페이지`}
+                  aria-current={item === currentPage ? 'page' : undefined}
+                >
+                  {item}
+                </button>
+              ),
+            )}
             <button
               type="button"
               onClick={() => {
-                setCurrentPage(page + 1);
+                setCurrentPage(currentPage + 1);
                 setOpenFriendId(null);
               }}
-              disabled={page === totalPages}
+              disabled={!hasNextPage}
               aria-label="다음 페이지"
             >
               &gt;

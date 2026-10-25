@@ -238,6 +238,13 @@ export const meetingApi = {
   list: () => apiGet('/api/community/meetings'),
   get: (id) => apiGet(`/api/community/meetings/${id}`),
   create: (meeting) => apiPost('/api/community/meetings', meeting),
+export const userApi = {
+  search: (loginId, page = 0, size = 30) => {
+    const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
+    return apiGet(`/api/users/search?${params.toString()}`);
+  },
+};
+
   update: (id, meeting) => apiPut(`/api/community/meetings/${id}`, meeting),
   remove: (id) => apiDelete(`/api/community/meetings/${id}`),
   getLike: (id) => apiGet(`/api/contents/MEETING/${id}/like`),

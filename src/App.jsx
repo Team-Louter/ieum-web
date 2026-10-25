@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import LoginPage from './pages/LoginPage/LoginPage';
-import { getAccessToken } from './api/client';
+import { getAccessToken, userApi } from './api/client';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
 import useAccountActions from './app/useAccountActions';
@@ -207,7 +207,6 @@ function AppContent() {
     medications: data.medications ?? [],
     guardian: data.guardian ?? defaultGuardian,
     friends: data.friends ?? [],
-    friendDirectory: data.friendDirectory ?? [],
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],
     meetings: data.meetings ?? [],
@@ -229,6 +228,7 @@ function AppContent() {
     role: user.role,
 
     onAddFriend: friendActions.sendFriendRequest,
+    onSearchUsers: userApi.search,
     onAcceptFriendRequest: friendActions.acceptFriendRequest,
     onRejectFriendRequest: friendActions.rejectFriendRequest,
     onRemoveFriend: friendActions.removeFriend,
