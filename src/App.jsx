@@ -196,7 +196,7 @@ function AppContent() {
     onSendRecoveryCode: accountActions.sendRecoveryCode,
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
     onResetPassword: accountActions.resetPassword,
-    currentLoginId: savedAccount.loginId || user.loginId,
+    currentLoginId: user.loginId,
     accountEmail: savedAccount.email || '',
     signupEmail: savedAccount.registrationEmail || user.email || savedAccount.email || '',
 

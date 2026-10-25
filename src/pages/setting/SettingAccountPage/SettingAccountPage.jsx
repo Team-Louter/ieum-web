@@ -5,7 +5,7 @@ import SettingLegalDocument from './SettingLegalDocument';
 import './SettingLegalDocument.css';
 
 const accountItems = [
-  { id: 'loginId', title: '아이디', description: '계정에 표시할 아이디를 관리할 수 있습니다.', actionLabel: '수정하기' },
+  { id: 'loginId', title: '아이디', description: '회원가입할 때 설정한 로그인 아이디입니다.' },
   { id: 'email', title: '이메일', description: '계정에 표시할 이메일을 관리할 수 있습니다.', actionLabel: '수정하기' },
   { id: 'password', title: '비밀번호', description: '이메일 인증 후 비밀번호를 변경할 수 있습니다.', actionLabel: '변경하기' },
   { id: 'terms', title: '이용약관', description: '이음 서비스의 이용약관을 확인할 수 있습니다.', actionLabel: '확인하기' },
@@ -29,7 +29,6 @@ function SettingAccountPage({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [messageIsError, setMessageIsError] = useState(false);
-  const [displayLoginId, setDisplayLoginId] = useState(currentLoginId);
   const [displayEmail, setDisplayEmail] = useState(accountEmail);
   const [fieldValue, setFieldValue] = useState('');
 
@@ -43,7 +42,6 @@ function SettingAccountPage({
     setActiveDialog(itemId);
     setMessage('');
     setMessageIsError(false);
-    if (itemId === 'loginId') setFieldValue(displayLoginId);
     if (itemId === 'email') setFieldValue(displayEmail);
     if (itemId === 'password') {
       setEmail('');
@@ -58,14 +56,13 @@ function SettingAccountPage({
     event.preventDefault();
     const value = fieldValue.trim();
     if (!value) {
-      setMessage(field === 'email' ? '이메일을 입력해 주세요.' : '아이디를 입력해 주세요.');
+      setMessage('이메일을 입력해 주세요.');
       setMessageIsError(true);
       return;
     }
 
     try {
       await onLocalAccountChange?.(field, value);
-      if (field === 'loginId') setDisplayLoginId(value);
       if (field === 'email') setDisplayEmail(value);
       closeDialog();
     } catch (error) {
@@ -135,26 +132,11 @@ function SettingAccountPage({
         <SettingItem
           key={item.id}
           title={item.title}
-          description={item.id === 'loginId' && displayLoginId ? `로그인 아이디: ${displayLoginId}` : item.id === 'email' && displayEmail ? `이메일: ${displayEmail}` : item.description}
+          description={item.id === 'loginId' && currentLoginId ? `가입 아이디: ${currentLoginId}` : item.id === 'email' && displayEmail ? `이메일: ${displayEmail}` : item.description}
           actionLabel={item.actionLabel}
           onAction={() => openDialog(item.id)}
         />
       ))}
-
-      {activeDialog === 'loginId' && (
-        <SettingDialog title="로그인 아이디" onClose={closeDialog}>
-          <form className="setting-dialog__form" onSubmit={(event) => saveLocalAccountField(event, 'loginId')}>
-            <label className="setting-dialog__field">
-              표시 아이디
-              <input value={fieldValue} onChange={(event) => setFieldValue(event.target.value)} maxLength={40} required />
-            </label>
-            {message && <p className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`} role="status">{message}</p>}
-            <div className="setting-dialog__actions">
-              <button className="setting-dialog__button setting-dialog__button--primary" type="submit">저장하기</button>
-            </div>
-          </form>
-        </SettingDialog>
-      )}
 
       {activeDialog === 'email' && (
         <SettingDialog title="이메일" onClose={closeDialog}>
