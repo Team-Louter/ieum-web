@@ -16,6 +16,13 @@ export function toSharingCard(sharing = {}) {
   const sellerId = sharing.sellerId ?? null;
   const sellerLoginId =
     sharing.sellerLoginId ?? sharing.seller?.loginId ?? sharing.loginId ?? sharing.owner ?? '';
+  const sellerNickname = sharing.sellerNickname ?? sharing.seller?.nickname ?? '';
+  const sellerProfileImage = resolveApiAssetUrl(
+    sharing.sellerProfileImageUrl ??
+      sharing.seller?.profileImageUrl ??
+      sharing.seller?.profileImage ??
+      '',
+  );
 
   return {
     ...sharing,
@@ -29,7 +36,8 @@ export function toSharingCard(sharing = {}) {
     seller: {
       id: sellerLoginId || '판매자 정보 없음',
       loginId: sellerLoginId,
-      profileImage: profileFallback,
+      nickname: sellerNickname,
+      profileImage: sellerProfileImage || profileFallback,
     },
   };
 }

@@ -58,10 +58,12 @@ function FriendRequestsModal({ requests = [], onAccept, onReject, onClose }) {
             {requests.map((request) => {
               const friendshipId = request.friendshipId ?? request.id;
               const requesterId = request.fromUserId ?? request.userId;
-              const requesterName = request.fromUserNickname
-                ?? request.nickname
-                ?? request.loginId
-                ?? `사용자 ${requesterId ?? ''}`;
+              const requesterLoginId = request.fromUserLoginId ?? request.loginId ?? '';
+              const requesterNickname = request.fromUserNickname ?? request.nickname ?? '';
+              const requesterName =
+                requesterLoginId ||
+                requesterNickname ||
+                `사용자 ${requesterId ?? ''}`;
               const isProcessing = String(processingId) === String(friendshipId);
 
               return (
@@ -76,7 +78,11 @@ function FriendRequestsModal({ requests = [], onAccept, onReject, onClose }) {
                   />
                   <div className="friend-requests-modal__person">
                     <strong>{requesterName}</strong>
-                    {requesterId != null && <span>사용자 ID {requesterId}</span>}
+                    {requesterLoginId && requesterNickname && requesterLoginId !== requesterNickname ? (
+                      <span>{requesterNickname}</span>
+                    ) : !requesterLoginId && requesterId != null ? (
+                      <span>사용자 ID {requesterId}</span>
+                    ) : null}
                   </div>
                   <div className="friend-requests-modal__actions">
                     <button

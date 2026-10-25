@@ -1,4 +1,4 @@
-import { chatApi, friendApi } from '../client';
+import { chatApi, friendApi, resolveApiAssetUrl } from '../client';
 import { isDemoFallbackError, readDemoValue } from '../demoStore';
 import { asArray, loadApiOrDemo } from './common';
 
@@ -41,14 +41,21 @@ export async function loadChatPage({ demoScope, userId, onDefaultChatRoom }) {
     })
     .map((room) => {
       const friend = friendById.get(Number(room.partnerId));
-      const loginId = friend?.loginId ?? room.partnerLoginId ?? '';
+      const loginId = room.partnerLoginId ?? friend?.loginId ?? '';
 
       return {
         id: Number(room.id),
         partnerId: Number(room.partnerId),
         loginId,
-        name: loginId || friend?.nickname || room.name || `사용자 ${room.partnerId}`,
-        profileImage: friend?.profileImageUrl ?? '',
+        name:
+          loginId ||
+          room.partnerNickname ||
+          friend?.nickname ||
+          room.name ||
+          `사용자 ${room.partnerId}`,
+        profileImage: resolveApiAssetUrl(
+          room.partnerProfileImageUrl ?? friend?.profileImageUrl ?? '',
+        ),
       };
     });
 

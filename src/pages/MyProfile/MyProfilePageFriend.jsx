@@ -54,7 +54,7 @@ function MyProfilePageFriend({
             <li key={friend.friendshipId ?? friend.id ?? index}>
               <MeetingMyMemberProfile
                 profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
-                id={friend.nickname ?? friend.name ?? friend.id ?? ''}
+                id={friend.loginId ?? friend.nickname ?? friend.name ?? friend.id ?? ''}
                 role="회원"
                 isMenuOpen={openFriendId === (friend.friendshipId ?? friend.id ?? index)}
                 onToggle={() => setOpenFriendId((openId) => (
