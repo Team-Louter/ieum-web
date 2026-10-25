@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './MeetingKebabMenu.css';
 
-export default function MeetingKebabMenu({ image }) {
+export default function MeetingKebabMenu({ image, meeting }) {
 
   const [ isKebabMenu, setIsKebabMenu ] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +16,12 @@ export default function MeetingKebabMenu({ image }) {
             className="delete"
             onClick={(event) => {
               event.stopPropagation();
-              navigate("/meeting/management");
+              const meetingId = meeting?.id;
+              const hasNumericId = meetingId != null && /^\d+$/.test(String(meetingId));
+              navigate(
+                hasNumericId ? `/meeting/management/${meetingId}` : '/meeting/management',
+                { state: { meeting } },
+              );
             }}
           >
             모임 관리하기

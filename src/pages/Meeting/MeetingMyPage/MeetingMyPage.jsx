@@ -53,7 +53,7 @@ export default function MeetingMyPage({
               </p>
             </div>
           </div>
-          <MeetingKebabMenu image={dotSetting} />
+          <MeetingKebabMenu image={dotSetting} meeting={meeting} />
         </div>
         <div className="contents-horizen"></div>
         <MeetingMyAnnouncement
