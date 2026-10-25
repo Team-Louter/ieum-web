@@ -25,6 +25,10 @@
   font-size: var(--font-size-body);
 }
 
+.my-profile-info__nickname {
+  color: #777;
+}
+
 .my-profile-info__stats {
   display: flex;
   gap: 30px;

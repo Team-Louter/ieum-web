@@ -1,13 +1,15 @@
-import { friendApi, meetingApi, profileApi } from '../client';
+import { friendApi, meetingApi, profileApi, resolveApiAssetUrl } from '../client';
 import { toMeetingCard } from '../adapters';
 import { readDemoValue } from '../demoStore';
 import { asArray, isOwnedBy, loadApiOrDemo } from './common';
 
-function toProfile(profile, friendCount) {
+function toProfile(profile, friendCount, loginId) {
   return {
-    id: profile.nickname ?? '',
+    id: loginId || profile.loginId || '',
+    userId: profile.userId ?? null,
+    nickname: profile.nickname ?? '',
     introduction: profile.bio ?? '',
-    profileImage: profile.profileImageUrl ?? '',
+    profileImage: resolveApiAssetUrl(profile.profileImageUrl ?? ''),
     postCount: 0,
     friendCount,
   };
@@ -20,9 +22,7 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
     { nickname: loginId, bio: '' },
     demoScope,
   );
-  const friendRequest = userId
-    ? loadApiOrDemo(() => friendApi.list(userId), 'friends', [], demoScope)
-    : Promise.resolve(readDemoValue('friends', [], demoScope));
+  const friendRequest = loadApiOrDemo(() => friendApi.list(), 'friends', [], demoScope);
 
   const [profile, friends] = await Promise.all([profileRequest, friendRequest]);
   const friendItems = asArray(friends).map((friend) => ({
@@ -35,7 +35,14 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
     .filter((post) => isOwnedBy(loginId, post));
 
   const result = {
-    profile: { ...toProfile(profile, friendItems.length), ...savedProfile, friendCount: friendItems.length },
+    profile: {
+      ...toProfile(profile, friendItems.length, loginId),
+      ...savedProfile,
+      id: loginId || savedProfile.loginId || savedProfile.id || '',
+      nickname: profile.nickname ?? savedProfile.nickname ?? '',
+      userId: profile.userId ?? userId ?? null,
+      friendCount: friendItems.length,
+    },
     friends: friendItems,
     posts: ownPosts,
   };
