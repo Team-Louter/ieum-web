@@ -57,11 +57,6 @@ function SettingGeneralPage({
   return (
     <div className="setting-page-section">
       <SettingItem
-        title="다크모드"
-        description="화면 배경을 어둡게 설정해 눈을 보호하고 배터리 사용량을 줄입니다."
-        trailing={<SettingToggle checked={settings.darkMode} onChange={() => onToggle('darkMode')} label="다크모드" />}
-      />
-      <SettingItem
         title="복약 알림"
         description="설정한 시간에 복약 알림을 받습니다."
         trailing={<SettingToggle checked={settings.medicationAlert} onChange={() => onToggle('medicationAlert')} label="복약 알림" />}

@@ -8,7 +8,6 @@ import SettingSupportPage from '../SettingSupportPage/SettingSupportPage';
 import './SettingsPage.css';
 
 const initialSettings = {
-  darkMode: false,
   interactionAlert: false,
   mentionAlert: false,
   medicationAlert: true,
@@ -39,9 +38,8 @@ function SettingsPage({
   const [activeSection, setActiveSection] = useState('general');
   const [localSettings, setLocalSettings] = useState(() => {
     const savedSettings = {};
-    ['darkMode', 'interactionAlert', 'mentionAlert', 'guardianLocation'].forEach((key) => {
-      const savedValue = window.localStorage.getItem(`ieum.setting.${key}`)
-        ?? (key === 'darkMode' ? window.localStorage.getItem('ieum.darkMode') : null);
+    ['interactionAlert', 'mentionAlert', 'guardianLocation'].forEach((key) => {
+      const savedValue = window.localStorage.getItem(`ieum.setting.${key}`);
       if (savedValue !== null) savedSettings[key] = savedValue === 'true';
     });
     return savedSettings;
@@ -50,9 +48,8 @@ function SettingsPage({
 
   const toggle = (key) => {
     const nextValue = !settings[key];
-    if (['darkMode', 'interactionAlert', 'mentionAlert', 'guardianLocation'].includes(key)) {
+    if (['interactionAlert', 'mentionAlert', 'guardianLocation'].includes(key)) {
       window.localStorage.setItem(`ieum.setting.${key}`, String(nextValue));
-      if (key === 'darkMode') window.localStorage.setItem('ieum.darkMode', String(nextValue));
       setLocalSettings((currentSettings) => ({ ...currentSettings, [key]: nextValue }));
       return;
     }
@@ -91,7 +88,7 @@ function SettingsPage({
   };
 
   return (
-    <div className={`settings-layout${settings.darkMode ? ' settings-layout--dark' : ''}`}>
+    <div className="settings-layout">
       <div className="settings-layout__main">
         <section className="settings-page" aria-label="설정">
           <SettingSidebar
