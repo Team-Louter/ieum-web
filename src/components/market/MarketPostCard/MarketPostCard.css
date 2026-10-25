@@ -17,12 +17,20 @@
   background-color: #dfdfdf;
 }
 
-.market-post-card > img {
+.market-post-card__image {
+  position: relative;
   width: 250px;
   height: 250px;
   flex-shrink: 0;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: 10px;
+}
+
+.market-post-card__image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .market-post-card__info {
@@ -46,7 +54,13 @@
 }
 
 .market-post-card__status {
-  color: #329153;
-  font-size: var(--font-size-body);
-  font-weight: bold;
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgb(35 41 37 / 82%);
+  color: #fff;
+  font-size: var(--font-size-small, 18px);
+  font-weight: 700;
 }
