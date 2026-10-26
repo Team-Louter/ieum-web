@@ -62,8 +62,8 @@
 
 .setting-dialog__close img {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
 }
 
 .setting-dialog__content {
