@@ -8,6 +8,13 @@ function isEmailFormatValid(emailValue) {
     return atPosition > 0 && dotPosition > atPosition + 1 && dotPosition < emailValue.length - 1;
 }
 
+function isPasswordValid(passwordValue) {
+    return passwordValue.length >= 8
+        && /[a-zA-Z]/.test(passwordValue)
+        && /[0-9]/.test(passwordValue)
+        && /[^a-zA-Z0-9]/.test(passwordValue);
+}
+
 function IDsearch({ type, onClose }) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
@@ -61,8 +68,8 @@ function IDsearch({ type, onClose }) {
 
     async function handleReset(event) {
         event.preventDefault();
-        if (newPassword.length < 8) {
-            setErrorMessage('새 비밀번호는 8자 이상 입력해 주세요.');
+        if (!isPasswordValid(newPassword)) {
+            setErrorMessage('비밀번호는 8자 이상, 영문자·숫자·특수문자를 포함해야 합니다.');
             return;
         }
         setIsSubmitting(true);

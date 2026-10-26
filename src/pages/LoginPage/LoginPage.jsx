@@ -98,7 +98,7 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
                     className="find"
                     onClick={() => setFindType('password')}
                 >
-                    비밀번호 찾기
+                    비밀번호 재설정
                 </button>
             </div>
 
