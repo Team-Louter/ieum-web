@@ -45,6 +45,15 @@
   padding: 0 40px;
 }
 
+.meeting-management-members .member-list {
+  width: 100%;
+}
+
+.meeting-management-members .member-list__empty {
+  min-height: 110px;
+  padding: 12px 16px;
+}
+
 .meeting-management-message {
   margin: 0;
   color: #767676;
