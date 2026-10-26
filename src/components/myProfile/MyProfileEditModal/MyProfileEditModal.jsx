@@ -1,9 +1,12 @@
 import './MyProfileEditModal.css';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import closeIcon from '../../../assets/images/close.svg';
 import profileImg from '../../../assets/images/profile.png';
 
 function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = '' }) {
+  const previewUrlRef = useRef('');
+  const [previewImage, setPreviewImage] = useState('');
+
   useEffect(() => {
     /** Escape 키 입력 시 프로필 수정 모달을 닫습니다. */
     function handleKeyDown(event) {
@@ -16,11 +19,27 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCancel]);
 
+  useEffect(
+    () => () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    },
+    [],
+  );
+
   /** 배경을 클릭했을 때 프로필 수정 모달을 닫습니다. */
   function handleBackdropClick(event) {
     if (event.target === event.currentTarget) {
       onCancel();
     }
+  }
+
+  function handleProfileImageChange(event) {
+    const selectedImage = event.target.files?.[0];
+    if (!selectedImage) return;
+
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = URL.createObjectURL(selectedImage);
+    setPreviewImage(previewUrlRef.current);
   }
 
   function handleSubmit(event) {
@@ -52,7 +71,13 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
           <div id="input-container">
             <div id="profile-image-input-container">
               <img
-                src={profile.profileImage || profile.profile_image || profileImg}
+                src={
+                  previewImage ||
+                  profile.profileImage ||
+                  profile.profile_image ||
+                  profile.profileImageUrl ||
+                  profileImg
+                }
                 alt="프로필 사진"
                 onError={(event) => {
                   event.currentTarget.onerror = null;
@@ -68,6 +93,7 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
                 hidden
                 id="profile-image-input"
                 name="profileImage"
+                onChange={handleProfileImageChange}
               />
             </div>
             <div>
