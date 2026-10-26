@@ -106,7 +106,20 @@ export default function useMeetingActions({ demoScope, user, runAction, movePage
 
   async function joinMeeting(meetingId) {
     if (meetingId == null) throw new Error('가입할 모임을 찾을 수 없습니다.');
-    return runAction(() => meetingApi.join(meetingId), '모임 가입 요청을 보냈습니다.');
+    return runAction(() => meetingApi.join(meetingId), (membership) => {
+      const status = String(
+        membership?.status ?? membership?.membershipStatus ?? membership?.data?.status ?? '',
+      ).toUpperCase();
+      const isPending = [
+        'PENDING',
+        'PENDING_APPROVAL',
+        'WAITING',
+        'WAITING_APPROVAL',
+        'REQUESTED',
+      ].includes(status);
+
+      return isPending ? '모임 가입 신청을 보냈습니다.' : '모임에 가입했습니다.';
+    });
   }
 
   async function leaveMeeting(meetingId) {

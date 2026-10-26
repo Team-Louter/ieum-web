@@ -124,7 +124,11 @@ function AppContent() {
   async function runAction(action, successMessage) {
     try {
       const result = await action();
-      setFeedback(successMessage ?? '저장했습니다.');
+      const message =
+        typeof successMessage === 'function'
+          ? successMessage(result)
+          : (successMessage ?? '저장했습니다.');
+      setFeedback(message);
       setFeedbackIsError(false);
       setReloadKey((value) => value + 1);
       return result;
