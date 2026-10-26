@@ -232,7 +232,7 @@ function AddFriendPage({
                   : '친구의 아이디를 검색하면 계정을 찾을 수 있어요.'
               }
             />
-          ) : null
+          ) : null}
         </div>
         {!isSearching && (currentPage > 1 || hasNextPage) && (
           <nav className="add-friend-pagination" aria-label="친구 목록 페이지 이동">
