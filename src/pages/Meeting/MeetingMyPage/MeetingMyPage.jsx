@@ -20,6 +20,16 @@ const PENDING_MEMBERSHIP_STATUSES = [
   'WAITING_APPROVAL',
   'REQUESTED',
 ];
+const NOT_JOINED_MEMBERSHIP_STATUSES = [
+  'NONE',
+  'NOT_JOINED',
+  'NOT_MEMBER',
+  'REJECTED',
+  'DECLINED',
+  'LEFT',
+  'WITHDRAWN',
+  'INACTIVE',
+];
 
 function getRoleLabel(role) {
   const normalizedRole = String(role ?? '').trim().toUpperCase().replace(/^ROLE_/, '');
@@ -77,10 +87,12 @@ export default function MeetingMyPage({
       (currentLoginId && member.loginId === currentLoginId),
   );
   const membershipStatus = String(
-    meeting.membershipStatus ??
-      membership?.status ??
+    membership?.status ??
       membership?.membershipStatus ??
       membership?.data?.status ??
+      membership?.data?.membershipStatus ??
+      meeting.membershipStatus ??
+      currentMember?.status ??
       '',
   ).toUpperCase();
   const roleLabel = getRoleLabel(
@@ -95,6 +107,11 @@ export default function MeetingMyPage({
     (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
     Boolean(currentLoginId && meeting.owner === currentLoginId);
   const isPending = PENDING_MEMBERSHIP_STATUSES.includes(membershipStatus);
+  const hasExplicitNotJoinedStatus = NOT_JOINED_MEMBERSHIP_STATUSES.includes(membershipStatus);
+  const isActiveMember =
+    ACTIVE_MEMBERSHIP_STATUSES.includes(membershipStatus) ||
+    ACTIVE_MEMBERSHIP_STATUSES.includes(String(currentMember?.status ?? '').toUpperCase()) ||
+    (!membershipStatus && roleLabel === '회원');
   const canManage = Boolean(
     membership?.canManage ||
       membership?.data?.canManage ||
@@ -107,9 +124,7 @@ export default function MeetingMyPage({
     : (membership?.canLeave ??
       membership?.data?.canLeave ??
       meeting.canLeave ??
-      (ACTIVE_MEMBERSHIP_STATUSES.includes(membershipStatus) ||
-        (!isPending && Boolean(membership || currentMember)) ||
-        roleLabel === '회원'));
+      (isActiveMember && !hasExplicitNotJoinedStatus));
   const myRoleLabel =
     roleLabel ||
     (isOwner
