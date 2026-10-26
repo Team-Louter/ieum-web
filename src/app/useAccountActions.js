@@ -49,17 +49,17 @@ export default function useAccountActions({
 
     setFeedback(
       role === 'ROLE_GUARDIAN'
-        ? '회원가입이 완료되었습니다. 보호자 설정에서 어르신의 가입 이메일로 연결할 수 있습니다.'
-        : '회원가입이 완료되었습니다. 보호자에게 어르신 계정의 가입 이메일을 전달해 연결해 주세요.',
+        ? '회원가입이 완료되었습니다. 어르신이 보호자 연결을 요청하면 연결 목록에서 확인할 수 있습니다.'
+        : '회원가입이 완료되었습니다. 보호자 설정에서 보호자의 가입 이메일로 연결할 수 있습니다.',
     );
     setFeedbackIsError(false);
     movePage('/neighbor');
   }
 
-  async function connectSenior(seniorEmail) {
+  async function connectGuardian(guardianEmail) {
     return runAction(
-      () => familyApi.connect(seniorEmail),
-      '어르신 계정을 연결했습니다.',
+      () => familyApi.connectGuardian(guardianEmail),
+      '보호자 계정을 연결했습니다.',
     );
   }
 
@@ -199,7 +199,7 @@ export default function useAccountActions({
   return {
     login,
     signup,
-    connectSenior,
+    connectGuardian,
     disconnectFamily,
     updateProfile,
     changeSetting,

@@ -16,7 +16,7 @@ export async function loadGuardianPage({ demoScope }) {
         homeAddress: '',
         homeCoordinates: null,
         lastLoginText: '연결된 어르신이 없습니다.',
-        statusMessage: '보호자 설정에서 어르신을 연결해 주세요.',
+        statusMessage: '어르신 계정에서 보호자 연결을 신청해 주세요.',
       },
       medications: [],
     };

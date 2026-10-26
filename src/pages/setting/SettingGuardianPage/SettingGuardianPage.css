@@ -24,5 +24,11 @@
 }
 
 .setting-guardian-manager__actions {
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+}
+
+.setting-guardian-manager__actions .setting-dialog__button {
+  width: 100%;
 }

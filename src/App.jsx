@@ -203,7 +203,7 @@ function AppContent() {
     onProfileUpdate: accountActions.updateProfile,
     onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccountData,
-    onFamilyConnect: accountActions.connectSenior,
+    onFamilyConnect: accountActions.connectGuardian,
     onFamilyDisconnect: accountActions.disconnectFamily,
     onSendRecoveryCode: accountActions.sendRecoveryCode,
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
