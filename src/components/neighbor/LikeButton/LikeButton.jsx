@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './LikeButton.css';
 
 /** 게시물 좋아요 상태를 전환하는 버튼입니다. */
-function LikeButton({ isLiked: controlledIsLiked, onToggle }) {
+function LikeButton({ isLiked: controlledIsLiked, likeCount = 0, onToggle }) {
   const [localIsLiked, setLocalIsLiked] = useState(false);
   const isControlled = controlledIsLiked !== undefined && typeof onToggle === 'function';
   const isLiked = isControlled ? controlledIsLiked : localIsLiked;
@@ -31,7 +31,7 @@ function LikeButton({ isLiked: controlledIsLiked, onToggle }) {
       >
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z" />
       </svg>
-      <span>좋아요</span>
+      <span>{likeCount}</span>
     </button>
   );
 }
