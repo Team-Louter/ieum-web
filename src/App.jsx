@@ -218,6 +218,7 @@ function AppContent() {
     medicationSchedule: data.medicationSchedule ?? [],
     medications: data.medications ?? [],
     guardian: data.guardian ?? defaultGuardian,
+    elders: data.elders ?? [],
     friends: data.friends ?? [],
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],

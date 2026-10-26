@@ -53,22 +53,30 @@ function findAddressCoordinates(address) {
 function GuardianPage({
   guardian = dummyGuardian,
   medications = dummyGuardianMedications,
+  elders = [],
   onLocationRefresh,
   isLoading = false,
   apiError = '',
 }) {
-  const guardianSource = guardian ?? {};
+  const [selectedElderId, setSelectedElderId] = useState(() =>
+    elders[0] ? String(elders[0].id) : '',
+  );
+  const selectedElder =
+    elders.find((elder) => String(elder.id) === selectedElderId) ?? elders[0] ?? null;
+  const guardianSource = selectedElder ?? guardian ?? {};
   const guardianData = {
     ...dummyGuardian,
     ...guardianSource,
-    elderName: guardianSource.elderName?.trim() || dummyGuardian.elderName,
+    elderName:
+      guardianSource.elderName?.trim() || guardianSource.loginId?.trim() || dummyGuardian.elderName,
     homeAddress: guardianSource.homeAddress?.trim() || '',
     homeCoordinates: guardianSource.homeCoordinates ?? null,
     homeRadiusMeters: guardianSource.homeRadiusMeters ?? dummyGuardian.homeRadiusMeters,
     lastLoginText: guardianSource.lastLoginText?.trim() || dummyGuardian.lastLoginText,
     statusMessage: guardianSource.statusMessage?.trim() || dummyGuardian.statusMessage,
   };
-  const medicationItems = Array.isArray(medications) ? medications : [];
+  const selectedMedications = selectedElder ? selectedElder.medications : medications;
+  const medicationItems = Array.isArray(selectedMedications) ? selectedMedications : [];
   const [isKakaoMapReady, setIsKakaoMapReady] = useState(false);
   const [resolvedHome, setResolvedHome] = useState(null);
   const homeLocation =
@@ -139,7 +147,30 @@ function GuardianPage({
         <h1 id="guardian-page-title" className="guardian-visually-hidden">
           보호자 기능
         </h1>
-        <div className="guardian-page__content">
+        <div
+          className={`guardian-page__content${elders.length > 1 ? ' guardian-page__content--elder-tabs' : ''}`}
+        >
+          {elders.length > 1 && (
+            <div className="guardian-page__elder-tabs" role="group" aria-label="어르신 선택">
+              {elders.map((elder) => {
+                const elderId = String(elder.id);
+                const isSelected = String(selectedElder?.id) === elderId;
+
+                return (
+                  <button
+                    key={elderId}
+                    className={`guardian-page__elder-tab${isSelected ? ' guardian-page__elder-tab--active' : ''}`}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => setSelectedElderId(elderId)}
+                  >
+                    {elder.loginId || elder.elderName || '어르신'}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           <GuardianStatusBanner
             lastLoginText={guardianData.lastLoginText}
             message={guardianData.statusMessage}

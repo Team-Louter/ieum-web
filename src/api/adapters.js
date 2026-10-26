@@ -96,8 +96,18 @@ export function toGuardianMedication(medication = {}) {
 
 export function elapsedLoginText(lastActiveAt) {
   if (!lastActiveAt) return '최근 접속 정보를 확인할 수 없습니다.';
-  const parsed = new Date(lastActiveAt);
+  // 대시보드 API의 LocalDateTime에는 시간대가 빠져 있습니다.
+  // 배포 서버 시각(UTC)을 기준으로 내려오므로 시간대가 없는 값은 UTC로 읽습니다.
+  const timestamp = String(lastActiveAt);
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(timestamp);
+  const parsed = new Date(hasTimezone ? timestamp : `${timestamp}Z`);
   if (Number.isNaN(parsed.getTime())) return '최근 접속 정보를 확인할 수 없습니다.';
-  const hours = Math.max(0, Math.floor((Date.now() - parsed.getTime()) / 3_600_000));
+  const elapsedMilliseconds = Math.max(0, Date.now() - parsed.getTime());
+
+  if (elapsedMilliseconds < 3_600_000) {
+    return '어르신께서 조금 전에 접속하셨습니다.';
+  }
+
+  const hours = Math.floor(elapsedMilliseconds / 3_600_000);
   return `어르신께서 ${hours}시간 전에 접속하셨습니다.`;
 }
