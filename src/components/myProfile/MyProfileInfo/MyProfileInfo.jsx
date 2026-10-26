@@ -25,7 +25,7 @@ function MyProfileInfo({ profile = {} }) {
       />
       <div className="my-profile-info__text">
         <p>{displayName}</p>
-        <p>{introduction || '내 소개'}</p>
+        <p>{introduction?.trim() || '내 소개가 없습니다'}</p>
         <div className="my-profile-info__stats">
           <p>게시물 {formatCount(postCount)}</p>
           <p>친구 {formatCount(friendCount)}</p>
