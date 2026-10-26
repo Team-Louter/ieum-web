@@ -11,11 +11,11 @@
 }
 
 .market-post-status--in-progress {
-  background: #fff7e6;
-  color: #805d1b;
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
 .market-post-status--complete {
-  background: #f0fbf3;
-  color: #287344;
+  background: #eeeeee;
+  color: #616161;
 }
