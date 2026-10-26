@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import closeIcon from '../../../assets/images/close.svg';
 import './SettingDialog.css';
 
 function SettingDialog({ title, description, onClose, children, className = '' }) {
@@ -34,7 +35,7 @@ function SettingDialog({ title, description, onClose, children, className = '' }
             onClick={onClose}
             aria-label="닫기"
           >
-            ×
+            <img src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </header>
         <div className="setting-dialog__content">{children}</div>
