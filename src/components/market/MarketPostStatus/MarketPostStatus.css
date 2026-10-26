@@ -7,7 +7,7 @@
   border-radius: 8px;
   font-size: var(--font-size-small, 18px);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgb(30 90 50 / 12%);
+  box-shadow: none;
 }
 
 .market-post-status--in-progress {
