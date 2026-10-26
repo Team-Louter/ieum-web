@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
-import LoginPage from './pages/LoginPage/LoginPage';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { getAccessToken, userApi } from './api/client';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
@@ -292,7 +292,11 @@ function AppContent() {
   };
 
   if (!Page) {
-    return <LoginPage onNavigate={movePage} onLogin={accountActions.login} />;
+    return (
+      <NotFoundPage
+        onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')}
+      />
+    );
   }
 
   if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {
