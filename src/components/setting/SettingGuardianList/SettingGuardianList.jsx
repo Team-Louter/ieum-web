@@ -7,6 +7,7 @@ function SettingGuardianList({
   isEditing = false,
   isBusy = false,
   onRemove,
+  displayLoginId = false,
   emptyMessage = '연결된 보호자/어르신이 없습니다.',
   isLoading = false,
   apiError = '',
@@ -30,7 +31,9 @@ function SettingGuardianList({
         const guardianName =
           typeof guardian === 'string'
             ? guardian
-            : (guardian.nickname ?? guardian.name ?? guardian.id ?? '');
+            : (displayLoginId
+                ? (guardian.loginId ?? guardian.id ?? '')
+                : (guardian.nickname ?? guardian.name ?? guardian.id ?? ''));
         const guardianImage =
           typeof guardian === 'string'
             ? profileImg
