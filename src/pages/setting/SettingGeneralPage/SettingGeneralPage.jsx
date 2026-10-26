@@ -121,7 +121,7 @@ function SettingGeneralPage({
                   {formMessage}
                 </p>
               )}
-              <div className="setting-dialog__actions">
+              <div className="setting-dialog__actions setting-general-page__medication-submit-actions">
                 <button
                   className="setting-dialog__button setting-dialog__button--primary"
                   type="submit"

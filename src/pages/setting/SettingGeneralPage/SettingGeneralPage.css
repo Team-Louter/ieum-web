@@ -3,3 +3,12 @@
   flex-direction: column;
   gap: 22px;
 }
+
+.setting-general-page__medication-manager .setting-general-page__medication-submit-actions {
+  display: block;
+  width: 100%;
+}
+
+.setting-general-page__medication-manager .setting-general-page__medication-submit-actions > button {
+  width: 100%;
+}
