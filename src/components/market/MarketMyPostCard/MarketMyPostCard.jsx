@@ -1,4 +1,5 @@
 import './MarketMyPostCard.css';
+import MarketPostStatus from '../MarketPostStatus/MarketPostStatus';
 
 function MarketMyPostCard({
   post = {},
@@ -17,18 +18,14 @@ function MarketMyPostCard({
 
   return (
     <article className="market-my-post-card">
-      <img src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
+      <div className="market-my-post-card__image">
+        <img src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
+        <MarketPostStatus complete={isComplete} />
+      </div>
       <div className="market-my-post-card__info">
         <p>{title}</p>
         <p>{price}</p>
         <p>{address}</p>
-        <p
-          className={
-            isComplete ? 'market-my-post-card__status is-complete' : 'market-my-post-card__status'
-          }
-        >
-          {isComplete ? '거래완료' : '판매중'}
-        </p>
       </div>
       <div className="market-my-post-card__button-container">
         <button type="button" disabled={isComplete} onClick={() => onMarkSold?.(post.id)}>

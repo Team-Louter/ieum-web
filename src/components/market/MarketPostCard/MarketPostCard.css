@@ -52,16 +52,3 @@
 .market-post-card__address {
   color: #555;
 }
-
-.market-post-card__status {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: #f0fbf3;
-  color: #287344;
-  font-size: var(--font-size-small, 18px);
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgb(30 90 50 / 12%);
-}
