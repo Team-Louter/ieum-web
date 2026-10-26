@@ -12,6 +12,8 @@ function PostCard({
   onCommentToggle,
   onLikeToggle,
   onSubmitComment,
+  isLoading = false,
+  apiError = '',
 }) {
   const author = post.author ?? {};
   const image = contentImg ?? post.image;
@@ -50,6 +52,8 @@ function PostCard({
           onToggle={onCommentToggle}
           comments={post.comments}
           onSubmitComment={onSubmitComment}
+          isLoading={isLoading}
+          apiError={apiError}
         />
       </div>
       <div className="content-info-p">

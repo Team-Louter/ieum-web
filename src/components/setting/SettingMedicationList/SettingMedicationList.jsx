@@ -1,10 +1,20 @@
 import './SettingMedicationList.css';
+import EmptyState from '../../common/EmptyState/EmptyState';
 
-function SettingMedicationList({ schedule = [], onDelete }) {
-  const scheduleItems = schedule ?? [];
+function SettingMedicationList({ schedule = [], onDelete, isLoading = false, apiError = '' }) {
+  const scheduleItems = Array.isArray(schedule) ? schedule : [];
 
   if (!scheduleItems.length) {
-    return <p className="setting-medication-list__empty">등록된 복약 정보가 없습니다.</p>;
+    if (isLoading || apiError) return null;
+
+    return (
+      <EmptyState
+        compact
+        className="setting-medication-list__empty"
+        title="등록된 복약 정보가 없어요"
+        description="복약 정보를 추가하면 이곳에서 확인할 수 있어요."
+      />
+    );
   }
 
   return (

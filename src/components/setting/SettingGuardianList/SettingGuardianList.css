@@ -22,9 +22,8 @@
 }
 
 .setting-guardian-list__empty {
+  min-height: 140px;
   margin: 8px 0 2px;
-  color: #777;
-  font-size: var(--font-size-small);
 }
 
 .setting-guardian-list__remove {

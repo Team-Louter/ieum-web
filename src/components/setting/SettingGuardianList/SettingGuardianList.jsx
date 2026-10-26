@@ -1,5 +1,6 @@
 import './SettingGuardianList.css';
 import profileImg from '../../../assets/images/profile.png';
+import EmptyState from '../../common/EmptyState/EmptyState';
 
 function SettingGuardianList({
   guardians = [],
@@ -7,9 +8,20 @@ function SettingGuardianList({
   isBusy = false,
   onRemove,
   emptyMessage = '연결된 보호자/어르신이 없습니다.',
+  isLoading = false,
+  apiError = '',
 }) {
   if (!guardians.length) {
-    return <p className="setting-guardian-list__empty">{emptyMessage}</p>;
+    if (isLoading || apiError) return null;
+
+    return (
+      <EmptyState
+        compact
+        className="setting-guardian-list__empty"
+        title="연결된 계정이 없어요"
+        description={emptyMessage}
+      />
+    );
   }
 
   return (

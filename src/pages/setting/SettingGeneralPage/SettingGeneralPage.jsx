@@ -12,6 +12,8 @@ function SettingGeneralPage({
   onMedicationScheduleEdit,
   onMedicationCreate,
   onMedicationDelete,
+  isLoading = false,
+  apiError = '',
 }) {
   const [isMedicationDialogOpen, setIsMedicationDialogOpen] = useState(false);
   const [name, setName] = useState('');
@@ -74,7 +76,11 @@ function SettingGeneralPage({
           actionLabel="수정하기"
           onAction={openMedicationDialog}
         >
-          <SettingMedicationList schedule={medicationSchedule} />
+          <SettingMedicationList
+            schedule={medicationSchedule}
+            isLoading={isLoading}
+            apiError={apiError}
+          />
         </SettingItem>
       )}
 
@@ -88,6 +94,8 @@ function SettingGeneralPage({
             <SettingMedicationList
               schedule={medicationSchedule}
               onDelete={handleMedicationDelete}
+              isLoading={isLoading}
+              apiError={apiError}
             />
             <form className="setting-dialog__form" onSubmit={handleMedicationCreate}>
               <label className="setting-dialog__field">

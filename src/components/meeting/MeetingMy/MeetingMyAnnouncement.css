@@ -93,10 +93,9 @@
 }
 
 .Announcement-card--empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #767676;
+  width: 700px;
+  min-height: 200px;
+  margin-top: 20px;
 }
 
 .announcement-dialog-backdrop {

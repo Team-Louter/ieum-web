@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MeetingMyMemberProfile from './MeetingMyMemberProfile';
 import MeetingMyMemberTitle from './MeetingMyMemberTitle';
+import EmptyState from '../../common/EmptyState/EmptyState';
 import './MeetingMyMemberList.css';
 
 export default function MeetingMyMemberList({
@@ -11,6 +12,8 @@ export default function MeetingMyMemberList({
   meetingId,
   onMore,
   currentUserId,
+  isLoading = false,
+  apiError = '',
 }) {
   const [openMemberIndex, setOpenMemberIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,19 +38,28 @@ export default function MeetingMyMemberList({
         showMore={Boolean(maxVisible || onMore)}
       />
       <div className="member-list">
-        {visibleMembers.map((member, memberIndex) => (
-          <MeetingMemberItem
-            key={member.id ?? `${firstMemberIndex + memberIndex}`}
-            member={member}
-            currentUserId={currentUserId}
-            canManage={canManage}
-            isMenuOpen={openMemberIndex === memberIndex}
-            onToggle={() =>
-              setOpenMemberIndex((openIndex) => (openIndex === memberIndex ? null : memberIndex))
-            }
-            onMemberAction={onMemberAction}
+        {visibleMembers.length > 0 ? (
+          visibleMembers.map((member, memberIndex) => (
+            <MeetingMemberItem
+              key={member.id ?? `${firstMemberIndex + memberIndex}`}
+              member={member}
+              currentUserId={currentUserId}
+              canManage={canManage}
+              isMenuOpen={openMemberIndex === memberIndex}
+              onToggle={() =>
+                setOpenMemberIndex((openIndex) => (openIndex === memberIndex ? null : memberIndex))
+              }
+              onMemberAction={onMemberAction}
+            />
+          ))
+        ) : !isLoading && !apiError ? (
+          <EmptyState
+            compact
+            className="member-list__empty"
+            title="아직 모임 회원이 없어요"
+            description="모임 회원이 표시되면 이곳에서 확인할 수 있어요."
           />
-        ))}
+        ) : null}
       </div>
       {totalPages > 1 && (
         <nav className="member-pagination" aria-label="회원 목록 페이지 이동">

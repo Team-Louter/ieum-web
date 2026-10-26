@@ -27,6 +27,8 @@ export default function MeetingMyPage({
   onAnnouncementCreate,
   onAnnouncementUpdate,
   onAnnouncementDelete,
+  isLoading = false,
+  apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
@@ -110,6 +112,8 @@ export default function MeetingMyPage({
           onCreate={onAnnouncementCreate}
           onUpdate={onAnnouncementUpdate}
           onDelete={onAnnouncementDelete}
+          isLoading={isLoading}
+          apiError={apiError}
         />
         <div className="contents-horizen"></div>
         <MeetingMyMemberList
@@ -119,6 +123,8 @@ export default function MeetingMyPage({
           canManage={Boolean(canManage)}
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
+          isLoading={isLoading}
+          apiError={apiError}
         />
       </div>
     </Layout>

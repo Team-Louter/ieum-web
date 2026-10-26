@@ -25,6 +25,8 @@ export default function MeetingManagementPage({
   currentUserId,
   onSubmit,
   onMemberAction,
+  isLoading = false,
+  apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
@@ -106,6 +108,8 @@ export default function MeetingManagementPage({
             canManage={Boolean(canManage)}
             currentUserId={currentUserId}
             onMemberAction={onMemberAction}
+            isLoading={isLoading}
+            apiError={apiError}
           />
         </section>
       </div>

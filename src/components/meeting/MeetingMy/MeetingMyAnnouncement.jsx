@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './MeetingMyAnnouncement.css';
 import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
+import EmptyState from '../../common/EmptyState/EmptyState';
 
 export default function MeetingMyAnnouncement({
   announcement = {},
@@ -11,13 +12,16 @@ export default function MeetingMyAnnouncement({
   onCreate,
   onUpdate,
   onDelete,
+  isLoading = false,
+  apiError = '',
 }) {
   const navigate = useNavigate();
   const [isListOpen, setIsListOpen] = useState(false);
   const [editingNoticeId, setEditingNoticeId] = useState(null);
   const [editValues, setEditValues] = useState({ title: '', content: '' });
-  const noticeList = notices.length
-    ? notices
+  const noticeItems = Array.isArray(notices) ? notices : [];
+  const noticeList = noticeItems.length
+    ? noticeItems
     : announcement.title
       ? [announcement]
       : [];
@@ -97,11 +101,14 @@ export default function MeetingMyAnnouncement({
             <p className="announcement-card-info">{latestNotice.content ?? ''}</p>
           </div>
         </div>
-      ) : (
-        <div className="Announcement-card Announcement-card--empty">
-          아직 등록된 공지사항이 없습니다.
-        </div>
-      )}
+      ) : !isLoading && !apiError ? (
+        <EmptyState
+          compact
+          className="Announcement-card--empty"
+          title="등록된 공지사항이 없어요"
+          description="새 공지사항을 올리면 이곳에서 확인할 수 있어요."
+        />
+      ) : null}
 
       {isListOpen && (
         <div className="announcement-dialog-backdrop" onMouseDown={() => setIsListOpen(false)}>
@@ -124,59 +131,67 @@ export default function MeetingMyAnnouncement({
               </button>
             </header>
             <div className="announcement-dialog__list">
-              {noticeList.map((notice) => (
-                <article className="announcement-dialog__item" key={notice.id ?? notice.title}>
-                  {editingNoticeId === notice.id ? (
-                    <form className="announcement-dialog__edit" onSubmit={saveEdit}>
-                      <input
-                        aria-label="공지 제목"
-                        value={editValues.title}
-                        required
-                        onChange={(event) =>
-                          setEditValues((current) => ({ ...current, title: event.target.value }))
-                        }
-                      />
-                      <textarea
-                        aria-label="공지 내용"
-                        value={editValues.content}
-                        required
-                        onChange={(event) =>
-                          setEditValues((current) => ({ ...current, content: event.target.value }))
-                        }
-                      />
-                      <div className="announcement-dialog__item-actions">
-                        <button type="submit">저장</button>
-                        <button type="button" onClick={() => setEditingNoticeId(null)}>
-                          취소
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <h3>{notice.title}</h3>
-                      <p>{notice.content}</p>
-                      {canManage && (
+              {noticeList.length > 0 ? (
+                noticeList.map((notice) => (
+                  <article className="announcement-dialog__item" key={notice.id ?? notice.title}>
+                    {editingNoticeId === notice.id ? (
+                      <form className="announcement-dialog__edit" onSubmit={saveEdit}>
+                        <input
+                          aria-label="공지 제목"
+                          value={editValues.title}
+                          required
+                          onChange={(event) =>
+                            setEditValues((current) => ({ ...current, title: event.target.value }))
+                          }
+                        />
+                        <textarea
+                          aria-label="공지 내용"
+                          value={editValues.content}
+                          required
+                          onChange={(event) =>
+                            setEditValues((current) => ({ ...current, content: event.target.value }))
+                          }
+                        />
                         <div className="announcement-dialog__item-actions">
-                          {onUpdate && (
-                            <button type="button" onClick={() => startEditing(notice)}>
-                              수정
-                            </button>
-                          )}
-                          {onDelete && (
-                            <button
-                              className="announcement-dialog__delete"
-                              type="button"
-                              onClick={() => removeNotice(notice)}
-                            >
-                              삭제
-                            </button>
-                          )}
+                          <button type="submit">저장</button>
+                          <button type="button" onClick={() => setEditingNoticeId(null)}>
+                            취소
+                          </button>
                         </div>
-                      )}
-                    </>
-                  )}
-                </article>
-              ))}
+                      </form>
+                    ) : (
+                      <>
+                        <h3>{notice.title}</h3>
+                        <p>{notice.content}</p>
+                        {canManage && (
+                          <div className="announcement-dialog__item-actions">
+                            {onUpdate && (
+                              <button type="button" onClick={() => startEditing(notice)}>
+                                수정
+                              </button>
+                            )}
+                            {onDelete && (
+                              <button
+                                className="announcement-dialog__delete"
+                                type="button"
+                                onClick={() => removeNotice(notice)}
+                              >
+                                삭제
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </article>
+                ))
+              ) : !isLoading && !apiError ? (
+                <EmptyState
+                  compact
+                  title="등록된 공지사항이 없어요"
+                  description="새 공지사항을 올리면 이곳에서 확인할 수 있어요."
+                />
+              ) : null}
             </div>
           </section>
         </div>

@@ -75,6 +75,12 @@
   align-content: center;
 }
 
+.add-friend-list--empty {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
 .add-friend-empty {
   width: 100%;
   margin: 0;

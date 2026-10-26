@@ -54,6 +54,8 @@ function GuardianPage({
   guardian = dummyGuardian,
   medications = dummyGuardianMedications,
   onLocationRefresh,
+  isLoading = false,
+  apiError = '',
 }) {
   const guardianSource = guardian ?? {};
   const guardianData = {
@@ -66,8 +68,7 @@ function GuardianPage({
     lastLoginText: guardianSource.lastLoginText?.trim() || dummyGuardian.lastLoginText,
     statusMessage: guardianSource.statusMessage?.trim() || dummyGuardian.statusMessage,
   };
-  const medicationItems =
-    Array.isArray(medications) && medications.length > 0 ? medications : dummyGuardianMedications;
+  const medicationItems = Array.isArray(medications) ? medications : [];
   const [isKakaoMapReady, setIsKakaoMapReady] = useState(false);
   const [resolvedHome, setResolvedHome] = useState(null);
   const homeLocation =
@@ -145,7 +146,11 @@ function GuardianPage({
           />
 
           <div className="guardian-page__summary">
-            <GuardianMedicationList medications={medicationItems} />
+            <GuardianMedicationList
+              medications={medicationItems}
+              isLoading={isLoading}
+              apiError={apiError}
+            />
             <GuardianLocationStatus
               address={addressLabel}
               isLoading={isLoadingLocation}

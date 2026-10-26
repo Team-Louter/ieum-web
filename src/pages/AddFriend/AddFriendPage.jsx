@@ -3,6 +3,7 @@ import { resolveApiAssetUrl } from '../../api/client';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
 import FriendRequestsModal from '../../components/friends/FriendRequestsModal/FriendRequestsModal';
+import EmptyState from '../../components/common/EmptyState/EmptyState';
 import './AddFriendPage.css';
 
 const pageSize = 30;
@@ -31,6 +32,8 @@ function AddFriendPage({
   onAcceptFriendRequest,
   onRejectFriendRequest,
   onRefreshFriendRequests,
+  isLoading = false,
+  apiError = '',
 }) {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,6 +122,7 @@ function AddFriendPage({
       : [pageNumber],
   );
   const visibleFriends = isSearching ? [] : visibleDirectory;
+  const isEmptyDirectory = visibleFriends.length === 0 && !isSearching && !searchState.error;
 
   function handleSearch(event) {
     setSearchText(event.target.value);
@@ -186,7 +190,9 @@ function AddFriendPage({
             <span aria-label={`${friendRequests.length}건`}>{friendRequests.length}</span>
           </button>
         </div>
-        <div className={`add-friend-list${isSearching ? ' add-friend-list--loading' : ''}`}>
+        <div
+          className={`add-friend-list${isSearching ? ' add-friend-list--loading' : ''}${isEmptyDirectory ? ' add-friend-list--empty' : ''}`}
+        >
           {visibleFriends.map((friend) => (
             <div className="add-friend-profile" key={friend.id ?? friend.userId ?? friend.loginId}>
               <MeetingMyMemberProfile
@@ -216,13 +222,17 @@ function AddFriendPage({
                 ? '계정을 검색하지 못했습니다. 잠시 후 다시 시도해 주세요.'
                 : '계정 목록을 불러오지 못했습니다. 아이디로 검색해 보세요.'}
             </p>
-          ) : visibleFriends.length === 0 && (
-            <p className="add-friend-empty">
-              {normalizedSearchText
-                ? '검색 결과가 없습니다.'
-                : '표시할 계정이 없습니다. 아이디로 검색해 보세요.'}
-            </p>
-          )}
+          ) : isEmptyDirectory ? (
+            <EmptyState
+              compact
+              title={normalizedSearchText ? '검색 결과가 없어요' : '표시할 계정이 없어요'}
+              description={
+                normalizedSearchText
+                  ? '다른 아이디로 다시 검색해 보세요.'
+                  : '친구의 아이디를 검색하면 계정을 찾을 수 있어요.'
+              }
+            />
+          ) : null
         </div>
         {!isSearching && (currentPage > 1 || hasNextPage) && (
           <nav className="add-friend-pagination" aria-label="친구 목록 페이지 이동">
@@ -277,6 +287,8 @@ function AddFriendPage({
           requests={friendRequests}
           onAccept={handleAcceptRequest}
           onReject={handleRejectRequest}
+          isLoading={isLoading}
+          apiError={apiError}
           onClose={() => setIsRequestsModalOpen(false)}
         />
       )}

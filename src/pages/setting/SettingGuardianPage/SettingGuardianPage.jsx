@@ -12,6 +12,8 @@ function SettingGuardianPage({
   role,
   onConnect,
   onDisconnect,
+  isLoading = false,
+  apiError = '',
 }) {
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [accountIdentifier, setAccountIdentifier] = useState('');
@@ -93,6 +95,8 @@ function SettingGuardianPage({
         <SettingGuardianList
           guardians={sourceGuardians}
           emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
+          isLoading={isLoading}
+          apiError={apiError}
         />
       </SettingItem>
 
@@ -149,6 +153,8 @@ function SettingGuardianPage({
               isBusy={isBusy}
               onRemove={handleDisconnect}
               emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
+              isLoading={isLoading}
+              apiError={apiError}
             />
           </div>
           {canConnectGuardian ? (

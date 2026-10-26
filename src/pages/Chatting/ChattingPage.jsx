@@ -5,6 +5,7 @@ import searchIcon from '../../assets/images/search.svg';
 import profileImage from '../../assets/images/profile.png';
 import { dummyChatContacts, dummyChatThreads } from '../../constants/dummy/dummyChats';
 import { getValidAccessToken } from '../../api/client';
+import EmptyState from '../../components/common/EmptyState/EmptyState';
 
 const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
 
@@ -20,6 +21,9 @@ function ChattingPage({
   accessToken,
   currentUserId,
   onChatReconnected,
+  onNavigate,
+  isLoading = false,
+  apiError = '',
 }) {
   const contactItems = contacts ?? EMPTY_CONTACTS;
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +40,7 @@ function ChattingPage({
   }, [onChatReconnected]);
   const selectedContactId = activeContactId ?? localActiveContactId ?? contactItems[0]?.id ?? null;
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
+  const isContactsEmpty = contactItems.length === 0 && !isLoading && !apiError;
   const visibleContacts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
     return contactItems.filter((contact) =>
@@ -187,17 +192,31 @@ function ChattingPage({
         </div>
 
         <div className="user-list">
-          {visibleContacts.map((contact) => (
-            <button
-              className={`user-list-item${contact.id === selectedContactId ? ' user-list-item--active' : ''}`}
-              key={contact.id}
-              type="button"
-              onClick={() => selectContact(contact.id)}
-            >
-              <img src={contact.profileImage || profileImage} alt="" />
-              <span>{contact.name}</span>
-            </button>
-          ))}
+          {visibleContacts.length > 0 ? (
+            visibleContacts.map((contact) => (
+              <button
+                className={`user-list-item${contact.id === selectedContactId ? ' user-list-item--active' : ''}`}
+                key={contact.id}
+                type="button"
+                onClick={() => selectContact(contact.id)}
+              >
+                <img src={contact.profileImage || profileImage} alt="" />
+                <span>{contact.name}</span>
+              </button>
+            ))
+          ) : !isLoading && !apiError ? (
+            <EmptyState
+              compact
+              title={searchTerm.trim() ? '검색 결과가 없어요' : '대화할 친구가 없어요'}
+              description={
+                searchTerm.trim()
+                  ? '다른 이름으로 다시 검색해 보세요.'
+                  : '친구를 추가하면 이곳에서 대화를 시작할 수 있어요.'
+              }
+              actionLabel={!searchTerm.trim() ? '친구 추가하기' : undefined}
+              onAction={!searchTerm.trim() ? () => onNavigate?.('/addfriend') : undefined}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -216,14 +235,22 @@ function ChattingPage({
             </div>
 
             <div className="chat-messages" aria-live="polite" ref={messagesContainerRef}>
-              {selectedMessages.map((message) => {
-                const isMine = message.sender === 'me' || message.isMine;
-                return (
-                  <div className={`message ${isMine ? 'sent' : 'received'}`} key={message.id}>
-                    {message.content ?? message.text}
-                  </div>
-                );
-              })}
+              {selectedMessages.length > 0 ? (
+                selectedMessages.map((message) => {
+                  const isMine = message.sender === 'me' || message.isMine;
+                  return (
+                    <div className={`message ${isMine ? 'sent' : 'received'}`} key={message.id}>
+                      {message.content ?? message.text}
+                    </div>
+                  );
+                })
+              ) : !isLoading && !apiError ? (
+                <EmptyState
+                  compact
+                  title="아직 대화가 없어요"
+                  description="메시지를 보내 대화를 시작해 보세요."
+                />
+              ) : null}
             </div>
             {sendError && (
               <p className="chat-send-error" role="alert">
@@ -243,9 +270,24 @@ function ChattingPage({
               </button>
             </form>
           </>
-        ) : (
-          <div className="chat-room-empty">대화를 선택해 주세요.</div>
-        )}
+        ) : !isLoading && !apiError ? (
+          <div className="chat-room-empty">
+            {isContactsEmpty ? (
+              <EmptyState
+                title="대화할 친구가 없어요"
+                description="친구를 추가하면 이곳에서 대화를 시작할 수 있어요."
+                actionLabel="친구 추가하기"
+                onAction={() => onNavigate?.('/addfriend')}
+              />
+            ) : (
+              <EmptyState
+                compact
+                title="대화를 선택해 주세요"
+                description="목록에서 친구를 선택하면 대화가 표시됩니다."
+              />
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
