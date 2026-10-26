@@ -70,11 +70,20 @@
   font-size: var(--font-size-body);
 }
 
+.meeting-input-region {
+  width: 650px;
+  height: 50px;
+  padding: 14px 20px;
+  border: 2px solid #dfdfdf;
+  border-radius: 10px;
+  font-size: var(--font-size-body);
+}
+
 .meeting-input-info {
   resize: none;
 
   width: 650px;
-  height: 200px;
+  height: 170px;
   padding: 20px;
 
   border: 2px solid #dfdfdf;

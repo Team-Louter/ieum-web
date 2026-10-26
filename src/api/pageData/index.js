@@ -42,10 +42,10 @@ export default async function loadPageData({
   }
 
   if (path === '/meeting' || path === '/meeting/my') {
-    return loadMeetingListPage({ path, demoScope, loginId });
+    return loadMeetingListPage({ path, demoScope, loginId, userId });
   }
 
-  if (path === '/meeting/my/detail' && selectedId) {
+  if ((path === '/meeting/my/detail' || path === '/meeting/my/member-list') && selectedId) {
     return loadMeetingDetailPage({ selectedId, demoScope });
   }
 

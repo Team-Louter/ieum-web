@@ -3,7 +3,15 @@ import MeetingMyMemberProfile from './MeetingMyMemberProfile';
 import MeetingMyMemberTitle from './MeetingMyMemberTitle';
 import './MeetingMyMemberList.css';
 
-export default function MeetingMyMemberList({ members = [], maxVisible, onMemberAction }) {
+export default function MeetingMyMemberList({
+  members = [],
+  maxVisible,
+  onMemberAction,
+  canManage = false,
+  meetingId,
+  onMore,
+  currentUserId,
+}) {
   const [openMemberIndex, setOpenMemberIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = maxVisible ?? 24;
@@ -20,19 +28,24 @@ export default function MeetingMyMemberList({ members = [], maxVisible, onMember
 
   return (
     <div className="member-list-container">
-      <MeetingMyMemberTitle HowManyUser={members.length} />
+      <MeetingMyMemberTitle
+        HowManyUser={members.length}
+        meetingId={meetingId}
+        onMore={onMore}
+        showMore={Boolean(maxVisible || onMore)}
+      />
       <div className="member-list">
         {visibleMembers.map((member, memberIndex) => (
-          <MeetingMyMemberProfile
+          <MeetingMemberItem
             key={member.id ?? `${firstMemberIndex + memberIndex}`}
-            id={member.nickname ?? member.name ?? member.id ?? ''}
-            role={member.role ?? '회원'}
-            profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
+            member={member}
+            currentUserId={currentUserId}
+            canManage={canManage}
             isMenuOpen={openMemberIndex === memberIndex}
             onToggle={() =>
               setOpenMemberIndex((openIndex) => (openIndex === memberIndex ? null : memberIndex))
             }
-            onAction={(action) => onMemberAction?.(member, action)}
+            onMemberAction={onMemberAction}
           />
         ))}
       </div>
@@ -74,5 +87,36 @@ export default function MeetingMyMemberList({ members = [], maxVisible, onMember
         </nav>
       )}
     </div>
+  );
+}
+
+function MeetingMemberItem({
+  member,
+  currentUserId,
+  canManage,
+  isMenuOpen,
+  onToggle,
+  onMemberAction,
+}) {
+  const status = String(member.status ?? '').toUpperCase();
+  const isManager = String(member.role ?? '').toUpperCase() === 'MANAGER';
+
+  return (
+    <MeetingMyMemberProfile
+      id={member.loginId ?? member.nickname ?? member.name ?? member.id ?? ''}
+      role={isManager ? '관리자' : '회원'}
+      profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
+      isMenuOpen={isMenuOpen}
+      onToggle={onToggle}
+      interactive={canManage && String(member.userId ?? member.id) !== String(currentUserId)}
+      actionItems={
+        isManager
+          ? ['관리자 해제', '추방하기']
+          : status === 'PENDING'
+            ? ['가입 승인', '관리자 임명', '추방하기']
+            : ['관리자 임명', '추방하기']
+      }
+      onAction={(action) => onMemberAction?.(member, action)}
+    />
   );
 }

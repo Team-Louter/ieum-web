@@ -179,6 +179,12 @@ function AppContent() {
     '/neighbor/create': postActions.createNeighborPost,
     '/market/create': postActions.createSharing,
     '/meeting/make': meetingActions.createMeeting,
+    '/meeting/announcement/make': (values) => meetingActions.createNotice(selectedId, values),
+    '/meeting/management': (values) =>
+      meetingActions.updateMeeting(
+        data.meeting ?? location.state?.meeting ?? defaultMeeting,
+        values,
+      ),
   };
 
   const commonProps = {
@@ -193,6 +199,8 @@ function AppContent() {
     onProfileUpdate: accountActions.updateProfile,
     onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccountData,
+    onFamilyConnect: accountActions.connectGuardian,
+    onFamilyDisconnect: accountActions.disconnectFamily,
     onSendRecoveryCode: accountActions.sendRecoveryCode,
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
     onResetPassword: accountActions.resetPassword,
@@ -211,7 +219,9 @@ function AppContent() {
     posts: data.posts ?? [],
     meetings: data.meetings ?? [],
     meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
+    membership: data.membership ?? null,
     announcement: data.announcement ?? {},
+    notices: data.notices ?? [],
     members: data.members ?? [],
     products: data.products ?? [],
     selectedPost: data.selectedPost ?? location.state?.post ?? defaultSelectedPost,
@@ -238,6 +248,16 @@ function AppContent() {
     onChatReconnected: () => setReloadKey((value) => value + 1),
 
     onMeetingSelect: (meeting) => movePage(`/meeting/my/detail/${meeting.id}`),
+    onJoin: (meetingId) => meetingActions.joinMeeting(meetingId).catch(() => {}),
+    onLeave: (meetingId) => meetingActions.leaveMeeting(meetingId).catch(() => {}),
+    onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),
+    onMemberAction: (member, action) =>
+      meetingActions.handleMemberAction(selectedId, member, action).catch(() => {}),
+    onAnnouncementCreate: (meetingId) =>
+      movePage('/meeting/announcement/make', { state: { meetingId } }),
+    onAnnouncementUpdate: (noticeId, values) =>
+      meetingActions.updateNotice(selectedId, noticeId, values),
+    onAnnouncementDelete: (noticeId) => meetingActions.deleteNotice(selectedId, noticeId),
     onProductSelect: (product) =>
       movePage(`/market/feedin/${product.id}`, { state: { post: product } }),
     onLike: postActions.toggleNeighborLike,

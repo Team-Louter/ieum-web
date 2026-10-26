@@ -37,6 +37,13 @@ export default function MeetingInputBox({ values = {}, onChange }) {
           onChange={(event) => onChange?.('title', event.target.value)}
           required
         />
+        <input
+          className="meeting-input-region"
+          placeholder="모임 지역을 입력해 주세요"
+          value={values.region ?? ''}
+          onChange={(event) => onChange?.('region', event.target.value)}
+          required
+        />
         <textarea
           className="meeting-input-info"
           placeholder="모임 소개를 입력해 주세요"

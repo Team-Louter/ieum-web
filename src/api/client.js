@@ -212,7 +212,7 @@ export const profileApi = {
 
 export const familyApi = {
   list: () => apiGet('/api/connect'),
-  connect: (seniorEmail) => apiPost('/api/connect', { seniorEmail }),
+  connect: (guardianEmail) => apiPost('/api/connect', { guardianEmail }),
   disconnect: (loginId) => apiDelete(`/api/connect/${encodeURIComponent(loginId)}`),
 };
 
@@ -239,7 +239,7 @@ export const friendApi = {
 };
 
 export const userApi = {
-  search: (loginId, page = 0, size = 30) => {
+  search: (loginId, page = 0, size = 20) => {
     const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
     return apiGet(`/api/users/search?${params.toString()}`);
   },
@@ -251,6 +251,22 @@ export const meetingApi = {
   create: (meeting) => apiPost('/api/community/meetings', meeting),
   update: (id, meeting) => apiPut(`/api/community/meetings/${id}`, meeting),
   remove: (id) => apiDelete(`/api/community/meetings/${id}`),
+  membership: (id) => apiGet(`/api/community/meetings/${id}/membership`),
+  members: (id) => apiGet(`/api/community/meetings/${id}/members`),
+  join: (id) => apiPost(`/api/community/meetings/${id}/join`),
+  approveMember: (id, userId) =>
+    apiPost(`/api/community/meetings/${id}/members/${userId}/approve`),
+  updateMemberRole: (id, userId, role) =>
+    apiPatch(`/api/community/meetings/${id}/members/${userId}/role`, { role }),
+  removeMember: (id, userId) => apiDelete(`/api/community/meetings/${id}/members/${userId}`),
+  leave: (id) => apiDelete(`/api/community/meetings/${id}/members/me`),
+  notices: (id, page = 0, size = 20) =>
+    apiGet(`/api/community/meetings/${id}/notices?page=${page}&size=${size}`),
+  getNotice: (id, noticeId) => apiGet(`/api/community/meetings/${id}/notices/${noticeId}`),
+  createNotice: (id, notice) => apiPost(`/api/community/meetings/${id}/notices`, notice),
+  updateNotice: (id, noticeId, notice) =>
+    apiPut(`/api/community/meetings/${id}/notices/${noticeId}`, notice),
+  removeNotice: (id, noticeId) => apiDelete(`/api/community/meetings/${id}/notices/${noticeId}`),
   getLike: (id) => apiGet(`/api/contents/MEETING/${id}/like`),
   like: (id) => apiPut(`/api/contents/MEETING/${id}/like`),
   unlike: (id) => apiDelete(`/api/contents/MEETING/${id}/like`),

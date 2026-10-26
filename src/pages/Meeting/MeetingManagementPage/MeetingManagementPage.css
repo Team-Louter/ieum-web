@@ -1,8 +1,14 @@
 .meeting-management {
   display: flex;
   flex-direction: column;
-  width: 1000px;
-  gap: 50px;
+  width: min(1000px, 100%);
+  gap: 40px;
+}
+
+.meeting-management-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .meeting-management-options {
@@ -11,25 +17,48 @@
   gap: 20px;
 }
 
+.meeting-management-save {
+  min-height: 60px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  color: #bbffbf;
+  background-color: #42b66b;
+  font-size: var(--font-size-body);
+  cursor: pointer;
+}
+
+.meeting-management-save:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .meeting-management-divider {
-  width: 1000px;
+  width: 100%;
   border-top: 2px solid #dfdfdf;
 }
 
-.meeting-management-managers {
+.meeting-management-members {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 0 40px;
 }
 
-.meeting-management-managers h2 {
+.meeting-management-message {
   margin: 0;
-  font-size: var(--font-size-subtitle);
+  color: #767676;
+  text-align: center;
 }
 
-.meeting-management-manager-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+.meeting-management-error {
+  margin: 0;
+  color: #c62424;
+  text-align: center;
+}
+
+@media (max-width: 1080px) {
+  .meeting-management-members {
+    padding: 0 16px;
+  }
 }

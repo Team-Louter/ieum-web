@@ -2,18 +2,16 @@ import './MeetingCreatePage.css';
 import { useState } from 'react';
 import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
 import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
-import MeetingMakeOptionSelect from '../../../components/meeting/MeetingMake/MeetingMakeOptionSelect';
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 
 const defaultMeetingValues = {
   title: '',
   description: '',
+  region: '',
   image: null,
   requireApproval: false,
   isPrivate: false,
-  inviteLinkPermission: '개설자',
-  inviteLinkExpiration: '1일',
 };
 
 export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
@@ -59,24 +57,6 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
             onChange={(checked) => updateValue('isPrivate', checked)}
             title="모임 비공개 설정"
             desc="모임이 비공개로 전환되고 초대 링크로만 초대가 가능합니다."
-          />
-          <MeetingMakeOptionSelect
-            value={values.inviteLinkPermission}
-            onChange={(value) => updateValue('inviteLinkPermission', value)}
-            option1="개설자"
-            option2="관리자 이상"
-            option3="모든 회원"
-            title="초대 링크 생성 설정"
-            desc="모임 초대 링크 생성 권한을 설정합니다."
-          />
-          <MeetingMakeOptionSelect
-            value={values.inviteLinkExpiration}
-            onChange={(value) => updateValue('inviteLinkExpiration', value)}
-            option1="1일"
-            option2="7일"
-            option3="기한 없음"
-            title="초대 링크 기한 기본 설정"
-            desc="모임 초대 링크의 사용 기한을 설정합니다."
           />
         </div>
         <button className="meeting-make-button" type="submit">

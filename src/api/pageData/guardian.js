@@ -57,8 +57,6 @@ export async function loadSettingsPage({ role, demoScope }) {
   return {
     settings: {
       medicationAlert: Boolean(notificationSettings?.medicationNotiEnabled),
-      guardianActivity: Boolean(notificationSettings?.inactivityAlertEnabled),
-      guardianMedication: Boolean(notificationSettings?.medicationAlertEnabled),
       darkMode: false,
       interactionAlert: false,
       mentionAlert: false,

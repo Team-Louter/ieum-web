@@ -52,7 +52,11 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
     const meetings = asArray(
       await loadApiOrDemo(() => meetingApi.list(), 'meetings', [], demoScope),
     ).map(toMeetingCard);
-    result.meetings = meetings.filter((meeting) => meeting.owner === loginId);
+    result.meetings = meetings.filter(
+      (meeting) =>
+        (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
+        meeting.owner === loginId,
+    );
   }
 
   return result;

@@ -22,7 +22,6 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
     const [email, setEmail] = useState('');
     const [emailCode, setEmailCode] = useState('');
     const [address, setAddress] = useState('');
-    const [seniorEmail, setSeniorEmail] = useState('');
     const [emailSent, setEmailSent] = useState(false);
     const [emailVerified, setEmailVerified] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,8 +64,8 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        if (!loginId.trim() || !address.trim() || !isEmailFormatValid(seniorEmail)) {
-            setMessage('아이디, 주소와 연결할 어르신 이메일을 확인해 주세요.');
+        if (!loginId.trim() || !address.trim()) {
+            setMessage('아이디와 주소를 입력해 주세요.');
             setMessageIsError(true);
             return;
         }
@@ -89,7 +88,7 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
         try {
             const response = await onSignup?.({
                 loginId: loginId.trim(), nickname: loginId.trim(), email, password, address,
-                role: 'ROLE_GUARDIAN', seniorEmail: seniorEmail.trim(),
+                role: 'ROLE_GUARDIAN',
             });
             if (response) {
                 setMessage(response);
@@ -127,9 +126,6 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
                 )}
                 <div className="signup-field">
                     <FieldWithButton id="guardian-address" label="주소" value={address} onChange={(event) => setAddress(event.target.value)} />
-                </div>
-                <div className="signup-field">
-                    <FieldWithButton id="linked-user-email" label="연결할 어르신 이메일" type="email" value={seniorEmail} onChange={(event) => setSeniorEmail(event.target.value)} />
                 </div>
                 {message && <p className={messageIsError ? 'input-error-msg' : 'input-success-msg'} role={messageIsError ? 'alert' : 'status'}>{message}</p>}
                 <button type="submit" className="signup-submit" disabled={isSubmitting}>{isSubmitting ? '계정 생성 중…' : '계정 만들기'}</button>

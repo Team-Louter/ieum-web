@@ -12,6 +12,29 @@ export function toMeetingCard(meeting = {}) {
   };
 }
 
+export function toMeetingMember(member = {}) {
+  return {
+    ...member,
+    id: member.userId ?? member.id,
+    loginId: member.loginId ?? '',
+    nickname: member.nickname ?? member.loginId ?? '',
+    profileImage: resolveApiAssetUrl(member.profileImageUrl ?? ''),
+  };
+}
+
+export function toMeetingNotice(notice = {}) {
+  return {
+    ...notice,
+    id: notice.id,
+    author: {
+      id: notice.authorLoginId ?? '',
+      nickname: notice.authorLoginId ?? '',
+    },
+    title: notice.title ?? '',
+    content: notice.content ?? '',
+  };
+}
+
 export function toSharingCard(sharing = {}) {
   const sellerId = sharing.sellerId ?? null;
   const sellerLoginId =

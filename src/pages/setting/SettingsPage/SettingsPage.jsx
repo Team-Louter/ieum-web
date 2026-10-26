@@ -24,6 +24,8 @@ function SettingsPage({
   onMedicationDelete,
   settings: settingsFromProps,
   onSettingChange,
+  onFamilyConnect,
+  onFamilyDisconnect,
   role,
   currentLoginId,
   accountEmail,
@@ -68,7 +70,14 @@ function SettingsPage({
         onResetPassword={onResetPassword}
       />
     ),
-    guardian: <SettingGuardianPage {...pageProps} guardians={guardians} />,
+    guardian: (
+      <SettingGuardianPage
+        {...pageProps}
+        guardians={guardians}
+        onConnect={onFamilyConnect}
+        onDisconnect={onFamilyDisconnect}
+      />
+    ),
     general: (
       <SettingGeneralPage
         {...pageProps}
