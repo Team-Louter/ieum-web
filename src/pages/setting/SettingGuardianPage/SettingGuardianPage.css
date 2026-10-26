@@ -8,13 +8,11 @@
 }
 
 .setting-dialog--guardian-manager {
-  width: min(900px, 100%);
-  min-width: min(800px, 100%);
-  min-height: 500px;
+  width: min(560px, 100%);
 }
 
 .setting-guardian-manager__list {
-  max-height: min(420px, 50dvh);
+  max-height: min(280px, 35dvh);
   overflow-y: auto;
   margin-bottom: 18px;
   padding-bottom: 16px;
@@ -27,10 +25,4 @@
 
 .setting-guardian-manager__actions {
   justify-content: flex-end;
-}
-
-@media (max-width: 600px) {
-  .setting-dialog--guardian-manager {
-    min-height: 0;
-  }
 }
