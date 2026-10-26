@@ -9,31 +9,49 @@ function GuardianMedicationList({ medications, isLoading = false, apiError = '' 
       className="guardian-info-card guardian-medication-list"
       aria-labelledby="guardian-medication-title"
     >
-      <h2 id="guardian-medication-title" className="guardian-visually-hidden">
-        오늘의 복약 현황
+      <h2 id="guardian-medication-title" className="guardian-medication-list__title">
+        복약 알림
       </h2>
       {medicationItems.length > 0 ? (
-        medicationItems.map(({ id, time, name, status }) => (
-          <div className="guardian-medication-list__item" key={id}>
-            <span
-              className={`guardian-medication-list__time guardian-medication-list__time--${status}`}
-            >
-              {time}
-            </span>
-            <span
-              className={`guardian-medication-list__name guardian-medication-list__name--${status}`}
-            >
-              {name}
-            </span>
-          </div>
-        ))
-      ) : !isLoading && !apiError ? (
+        <div
+          className="guardian-medication-list__items"
+          role="region"
+          aria-label="복약 알림 목록"
+          tabIndex={0}
+        >
+          {medicationItems.map(({ id, time, name, status }) => (
+            <div className="guardian-medication-list__item" key={id}>
+              <span
+                className={`guardian-medication-list__time guardian-medication-list__time--${status}`}
+              >
+                {time}
+              </span>
+              <span
+                className={`guardian-medication-list__name guardian-medication-list__name--${status}`}
+              >
+                {name}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : isLoading ? (
+        <p className="guardian-medication-list__message" role="status">
+          복약 알림을 불러오는 중입니다.
+        </p>
+      ) : apiError ? (
+        <p
+          className="guardian-medication-list__message guardian-medication-list__message--error"
+          role="alert"
+        >
+          {apiError}
+        </p>
+      ) : (
         <EmptyState
           compact
           title="오늘 복약 일정이 없어요"
           description="복약 일정이 등록되면 이곳에서 확인할 수 있어요."
         />
-      ) : null}
+      )}
     </section>
   );
 }

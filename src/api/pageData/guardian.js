@@ -6,11 +6,22 @@ import { asArray, loadApiOrDemo } from './common';
 export async function loadGuardianPage({ demoScope }) {
   const elders = asArray(
     await loadApiOrDemo(() => guardianApi.dashboard(), 'guardian.dashboard', [], demoScope),
-  );
+  ).map((elder, index) => ({
+    id: String(elder.loginId ?? elder.userId ?? elder.id ?? `elder-${index + 1}`),
+    loginId: elder.loginId ?? '',
+    elderName: elder.loginId || elder.nickname || '어르신',
+    homeAddress: elder.homeAddress ?? '',
+    homeCoordinates: elder.homeCoordinates ?? null,
+    homeRadiusMeters: elder.homeRadiusMeters,
+    lastLoginText: elapsedLoginText(elder.lastActiveAt),
+    statusMessage: '어르신의 최근 활동과 복약 상태를 확인할 수 있습니다.',
+    medications: asArray(elder.medications).map(toGuardianMedication),
+  }));
   const elder = elders[0];
 
   if (!elder) {
     return {
+      elders: [],
       guardian: {
         elderName: '',
         homeAddress: '',
@@ -23,14 +34,16 @@ export async function loadGuardianPage({ demoScope }) {
   }
 
   return {
+    elders,
     guardian: {
-      elderName: elder.nickname,
-      homeAddress: '',
-      homeCoordinates: null,
-      lastLoginText: elapsedLoginText(elder.lastActiveAt),
-      statusMessage: '어르신의 최근 활동과 복약 상태를 확인할 수 있습니다.',
+      elderName: elder.elderName,
+      homeAddress: elder.homeAddress,
+      homeCoordinates: elder.homeCoordinates,
+      homeRadiusMeters: elder.homeRadiusMeters,
+      lastLoginText: elder.lastLoginText,
+      statusMessage: elder.statusMessage,
     },
-    medications: asArray(elder.medications).map(toGuardianMedication),
+    medications: elder.medications,
   };
 }
 
