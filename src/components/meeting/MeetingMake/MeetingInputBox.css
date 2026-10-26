@@ -59,7 +59,8 @@
   justify-content: space-between;
 }
 
-.meeting-input-name {
+.meeting-input-name,
+.meeting-input-region {
   width: 650px;
   height: 60px;
   padding: 20px;
@@ -67,15 +68,6 @@
   border: 2px solid #dfdfdf;
   border-radius: 10px;
 
-  font-size: var(--font-size-body);
-}
-
-.meeting-input-region {
-  width: 650px;
-  height: 50px;
-  padding: 14px 20px;
-  border: 2px solid #dfdfdf;
-  border-radius: 10px;
   font-size: var(--font-size-body);
 }
 
