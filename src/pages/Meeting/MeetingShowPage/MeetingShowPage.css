@@ -3,3 +3,10 @@
   flex-direction: column;
   gap: 40px;
 }
+
+.meeting-list--empty {
+  width: min(900px, 100%);
+  min-height: calc(100dvh - 260px);
+  align-items: center;
+  justify-content: center;
+}

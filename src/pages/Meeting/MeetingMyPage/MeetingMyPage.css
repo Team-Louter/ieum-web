@@ -50,3 +50,23 @@
 .meeting-my-contents {
   display: flex;
 }
+
+.meeting-my-card .meeting-card-info {
+  justify-content: center;
+  gap: 6px;
+}
+
+.meeting-my-card .meeting-card-info > p {
+  margin: 0;
+}
+
+.meeting-my-role {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e8f7ed;
+  color: #319b59;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}

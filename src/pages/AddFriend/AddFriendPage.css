@@ -75,11 +75,69 @@
   align-content: center;
 }
 
+.add-friend-list--empty {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.add-friend-list--error {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
 .add-friend-empty {
   width: 100%;
   margin: 0;
   text-align: center;
   font-size: var(--font-size-body);
+}
+
+.add-friend-error-state {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 260px;
+  padding: 24px;
+  text-align: center;
+}
+
+.add-friend-error-state h2 {
+  color: #333;
+  font-size: var(--font-size-subtitle);
+  font-weight: 700;
+}
+
+.add-friend-error-state p {
+  color: #777;
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+}
+
+.add-friend-error-state button {
+  margin-top: 4px;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 8px;
+  background: #42b66b;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-body);
+}
+
+.add-friend-error-state button:hover {
+  background: #319b57;
+}
+
+.add-friend-error-state button:focus-visible {
+  outline: 3px solid #8ad5a4;
+  outline-offset: 3px;
 }
 
 .add-friend-profile {

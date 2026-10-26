@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
-import LoginPage from './pages/LoginPage/LoginPage';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { getAccessToken, userApi } from './api/client';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
@@ -124,7 +124,11 @@ function AppContent() {
   async function runAction(action, successMessage) {
     try {
       const result = await action();
-      setFeedback(successMessage ?? '저장했습니다.');
+      const message =
+        typeof successMessage === 'function'
+          ? successMessage(result)
+          : (successMessage ?? '저장했습니다.');
+      setFeedback(message);
       setFeedbackIsError(false);
       setReloadKey((value) => value + 1);
       return result;
@@ -247,7 +251,7 @@ function AppContent() {
     onSelectContact: selectChatRoom,
     onChatReconnected: () => setReloadKey((value) => value + 1),
 
-    onMeetingSelect: (meeting) => movePage(`/meeting/my/detail/${meeting.id}`),
+    onMeetingSelect: (meeting) => movePage(`/meeting/detail/${meeting.id}`),
     onJoin: (meetingId) => meetingActions.joinMeeting(meetingId).catch(() => {}),
     onLeave: (meetingId) => meetingActions.leaveMeeting(meetingId).catch(() => {}),
     onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),
@@ -292,7 +296,11 @@ function AppContent() {
   };
 
   if (!Page) {
-    return <LoginPage onNavigate={movePage} onLogin={accountActions.login} />;
+    return (
+      <NotFoundPage
+        onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')}
+      />
+    );
   }
 
   if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {

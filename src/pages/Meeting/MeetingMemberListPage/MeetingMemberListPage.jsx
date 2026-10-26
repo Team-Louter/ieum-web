@@ -10,6 +10,8 @@ export default function MeetingMemberListPage({
   membership,
   currentUserId,
   onMemberAction,
+  isLoading = false,
+  apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
@@ -28,6 +30,8 @@ export default function MeetingMemberListPage({
           canManage={Boolean(membership?.canManage ?? meeting?.canManage)}
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
+          isLoading={isLoading}
+          apiError={apiError}
         />
       </div>
     </Layout>

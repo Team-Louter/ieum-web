@@ -7,15 +7,15 @@
   border-radius: 8px;
   font-size: var(--font-size-small, 18px);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgb(30 90 50 / 12%);
+  box-shadow: none;
 }
 
 .market-post-status--in-progress {
-  background: #fff7e6;
-  color: #805d1b;
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
 .market-post-status--complete {
-  background: #f0fbf3;
-  color: #287344;
+  background: #eeeeee;
+  color: #616161;
 }

@@ -12,6 +12,35 @@ import {
   dummyMyMeetings,
 } from '../../../constants/dummy/dummyMeetings';
 
+const ACTIVE_MEMBERSHIP_STATUSES = ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'];
+const PENDING_MEMBERSHIP_STATUSES = [
+  'PENDING',
+  'PENDING_APPROVAL',
+  'WAITING',
+  'WAITING_APPROVAL',
+  'REQUESTED',
+];
+
+function getRoleLabel(role) {
+  const normalizedRole = String(role ?? '').trim().toUpperCase().replace(/^ROLE_/, '');
+  const roleLabels = {
+    OWNER: '모임장',
+    LEADER: '모임장',
+    HOST: '모임장',
+    CREATOR: '모임장',
+    개설자: '모임장',
+    모임장: '모임장',
+    MANAGER: '관리자',
+    ADMIN: '관리자',
+    관리자: '관리자',
+    MEMBER: '회원',
+    PARTICIPANT: '회원',
+    회원: '회원',
+  };
+
+  return roleLabels[normalizedRole] ?? String(role ?? '').trim();
+}
+
 export default function MeetingMyPage({
   meeting = dummyMyMeetings[0],
   announcement = dummyMeetingAnnouncement,
@@ -27,29 +56,72 @@ export default function MeetingMyPage({
   onAnnouncementCreate,
   onAnnouncementUpdate,
   onAnnouncementDelete,
+  isLoading = false,
+  apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
+  const isMyMeetingDetail = currentPath.startsWith('/meeting/my/detail');
   const menuItems = [
-    { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
+    {
+      label: '모임 보기',
+      href: '/meeting',
+      isActive: currentPath === '/meeting' || currentPath.startsWith('/meeting/detail'),
+    },
     { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') },
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
+  const currentMember = members.find(
+    (member) =>
+      (currentUserId != null &&
+        String(member.userId ?? member.id) === String(currentUserId)) ||
+      (currentLoginId && member.loginId === currentLoginId),
+  );
   const membershipStatus = String(
-    meeting.membershipStatus ?? membership?.status ?? '',
+    meeting.membershipStatus ??
+      membership?.status ??
+      membership?.membershipStatus ??
+      membership?.data?.status ??
+      '',
   ).toUpperCase();
-  const canManage =
-    membership?.canManage ??
-    meeting.canManage ??
-    Boolean(
-      (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
-        (currentLoginId && meeting.owner && meeting.owner === currentLoginId),
-    );
-  const canLeave =
-    membership?.canLeave ??
-    meeting.canLeave ??
-    ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'].includes(membershipStatus);
-  const isPending = ['PENDING', 'WAITING', 'REQUESTED'].includes(membershipStatus);
-  const canJoin = !canManage && !canLeave && !isPending;
+  const roleLabel = getRoleLabel(
+    membership?.role ??
+      membership?.memberRole ??
+      membership?.data?.role ??
+      currentMember?.role ??
+      meeting.role,
+  );
+  const isOwner =
+    roleLabel === '모임장' ||
+    (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
+    Boolean(currentLoginId && meeting.owner === currentLoginId);
+  const isPending = PENDING_MEMBERSHIP_STATUSES.includes(membershipStatus);
+  const canManage = Boolean(
+    membership?.canManage ||
+      membership?.data?.canManage ||
+      meeting.canManage ||
+      isOwner ||
+      roleLabel === '관리자',
+  );
+  const canLeave = isMyMeetingDetail && !isPending && !isOwner
+    ? true
+    : (membership?.canLeave ??
+      membership?.data?.canLeave ??
+      meeting.canLeave ??
+      (ACTIVE_MEMBERSHIP_STATUSES.includes(membershipStatus) ||
+        (!isPending && Boolean(membership || currentMember)) ||
+        roleLabel === '회원'));
+  const myRoleLabel =
+    roleLabel ||
+    (isOwner
+      ? '모임장'
+      : canManage
+        ? '관리자'
+        : isPending
+          ? '가입 승인 대기'
+          : canLeave || isMyMeetingDetail
+            ? '회원'
+            : '');
+  const canJoin = !isMyMeetingDetail && !canManage && !canLeave && !isPending;
 
   return (
     <Layout>
@@ -74,6 +146,9 @@ export default function MeetingMyPage({
                   .filter(Boolean)
                   .join(' • ')}
               </p>
+              {myRoleLabel && (
+                <p className="meeting-my-role">내 등급 · {myRoleLabel}</p>
+              )}
             </div>
           </div>
           <div className="meeting-my-card__actions">
@@ -110,6 +185,8 @@ export default function MeetingMyPage({
           onCreate={onAnnouncementCreate}
           onUpdate={onAnnouncementUpdate}
           onDelete={onAnnouncementDelete}
+          isLoading={isLoading}
+          apiError={apiError}
         />
         <div className="contents-horizen"></div>
         <MeetingMyMemberList
@@ -119,6 +196,8 @@ export default function MeetingMyPage({
           canManage={Boolean(canManage)}
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
+          isLoading={isLoading}
+          apiError={apiError}
         />
       </div>
     </Layout>

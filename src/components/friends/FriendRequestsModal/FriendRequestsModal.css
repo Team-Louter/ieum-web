@@ -145,10 +145,7 @@
 }
 
 .friend-requests-modal__empty {
-  margin: 34px 0 22px;
-  color: #777;
-  font-size: var(--font-size-body);
-  text-align: center;
+  margin: 12px 0 0;
 }
 
 @media (max-width: 560px) {

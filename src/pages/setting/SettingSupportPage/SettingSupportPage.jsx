@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { readDemoValue, updateDemoValue } from '../../../api/demoStore';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
+import EmptyState from '../../../components/common/EmptyState/EmptyState';
 import './SettingSupportPage.css';
 
 const questions = [
@@ -111,8 +112,8 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
         className="setting-support-page__card"
       />
 
-      {inquiries.length > 0 && (
-        <SettingItem title="최근 문의" className="setting-support-page__card">
+      <SettingItem title="최근 문의" className="setting-support-page__card">
+        {inquiries.length > 0 ? (
           <section className="setting-support-page__history" aria-label="최근 문의 내역">
             <ul>
               {inquiries.slice(0, 5).map((inquiry) => (
@@ -131,8 +132,16 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
               ))}
             </ul>
           </section>
-        </SettingItem>
-      )}
+        ) : (
+          <EmptyState
+            compact
+            title="등록된 문의가 없어요"
+            description="고객센터에 문의를 남기면 이곳에서 확인할 수 있어요."
+            actionLabel="문의 작성"
+            onAction={() => setIsInquiryOpen(true)}
+          />
+        )}
+      </SettingItem>
 
       {isInquiryOpen && (
         <SettingDialog

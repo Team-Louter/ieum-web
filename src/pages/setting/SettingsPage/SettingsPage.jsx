@@ -36,6 +36,8 @@ function SettingsPage({
   onSendRecoveryCode,
   onVerifyRecoveryCode,
   onResetPassword,
+  isLoading = false,
+  apiError = '',
 }) {
   const [activeSection, setActiveSection] = useState('general');
   const [localSettings, setLocalSettings] = useState(() => {
@@ -58,7 +60,7 @@ function SettingsPage({
     onSettingChange?.(key, nextValue);
   };
 
-  const pageProps = { settings, onToggle: toggle, role };
+  const pageProps = { settings, onToggle: toggle, role, isLoading, apiError };
   const pages = {
     account: (
       <SettingAccountPage

@@ -9,22 +9,23 @@ function MyProfileInfo({ profile = {} }) {
     friendCount = 0,
     profileImage = profileImg,
   } = profile;
-  const loginId = profile.loginId ?? profile.id ?? '아이디';
+  const loginId = profile.loginId ?? profile.id ?? '';
+  const displayName = profile.nickname?.trim() || loginId || '아이디';
   const formatCount = (count) => String(Number(count) || 0).padStart(2, '0');
 
   return (
     <div className="my-profile-info">
       <img
         src={profileImage || profileImg}
-        alt={`${loginId || '사용자'} 프로필 사진`}
+        alt={`${displayName || '사용자'} 프로필 사진`}
         onError={(event) => {
           event.currentTarget.onerror = null;
           event.currentTarget.src = profileImg;
         }}
       />
       <div className="my-profile-info__text">
-        <p>{loginId}</p>
-        <p>{introduction || '내 소개'}</p>
+        <p>{displayName}</p>
+        <p>{introduction?.trim() || '내 소개가 없습니다'}</p>
         <div className="my-profile-info__stats">
           <p>게시물 {formatCount(postCount)}</p>
           <p>친구 {formatCount(friendCount)}</p>

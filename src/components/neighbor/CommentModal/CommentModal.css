@@ -48,6 +48,11 @@
   scrollbar-width: none;
 }
 
+.comment-modal__list > .empty-state {
+  flex: 1 1 auto;
+  min-height: 180px;
+}
+
 .comment-modal__form {
   background-color: #fff;
   display: flex;

@@ -2,21 +2,37 @@ import CommentModal from '../CommentModal/CommentModal';
 import CommentItem from '../CommentItem/CommentItem';
 import commentImg from '../../../assets/images/comment.png';
 import profileImg from '../../../assets/images/profile.png';
-import { dummyComments } from '../../../constants/dummy/dummyComments';
+import EmptyState from '../../common/EmptyState/EmptyState';
 import './CommentButton.css';
 
 /** 게시물별 댓글 모달을 열거나 닫는 버튼입니다. */
-function CommentButton({ isOpen = false, onToggle, comments = dummyComments, onSubmitComment }) {
+function CommentButton({
+  isOpen = false,
+  onToggle,
+  comments = [],
+  onSubmitComment,
+  isLoading = false,
+  apiError = '',
+}) {
+  const commentItems = Array.isArray(comments) ? comments : [];
   const commentModal = isOpen ? (
     <CommentModal onClose={onToggle} onSubmit={onSubmitComment}>
-      {comments.map((comment, index) => (
-        <CommentItem
-          key={comment.id ?? index}
-          profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
-          profileId={comment.profileId ?? comment.author?.id ?? comment.nickname ?? ''}
-          comment={comment.content ?? comment.text ?? ''}
+      {commentItems.length > 0 ? (
+        commentItems.map((comment, index) => (
+          <CommentItem
+            key={comment.id ?? index}
+            profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
+            profileId={comment.profileId ?? comment.author?.id ?? comment.nickname ?? ''}
+            comment={comment.content ?? comment.text ?? ''}
+          />
+        ))
+      ) : !isLoading && !apiError ? (
+        <EmptyState
+          compact
+          title="아직 댓글이 없어요"
+          description="첫 댓글을 남겨 대화를 시작해 보세요."
         />
-      ))}
+      ) : null}
     </CommentModal>
   ) : null;
 

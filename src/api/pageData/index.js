@@ -45,7 +45,10 @@ export default async function loadPageData({
     return loadMeetingListPage({ path, demoScope, loginId, userId });
   }
 
-  if ((path === '/meeting/my/detail' || path === '/meeting/my/member-list') && selectedId) {
+  if (
+    (path === '/meeting/detail' || path === '/meeting/my/detail' || path === '/meeting/my/member-list') &&
+    selectedId
+  ) {
     return loadMeetingDetailPage({ selectedId, demoScope });
   }
 

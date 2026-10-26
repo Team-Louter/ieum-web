@@ -112,8 +112,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
             ) : (
               <span className="market-post-create-form__upload-prompt">
                 <img src={uploadIcon} alt="" />
-                <strong>사진 또는 동영상 추가</strong>
-                <span>클릭해서 파일을 선택해 주세요</span>
+                <span>동영상 또는 사진을 올려주세요.</span>
               </span>
             )}
           </button>

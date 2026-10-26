@@ -50,6 +50,8 @@ function NeighborFeedPage({
                 onCommentToggle={() => handleCommentToggle(postId)}
                 onLikeToggle={(nextIsLiked) => onLike?.(post, nextIsLiked)}
                 onSubmitComment={(comment) => onSubmitComment?.(post, comment)}
+                isLoading={isLoading}
+                apiError={apiError}
               />
             );
           })

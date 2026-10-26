@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react';
 import profilePlaceholder from '../../../assets/images/profile.png';
+import EmptyState from '../../common/EmptyState/EmptyState';
 import './FriendRequestsModal.css';
 
-function FriendRequestsModal({ requests = [], onAccept, onReject, onClose }) {
+function FriendRequestsModal({
+  requests = [],
+  onAccept,
+  onReject,
+  onClose,
+  isLoading = false,
+  apiError = '',
+}) {
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
@@ -106,9 +114,14 @@ function FriendRequestsModal({ requests = [], onAccept, onReject, onClose }) {
               );
             })}
           </ul>
-        ) : (
-          <p className="friend-requests-modal__empty">새로운 친구 신청이 없습니다.</p>
-        )}
+        ) : !isLoading && !apiError ? (
+          <EmptyState
+            compact
+            className="friend-requests-modal__empty"
+            title="새로운 친구 신청이 없어요"
+            description="친구 신청을 받으면 이곳에서 확인할 수 있어요."
+          />
+        ) : null}
       </section>
     </div>
   );
