@@ -31,8 +31,13 @@ export default function MeetingMyPage({
   apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
+  const isMyMeetingDetail = currentPath.startsWith('/meeting/my/detail');
   const menuItems = [
-    { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
+    {
+      label: '모임 보기',
+      href: '/meeting',
+      isActive: currentPath === '/meeting' || currentPath.startsWith('/meeting/detail'),
+    },
     { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') },
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
@@ -57,7 +62,7 @@ export default function MeetingMyPage({
     'WAITING_APPROVAL',
     'REQUESTED',
   ].includes(membershipStatus);
-  const canJoin = !canManage && !canLeave && !isPending;
+  const canJoin = !isMyMeetingDetail && !canManage && !canLeave && !isPending;
 
   return (
     <Layout>

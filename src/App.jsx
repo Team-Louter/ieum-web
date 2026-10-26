@@ -251,7 +251,7 @@ function AppContent() {
     onSelectContact: selectChatRoom,
     onChatReconnected: () => setReloadKey((value) => value + 1),
 
-    onMeetingSelect: (meeting) => movePage(`/meeting/my/detail/${meeting.id}`),
+    onMeetingSelect: (meeting) => movePage(`/meeting/detail/${meeting.id}`),
     onJoin: (meetingId) => meetingActions.joinMeeting(meetingId).catch(() => {}),
     onLeave: (meetingId) => meetingActions.leaveMeeting(meetingId).catch(() => {}),
     onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),

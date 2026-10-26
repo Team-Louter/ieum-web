@@ -30,10 +30,7 @@ export default function MeetingMyListPage({
             <MeetingCard
               key={meeting.id ?? index}
               meeting={meeting}
-              to={
-                meeting.href ??
-                (meeting.id != null ? `/meeting/my/detail/${meeting.id}` : '/meeting/my/detail')
-              }
+              to={meeting.id != null ? `/meeting/my/detail/${meeting.id}` : '/meeting/my/detail'}
               onClick={() => onMeetingSelect?.(meeting)}
             />
           ))

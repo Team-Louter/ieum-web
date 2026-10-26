@@ -42,6 +42,7 @@ export const pageRoutes = {
   '/profile/friends': ProfilePageFriend,
   '/guardian': GuardianPage,
   '/meeting': MeetingShowPage,
+  '/meeting/detail': MeetingMyPage,
   '/meeting/my': MeetingMyListPage,
   '/meeting/my/detail': MeetingMyPage,
   '/meeting/make': MeetingCreatePage,
@@ -63,6 +64,7 @@ export const publicRoutes = ['/login', '/signup/user', '/signup/guardian'];
 
 // 상세 페이지의 숫자 ID는 페이지 종류와 분리해 usePageApiData에 전달합니다.
 export function getRouteKey(path) {
+  if (/^\/meeting\/detail\/\d+$/.test(path)) return '/meeting/detail';
   if (/^\/market\/feedin\/\d+$/.test(path)) return '/market/feedin';
   if (/^\/meeting\/my\/detail\/\d+$/.test(path)) return '/meeting/my/detail';
   if (/^\/meeting\/my\/member-list\/\d+$/.test(path)) return '/meeting/my/member-list';
@@ -72,7 +74,7 @@ export function getRouteKey(path) {
 
 export function getRouteId(path) {
   const match = path.match(
-    /^\/(?:market\/feedin|meeting\/my\/detail|meeting\/my\/member-list|meeting\/management)\/(\d+)$/,
+    /^\/(?:market\/feedin|meeting\/detail|meeting\/my\/detail|meeting\/my\/member-list|meeting\/management)\/(\d+)$/,
   );
   return match ? Number(match[1]) : null;
 }

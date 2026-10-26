@@ -29,7 +29,7 @@ export default function MeetingShowPage({
             <MeetingCard
               key={meeting.id ?? index}
               meeting={meeting}
-              to={meeting.href}
+              to={meeting.href ?? (meeting.id != null ? `/meeting/detail/${meeting.id}` : undefined)}
               onClick={() => onMeetingSelect?.(meeting)}
             />
           ))
