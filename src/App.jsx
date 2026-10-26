@@ -31,6 +31,10 @@ function AppContent() {
     getRouteId(currentPath) ?? location.state?.sharingId ?? location.state?.meetingId ?? null;
   const Page = pageRoutes[routeKey];
 
+  const [communityPaging, setCommunityPaging] = useState({ key: '', page: 0 });
+  const communityKey = `${routeKey}:${selectedId ?? ''}`;
+  const communityPage = communityPaging.key === communityKey ? communityPaging.page : 0;
+
   // 앱 전체에서 여러 화면이 함께 사용하는 상태입니다.
   const [accessToken, setAccessToken] = useState(() => getAccessToken());
   const [reloadKey, setReloadKey] = useState(0);
@@ -110,6 +114,7 @@ function AppContent() {
     activeChatRoomId,
     accessToken,
     reloadKey,
+    communityPage,
     onDefaultChatRoom: selectDefaultChatRoom,
   });
 
@@ -117,6 +122,7 @@ function AppContent() {
 
   function movePage(pageName, options) {
     window.scrollTo(0, 0);
+    setCommunityPaging({ key: '', page: 0 });
     navigate(pageName, options);
   }
 
@@ -165,7 +171,12 @@ function AppContent() {
     setChatSelection,
   });
 
-  const meetingActions = useMeetingActions({ demoScope, user, runAction, movePage });
+  const meetingActions = useMeetingActions({
+    demoScope,
+    user,
+    runAction,
+    movePage,
+  });
 
   const postActions = usePostActions({
     demoScope,
@@ -221,6 +232,10 @@ function AppContent() {
     friends: data.friends ?? [],
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],
+    communityPage,
+    hasNext: data.hasNext ?? false,
+    onCommunityPageChange: (page) => setCommunityPaging({ key: communityKey, page }),
+    onProfileChat: (id) => friendActions.startChat(id).catch(() => {}),
     meetings: data.meetings ?? [],
     meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
     membership: data.membership ?? null,
@@ -241,7 +256,7 @@ function AppContent() {
     checkedMedicationIds,
     role: user.role,
 
-    onAddFriend: friendActions.sendFriendRequest,
+    onAddFriend: (target) => friendActions.sendFriendRequest(target).catch(() => {}),
     onSearchUsers: userApi.search,
     onAcceptFriendRequest: friendActions.acceptFriendRequest,
     onRejectFriendRequest: friendActions.rejectFriendRequest,
@@ -296,11 +311,7 @@ function AppContent() {
   };
 
   if (!Page) {
-    return (
-      <NotFoundPage
-        onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')}
-      />
-    );
+    return <NotFoundPage onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')} />;
   }
 
   if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {
@@ -313,7 +324,7 @@ function AppContent() {
       <Page {...commonProps} />
 
       {loading && accessToken && <LoadingMessage />}
-      {feedback && (
+      {(feedback || error) && (
         <FeedbackMessage
           message={error || feedback}
           isError={Boolean(error || feedbackIsError)}

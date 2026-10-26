@@ -10,11 +10,16 @@ export default function usePageApiData({
   activeChatRoomId,
   accessToken,
   reloadKey,
+  communityPage = 0,
   onDefaultChatRoom,
 }) {
+  const resourceKey = `${path}:${selectedId ?? ''}:${communityPage}:${accessToken ?? ''}`;
   const [savedResource, setSavedResource] = useState({ path: '', data: {} });
   const [savedError, setSavedError] = useState({ path: '', message: '' });
-  const [requestState, setRequestState] = useState({ path: '', loading: false });
+  const [requestState, setRequestState] = useState({
+    path: '',
+    loading: false,
+  });
 
   const user = getCurrentUser();
   const demoScope = user.loginId || (user.userId ? String(user.userId) : 'guest');
@@ -22,13 +27,13 @@ export default function usePageApiData({
   const needsLogin = !isPublicPage && !accessToken;
 
   // 이전 화면 데이터가 새 화면에 잠깐 나타나지 않도록 경로를 확인합니다.
-  const data = savedResource.path === path ? savedResource.data : {};
+  const data = savedResource.path === resourceKey ? savedResource.data : {};
   const error = needsLogin
     ? 'API 데이터를 불러오려면 먼저 로그인해 주세요.'
-    : savedError.path === path
+    : savedError.path === resourceKey
       ? savedError.message
       : '';
-  const loading = !needsLogin && (requestState.path !== path || requestState.loading);
+  const loading = !needsLogin && (requestState.path !== resourceKey || requestState.loading);
 
   useEffect(() => {
     let isActive = true;
@@ -40,7 +45,7 @@ export default function usePageApiData({
     }
 
     async function loadCurrentPage() {
-      setRequestState({ path, loading: true });
+      setRequestState({ path: resourceKey, loading: true });
 
       try {
         const nextData = await loadPageData({
@@ -51,25 +56,26 @@ export default function usePageApiData({
           userId: user.userId,
           demoScope,
           onDefaultChatRoom,
+          communityPage,
         });
 
         if (!isActive) return;
         setSavedResource((current) => ({
-          path,
+          path: resourceKey,
           data: {
-            ...(current.path === path ? current.data : {}),
+            ...(current.path === resourceKey ? current.data : {}),
             ...nextData,
           },
         }));
-        setSavedError({ path, message: '' });
+        setSavedError({ path: resourceKey, message: '' });
       } catch (loadError) {
         if (!isActive) return;
         setSavedError({
-          path,
+          path: resourceKey,
           message: loadError?.message ?? 'API 요청에 실패했습니다.',
         });
       } finally {
-        if (isActive) setRequestState({ path, loading: false });
+        if (isActive) setRequestState({ path: resourceKey, loading: false });
       }
     }
 
@@ -79,6 +85,8 @@ export default function usePageApiData({
     };
   }, [
     path,
+    resourceKey,
+    communityPage,
     isPublicPage,
     selectedId,
     accessToken,
@@ -106,16 +114,16 @@ export default function usePageApiData({
 
         if (!isActive) return;
         setSavedResource((current) => ({
-          path,
+          path: resourceKey,
           data: {
-            ...(current.path === path ? current.data : {}),
+            ...(current.path === resourceKey ? current.data : {}),
             ...messageData,
           },
         }));
       } catch (loadError) {
         if (!isActive) return;
         setSavedError({
-          path,
+          path: resourceKey,
           message: loadError?.message ?? '채팅 기록을 불러오지 못했습니다.',
         });
       }
@@ -125,7 +133,7 @@ export default function usePageApiData({
     return () => {
       isActive = false;
     };
-  }, [path, activeChatRoomId, accessToken, reloadKey, user.userId, demoScope]);
+  }, [path, resourceKey, activeChatRoomId, accessToken, reloadKey, user.userId, demoScope]);
 
   return { data, error, loading, user };
 }

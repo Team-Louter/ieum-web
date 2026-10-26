@@ -9,6 +9,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
   const [title, setTitle] = useState(initialValues.title ?? '');
   const [content, setContent] = useState(initialValues.content ?? '');
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
 
@@ -20,7 +21,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
     };
   }, []);
 
-  /** 선택한 파일이 이미지 또는 동영상인지 확인하고 미리보기를 준비합니다. */
+  /** 선택한 파일이 JPEG 또는 PNG 이미지인지 확인하고 미리보기를 준비합니다. */
   function handleFileChange(event) {
     const [nextFile] = event.target.files;
 
@@ -28,11 +29,11 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
       return;
     }
 
-    if (!nextFile.type.startsWith('image/') && !nextFile.type.startsWith('video/')) {
+    if (!['image/jpeg', 'image/png'].includes(nextFile.type) || nextFile.size > 5 * 1024 * 1024) {
       setSelectedFile(null);
       setErrors((currentErrors) => ({
         ...currentErrors,
-        media: '이미지 또는 동영상 파일만 선택할 수 있습니다.',
+        media: '5MB 이하 JPEG 또는 PNG 사진을 선택해 주세요.',
       }));
       event.target.value = '';
       return;
@@ -60,11 +61,12 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
   }
 
   /** 필수 입력값을 확인하고 유효하지 않은 항목에 오류 문구를 표시합니다. */
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (submitting) return;
 
     const nextErrors = {
-      media: selectedFile ? '' : '필수 입력 정보입니다.',
+      media: '',
       title: title.trim() ? '' : '필수 입력 정보입니다.',
       content: content.trim() ? '' : '필수 입력 정보입니다.',
     };
@@ -75,7 +77,21 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
       return;
     }
 
-    onSubmit?.({ title: title.trim(), content: content.trim(), media: selectedFile });
+    setSubmitting(true);
+    try {
+      await onSubmit?.({
+        title: title.trim(),
+        content: content.trim(),
+        media: selectedFile,
+      });
+    } catch (failure) {
+      setErrors((current) => ({
+        ...current,
+        submit: failure.message ?? '게시물을 등록하지 못했습니다.',
+      }));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -105,7 +121,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
             ) : (
               <>
                 <img src={uploadIcon} alt="" />
-                <p>동영상 또는 사진을 올려주세요.</p>
+                <p>사진을 올려주세요. (선택, JPEG·PNG 5MB 이하)</p>
               </>
             )}
           </button>
@@ -126,7 +142,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
           ref={fileInputRef}
           type="file"
           id="neighbor-post-media"
-          accept="image/*,video/*"
+          accept="image/jpeg,image/png"
           hidden
           onChange={handleFileChange}
         />
@@ -135,6 +151,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
             <input
               type="text"
               placeholder="제목을 입력해주세요."
+              maxLength={100}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
             />
@@ -148,6 +165,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
           <div>
             <textarea
               placeholder="내용을 입력해주세요."
+              maxLength={5000}
               value={content}
               onChange={(event) => setContent(event.target.value)}
             />
@@ -160,7 +178,8 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
           </div>
         </div>
       </div>
-      <button type="submit" className="neighbor-post-create-form__submit">
+      <p role="alert">{errors.submit}</p>
+      <button disabled={submitting} type="submit" className="neighbor-post-create-form__submit">
         게시물 만들기
       </button>
     </form>

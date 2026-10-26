@@ -143,12 +143,18 @@ export async function apiRequest(path, options = {}) {
   }
   if (auth && getAccessToken()) headers.set('Authorization', `Bearer ${getAccessToken()}`);
 
-  let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
+  let response = await fetch(`${API_BASE_URL}${path}`, {
+    ...requestOptions,
+    headers,
+  });
   if ((response.status === 401 || response.status === 403) && auth && retryAuth) {
     const nextToken = await refreshAccessToken();
     if (nextToken) {
       headers.set('Authorization', `Bearer ${nextToken}`);
-      response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
+      response = await fetch(`${API_BASE_URL}${path}`, {
+        ...requestOptions,
+        headers,
+      });
     }
   }
 
@@ -197,6 +203,7 @@ export const authApi = {
 };
 
 export const profileApi = {
+  getUser: (id) => apiGet(`/api/profile/${id}`),
   get: () => apiGet('/api/profile'),
   update: (profile, profileImage) => {
     if (!profileImage) return apiPatch('/api/profile', profile);
@@ -240,12 +247,17 @@ export const friendApi = {
 
 export const userApi = {
   search: (loginId, page = 0, size = 20) => {
-    const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
+    const params = new URLSearchParams({
+      loginId,
+      page: String(page),
+      size: String(size),
+    });
     return apiGet(`/api/users/search?${params.toString()}`);
   },
 };
 
 export const meetingApi = {
+  mine: () => apiGet('/api/community/meetings/my'),
   list: () => apiGet('/api/community/meetings'),
   get: (id) => apiGet(`/api/community/meetings/${id}`),
   create: (meeting) => apiPost('/api/community/meetings', meeting),
@@ -254,8 +266,7 @@ export const meetingApi = {
   membership: (id) => apiGet(`/api/community/meetings/${id}/membership`),
   members: (id) => apiGet(`/api/community/meetings/${id}/members`),
   join: (id) => apiPost(`/api/community/meetings/${id}/join`),
-  approveMember: (id, userId) =>
-    apiPost(`/api/community/meetings/${id}/members/${userId}/approve`),
+  approveMember: (id, userId) => apiPost(`/api/community/meetings/${id}/members/${userId}/approve`),
   updateMemberRole: (id, userId, role) =>
     apiPatch(`/api/community/meetings/${id}/members/${userId}/role`, { role }),
   removeMember: (id, userId) => apiDelete(`/api/community/meetings/${id}/members/${userId}`),
@@ -298,4 +309,24 @@ export const chatApi = {
     return apiGet(`/api/chat/rooms/${roomId}/messages?${query}`);
   },
   sendMessage: (roomId, content) => apiPost(`/api/chat/rooms/${roomId}/messages`, { content }),
+};
+
+export const communityPostApi = {
+  list: ({ authorId, mine = false, page = 0, size = 20 } = {}) => {
+    const query = new URLSearchParams({
+      mine: String(mine),
+      page: String(page),
+      size: String(size),
+    });
+    if (authorId != null) query.set('authorId', String(authorId));
+    return apiGet(`/api/community/posts?${query}`);
+  },
+  create: (request, file) =>
+    apiPost('/api/community/posts', file ? makeRequestWithFile(request, file) : request),
+  remove: (id) => apiDelete(`/api/community/posts/${id}`),
+  like: (id, enabled) =>
+    enabled
+      ? apiPut(`/api/community/posts/${id}/like`)
+      : apiDelete(`/api/community/posts/${id}/like`),
+  comment: (id, content) => apiPost(`/api/community/posts/${id}/comments`, { content }),
 };

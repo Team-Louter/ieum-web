@@ -1,3 +1,4 @@
+import PostPagination from '../../components/neighbor/PostPagination';
 import './MyProfilePageContent.css';
 import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
@@ -16,6 +17,9 @@ function MyProfilePageContent({
   onNavigate,
   isLoading = false,
   apiError = '',
+  communityPage = 0,
+  hasNext = false,
+  onCommunityPageChange,
 }) {
   const postItems = Array.isArray(posts) ? posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
@@ -46,6 +50,12 @@ function MyProfilePageContent({
           ) : null}
         </div>
       </div>
+      <PostPagination
+        communityPage={communityPage}
+        hasNext={hasNext}
+        onCommunityPageChange={onCommunityPageChange}
+        isLoading={isLoading}
+      />
     </Layout>
   );
 }

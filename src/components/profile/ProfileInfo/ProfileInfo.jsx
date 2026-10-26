@@ -26,7 +26,7 @@ function ProfileInfo({ profile = {} }) {
         <p>{introduction}</p>
         <div className="profile-info__stats">
           <p>게시물 {postCount}</p>
-          <p>친구 {friendCount}</p>
+          {friendCount != null && <p>친구 {friendCount}</p>}
         </div>
       </div>
     </div>

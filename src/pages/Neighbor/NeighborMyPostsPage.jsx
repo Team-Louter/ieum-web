@@ -1,3 +1,4 @@
+import PostPagination from '../../components/neighbor/PostPagination';
 import './NeighborMyPostsPage.css';
 import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
@@ -12,13 +13,24 @@ function NeighborMyPostsPage({
   onNavigate,
   isLoading = false,
   apiError = '',
+  communityPage = 0,
+  hasNext = false,
+  onCommunityPageChange,
 }) {
   const postItems = Array.isArray(posts) ? posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
-    { label: '게시물 보기', href: '/neighbor', isActive: currentPath === '/neighbor' },
-    { label: '내 게시물', href: '/neighbor/my', isActive: currentPath === '/neighbor/my' },
+    {
+      label: '게시물 보기',
+      href: '/neighbor',
+      isActive: currentPath === '/neighbor',
+    },
+    {
+      label: '내 게시물',
+      href: '/neighbor/my',
+      isActive: currentPath === '/neighbor/my',
+    },
     {
       label: '게시물 만들기',
       href: '/neighbor/create',
@@ -43,6 +55,12 @@ function NeighborMyPostsPage({
           />
         ) : null}
       </div>
+      <PostPagination
+        communityPage={communityPage}
+        hasNext={hasNext}
+        onCommunityPageChange={onCommunityPageChange}
+        isLoading={isLoading}
+      />
     </Layout>
   );
 }

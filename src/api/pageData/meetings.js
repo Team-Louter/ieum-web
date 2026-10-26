@@ -22,10 +22,20 @@ function isParticipatingMeeting(meeting) {
 }
 
 export async function loadMeetingListPage({ path, demoScope, loginId, userId }) {
-  const remoteMeetings = asArray(await loadApiOrEmpty(() => meetingApi.list()));
-  const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
+  const remoteMeetings = asArray(
+    await (path === '/meeting/my' ? meetingApi.mine() : meetingApi.list()),
+  );
+  const savedMeetings = asArray(readDemoValue('meetings', [], demoScope));
+  const localMeetings = savedMeetings.filter((meeting) => !meeting._apiBacked);
+  const serverMeetings = remoteMeetings.map((meeting) => ({
+    ...meeting,
+    imageUrl:
+      meeting.imageUrl ??
+      savedMeetings.find((saved) => saved._apiBacked && String(saved.id) === String(meeting.id))
+        ?.imageUrl,
+  }));
 
-  const meetings = [...localMeetings, ...remoteMeetings]
+  const meetings = [...serverMeetings, ...localMeetings]
     .filter(
       (meeting, index, list) =>
         list.findIndex((candidate) => String(candidate.id) === String(meeting.id)) === index,
@@ -78,7 +88,7 @@ export async function loadMeetingDetailPage({ selectedId, demoScope }) {
     });
   const meeting = toMeetingCard({
     ...remoteMeeting,
-    ...(localMeeting ?? {}),
+    imageUrl: remoteMeeting.imageUrl ?? localMeeting?.imageUrl,
     memberCount: remoteMeeting.memberCount ?? members.length,
   });
 

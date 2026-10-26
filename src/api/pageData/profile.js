@@ -1,7 +1,8 @@
 import { friendApi, meetingApi, profileApi, resolveApiAssetUrl } from '../client';
 import { toMeetingCard } from '../adapters';
 import { readDemoValue } from '../demoStore';
-import { asArray, isOwnedBy, loadApiOrDemo } from './common';
+import { loadCommunityPosts } from './community';
+import { asArray, loadApiOrDemo } from './common';
 
 function toProfile(profile, friendCount, loginId) {
   return {
@@ -15,7 +16,7 @@ function toProfile(profile, friendCount, loginId) {
   };
 }
 
-export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
+export async function loadMyProfilePage({ path, demoScope, loginId, userId, communityPage = 0 }) {
   const profileRequest = loadApiOrDemo(
     () => profileApi.get(),
     'profile',
@@ -31,9 +32,11 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
     name: friend.nickname,
   }));
   const savedProfile = readDemoValue('profile', {}, demoScope);
-  const ownPosts = asArray(readDemoValue('neighbor.posts', [], demoScope)).filter((post) =>
-    isOwnedBy(loginId, post),
-  );
+  const {
+    posts: ownPosts,
+    hasNext,
+    totalCount,
+  } = await loadCommunityPosts({ mine: true, page: communityPage });
 
   const result = {
     profile: {
@@ -43,21 +46,32 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
       nickname: profile.nickname ?? savedProfile.nickname ?? '',
       userId: profile.userId ?? userId ?? null,
       friendCount: friendItems.length,
+      postCount: totalCount,
     },
     friends: friendItems,
     posts: ownPosts,
+    hasNext,
   };
 
   if (path === '/myProfile/meetings') {
-    const meetings = asArray(
-      await loadApiOrDemo(() => meetingApi.list(), 'meetings', [], demoScope),
-    ).map(toMeetingCard);
-    result.meetings = meetings.filter(
-      (meeting) =>
-        (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
-        meeting.owner === loginId,
-    );
+    result.meetings = asArray(await meetingApi.mine()).map(toMeetingCard);
   }
 
   return result;
+}
+
+export async function loadOtherProfilePage({ selectedId, communityPage = 0 }) {
+  if (!selectedId) throw new Error('작성자 정보가 없습니다. 게시물에서 프로필을 다시 열어 주세요.');
+  const [profile, feed] = await Promise.all([
+    profileApi.getUser(selectedId),
+    loadCommunityPosts({ authorId: selectedId, page: communityPage }),
+  ]);
+  return {
+    profile: {
+      ...toProfile(profile, null, profile.loginId),
+      postCount: feed.totalCount,
+    },
+    posts: feed.posts,
+    hasNext: feed.hasNext,
+  };
 }

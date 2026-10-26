@@ -6,7 +6,8 @@ import { loadGuardianPage, loadSettingsPage } from './guardian';
 import { loadMarketDetailPage, loadMarketListPage } from './market';
 import { loadMeetingDetailPage, loadMeetingListPage } from './meetings';
 import { loadMyProfilePage } from './profile';
-import { readDemoValue } from '../demoStore';
+import { loadCommunityPosts } from './community';
+import { loadOtherProfilePage } from './profile';
 
 // 화면 경로에 맞는 데이터 함수를 찾아 실행합니다.
 export default async function loadPageData({
@@ -17,6 +18,7 @@ export default async function loadPageData({
   userId,
   demoScope,
   onDefaultChatRoom,
+  communityPage = 0,
 }) {
   if (path === '/guardian') {
     if (role !== 'ROLE_GUARDIAN') {
@@ -28,17 +30,22 @@ export default async function loadPageData({
   if (path === '/settings') return loadSettingsPage({ role, demoScope });
 
   if (path === '/neighbor' || path === '/neighbor/my') {
-    const posts = asArray(readDemoValue('neighbor.posts', [], demoScope));
-    return {
-      posts:
-        path === '/neighbor/my'
-          ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
-          : posts,
-    };
+    return loadCommunityPosts({
+      mine: path === '/neighbor/my',
+      page: communityPage,
+    });
   }
 
+  if (path.startsWith('/profile')) return loadOtherProfilePage({ selectedId, communityPage });
+
   if (path.startsWith('/myProfile')) {
-    return loadMyProfilePage({ path, demoScope, loginId, userId });
+    return loadMyProfilePage({
+      path,
+      demoScope,
+      loginId,
+      userId,
+      communityPage,
+    });
   }
 
   if (path === '/meeting' || path === '/meeting/my') {
@@ -46,7 +53,9 @@ export default async function loadPageData({
   }
 
   if (
-    (path === '/meeting/detail' || path === '/meeting/my/detail' || path === '/meeting/my/member-list') &&
+    (path === '/meeting/detail' ||
+      path === '/meeting/my/detail' ||
+      path === '/meeting/my/member-list') &&
     selectedId
   ) {
     return loadMeetingDetailPage({ selectedId, demoScope });
