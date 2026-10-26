@@ -22,6 +22,20 @@
 
 .setting-dialog--document {
   width: min(860px, 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.setting-dialog--document .setting-dialog__header {
+  flex: none;
+}
+
+.setting-dialog--document .setting-dialog__content {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .setting-dialog__header {
