@@ -3,6 +3,24 @@ import { toMeetingCard, toMeetingMember, toMeetingNotice } from '../adapters';
 import { readDemoValue } from '../demoStore';
 import { asArray, loadApiOrEmpty } from './common';
 
+const ACTIVE_MEMBERSHIP_STATUSES = new Set(['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER']);
+const PENDING_MEMBERSHIP_STATUSES = new Set([
+  'PENDING',
+  'PENDING_APPROVAL',
+  'WAITING',
+  'WAITING_APPROVAL',
+  'REQUESTED',
+]);
+
+function isParticipatingMeeting(meeting) {
+  const status = String(meeting.membershipStatus ?? '').toUpperCase();
+  return (
+    meeting.canLeave === true ||
+    ACTIVE_MEMBERSHIP_STATUSES.has(status) ||
+    PENDING_MEMBERSHIP_STATUSES.has(status)
+  );
+}
+
 export async function loadMeetingListPage({ path, demoScope, loginId, userId }) {
   const remoteMeetings = asArray(await loadApiOrEmpty(() => meetingApi.list()));
   const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
@@ -20,7 +38,8 @@ export async function loadMeetingListPage({ path, demoScope, loginId, userId }) 
         ? meetings.filter(
             (meeting) =>
               (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
-              meeting.owner === loginId,
+              meeting.owner === loginId ||
+              isParticipatingMeeting(meeting),
           )
         : meetings,
   };

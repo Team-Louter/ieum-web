@@ -50,7 +50,13 @@ export default function MeetingMyPage({
     membership?.canLeave ??
     meeting.canLeave ??
     ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'].includes(membershipStatus);
-  const isPending = ['PENDING', 'WAITING', 'REQUESTED'].includes(membershipStatus);
+  const isPending = [
+    'PENDING',
+    'PENDING_APPROVAL',
+    'WAITING',
+    'WAITING_APPROVAL',
+    'REQUESTED',
+  ].includes(membershipStatus);
   const canJoin = !canManage && !canLeave && !isPending;
 
   return (
