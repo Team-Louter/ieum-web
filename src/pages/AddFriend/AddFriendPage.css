@@ -69,6 +69,19 @@
   min-height: 500px;
 }
 
+.add-friend-list--loading {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.add-friend-empty {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: var(--font-size-body);
+}
+
 .add-friend-profile {
   width: 220px;
 }

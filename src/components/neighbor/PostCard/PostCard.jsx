@@ -20,7 +20,14 @@ function PostCard({
     <div className="content-container">
       <div className="content-profile-container">
         <div>
-          <img src={author.profileImage ?? author.profile_image ?? profileImg} alt="프로필 사진" />
+          <img
+            src={author.profileImage || author.profile_image || author.profileImageUrl || profileImg}
+            alt="프로필 사진"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = profileImg;
+            }}
+          />
           <p>{author.id ?? author.nickname ?? ''}</p>
         </div>
         <Link to={post.profileHref ?? '/profile'}>

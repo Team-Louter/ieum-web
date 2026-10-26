@@ -34,16 +34,20 @@ export default function usePostActions({
         const createdSharing = await sharingApi.create(request, imageFile);
         if (createdSharing?.id != null) {
           const ownersById = readDemoValue('market.owners', {}, demoScope);
-          writeDemoValue('market.owners', {
-            ...ownersById,
-            [String(createdSharing.id)]: user.loginId,
-          }, demoScope);
+          writeDemoValue(
+            'market.owners',
+            {
+              ...ownersById,
+              [String(createdSharing.id)]: user.loginId,
+            },
+            demoScope,
+          );
         }
         return createdSharing;
       } catch (error) {
         if (!isDemoFallbackError(error)) throw error;
 
-        const imageUrl = imageFile ? await fileToDataUrl(imageFile) : values.imageUrl ?? '';
+        const imageUrl = imageFile ? await fileToDataUrl(imageFile) : (values.imageUrl ?? '');
         const localSharing = {
           ...request,
           id: Date.now(),
@@ -85,12 +89,18 @@ export default function usePostActions({
   }
 
   function toggleNeighborLike(post, isLiked) {
-    updateDemoValue('neighbor.posts', (posts) => posts.map((item) => {
-      if (String(item.id) !== String(post.id)) return item;
+    updateDemoValue(
+      'neighbor.posts',
+      (posts) =>
+        posts.map((item) => {
+          if (String(item.id) !== String(post.id)) return item;
 
-      const likeCount = Number(item.likeCount ?? 0) + (isLiked ? 1 : -1);
-      return { ...item, isLiked, likeCount: Math.max(0, likeCount) };
-    }), [], demoScope);
+          const likeCount = Number(item.likeCount ?? 0) + (isLiked ? 1 : -1);
+          return { ...item, isLiked, likeCount: Math.max(0, likeCount) };
+        }),
+      [],
+      demoScope,
+    );
     setReloadKey((current) => current + 1);
   }
 
@@ -102,11 +112,17 @@ export default function usePostActions({
       createdAt: new Date().toISOString(),
     };
 
-    updateDemoValue('neighbor.posts', (posts) => posts.map((item) => (
-      String(item.id) === String(post.id)
-        ? { ...item, comments: [...(item.comments ?? []), comment] }
-        : item
-    )), [], demoScope);
+    updateDemoValue(
+      'neighbor.posts',
+      (posts) =>
+        posts.map((item) =>
+          String(item.id) === String(post.id)
+            ? { ...item, comments: [...(item.comments ?? []), comment] }
+            : item,
+        ),
+      [],
+      demoScope,
+    );
     setReloadKey((current) => current + 1);
   }
 
@@ -129,9 +145,15 @@ export default function usePostActions({
       } catch (error) {
         if (![405, 501].includes(error?.status)) throw error;
 
-        updateDemoValue('market.posts', (posts) => posts.map((post) => (
-          String(post.id) === String(productId) ? { ...post, complete: true } : post
-        )), [], demoScope);
+        updateDemoValue(
+          'market.posts',
+          (posts) =>
+            posts.map((post) =>
+              String(post.id) === String(productId) ? { ...post, complete: true } : post,
+            ),
+          [],
+          demoScope,
+        );
       }
     }, '나눔 완료로 표시했습니다.');
   }

@@ -26,7 +26,7 @@ export default function MeetingMyMemberProfile({
     </>
   );
 
-  return(
+  return (
     <div className="member-profile-item">
       {interactive ? (
         <button
@@ -47,7 +47,9 @@ export default function MeetingMyMemberProfile({
             <button
               type="button"
               key={actionItem}
-              className={dangerActionItems.includes(actionItem) ? 'member-action-menu__danger' : undefined}
+              className={
+                dangerActionItems.includes(actionItem) ? 'member-action-menu__danger' : undefined
+              }
               onClick={() => onAction?.(actionItem)}
             >
               {actionItem}
@@ -56,5 +58,5 @@ export default function MeetingMyMemberProfile({
         </div>
       )}
     </div>
-  )
+  );
 }

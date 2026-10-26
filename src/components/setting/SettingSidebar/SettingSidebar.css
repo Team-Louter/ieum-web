@@ -65,7 +65,8 @@
 }
 
 .setting-sidebar__menu-button.is-active img {
-  filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg) brightness(88%) contrast(87%);
+  filter: brightness(0) saturate(100%) invert(62%) sepia(39%) saturate(760%) hue-rotate(92deg)
+    brightness(88%) contrast(87%);
 }
 
 .setting-sidebar__menu-button span,

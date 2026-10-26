@@ -1,4 +1,3 @@
-
 .meeting-make-option-container {
   display: flex;
   justify-content: space-between;
@@ -22,7 +21,6 @@
   font-weight: 300;
 }
 
-
 /* ===============
 체크ㅏ스 스타일 바꾸는겅ㅇㅇㅇㅇ
 =============== */
@@ -31,24 +29,24 @@
   width: 120px;
   height: 40px;
 
-  border: 1px solid #DFDFDF;
+  border: 1px solid #dfdfdf;
   border-radius: 10px;
 
-  color: #6F6F6F;
+  color: #6f6f6f;
   background-color: white;
 
   font-size: var(--font-size-body);
 }
 
 .select-list {
-  width:100%;
+  width: 100%;
   position: absolute;
-  border: 1px solid #DFDFDF;
+  border: 1px solid #dfdfdf;
   list-style: none;
   margin: 0;
   padding: 0;
 
-  background-color: #FFF;
+  background-color: #fff;
   z-index: 999;
 }
 

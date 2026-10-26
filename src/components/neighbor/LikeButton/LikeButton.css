@@ -1,0 +1,19 @@
+/* 좋아요 버튼은 게시물 반응 버튼 공통 스타일을 사용합니다. */
+.like-button .like-button__icon {
+  width: 27.5px;
+  height: 27.5px;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: color 0.15s ease, fill 0.15s ease;
+}
+
+.content-info-icon-container > button.like-button.is-active {
+  color: #e5394f;
+}
+
+.like-button.is-active .like-button__icon {
+  fill: currentColor;
+}

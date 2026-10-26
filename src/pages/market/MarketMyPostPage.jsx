@@ -27,9 +27,16 @@ function MarketMyPostPage({
     <Layout>
       <PageTabNavigation ariaLabel="나눔마당 메뉴" isFixed items={menuItems} />
       <div id="post-card-list" className={isEmpty ? 'empty-state-page--centered' : undefined}>
-        {postItems.length > 0 ? postItems.map((post) => (
-          <MarketMyPostCard key={post.id} post={post} onMarkSold={onMarkSold} onDelete={onDeletePost} />
-        )) : isEmpty ? (
+        {postItems.length > 0 ? (
+          postItems.map((post) => (
+            <MarketMyPostCard
+              key={post.id}
+              post={post}
+              onMarkSold={onMarkSold}
+              onDelete={onDeletePost}
+            />
+          ))
+        ) : isEmpty ? (
           <EmptyState
             title="등록한 게시물이 없어요"
             description="내가 올린 상품을 등록하면 이곳에서 관리할 수 있어요."

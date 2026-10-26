@@ -14,7 +14,12 @@ function SettingMedicationList({ schedule = [], onDelete }) {
           <span className="setting-medication-list__time">{time}</span>
           <span className="setting-medication-list__name">{label ?? medicationName}</span>
           {onDelete && (
-            <button type="button" className="setting-medication-list__delete" onClick={() => onDelete(id)} disabled={id == null}>
+            <button
+              type="button"
+              className="setting-medication-list__delete"
+              onClick={() => onDelete(id)}
+              disabled={id == null}
+            >
               삭제
             </button>
           )}

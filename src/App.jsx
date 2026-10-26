@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import LoginPage from './pages/LoginPage/LoginPage';
-import { getAccessToken } from './api/client';
+import { getAccessToken, userApi } from './api/client';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
 import useAccountActions from './app/useAccountActions';
@@ -74,9 +74,9 @@ function AppContent() {
   useEffect(() => {
     if (routeKey === '/chatting') return;
     window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
-    setChatSelection((current) => (
-      current.path === '/chatting' ? { path: '', roomId: null } : current
-    ));
+    setChatSelection((current) =>
+      current.path === '/chatting' ? { path: '', roomId: null } : current,
+    );
   }, [routeKey]);
 
   const activeChatRoomId = chatSelection.path === routeKey ? chatSelection.roomId : null;
@@ -179,6 +179,12 @@ function AppContent() {
     '/neighbor/create': postActions.createNeighborPost,
     '/market/create': postActions.createSharing,
     '/meeting/make': meetingActions.createMeeting,
+    '/meeting/announcement/make': (values) => meetingActions.createNotice(selectedId, values),
+    '/meeting/management': (values) =>
+      meetingActions.updateMeeting(
+        data.meeting ?? location.state?.meeting ?? defaultMeeting,
+        values,
+      ),
   };
 
   const commonProps = {
@@ -193,10 +199,12 @@ function AppContent() {
     onProfileUpdate: accountActions.updateProfile,
     onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccountData,
+    onFamilyConnect: accountActions.connectGuardian,
+    onFamilyDisconnect: accountActions.disconnectFamily,
     onSendRecoveryCode: accountActions.sendRecoveryCode,
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
     onResetPassword: accountActions.resetPassword,
-    currentLoginId: savedAccount.loginId || user.loginId,
+    currentLoginId: user.loginId,
     accountEmail: savedAccount.email || '',
     signupEmail: savedAccount.registrationEmail || user.email || savedAccount.email || '',
 
@@ -207,12 +215,13 @@ function AppContent() {
     medications: data.medications ?? [],
     guardian: data.guardian ?? defaultGuardian,
     friends: data.friends ?? [],
-    friendDirectory: data.friendDirectory ?? [],
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],
     meetings: data.meetings ?? [],
     meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
+    membership: data.membership ?? null,
     announcement: data.announcement ?? {},
+    notices: data.notices ?? [],
     members: data.members ?? [],
     products: data.products ?? [],
     selectedPost: data.selectedPost ?? location.state?.post ?? defaultSelectedPost,
@@ -229,6 +238,7 @@ function AppContent() {
     role: user.role,
 
     onAddFriend: friendActions.sendFriendRequest,
+    onSearchUsers: userApi.search,
     onAcceptFriendRequest: friendActions.acceptFriendRequest,
     onRejectFriendRequest: friendActions.rejectFriendRequest,
     onRemoveFriend: friendActions.removeFriend,
@@ -238,6 +248,16 @@ function AppContent() {
     onChatReconnected: () => setReloadKey((value) => value + 1),
 
     onMeetingSelect: (meeting) => movePage(`/meeting/my/detail/${meeting.id}`),
+    onJoin: (meetingId) => meetingActions.joinMeeting(meetingId).catch(() => {}),
+    onLeave: (meetingId) => meetingActions.leaveMeeting(meetingId).catch(() => {}),
+    onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),
+    onMemberAction: (member, action) =>
+      meetingActions.handleMemberAction(selectedId, member, action).catch(() => {}),
+    onAnnouncementCreate: (meetingId) =>
+      movePage('/meeting/announcement/make', { state: { meetingId } }),
+    onAnnouncementUpdate: (noticeId, values) =>
+      meetingActions.updateNotice(selectedId, noticeId, values),
+    onAnnouncementDelete: (noticeId) => meetingActions.deleteNotice(selectedId, noticeId),
     onProductSelect: (product) =>
       movePage(`/market/feedin/${product.id}`, { state: { post: product } }),
     onLike: postActions.toggleNeighborLike,
@@ -275,9 +295,13 @@ function AppContent() {
     return <LoginPage onNavigate={movePage} onLogin={accountActions.login} />;
   }
 
+  if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {
+    return <Navigate to={accessToken ? '/neighbor' : '/login'} replace />;
+  }
+
   return (
     <>
-      {!publicRoutes.includes(routeKey) && <Sidebar />}
+      {!publicRoutes.includes(routeKey) && <Sidebar role={user.role} />}
       <Page {...commonProps} />
 
       {loading && accessToken && <LoadingMessage />}

@@ -18,8 +18,11 @@
 }
 
 .content-profile-container > div > img {
+  flex: 0 0 40px;
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .content-profile-container > div > p {
@@ -27,12 +30,13 @@
 }
 
 .content-profile-container > a {
-  width: 100px;
-  height: 35px;
+  min-height: 35px;
+  padding: 8px 14px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
   background-color: #eee;
   color: #000;
   text-decoration: none;

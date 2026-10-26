@@ -4,8 +4,8 @@ import guardianSettingIcon from '../../../assets/images/guardianSetting.svg';
 import generalSettingsIcon from '../../../assets/images/generalSettings.svg';
 import newFeatureIcon from '../../../assets/images/newFeature.svg';
 import customerSupportIcon from '../../../assets/images/customerSupport.svg';
-import logoutIcon from '../../../assets/images/logout.svg'
-import deleteAccountIcon from '../../../assets/images/trashcan.svg'
+import logoutIcon from '../../../assets/images/logout.svg';
+import deleteAccountIcon from '../../../assets/images/trashcan.svg';
 
 const settingMenuGroups = [
   {
@@ -36,7 +36,13 @@ function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) 
               const isActive = activeSection === item.id;
 
               return (
-                <button className={`setting-sidebar__menu-button${isActive ? ' is-active' : ''}`} type="button" key={item.id} onClick={() => onSelect(item.id)} aria-pressed={isActive}>
+                <button
+                  className={`setting-sidebar__menu-button${isActive ? ' is-active' : ''}`}
+                  type="button"
+                  key={item.id}
+                  onClick={() => onSelect(item.id)}
+                  aria-pressed={isActive}
+                >
                   <img src={item.icon} alt="" />
                   {item.label}
                 </button>
@@ -51,7 +57,11 @@ function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) 
           <img src={logoutIcon} alt="로그아웃 아이콘" />
           로그아웃 하기
         </button>
-        <button className="setting-sidebar__account-action setting-sidebar__account-action--danger" type="button" onClick={onAccountDelete}>
+        <button
+          className="setting-sidebar__account-action setting-sidebar__account-action--danger"
+          type="button"
+          onClick={onAccountDelete}
+        >
           <img src={deleteAccountIcon} alt="계정 삭제 아이콘" />
           계정 삭제하기
         </button>

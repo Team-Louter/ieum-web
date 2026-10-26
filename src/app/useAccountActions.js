@@ -36,7 +36,7 @@ export default function useAccountActions({
     movePage('/neighbor');
   }
 
-  async function signup({ loginId, nickname, email, password, address, role, seniorEmail }) {
+  async function signup({ loginId, nickname, email, password, address, role }) {
     await authApi.signup({ loginId, nickname, email, password, address, role });
 
     const savedAccount = readDemoValue('account', {}, loginId.trim());
@@ -47,65 +47,75 @@ export default function useAccountActions({
     setAccessToken(tokens.accessToken);
     setReloadKey((value) => value + 1);
 
-    let message = '회원가입이 완료되었습니다.';
-    if (role === 'ROLE_GUARDIAN' && seniorEmail) {
-      try {
-        await familyApi.connect(seniorEmail);
-        message += ' 어르신 계정도 연결했습니다.';
-      } catch (error) {
-        message += ` 계정은 생성되었지만 어르신 연결은 실패했습니다: ${error.message}`;
-      }
-    }
-
-    setFeedback(message);
-    setFeedbackIsError(message.includes('실패'));
+    setFeedback('회원가입이 완료되었습니다. 어르신 계정에서 보호자를 연결할 수 있습니다.');
+    setFeedbackIsError(false);
     movePage('/neighbor');
+  }
+
+  async function connectGuardian(guardianEmail) {
+    return runAction(
+      () => familyApi.connect(guardianEmail),
+      '보호자 계정을 연결했습니다.',
+    );
+  }
+
+  async function disconnectFamily(loginId) {
+    return runAction(() => familyApi.disconnect(loginId), '가족 연결을 해제했습니다.');
   }
 
   async function updateProfile(updatedProfile) {
     return runAction(async () => {
       const previousProfile = readDemoValue('profile', {}, demoScope);
-      const profileImage = updatedProfile.profileImage instanceof File
-        ? updatedProfile.profileImage
-        : null;
+      const profileImage =
+        updatedProfile.profileImage instanceof File ? updatedProfile.profileImage : null;
       let serverProfile = null;
 
       try {
-        const response = await profileApi.update({
-          nickname: updatedProfile.nickname ?? updatedProfile.id ?? previousProfile.nickname ?? user.loginId,
-          bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
-        }, profileImage);
+        const response = await profileApi.update(
+          {
+            nickname:
+              updatedProfile.nickname ??
+              updatedProfile.id ??
+              previousProfile.nickname ??
+              user.loginId,
+            bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
+          },
+          profileImage,
+        );
         // 수정 응답이 안내 문자열이면 프로필을 다시 읽어 서버에 저장된 이미지 경로를 받습니다.
-        serverProfile = response && typeof response === 'object'
-          ? response
-          : await profileApi.get();
+        serverProfile =
+          response && typeof response === 'object' ? response : await profileApi.get();
       } catch (error) {
         if (!isDemoFallbackError(error)) throw error;
       }
 
-      const fallbackImage = profileImage && !serverProfile?.profileImageUrl
-        ? await fileToDataUrl(profileImage)
-        : previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '';
+      const fallbackImage =
+        profileImage && !serverProfile?.profileImageUrl
+          ? await fileToDataUrl(profileImage)
+          : (previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '');
       const image = serverProfile?.profileImageUrl ?? fallbackImage;
       const profile = {
         ...previousProfile,
         ...serverProfile,
-        nickname: serverProfile?.nickname
-          ?? updatedProfile.nickname
-          ?? previousProfile.nickname
-          ?? user.loginId,
-        bio: serverProfile?.bio
-          ?? updatedProfile.bio
-          ?? updatedProfile.introduction
-          ?? previousProfile.bio
-          ?? '',
+        nickname:
+          serverProfile?.nickname ??
+          updatedProfile.nickname ??
+          previousProfile.nickname ??
+          user.loginId,
+        bio:
+          serverProfile?.bio ??
+          updatedProfile.bio ??
+          updatedProfile.introduction ??
+          previousProfile.bio ??
+          '',
         profileImageUrl: image,
         id: updatedProfile.id ?? previousProfile.id,
-        introduction: serverProfile?.bio
-          ?? updatedProfile.introduction
-          ?? updatedProfile.bio
-          ?? previousProfile.introduction
-          ?? '',
+        introduction:
+          serverProfile?.bio ??
+          updatedProfile.introduction ??
+          updatedProfile.bio ??
+          previousProfile.introduction ??
+          '',
         profileImage: image,
       };
 
@@ -138,7 +148,10 @@ export default function useAccountActions({
   }
 
   async function sendRecoveryCode(email) {
-    return runAction(() => authApi.sendEmailCode(email, true), '인증 코드를 이메일로 발송했습니다.');
+    return runAction(
+      () => authApi.sendEmailCode(email, true),
+      '인증 코드를 이메일로 발송했습니다.',
+    );
   }
 
   async function verifyRecoveryCode(email, code) {
@@ -182,6 +195,8 @@ export default function useAccountActions({
   return {
     login,
     signup,
+    connectGuardian,
+    disconnectFamily,
     updateProfile,
     changeSetting,
     sendRecoveryCode,

@@ -9,7 +9,11 @@ function NeighborCreatePostPage({ initialValues, onSubmit }) {
   const menuItems = [
     { label: '게시물 보기', href: '/neighbor', isActive: currentPath === '/neighbor' },
     { label: '내 게시물', href: '/neighbor/my', isActive: currentPath === '/neighbor/my' },
-    { label: '게시물 만들기', href: '/neighbor/create', isActive: currentPath === '/neighbor/create' },
+    {
+      label: '게시물 만들기',
+      href: '/neighbor/create',
+      isActive: currentPath === '/neighbor/create',
+    },
   ];
 
   return (

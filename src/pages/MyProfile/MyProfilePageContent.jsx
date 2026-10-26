@@ -32,13 +32,11 @@ function MyProfilePageContent({
         <MyProfileEditButtons profile={profile} onProfileUpdate={onProfileUpdate} />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <div id="content-container">
-          {postItems.length > 0 ? postItems.map((post, index) => (
-            <MyPostCard
-              key={post.id ?? index}
-              post={post}
-              onDelete={onDeletePost}
-            />
-          )) : isEmpty ? (
+          {postItems.length > 0 ? (
+            postItems.map((post, index) => (
+              <MyPostCard key={post.id ?? index} post={post} onDelete={onDeletePost} />
+            ))
+          ) : isEmpty ? (
             <EmptyState
               title="작성한 게시물이 없어요"
               description="새 게시물을 작성하면 내 프로필에 표시돼요."

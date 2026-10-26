@@ -82,12 +82,25 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
     <form className="neighbor-post-create-form" onSubmit={handleSubmit}>
       <div className="neighbor-post-create-form__content">
         <div className="neighbor-post-create-form__media-wrapper">
-          <button type="button" className="neighbor-post-create-form__media-label" onClick={handleFileSelectClick}>
+          <button
+            type="button"
+            className="neighbor-post-create-form__media-label"
+            onClick={handleFileSelectClick}
+          >
             {previewUrl ? (
               selectedFile.type.startsWith('image/') ? (
-                <img className="neighbor-post-create-form__preview" src={previewUrl} alt="선택한 이미지 미리보기" />
+                <img
+                  className="neighbor-post-create-form__preview"
+                  src={previewUrl}
+                  alt="선택한 이미지 미리보기"
+                />
               ) : (
-                <video className="neighbor-post-create-form__preview" src={previewUrl} controls onClick={(event) => event.stopPropagation()} />
+                <video
+                  className="neighbor-post-create-form__preview"
+                  src={previewUrl}
+                  controls
+                  onClick={(event) => event.stopPropagation()}
+                />
               )
             ) : (
               <>
@@ -97,7 +110,11 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
             )}
           </button>
           {previewUrl && (
-            <button type="button" className="neighbor-post-create-form__change-button" onClick={handleFileSelectClick}>
+            <button
+              type="button"
+              className="neighbor-post-create-form__change-button"
+              onClick={handleFileSelectClick}
+            >
               파일 변경
             </button>
           )}
@@ -105,17 +122,39 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
             {errors.media}
           </p>
         </div>
-        <input ref={fileInputRef} type="file" id="neighbor-post-media" accept="image/*,video/*" hidden onChange={handleFileChange} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          id="neighbor-post-media"
+          accept="image/*,video/*"
+          hidden
+          onChange={handleFileChange}
+        />
         <div className="neighbor-post-create-form__text-fields">
           <div>
-            <input type="text" placeholder="제목을 입력해주세요." value={title} onChange={(event) => setTitle(event.target.value)} />
-            <p className="neighbor-post-create-form__error" role={errors.title ? 'alert' : undefined}>
+            <input
+              type="text"
+              placeholder="제목을 입력해주세요."
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <p
+              className="neighbor-post-create-form__error"
+              role={errors.title ? 'alert' : undefined}
+            >
               {errors.title}
             </p>
           </div>
           <div>
-            <textarea placeholder="내용을 입력해주세요." value={content} onChange={(event) => setContent(event.target.value)} />
-            <p className="neighbor-post-create-form__error" role={errors.content ? 'alert' : undefined}>
+            <textarea
+              placeholder="내용을 입력해주세요."
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+            />
+            <p
+              className="neighbor-post-create-form__error"
+              role={errors.content ? 'alert' : undefined}
+            >
               {errors.content}
             </p>
           </div>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import './MarketPostForm.css'
+import './MarketPostForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
@@ -15,16 +15,22 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
 
-  useEffect(() => () => {
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    },
+    [],
+  );
 
   function handleFileChange(event) {
     const [nextFile] = event.target.files;
     if (!nextFile) return;
     if (!nextFile.type.startsWith('image/') && !nextFile.type.startsWith('video/')) {
       setSelectedFile(null);
-      setErrors((currentErrors) => ({ ...currentErrors, media: '이미지 또는 동영상 파일만 선택할 수 있습니다.' }));
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        media: '이미지 또는 동영상 파일만 선택할 수 있습니다.',
+      }));
       event.target.value = '';
       return;
     }
@@ -66,7 +72,13 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
     }
 
     try {
-      await onSubmit?.({ title: title.trim(), price: price.trim(), content: content.trim(), region: region.trim(), media: selectedFile });
+      await onSubmit?.({
+        title: title.trim(),
+        price: price.trim(),
+        content: content.trim(),
+        region: region.trim(),
+        media: selectedFile,
+      });
     } catch (error) {
       setSubmitError(error?.message ?? '게시물을 등록하지 못했습니다.');
     }
@@ -76,12 +88,26 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
     <form className="market-post-create-form" onSubmit={handleSubmit}>
       <div className="market-post-create-form__content">
         <div className="market-post-create-form__media-wrapper">
-          <button type="button" className="market-post-create-form__media-label" onClick={handleFileSelectClick} aria-label="사진 또는 동영상 선택">
+          <button
+            type="button"
+            className="market-post-create-form__media-label"
+            onClick={handleFileSelectClick}
+            aria-label="사진 또는 동영상 선택"
+          >
             {previewUrl ? (
               selectedFile.type.startsWith('image/') ? (
-                <img className="market-post-create-form__preview" src={previewUrl} alt="선택한 이미지 미리보기" />
+                <img
+                  className="market-post-create-form__preview"
+                  src={previewUrl}
+                  alt="선택한 이미지 미리보기"
+                />
               ) : (
-                <video className="market-post-create-form__preview" src={previewUrl} controls onClick={(event) => event.stopPropagation()} />
+                <video
+                  className="market-post-create-form__preview"
+                  src={previewUrl}
+                  controls
+                  onClick={(event) => event.stopPropagation()}
+                />
               )
             ) : (
               <span className="market-post-create-form__upload-prompt">
@@ -92,7 +118,11 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
             )}
           </button>
           {previewUrl && (
-            <button type="button" className="market-post-create-form__change-button" onClick={handleFileSelectClick}>
+            <button
+              type="button"
+              className="market-post-create-form__change-button"
+              onClick={handleFileSelectClick}
+            >
               파일 변경
             </button>
           )}
@@ -100,33 +130,74 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
             {errors.media}
           </p>
         </div>
-        <input ref={fileInputRef} type="file" id="market-post-media" accept="image/*,video/*" hidden onChange={handleFileChange} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          id="market-post-media"
+          accept="image/*,video/*"
+          hidden
+          onChange={handleFileChange}
+        />
         <div className="market-post-create-form__text-fields">
           <div className="market-post-create-form__field">
             <label htmlFor="market-post-title">제목</label>
-            <input id="market-post-title" type="text" placeholder="예: 사용하지 않은 생활용품" value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} />
+            <input
+              id="market-post-title"
+              type="text"
+              placeholder="예: 사용하지 않은 생활용품"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              aria-invalid={Boolean(errors.title)}
+            />
             <p className="market-post-create-form__error" role={errors.title ? 'alert' : undefined}>
               {errors.title}
             </p>
           </div>
           <div className="market-post-create-form__field">
             <label htmlFor="market-post-price">가격</label>
-            <input id="market-post-price" type="text" inputMode="numeric" placeholder="숫자만 입력해 주세요" value={price} onChange={(event) => setPrice(event.target.value)} aria-invalid={Boolean(errors.price)} />
+            <input
+              id="market-post-price"
+              type="text"
+              inputMode="numeric"
+              placeholder="숫자만 입력해 주세요"
+              value={price}
+              onChange={(event) => setPrice(event.target.value)}
+              aria-invalid={Boolean(errors.price)}
+            />
             <p className="market-post-create-form__error" role={errors.price ? 'alert' : undefined}>
               {errors.price}
             </p>
           </div>
           <div className="market-post-create-form__field">
             <label htmlFor="market-post-region">거래 지역</label>
-            <input id="market-post-region" type="text" placeholder="예: 대구 북구" value={region} onChange={(event) => setRegion(event.target.value)} aria-invalid={Boolean(errors.region)} />
-            <p className="market-post-create-form__error" role={errors.region ? 'alert' : undefined}>
+            <input
+              id="market-post-region"
+              type="text"
+              placeholder="예: 대구 북구"
+              value={region}
+              onChange={(event) => setRegion(event.target.value)}
+              aria-invalid={Boolean(errors.region)}
+            />
+            <p
+              className="market-post-create-form__error"
+              role={errors.region ? 'alert' : undefined}
+            >
               {errors.region}
             </p>
           </div>
           <div className="market-post-create-form__field market-post-create-form__field--content">
             <label htmlFor="market-post-content">상세 설명</label>
-            <textarea id="market-post-content" placeholder="상품 상태와 거래 방법을 알려주세요." value={content} onChange={(event) => setContent(event.target.value)} aria-invalid={Boolean(errors.content)} />
-            <p className="market-post-create-form__error" role={errors.content ? 'alert' : undefined}>
+            <textarea
+              id="market-post-content"
+              placeholder="상품 상태와 거래 방법을 알려주세요."
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              aria-invalid={Boolean(errors.content)}
+            />
+            <p
+              className="market-post-create-form__error"
+              role={errors.content ? 'alert' : undefined}
+            >
               {errors.content}
             </p>
           </div>
@@ -135,7 +206,11 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
       <button type="submit" className="market-post-create-form__submit">
         게시물 만들기
       </button>
-      {submitError && <p className="market-post-create-form__submit-error" role="alert">{submitError}</p>}
+      {submitError && (
+        <p className="market-post-create-form__submit-error" role="alert">
+          {submitError}
+        </p>
+      )}
     </form>
   );
 }

@@ -15,7 +15,13 @@ function SettingNotificationPage({
       <SettingItem
         title="복약 알림"
         description="설정한 시간에 복약 알림을 받습니다."
-        trailing={<SettingToggle checked={settings.medicationAlert ?? false} onChange={() => onToggle?.('medicationAlert')} label="복약 알림" />}
+        trailing={
+          <SettingToggle
+            checked={settings.medicationAlert ?? false}
+            onChange={() => onToggle?.('medicationAlert')}
+            label="복약 알림"
+          />
+        }
       />
       {settings.medicationAlert && (
         <SettingItem

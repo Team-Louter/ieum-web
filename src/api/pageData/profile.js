@@ -31,8 +31,9 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
     name: friend.nickname,
   }));
   const savedProfile = readDemoValue('profile', {}, demoScope);
-  const ownPosts = asArray(readDemoValue('neighbor.posts', [], demoScope))
-    .filter((post) => isOwnedBy(loginId, post));
+  const ownPosts = asArray(readDemoValue('neighbor.posts', [], demoScope)).filter((post) =>
+    isOwnedBy(loginId, post),
+  );
 
   const result = {
     profile: {
@@ -48,13 +49,14 @@ export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
   };
 
   if (path === '/myProfile/meetings') {
-    const meetings = asArray(await loadApiOrDemo(
-      () => meetingApi.list(),
-      'meetings',
-      [],
-      demoScope,
-    )).map(toMeetingCard);
-    result.meetings = meetings.filter((meeting) => meeting.owner === loginId);
+    const meetings = asArray(
+      await loadApiOrDemo(() => meetingApi.list(), 'meetings', [], demoScope),
+    ).map(toMeetingCard);
+    result.meetings = meetings.filter(
+      (meeting) =>
+        (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
+        meeting.owner === loginId,
+    );
   }
 
   return result;

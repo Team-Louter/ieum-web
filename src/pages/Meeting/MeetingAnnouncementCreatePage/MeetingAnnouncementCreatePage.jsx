@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import './MeetingAnnouncementCreatePage.css';
-import Layout from "../../../components/common/Layout/Layout";
+import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 
 export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSubmit }) {
-  const navigate = useNavigate();
-  const [values, setValues] = useState(() => ({ title: initialValues.title ?? '', content: initialValues.content ?? '' }));
+  const [values, setValues] = useState(() => ({
+    title: initialValues.title ?? '',
+    content: initialValues.content ?? '',
+  }));
+  const [submitError, setSubmitError] = useState('');
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -14,10 +16,14 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    onSubmit?.(values);
-    if (!onSubmit) navigate('/meeting/my');
+    setSubmitError('');
+    try {
+      await onSubmit?.(values);
+    } catch (error) {
+      setSubmitError(error?.message ?? '공지사항을 올리지 못했습니다.');
+    }
   }
 
   return (
@@ -31,7 +37,9 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
           aria-label="공지 제목"
           required
           value={values.title}
-          onChange={(event) => setValues((currentValues) => ({ ...currentValues, title: event.target.value }))}
+          onChange={(event) =>
+            setValues((currentValues) => ({ ...currentValues, title: event.target.value }))
+          }
         />
         <textarea
           className="announcement-make-content"
@@ -39,11 +47,14 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
           aria-label="공지 내용"
           required
           value={values.content}
-          onChange={(event) => setValues((currentValues) => ({ ...currentValues, content: event.target.value }))}
+          onChange={(event) =>
+            setValues((currentValues) => ({ ...currentValues, content: event.target.value }))
+          }
         />
         <button className="announcement-make-submit" type="submit">
           공지사항 올리기
         </button>
+        {submitError && <p role="alert">{submitError}</p>}
       </form>
     </Layout>
   );

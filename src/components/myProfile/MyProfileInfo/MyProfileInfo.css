@@ -8,6 +8,7 @@
 .my-profile-info > img {
   width: 136px;
   height: 136px;
+  border-radius: 100px;
 }
 
 .my-profile-info__text {
@@ -23,10 +24,6 @@
 
 .my-profile-info__text > p:nth-child(2) {
   font-size: var(--font-size-body);
-}
-
-.my-profile-info__nickname {
-  color: #777;
 }
 
 .my-profile-info__stats {

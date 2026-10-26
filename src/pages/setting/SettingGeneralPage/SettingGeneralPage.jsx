@@ -57,14 +57,15 @@ function SettingGeneralPage({
   return (
     <div className="setting-page-section">
       <SettingItem
-        title="다크모드"
-        description="화면 배경을 어둡게 설정해 눈을 보호하고 배터리 사용량을 줄입니다."
-        trailing={<SettingToggle checked={settings.darkMode} onChange={() => onToggle('darkMode')} label="다크모드" />}
-      />
-      <SettingItem
         title="복약 알림"
         description="설정한 시간에 복약 알림을 받습니다."
-        trailing={<SettingToggle checked={settings.medicationAlert} onChange={() => onToggle('medicationAlert')} label="복약 알림" />}
+        trailing={
+          <SettingToggle
+            checked={settings.medicationAlert}
+            onChange={() => onToggle('medicationAlert')}
+            label="복약 알림"
+          />
+        }
       />
       {settings.medicationAlert && (
         <SettingItem
@@ -84,19 +85,40 @@ function SettingGeneralPage({
           onClose={() => setIsMedicationDialogOpen(false)}
         >
           <div className="setting-general-page__medication-manager">
-            <SettingMedicationList schedule={medicationSchedule} onDelete={handleMedicationDelete} />
+            <SettingMedicationList
+              schedule={medicationSchedule}
+              onDelete={handleMedicationDelete}
+            />
             <form className="setting-dialog__form" onSubmit={handleMedicationCreate}>
               <label className="setting-dialog__field">
                 약 이름
-                <input value={name} onChange={(event) => setName(event.target.value)} maxLength={80} required />
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  maxLength={80}
+                  required
+                />
               </label>
               <label className="setting-dialog__field">
                 복용 시간
-                <input type="time" value={takeTime} onChange={(event) => setTakeTime(event.target.value)} required />
+                <input
+                  type="time"
+                  value={takeTime}
+                  onChange={(event) => setTakeTime(event.target.value)}
+                  required
+                />
               </label>
-              {formMessage && <p className="setting-dialog__note" role="status">{formMessage}</p>}
+              {formMessage && (
+                <p className="setting-dialog__note" role="status">
+                  {formMessage}
+                </p>
+              )}
               <div className="setting-dialog__actions">
-                <button className="setting-dialog__button setting-dialog__button--primary" type="submit" disabled={busy || !name.trim()}>
+                <button
+                  className="setting-dialog__button setting-dialog__button--primary"
+                  type="submit"
+                  disabled={busy || !name.trim()}
+                >
                   {busy ? '등록 중…' : '복약 추가'}
                 </button>
               </div>

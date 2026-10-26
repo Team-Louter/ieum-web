@@ -1,29 +1,73 @@
 import { meetingApi } from '../client';
-import { toMeetingCard } from '../adapters';
+import { toMeetingCard, toMeetingMember, toMeetingNotice } from '../adapters';
 import { readDemoValue } from '../demoStore';
 import { asArray, loadApiOrEmpty } from './common';
 
-export async function loadMeetingListPage({ path, demoScope, loginId }) {
+export async function loadMeetingListPage({ path, demoScope, loginId, userId }) {
   const remoteMeetings = asArray(await loadApiOrEmpty(() => meetingApi.list()));
   const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
 
   const meetings = [...localMeetings, ...remoteMeetings]
-    .filter((meeting, index, list) => list.findIndex((candidate) => (
-      String(candidate.id) === String(meeting.id)
-    )) === index)
+    .filter(
+      (meeting, index, list) =>
+        list.findIndex((candidate) => String(candidate.id) === String(meeting.id)) === index,
+    )
     .map(toMeetingCard);
 
   return {
-    meetings: path === '/meeting/my'
-      ? meetings.filter((meeting) => meeting.owner === loginId)
-      : meetings,
+    meetings:
+      path === '/meeting/my'
+        ? meetings.filter(
+            (meeting) =>
+              (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
+              meeting.owner === loginId,
+          )
+        : meetings,
   };
 }
 
 export async function loadMeetingDetailPage({ selectedId, demoScope }) {
   const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
   const localMeeting = localMeetings.find((meeting) => String(meeting.id) === String(selectedId));
-  const meeting = toMeetingCard(localMeeting ?? await meetingApi.get(selectedId));
+  if (localMeeting && !localMeeting._apiBacked) {
+    return {
+      meeting: toMeetingCard(localMeeting),
+      membership: null,
+      announcement: readDemoValue('meeting.announcement', {}, demoScope),
+      notices: [],
+      members: asArray(readDemoValue('meeting.members', [], demoScope)).map(toMeetingMember),
+    };
+  }
 
-  return { meeting, announcement: null, members: [] };
+  const [remoteMeeting, remoteMembers, membership, noticePage] = await Promise.all([
+    meetingApi.get(selectedId),
+    loadApiOrEmpty(() => meetingApi.members(selectedId)),
+    meetingApi.membership(selectedId).catch((error) => {
+      if (error?.status === 404) return null;
+      throw error;
+    }),
+    loadApiOrEmpty(() => meetingApi.notices(selectedId)),
+  ]);
+
+  const members = asArray(remoteMembers).map(toMeetingMember);
+  const notices = asArray(Array.isArray(noticePage) ? noticePage : noticePage?.notices)
+    .map(toMeetingNotice)
+    .sort((first, second) => {
+      const firstTime = new Date(first.createdAt ?? 0).getTime();
+      const secondTime = new Date(second.createdAt ?? 0).getTime();
+      return secondTime - firstTime;
+    });
+  const meeting = toMeetingCard({
+    ...remoteMeeting,
+    ...(localMeeting ?? {}),
+    memberCount: remoteMeeting.memberCount ?? members.length,
+  });
+
+  return {
+    meeting,
+    membership,
+    announcement: notices[0] ?? {},
+    notices,
+    members,
+  };
 }

@@ -28,7 +28,12 @@ function CommentModal({ children, onClose, onSubmit }) {
   return (
     <section className="comment-modal" aria-label="댓글">
       <div className="comment-modal__panel">
-        <button type="button" onClick={onClose} className="comment-modal__close" aria-label="댓글 창 닫기">
+        <button
+          type="button"
+          onClick={onClose}
+          className="comment-modal__close"
+          aria-label="댓글 창 닫기"
+        >
           <img src={closeImg} alt="닫기 아이콘" />
         </button>
         <div className="comment-modal__list">{children}</div>

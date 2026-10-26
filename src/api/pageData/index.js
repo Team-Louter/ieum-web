@@ -30,9 +30,10 @@ export default async function loadPageData({
   if (path === '/neighbor' || path === '/neighbor/my') {
     const posts = asArray(readDemoValue('neighbor.posts', [], demoScope));
     return {
-      posts: path === '/neighbor/my'
-        ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
-        : posts,
+      posts:
+        path === '/neighbor/my'
+          ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
+          : posts,
     };
   }
 
@@ -41,10 +42,10 @@ export default async function loadPageData({
   }
 
   if (path === '/meeting' || path === '/meeting/my') {
-    return loadMeetingListPage({ path, demoScope, loginId });
+    return loadMeetingListPage({ path, demoScope, loginId, userId });
   }
 
-  if (path === '/meeting/my/detail' && selectedId) {
+  if ((path === '/meeting/my/detail' || path === '/meeting/my/member-list') && selectedId) {
     return loadMeetingDetailPage({ selectedId, demoScope });
   }
 

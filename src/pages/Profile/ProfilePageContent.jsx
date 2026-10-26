@@ -30,13 +30,12 @@ function ProfilePageContent({
         <ProfileActionButtons />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <div id="content-container">
-          {postItems.length > 0 ? postItems.map((post, index) => (
-            <MyPostCard key={post.id ?? index} post={post} onDelete={onDeletePost} />
-          )) : isEmpty ? (
-            <EmptyState
-              title="게시물이 없어요"
-              description="아직 작성된 게시물이 없습니다."
-            />
+          {postItems.length > 0 ? (
+            postItems.map((post, index) => (
+              <MyPostCard key={post.id ?? index} post={post} onDelete={onDeletePost} />
+            ))
+          ) : isEmpty ? (
+            <EmptyState title="게시물이 없어요" description="아직 작성된 게시물이 없습니다." />
           ) : null}
         </div>
       </div>

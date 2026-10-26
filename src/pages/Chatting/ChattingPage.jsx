@@ -38,16 +38,20 @@ function ChattingPage({
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
   const visibleContacts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
-    return contactItems.filter((contact) => (contact.name ?? '').toLocaleLowerCase().includes(normalizedSearch));
+    return contactItems.filter((contact) =>
+      (contact.name ?? '').toLocaleLowerCase().includes(normalizedSearch),
+    );
   }, [contactItems, searchTerm]);
   const selectedMessages = useMemo(() => {
     const merged = new Map();
-    const selectedRoomHistory = messagesRoomId == null
-      || String(messagesRoomId) === String(selectedContactId)
-      ? messages
-      : [];
-    [...(selectedRoomHistory ?? localThreads[selectedContactId] ?? []), ...(realtimeThreads[selectedContactId] ?? [])]
-      .forEach((message) => merged.set(message.id, message));
+    const selectedRoomHistory =
+      messagesRoomId == null || String(messagesRoomId) === String(selectedContactId)
+        ? messages
+        : [];
+    [
+      ...(selectedRoomHistory ?? localThreads[selectedContactId] ?? []),
+      ...(realtimeThreads[selectedContactId] ?? []),
+    ].forEach((message) => merged.set(message.id, message));
     return [...merged.values()];
   }, [messages, messagesRoomId, localThreads, realtimeThreads, selectedContactId]);
 
@@ -83,7 +87,12 @@ function ChattingPage({
               id: message.id,
               sender: Number(message.senderId) === Number(currentUserId) ? 'me' : 'them',
               content: message.content,
-              time: message.createdAt ? new Date(message.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
+              time: message.createdAt
+                ? new Date(message.createdAt).toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : '',
             };
             setRealtimeThreads((threads) => {
               const roomMessages = threads[roomId] ?? [];
@@ -130,15 +139,25 @@ function ChattingPage({
       try {
         setSendError('');
         const savedMessage = await onSendMessage({ contactId: selectedContactId, message });
-        const normalized = savedMessage ? {
-          id: savedMessage.id,
-          sender: Number(savedMessage.senderId) === Number(currentUserId) ? 'me' : 'them',
-          content: savedMessage.content,
-          time: savedMessage.createdAt ? new Date(savedMessage.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : message.time,
-        } : message;
+        const normalized = savedMessage
+          ? {
+              id: savedMessage.id,
+              sender: Number(savedMessage.senderId) === Number(currentUserId) ? 'me' : 'them',
+              content: savedMessage.content,
+              time: savedMessage.createdAt
+                ? new Date(savedMessage.createdAt).toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : message.time,
+            }
+          : message;
         setRealtimeThreads((threads) => ({
           ...threads,
-          [selectedContactId]: [...(threads[selectedContactId] ?? []).filter((item) => item.id !== normalized.id), normalized],
+          [selectedContactId]: [
+            ...(threads[selectedContactId] ?? []).filter((item) => item.id !== normalized.id),
+            normalized,
+          ],
         }));
       } catch (error) {
         setSendError(error?.message ?? '메시지를 보내지 못했습니다.');
@@ -155,13 +174,16 @@ function ChattingPage({
 
   return (
     <div className="chatting-page">
-
       {/* 채팅 목록 */}
       <div className="user-list-section">
-
         <div className="user-search">
           <img src={searchIcon} alt="검색하기" />
-          <input type="search" placeholder="검색하기" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
+          <input
+            type="search"
+            placeholder="검색하기"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
         </div>
 
         <div className="user-list">
@@ -177,19 +199,19 @@ function ChattingPage({
             </button>
           ))}
         </div>
-
       </div>
 
       {/* 채팅창 */}
       <div className="chat-room">
-
         {selectedContact ? (
           <>
             <div className="chat-room-header">
               <img src={selectedContact.profileImage || profileImage} alt="" />
               <span>{selectedContact.name}</span>
               {socketStatus !== '실시간 연결됨' && (
-                <span className="chat-socket-status" aria-live="polite">{socketStatus}</span>
+                <span className="chat-socket-status" aria-live="polite">
+                  {socketStatus}
+                </span>
               )}
             </div>
 
@@ -203,7 +225,11 @@ function ChattingPage({
                 );
               })}
             </div>
-            {sendError && <p className="chat-send-error" role="alert">{sendError}</p>}
+            {sendError && (
+              <p className="chat-send-error" role="alert">
+                {sendError}
+              </p>
+            )}
 
             <form className="chat-composer" onSubmit={submitMessage}>
               <input
@@ -212,15 +238,15 @@ function ChattingPage({
                 value={messageDraft}
                 onChange={(event) => setMessageDraft(event.target.value)}
               />
-              <button type="submit" disabled={!messageDraft.trim()}>전송</button>
+              <button type="submit" disabled={!messageDraft.trim()}>
+                전송
+              </button>
             </form>
           </>
         ) : (
           <div className="chat-room-empty">대화를 선택해 주세요.</div>
         )}
-
       </div>
-
     </div>
   );
 }
