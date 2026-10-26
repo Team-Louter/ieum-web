@@ -33,7 +33,7 @@ function PostCard({
         <div className="content-video content-placeholder" aria-label="게시물 미리보기" />
       )}
       <div className="content-info-icon-container">
-        <LikeButton isLiked={post.isLiked} likeCount={post.likeCount} onToggle={onLikeToggle} />
+        <LikeButton isLiked={post.isLiked} onToggle={onLikeToggle} />
         <CommentButton
           isOpen={isCommentOpen}
           onToggle={onCommentToggle}
