@@ -212,7 +212,7 @@ export const profileApi = {
 
 export const familyApi = {
   list: () => apiGet('/api/connect'),
-  connect: (guardianEmail) => apiPost('/api/connect', { guardianEmail }),
+  connect: (seniorEmail) => apiPost('/api/connect', { seniorEmail }),
   disconnect: (loginId) => apiDelete(`/api/connect/${encodeURIComponent(loginId)}`),
 };
 
