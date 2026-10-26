@@ -185,6 +185,7 @@
 /* 내 메시지 */
 .sent {
   align-self: flex-end;
+  background-color: #e6f7eb;
 }
 
 .chat-composer {
