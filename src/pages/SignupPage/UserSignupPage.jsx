@@ -4,15 +4,12 @@ import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
 import { authApi } from '../../api/client';
+import { isPasswordValid } from '../../utils/validation';
 
 function isEmailFormatValid(value) {
     const atPosition = value.indexOf('@');
     const dotPosition = value.lastIndexOf('.');
     return atPosition > 0 && dotPosition > atPosition + 1 && dotPosition < value.length - 1;
-}
-
-function isPasswordValid(value) {
-    return value.length >= 8 && /[a-zA-Z]/.test(value) && /[0-9]/.test(value) && /[^a-zA-Z0-9]/.test(value);
 }
 
 function UserSignupPage({ onNavigate, onSignup }) {

@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { authApi } from '../../api/client';
+import { isPasswordValid } from '../../utils/validation';
 import './IDsearch.css';
 
 function isEmailFormatValid(emailValue) {
     const atPosition = emailValue.indexOf('@');
     const dotPosition = emailValue.lastIndexOf('.');
     return atPosition > 0 && dotPosition > atPosition + 1 && dotPosition < emailValue.length - 1;
-}
-
-function isPasswordValid(passwordValue) {
-    return passwordValue.length >= 8
-        && /[a-zA-Z]/.test(passwordValue)
-        && /[0-9]/.test(passwordValue)
-        && /[^a-zA-Z0-9]/.test(passwordValue);
 }
 
 function IDsearch({ type, onClose }) {
