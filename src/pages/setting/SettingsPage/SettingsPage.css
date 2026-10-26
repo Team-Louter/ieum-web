@@ -23,6 +23,12 @@
   padding-top: 100px;
 }
 
+.settings-page__combined-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
 .setting-page-section {
   display: flex;
   flex-direction: column;

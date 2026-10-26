@@ -4,6 +4,7 @@ import EmptyState from '../../common/EmptyState/EmptyState';
 
 function SettingGuardianList({
   guardians = [],
+  displayLoginId = false,
   isEditing = false,
   isBusy = false,
   onRemove,
@@ -30,7 +31,9 @@ function SettingGuardianList({
         const guardianName =
           typeof guardian === 'string'
             ? guardian
-            : (guardian.nickname ?? guardian.name ?? guardian.id ?? '');
+            : displayLoginId
+              ? (guardian.loginId ?? guardian.id ?? guardian.nickname ?? guardian.name ?? '')
+              : (guardian.nickname ?? guardian.name ?? guardian.loginId ?? guardian.id ?? '');
         const guardianImage =
           typeof guardian === 'string'
             ? profileImg

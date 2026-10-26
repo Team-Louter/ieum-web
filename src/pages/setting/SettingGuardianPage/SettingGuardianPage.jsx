@@ -94,6 +94,7 @@ function SettingGuardianPage({
       >
         <SettingGuardianList
           guardians={sourceGuardians}
+          displayLoginId={isGuardian}
           emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
           isLoading={isLoading}
           apiError={apiError}
@@ -149,6 +150,7 @@ function SettingGuardianPage({
           <div className="setting-guardian-manager__list">
             <SettingGuardianList
               guardians={sourceGuardians}
+              displayLoginId={isGuardian}
               isEditing
               isBusy={isBusy}
               onRemove={handleDisconnect}

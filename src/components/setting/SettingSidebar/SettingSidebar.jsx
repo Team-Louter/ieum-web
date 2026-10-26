@@ -1,6 +1,5 @@
 import './SettingSidebar.css';
 import myAccountIcon from '../../../assets/images/myAccount.svg';
-import guardianSettingIcon from '../../../assets/images/guardianSetting.svg';
 import generalSettingsIcon from '../../../assets/images/generalSettings.svg';
 import newFeatureIcon from '../../../assets/images/newFeature.svg';
 import customerSupportIcon from '../../../assets/images/customerSupport.svg';
@@ -12,7 +11,6 @@ const settingMenuGroups = [
     title: '설정',
     items: [
       { id: 'account', label: '내 계정', icon: myAccountIcon },
-      { id: 'guardian', label: '보호자 설정', icon: guardianSettingIcon },
       { id: 'general', label: '일반 설정', icon: generalSettingsIcon },
     ],
   },

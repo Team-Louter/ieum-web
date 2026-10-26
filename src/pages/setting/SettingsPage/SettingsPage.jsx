@@ -72,22 +72,24 @@ function SettingsPage({
         onResetPassword={onResetPassword}
       />
     ),
-    guardian: (
-      <SettingGuardianPage
-        {...pageProps}
-        guardians={guardians}
-        onConnect={onFamilyConnect}
-        onDisconnect={onFamilyDisconnect}
-      />
-    ),
     general: (
-      <SettingGeneralPage
-        {...pageProps}
-        medicationSchedule={medicationSchedule}
-        onMedicationScheduleEdit={onMedicationScheduleEdit}
-        onMedicationCreate={onMedicationCreate}
-        onMedicationDelete={onMedicationDelete}
-      />
+      <div className="settings-page__combined-sections">
+        {role !== 'ROLE_GUARDIAN' && (
+          <SettingGeneralPage
+            {...pageProps}
+            medicationSchedule={medicationSchedule}
+            onMedicationScheduleEdit={onMedicationScheduleEdit}
+            onMedicationCreate={onMedicationCreate}
+            onMedicationDelete={onMedicationDelete}
+          />
+        )}
+        <SettingGuardianPage
+          {...pageProps}
+          guardians={guardians}
+          onConnect={onFamilyConnect}
+          onDisconnect={onFamilyDisconnect}
+        />
+      </div>
     ),
     feature: <SettingFeaturePage />,
     support: (
