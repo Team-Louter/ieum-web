@@ -1,4 +1,4 @@
-import { sharingApi } from '../api/client';
+import { communityPostApi, sharingApi } from '../api/client';
 import {
   fileToDataUrl,
   isDemoFallbackError,
@@ -13,9 +13,6 @@ export default function usePostActions({
   user,
   runAction,
   movePage,
-  setFeedback,
-  setFeedbackIsError,
-  setReloadKey,
 }) {
   async function createSharing(values) {
     const result = await runAction(async () => {
@@ -65,77 +62,107 @@ export default function usePostActions({
   }
 
   async function createNeighborPost(values) {
-    const image = values.media instanceof File ? await fileToDataUrl(values.media) : '';
-    const profile = readDemoValue('profile', {}, demoScope);
-    const post = {
-      id: Date.now(),
-      owner: user.loginId,
-      author: { id: user.loginId, profileImage: profile.profileImageUrl ?? '' },
-      title: values.title,
-      content: values.content,
-      image,
-      likeCount: 0,
-      isLiked: false,
-      comments: [],
-      createdAt: new Date().toISOString(),
-    };
+    const imageFile = values.media instanceof File ? values.media : null;
+    const post = await runAction(async () => {
+      if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+        throw new Error('JPG 또는 PNG 사진만 올릴 수 있습니다.');
+      }
+      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+        throw new Error('사진은 5MB 이하로 올려주세요.');
+      }
 
-    updateDemoValue('neighbor.posts', (posts) => [post, ...posts], [], demoScope);
-    setFeedback('게시물을 등록했습니다.');
-    setFeedbackIsError(false);
-    setReloadKey((current) => current + 1);
+      try {
+        return await communityPostApi.create(
+          { title: values.title, content: values.content },
+          imageFile,
+        );
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+        const image = imageFile ? await fileToDataUrl(imageFile) : '';
+        const profile = readDemoValue('profile', {}, demoScope);
+        const localPost = {
+          id: Date.now(),
+          owner: user.loginId,
+          author: { id: user.loginId, loginId: user.loginId, profileImage: profile.profileImageUrl ?? '' },
+          title: values.title,
+          content: values.content,
+          image,
+          likeCount: 0,
+          isLiked: false,
+          comments: [],
+          createdAt: new Date().toISOString(),
+        };
+        updateDemoValue('neighbor.posts', (posts) => [localPost, ...posts], [], demoScope);
+        return localPost;
+      }
+    }, '게시물을 등록했습니다.');
     movePage('/neighbor');
     return post;
   }
 
   function toggleNeighborLike(post, isLiked) {
-    updateDemoValue(
-      'neighbor.posts',
-      (posts) =>
-        posts.map((item) => {
-          if (String(item.id) !== String(post.id)) return item;
-
-          const likeCount = Number(item.likeCount ?? 0) + (isLiked ? 1 : -1);
-          return { ...item, isLiked, likeCount: Math.max(0, likeCount) };
-        }),
-      [],
-      demoScope,
-    );
-    setReloadKey((current) => current + 1);
+    return runAction(async () => {
+      try {
+        return await (isLiked ? communityPostApi.like(post.id) : communityPostApi.unlike(post.id));
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+        updateDemoValue(
+          'neighbor.posts',
+          (posts) =>
+            posts.map((item) => {
+              if (String(item.id) !== String(post.id)) return item;
+              const likeCount = Number(item.likeCount ?? 0) + (isLiked ? 1 : -1);
+              return { ...item, isLiked, likeCount: Math.max(0, likeCount) };
+            }),
+          [],
+          demoScope,
+        );
+      }
+    }, isLiked ? '좋아요를 눌렀습니다.' : '좋아요를 취소했습니다.').catch(() => {});
   }
 
   function addNeighborComment(post, content) {
-    const comment = {
-      id: Date.now(),
-      profileId: user.loginId,
-      content,
-      createdAt: new Date().toISOString(),
-    };
-
-    updateDemoValue(
-      'neighbor.posts',
-      (posts) =>
-        posts.map((item) =>
-          String(item.id) === String(post.id)
-            ? { ...item, comments: [...(item.comments ?? []), comment] }
-            : item,
-        ),
-      [],
-      demoScope,
-    );
-    setReloadKey((current) => current + 1);
+    return runAction(async () => {
+      try {
+        return await communityPostApi.createComment(post.id, { content });
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+        const comment = {
+          id: Date.now(),
+          profileId: user.loginId,
+          content,
+          createdAt: new Date().toISOString(),
+        };
+        updateDemoValue(
+          'neighbor.posts',
+          (posts) =>
+            posts.map((item) =>
+              String(item.id) === String(post.id)
+                ? { ...item, comments: [...(item.comments ?? []), comment] }
+                : item,
+            ),
+          [],
+          demoScope,
+        );
+        return comment;
+      }
+    }, '댓글을 등록했습니다.').catch(() => {});
   }
 
   function deleteNeighborPost(postId) {
-    updateDemoValue(
-      'neighbor.posts',
-      (posts) => posts.filter((post) => String(post.id) !== String(postId)),
-      [],
-      demoScope,
-    );
-    setFeedback('게시물을 삭제했습니다.');
-    setFeedbackIsError(false);
-    setReloadKey((current) => current + 1);
+    return runAction(async () => {
+      try {
+        return await communityPostApi.remove(postId);
+      } catch (error) {
+        if (!isDemoFallbackError(error)) throw error;
+        updateDemoValue(
+          'neighbor.posts',
+          (posts) => posts.filter((post) => String(post.id) !== String(postId)),
+          [],
+          demoScope,
+        );
+      }
+    }, '게시물을 삭제했습니다.').catch(() => {});
   }
 
   async function markSharingComplete(productId) {

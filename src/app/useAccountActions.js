@@ -1,6 +1,7 @@
 import {
   authApi,
   clearTokens,
+  connectionApi,
   familyApi,
   notificationApi,
   profileApi,
@@ -59,8 +60,34 @@ export default function useAccountActions({
     );
   }
 
-  async function disconnectFamily(loginId) {
-    return runAction(() => familyApi.disconnect(loginId), '가족 연결을 해제했습니다.');
+  async function requestElderConnection(seniorEmail) {
+    return runAction(
+      () => connectionApi.requestElder(seniorEmail),
+      '어르신 연결 요청을 보냈습니다.',
+    );
+  }
+
+  async function acceptFamilyConnection(connectionId) {
+    return runAction(
+      () => connectionApi.accept(connectionId),
+      '연결 요청을 수락했습니다.',
+    );
+  }
+
+  async function rejectFamilyConnection(connectionId) {
+    return runAction(
+      () => connectionApi.remove(connectionId),
+      '연결 요청을 거절했습니다.',
+    );
+  }
+
+  async function disconnectFamily(connection) {
+    const connectionId = typeof connection === 'object' ? connection?.connectionId : null;
+    const loginId = typeof connection === 'string' ? connection : connection?.loginId;
+    return runAction(
+      () => (connectionId ? connectionApi.remove(connectionId) : familyApi.disconnect(loginId)),
+      '가족 연결을 해제했습니다.',
+    );
   }
 
   async function updateProfile(updatedProfile) {
@@ -196,6 +223,9 @@ export default function useAccountActions({
     login,
     signup,
     connectGuardian,
+    requestElderConnection,
+    acceptFamilyConnection,
+    rejectFamilyConnection,
     disconnectFamily,
     updateProfile,
     changeSetting,

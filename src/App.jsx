@@ -20,8 +20,6 @@ import {
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
-const CHAT_SELECTION_STORAGE_KEY = 'ieum.chatRoomId';
-
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,14 +33,7 @@ function AppContent() {
   const [accessToken, setAccessToken] = useState(() => getAccessToken());
   const [reloadKey, setReloadKey] = useState(0);
   const [checkedMedicationIds, setCheckedMedicationIds] = useState([]);
-  const [chatSelection, setChatSelection] = useState(() => {
-    if (routeKey !== '/chatting') return { path: '', roomId: null };
-
-    const savedRoomId = Number(window.localStorage.getItem(CHAT_SELECTION_STORAGE_KEY));
-    return Number.isSafeInteger(savedRoomId) && savedRoomId > 0
-      ? { path: '/chatting', roomId: savedRoomId }
-      : { path: '', roomId: null };
-  });
+  const [chatSelection, setChatSelection] = useState({ path: '', roomId: null });
   const [feedback, setFeedbackState] = useState('');
   const [feedbackVersion, setFeedbackVersion] = useState(0);
   const [feedbackIsError, setFeedbackIsError] = useState(false);
@@ -64,16 +55,7 @@ function AppContent() {
   }, [feedback, feedbackVersion]);
 
   useEffect(() => {
-    if (chatSelection.path === '/chatting' && chatSelection.roomId != null) {
-      window.localStorage.setItem(CHAT_SELECTION_STORAGE_KEY, String(chatSelection.roomId));
-    } else {
-      window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
-    }
-  }, [chatSelection]);
-
-  useEffect(() => {
     if (routeKey === '/chatting') return;
-    window.localStorage.removeItem(CHAT_SELECTION_STORAGE_KEY);
     setChatSelection((current) =>
       current.path === '/chatting' ? { path: '', roomId: null } : current,
     );
@@ -165,7 +147,7 @@ function AppContent() {
     setChatSelection,
   });
 
-  const meetingActions = useMeetingActions({ demoScope, user, runAction, movePage });
+  const meetingActions = useMeetingActions({ runAction, movePage });
 
   const postActions = usePostActions({
     demoScope,
@@ -204,6 +186,9 @@ function AppContent() {
     onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccountData,
     onFamilyConnect: accountActions.connectGuardian,
+    onFamilyRequestElder: accountActions.requestElderConnection,
+    onFamilyAccept: accountActions.acceptFamilyConnection,
+    onFamilyReject: accountActions.rejectFamilyConnection,
     onFamilyDisconnect: accountActions.disconnectFamily,
     onSendRecoveryCode: accountActions.sendRecoveryCode,
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
@@ -215,6 +200,7 @@ function AppContent() {
     profile: data.profile ?? defaultProfile,
     settings: data.settings ?? defaultSettings,
     guardians: data.guardians ?? [],
+    pendingConnections: data.pendingConnections ?? [],
     medicationSchedule: data.medicationSchedule ?? [],
     medications: data.medications ?? [],
     guardian: data.guardian ?? defaultGuardian,

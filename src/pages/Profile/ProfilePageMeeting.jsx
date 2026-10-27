@@ -5,12 +5,11 @@ import ProfileActionButtons from '../../components/profile/ProfileActionButtons/
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MeetingCard from '../../components/meeting/MeetingCard/MeetingCard';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import { dummyMeetings } from '../../constants/dummy/dummyMeetings';
 import { dummyOtherProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function ProfilePageMeeting({
-  meetings = dummyMeetings,
+  meetings = [],
   profile = dummyOtherProfile,
   onMeetingSelect,
   isLoading = false,

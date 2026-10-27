@@ -56,8 +56,8 @@ function SettingGuardianList({
               <button
                 type="button"
                 className="setting-guardian-list__remove"
-                onClick={() => onRemove(targetLoginId)}
-                disabled={!targetLoginId || isBusy}
+                onClick={() => onRemove(guardian)}
+                disabled={!(targetLoginId || guardian?.connectionId) || isBusy}
               >
                 {isBusy ? '처리 중…' : '삭제'}
               </button>

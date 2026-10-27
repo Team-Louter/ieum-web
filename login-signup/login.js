@@ -24,9 +24,6 @@ form.addEventListener('submit', (e) => {
   } else {
     errorMsg.style.display = 'none';
 
-    // 로그인 성공 시 세션/토큰 저장 (지금은 백엔드 연동 전이라서 임시로 아이디만 저장)
-    sessionStorage.setItem('userId', id);
-
     // location.href = 'main.html'; // 메인페이지 만들어지면 연결
   }
 });
