@@ -10,6 +10,14 @@ function getMeetingRequest(values) {
   };
 }
 
+function getMeetingUpdateRequest(values) {
+  return {
+    name: values.title ?? values.name ?? '',
+    description: values.description ?? '',
+    region: values.region ?? '',
+  };
+}
+
 // 모임과 모임 안에서 사용하는 동작을 API 명세에 맞춰 처리합니다.
 export default function useMeetingActions({ runAction, movePage }) {
   async function createMeeting(values) {
@@ -32,7 +40,7 @@ export default function useMeetingActions({ runAction, movePage }) {
     if (typeof File !== 'undefined' && values.image instanceof File) {
       throw new Error('모임 대표 이미지 업로드 API가 아직 연결되지 않았습니다.');
     }
-    const request = getMeetingRequest({ ...meeting, ...values });
+    const request = getMeetingUpdateRequest({ ...meeting, ...values });
 
     return runAction(
       () => meetingApi.update(meetingId, request),

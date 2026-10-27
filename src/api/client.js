@@ -145,7 +145,8 @@ export async function apiRequest(path, options = {}) {
   if (hasBody && !isFormData(requestOptions.body) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  const accessToken = auth ? getAccessToken() : null;
+  // 요청 전에 만료가 가까운 토큰은 새 토큰으로 바꿉니다.
+  const accessToken = auth ? await getValidAccessToken() : null;
   if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
 
   let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
@@ -203,15 +204,15 @@ export const authApi = {
 
 export const profileApi = {
   get: () => apiGet('/api/profile'),
+  getByUserId: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}`),
   update: (profile, profileImage) => {
     if (!profileImage) return apiPatch('/api/profile', profile);
 
-    const query = new URLSearchParams();
-    if (profile.nickname != null) query.set('nickname', profile.nickname);
-    if (profile.bio != null) query.set('bio', profile.bio);
     const formData = new FormData();
     formData.append('file', profileImage);
-    return apiPatch(`/api/profile?${query.toString()}`, formData);
+    if (profile.nickname != null) formData.append('nickname', profile.nickname);
+    if (profile.bio != null) formData.append('bio', profile.bio);
+    return apiPatch('/api/profile', formData);
   },
 };
 
@@ -259,6 +260,7 @@ export const userApi = {
     const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
     return apiGet(`/api/users/search?${params.toString()}`);
   },
+  removeCurrent: () => apiDelete('/api/users/me'),
 };
 
 export const meetingApi = {

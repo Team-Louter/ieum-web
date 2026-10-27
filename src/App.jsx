@@ -184,7 +184,7 @@ function AppContent() {
     onLogout: accountActions.logout,
     onProfileUpdate: accountActions.updateProfile,
     onLocalAccountChange: accountActions.saveLocalAccountField,
-    onAccountDelete: accountActions.deleteAccountData,
+    onAccountDelete: accountActions.deleteAccount,
     onFamilyConnect: accountActions.connectGuardian,
     onFamilyRequestElder: accountActions.requestElderConnection,
     onFamilyAccept: accountActions.acceptFamilyConnection,

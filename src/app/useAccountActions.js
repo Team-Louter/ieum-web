@@ -6,6 +6,7 @@ import {
   notificationApi,
   profileApi,
   saveTokens,
+  userApi,
 } from '../api/client';
 import {
   clearDemoScope,
@@ -205,18 +206,24 @@ export default function useAccountActions({
     return value;
   }
 
-  function deleteAccountData() {
+  async function deleteAccount() {
     const shouldDelete = window.confirm(
-      '이 브라우저에 저장된 데모 데이터와 로그인 상태를 삭제할까요? 실제 서버 계정은 삭제되지 않습니다.',
+      '계정을 삭제할까요? 삭제한 계정은 되돌릴 수 없습니다.',
     );
     if (!shouldDelete) return;
 
-    clearDemoScope(demoScope);
-    clearTokens();
-    setAccessToken(null);
-    setFeedback('이 브라우저의 데모 데이터를 삭제하고 로그아웃했습니다. 서버 계정은 유지됩니다.');
-    setFeedbackIsError(false);
-    movePage('/login');
+    try {
+      await userApi.removeCurrent();
+      clearDemoScope(demoScope);
+      clearTokens();
+      setAccessToken(null);
+      setFeedback('계정을 삭제했습니다.');
+      setFeedbackIsError(false);
+      movePage('/login');
+    } catch (error) {
+      setFeedback(error?.message ?? '계정을 삭제하지 못했습니다.');
+      setFeedbackIsError(true);
+    }
   }
 
   return {
@@ -234,6 +241,6 @@ export default function useAccountActions({
     resetPassword,
     logout,
     saveLocalAccountField,
-    deleteAccountData,
+    deleteAccount,
   };
 }
