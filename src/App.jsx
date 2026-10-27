@@ -186,7 +186,6 @@ function AppContent() {
     onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccount,
     onFamilyConnect: accountActions.connectGuardian,
-    onFamilyRequestElder: accountActions.requestElderConnection,
     onFamilyAccept: accountActions.acceptFamilyConnection,
     onFamilyReject: accountActions.rejectFamilyConnection,
     onFamilyDisconnect: accountActions.disconnectFamily,
@@ -210,6 +209,7 @@ function AppContent() {
     posts: data.posts ?? [],
     meetings: data.meetings ?? [],
     meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
+    meetingId: selectedId,
     membership: data.membership ?? null,
     announcement: data.announcement ?? {},
     notices: data.notices ?? [],
@@ -288,6 +288,11 @@ function AppContent() {
         onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')}
       />
     );
+  }
+
+  // 로그인하지 않았다면 서비스 화면 대신 로그인 화면으로 보냅니다.
+  if (!publicRoutes.includes(routeKey) && !accessToken) {
+    return <Navigate to="/login" replace />;
   }
 
   if (routeKey === '/guardian' && user.role !== 'ROLE_GUARDIAN') {

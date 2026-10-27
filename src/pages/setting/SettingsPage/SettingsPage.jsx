@@ -25,7 +25,6 @@ function SettingsPage({
   settings: settingsFromProps,
   onSettingChange,
   onFamilyConnect,
-  onFamilyRequestElder,
   onFamilyAccept,
   onFamilyReject,
   onFamilyDisconnect,
@@ -84,7 +83,6 @@ function SettingsPage({
           guardians={guardians}
           pendingConnections={pendingConnections}
           onConnect={onFamilyConnect}
-          onRequestElder={onFamilyRequestElder}
           onAccept={onFamilyAccept}
           onReject={onFamilyReject}
           onDisconnect={onFamilyDisconnect}

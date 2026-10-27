@@ -1,8 +1,16 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.ieum.louter.site';
 
 let refreshPromise;
-let memoryAccessToken = null;
-let memoryRefreshToken = null;
+const ACCESS_TOKEN_KEY = 'ieum-access-token';
+const REFRESH_TOKEN_KEY = 'ieum-refresh-token';
+
+function readSavedToken(key) {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem(key);
+}
+
+let memoryAccessToken = readSavedToken(ACCESS_TOKEN_KEY);
+let memoryRefreshToken = readSavedToken(REFRESH_TOKEN_KEY);
 
 function isFormData(value) {
   return typeof FormData !== 'undefined' && value instanceof FormData;
@@ -58,11 +66,16 @@ export function saveTokens(tokens) {
   }
   memoryAccessToken = tokens.accessToken;
   memoryRefreshToken = tokens.refreshToken;
+  window.localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+  window.localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
 }
 
 export function clearTokens() {
   memoryAccessToken = null;
   memoryRefreshToken = null;
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
 function getRefreshToken() {
@@ -222,11 +235,11 @@ export const familyApi = {
   disconnect: (loginId) => apiDelete(`/api/connect/${encodeURIComponent(loginId)}`),
 };
 
-// 보호자 연결 요청은 어르신이 수락하기 전까지 대기 상태로 관리합니다.
+// 어르신이 보낸 보호자 연결 요청을 관리합니다.
 export const connectionApi = {
   list: () => apiGet('/api/connections'),
   pending: () => apiGet('/api/connections/pending'),
-  requestElder: (seniorEmail) => apiPost('/api/connections/request', { seniorEmail }),
+  requestGuardian: (guardianEmail) => apiPost('/api/connections/request', { guardianEmail }),
   accept: (connectionId) =>
     apiPatch(`/api/connections/${encodeURIComponent(String(connectionId))}/accept`),
   remove: (connectionId) =>

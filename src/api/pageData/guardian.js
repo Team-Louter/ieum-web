@@ -24,7 +24,7 @@ async function loadConnections(demoScope) {
 }
 
 async function loadPendingConnections(role) {
-  if (role !== 'ROLE_SENIOR') return [];
+  if (role !== 'ROLE_GUARDIAN') return [];
   try {
     return getItems(await connectionApi.pending());
   } catch (error) {
@@ -116,7 +116,7 @@ export async function loadSettingsPage({ role, demoScope }) {
     pendingConnections: pendingConnections.map((person) => ({
       ...person,
       id: person.connectionId,
-      name: person.loginId ?? person.nickname ?? '계정',
+      name: person.seniorLoginId ?? person.elderLoginId ?? person.loginId ?? person.nickname ?? '어르신 계정',
     })),
     medicationSchedule: uniqueMedications.map((medication) => ({
       id: medication.medicationId,
