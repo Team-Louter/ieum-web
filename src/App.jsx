@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
-import { getAccessToken, userApi } from './api/client';
+import { userApi } from './api/client';
+import useAuthSession from './hooks/useAuthSession';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
 import useAccountActions from './app/useAccountActions';
@@ -20,7 +21,7 @@ import {
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
-function AppContent() {
+function AppContent({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname.replace(/\/$/, '') || '/login';
@@ -30,7 +31,6 @@ function AppContent() {
   const Page = pageRoutes[routeKey];
 
   // 앱 전체에서 여러 화면이 함께 사용하는 상태입니다.
-  const [accessToken, setAccessToken] = useState(() => getAccessToken());
   const [reloadKey, setReloadKey] = useState(0);
   const [checkedMedicationIds, setCheckedMedicationIds] = useState([]);
   const [chatSelection, setChatSelection] = useState({ path: '', roomId: null });
@@ -349,10 +349,22 @@ function FeedbackMessage({ message, isError, onRetry, onClose }) {
   );
 }
 
+function SessionApp() {
+  const location = useLocation();
+  const session = useAuthSession();
+  const path = location.pathname.replace(/\/$/, '') || '/login';
+  if (!publicRoutes.includes(path)) {
+    if (session.checking) return <LoadingMessage />;
+    if (session.error) return <div role="alert">{session.error}<button type="button" onClick={session.retry}>다시 시도</button></div>;
+    if (!session.accessToken) return <Navigate to="/login" replace />;
+  }
+  return <AppContent accessToken={session.accessToken} setAccessToken={session.setAccessToken} />;
+}
+
 function App() {
   return (
     <Router>
-      <AppContent />
+      <SessionApp />
     </Router>
   );
 }
