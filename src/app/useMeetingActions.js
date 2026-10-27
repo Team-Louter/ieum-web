@@ -31,7 +31,7 @@ export default function useMeetingActions({ runAction, movePage }) {
       '모임을 만들었습니다.',
     );
 
-    movePage('/meeting');
+    movePage('/meeting/my');
     return result;
   }
 

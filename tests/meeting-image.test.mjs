@@ -15,7 +15,7 @@ test('meeting image creates multipart request and navigates only after server su
  const call=calls.at(-1);assert.equal(call.options.method,'POST');assert.ok(call.options.body instanceof FormData);
  assert.equal(call.options.headers.has('Content-Type'),false);
  assert.equal(call.options.body.get('file').name,'photo.png');
- const request=JSON.parse(await call.options.body.get('request').text());assert.equal(request.name,'등산 모임');assert.equal(request.owner,undefined);assert.equal(navigation,'/meeting');
+ const request=JSON.parse(await call.options.body.get('request').text());assert.equal(request.name,'등산 모임');assert.equal(request.owner,undefined);assert.equal(navigation,'/meeting/my');
 });
 test('meeting update uploads a replacement image with PUT',async()=>{
  await actions.updateMeeting({id:22,name:'before',description:'소개',region:'대구'},{title:'after',image:new File(['image'],'new.png',{type:'image/png'})});

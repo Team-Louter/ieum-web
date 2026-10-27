@@ -114,9 +114,7 @@ export default function MeetingMyPage({
       isOwner ||
       roleLabel === '관리자',
   );
-  const canLeave = isMyMeetingDetail && !isPending && !isOwner
-    ? true
-    : (membership?.canLeave ??
+  const canLeave = !isOwner && !isPending && (membership?.canLeave ??
       membership?.data?.canLeave ??
       meeting.canLeave ??
       (isActiveMember && !hasExplicitNotJoinedStatus));
@@ -128,7 +126,7 @@ export default function MeetingMyPage({
         ? '관리자'
         : isPending
           ? '가입 승인 대기'
-          : canLeave || isMyMeetingDetail
+          : canLeave
             ? '회원'
             : '');
   const canJoin = !isMyMeetingDetail && !canManage && !canLeave && !isPending;

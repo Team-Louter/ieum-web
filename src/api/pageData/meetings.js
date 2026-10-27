@@ -3,7 +3,7 @@ import { toMeetingCard, toMeetingMember, toMeetingNotice } from '../adapters';
 import { asArray, loadApiOrEmpty } from './common';
 
 export async function loadMeetingListPage({ path }) {
-  const response = path === '/meeting/my' ? await meetingApi.mine() : await meetingApi.list();
+  const response = path === '/meeting/my' ? await meetingApi.mine(true) : await meetingApi.list();
   const apiMeetings = Array.isArray(response)
     ? response
     : (response?.meetings ?? response?.content ?? []);
