@@ -3,6 +3,11 @@ const ACCESS_TOKEN_KEY = 'ieum.accessToken';
 const REFRESH_TOKEN_KEY = 'ieum.refreshToken';
 
 let refreshPromise;
+export const AUTH_SESSION_EVENT = 'ieum:auth-session-change';
+
+function notifySessionChange() {
+  window.dispatchEvent(new Event(AUTH_SESSION_EVENT));
+}
 
 function isFormData(value) {
   return typeof FormData !== 'undefined' && value instanceof FormData;
@@ -58,11 +63,13 @@ export function saveTokens(tokens) {
   }
   window.localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
   window.localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  notifySessionChange();
 }
 
 export function clearTokens() {
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
   window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+  notifySessionChange();
 }
 
 function readTokenClaims(token = getAccessToken()) {
@@ -110,10 +117,12 @@ async function refreshAccessToken() {
       body: JSON.stringify({ refreshToken }),
     });
     const payload = await parseResponse(response);
-    if (!response.ok || !payload?.accessToken) {
-      clearTokens();
-      return null;
+    if (window.localStorage.getItem(REFRESH_TOKEN_KEY) !== refreshToken) return getAccessToken();
+    if (!response.ok) {
+      if ([400, 401, 403].includes(response.status)) { clearTokens(); return null; }
+      throw new ApiError('로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.', response.status, null);
     }
+    if (!payload?.accessToken) { clearTokens(); return null; }
     saveTokens({
       accessToken: payload.accessToken,
       refreshToken: payload.refreshToken ?? refreshToken,
@@ -128,10 +137,12 @@ async function refreshAccessToken() {
 
 export async function getValidAccessToken() {
   const token = getAccessToken();
-  if (!token) return null;
-  const expiresAt = Number(readTokenClaims(token).exp) * 1000;
-  if (!expiresAt || expiresAt > Date.now() + 60_000) return token;
-  return (await refreshAccessToken()) ?? null;
+  const claims = readTokenClaims(token);
+  const expiresAt = Number(claims.exp) * 1000;
+  if (token && claims.sub && Number.isFinite(expiresAt) && expiresAt > Date.now() + 60_000) return token;
+  if (window.localStorage.getItem(REFRESH_TOKEN_KEY)) return refreshAccessToken();
+  if (token) clearTokens();
+  return null;
 }
 
 export async function apiRequest(path, options = {}) {
