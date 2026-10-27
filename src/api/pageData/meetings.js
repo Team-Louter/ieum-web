@@ -13,14 +13,15 @@ export async function loadMeetingListPage({ path }) {
 }
 
 export async function loadMeetingDetailPage({ selectedId }) {
-  const [remoteMeeting, remoteMembers, membership, noticePage] = await Promise.all([
+  const [remoteMeeting, membership] = await Promise.all([
     meetingApi.get(selectedId),
-    loadApiOrEmpty(() => meetingApi.members(selectedId)),
-    meetingApi.membership(selectedId).catch((error) => {
-      if (error?.status === 404) return null;
-      throw error;
-    }),
-    loadApiOrEmpty(() => meetingApi.notices(selectedId)),
+    meetingApi.membership(selectedId),
+  ]);
+  const state = membership?.membershipStatus ?? membership?.status;
+  const canReadNotices = ['OWNER', 'JOINED'].includes(state);
+  const [remoteMembers, noticePage] = await Promise.all([
+    membership?.canManage ? meetingApi.members(selectedId) : [],
+    canReadNotices ? loadApiOrEmpty(() => meetingApi.notices(selectedId)) : [],
   ]);
 
   const members = asArray(remoteMembers).map(toMeetingMember);

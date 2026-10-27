@@ -159,7 +159,7 @@ export async function apiRequest(path, options = {}) {
   if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
 
   let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
-  if ((response.status === 401 || response.status === 403) && auth && retryAuth) {
+  if (response.status === 401 && auth && retryAuth) {
     const nextToken = await refreshAccessToken();
     if (nextToken) {
       headers.set('Authorization', `Bearer ${nextToken}`);
