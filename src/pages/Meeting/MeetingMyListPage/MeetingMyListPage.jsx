@@ -2,11 +2,10 @@ import Layout from '../../../components/common/Layout/Layout';
 import MeetingCard from '../../../components/meeting/MeetingCard/MeetingCard';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../../components/common/EmptyState/EmptyState';
-import { dummyMyMeetings } from '../../../constants/dummy/dummyMeetings';
 import './MeetingMyListPage.css';
 
 export default function MeetingMyListPage({
-  meetings = dummyMyMeetings,
+  meetings = [],
   onMeetingSelect,
   onNavigate,
   isLoading = false,

@@ -1,8 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.ieum.louter.site';
-const ACCESS_TOKEN_KEY = 'ieum.accessToken';
-const REFRESH_TOKEN_KEY = 'ieum.refreshToken';
 
 let refreshPromise;
+let memoryAccessToken = null;
+let memoryRefreshToken = null;
 
 function isFormData(value) {
   return typeof FormData !== 'undefined' && value instanceof FormData;
@@ -49,20 +49,24 @@ export class ApiError extends Error {
 }
 
 export function getAccessToken() {
-  return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+  return memoryAccessToken;
 }
 
 export function saveTokens(tokens) {
   if (!tokens?.accessToken || !tokens?.refreshToken) {
     throw new Error('로그인 응답에 토큰이 없습니다.');
   }
-  window.localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-  window.localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  memoryAccessToken = tokens.accessToken;
+  memoryRefreshToken = tokens.refreshToken;
 }
 
 export function clearTokens() {
-  window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+  memoryAccessToken = null;
+  memoryRefreshToken = null;
+}
+
+function getRefreshToken() {
+  return memoryRefreshToken;
 }
 
 function readTokenClaims(token = getAccessToken()) {
@@ -100,7 +104,7 @@ async function parseResponse(response) {
 
 async function refreshAccessToken() {
   if (refreshPromise) return refreshPromise;
-  const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_KEY);
+  const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
 
   refreshPromise = (async () => {
@@ -141,7 +145,9 @@ export async function apiRequest(path, options = {}) {
   if (hasBody && !isFormData(requestOptions.body) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  if (auth && getAccessToken()) headers.set('Authorization', `Bearer ${getAccessToken()}`);
+  // 요청 전에 만료가 가까운 토큰은 새 토큰으로 바꿉니다.
+  const accessToken = auth ? await getValidAccessToken() : null;
+  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
 
   let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
   if ((response.status === 401 || response.status === 403) && auth && retryAuth) {
@@ -198,15 +204,15 @@ export const authApi = {
 
 export const profileApi = {
   get: () => apiGet('/api/profile'),
+  getByUserId: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}`),
   update: (profile, profileImage) => {
     if (!profileImage) return apiPatch('/api/profile', profile);
 
-    const query = new URLSearchParams();
-    if (profile.nickname != null) query.set('nickname', profile.nickname);
-    if (profile.bio != null) query.set('bio', profile.bio);
     const formData = new FormData();
     formData.append('file', profileImage);
-    return apiPatch(`/api/profile?${query.toString()}`, formData);
+    if (profile.nickname != null) formData.append('nickname', profile.nickname);
+    if (profile.bio != null) formData.append('bio', profile.bio);
+    return apiPatch('/api/profile', formData);
   },
 };
 
@@ -214,6 +220,17 @@ export const familyApi = {
   list: () => apiGet('/api/connect'),
   connect: (guardianEmail) => apiPost('/api/connect', { guardianEmail }),
   disconnect: (loginId) => apiDelete(`/api/connect/${encodeURIComponent(loginId)}`),
+};
+
+// 보호자 연결 요청은 어르신이 수락하기 전까지 대기 상태로 관리합니다.
+export const connectionApi = {
+  list: () => apiGet('/api/connections'),
+  pending: () => apiGet('/api/connections/pending'),
+  requestElder: (seniorEmail) => apiPost('/api/connections/request', { seniorEmail }),
+  accept: (connectionId) =>
+    apiPatch(`/api/connections/${encodeURIComponent(String(connectionId))}/accept`),
+  remove: (connectionId) =>
+    apiDelete(`/api/connections/${encodeURIComponent(String(connectionId))}`),
 };
 
 export const medicationApi = {
@@ -243,10 +260,13 @@ export const userApi = {
     const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });
     return apiGet(`/api/users/search?${params.toString()}`);
   },
+  removeCurrent: () => apiDelete('/api/users/me'),
 };
 
 export const meetingApi = {
   list: () => apiGet('/api/community/meetings'),
+  mine: (includePending = false) =>
+    apiGet(`/api/community/meetings/my${includePending ? '?includePending=true' : ''}`),
   get: (id) => apiGet(`/api/community/meetings/${id}`),
   create: (meeting) => apiPost('/api/community/meetings', meeting),
   update: (id, meeting) => apiPut(`/api/community/meetings/${id}`, meeting),
@@ -270,6 +290,20 @@ export const meetingApi = {
   getLike: (id) => apiGet(`/api/contents/MEETING/${id}/like`),
   like: (id) => apiPut(`/api/contents/MEETING/${id}/like`),
   unlike: (id) => apiDelete(`/api/contents/MEETING/${id}/like`),
+};
+
+export const communityPostApi = {
+  list: ({ mine = false, page = 0, size = 20 } = {}) => {
+    if (mine) return apiGet('/api/community/posts?mine=true');
+    return apiGet(`/api/community/posts?page=${page}&size=${size}`);
+  },
+  get: (id) => apiGet(`/api/community/posts/${id}`),
+  create: (post, imageFile) =>
+    apiPost('/api/community/posts', imageFile ? makeRequestWithFile(post, imageFile) : post),
+  remove: (id) => apiDelete(`/api/community/posts/${id}`),
+  like: (id) => apiPut(`/api/community/posts/${id}/like`),
+  unlike: (id) => apiDelete(`/api/community/posts/${id}/like`),
+  createComment: (id, comment) => apiPost(`/api/community/posts/${id}/comments`, comment),
 };
 
 export const sharingApi = {

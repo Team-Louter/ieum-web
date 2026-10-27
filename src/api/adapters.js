@@ -12,6 +12,42 @@ export function toMeetingCard(meeting = {}) {
   };
 }
 
+export function toCommunityPost(post = {}) {
+  const author = post.author ?? {};
+  const loginId = author.loginId ?? post.authorLoginId ?? post.owner ?? '';
+  const userId = author.userId ?? post.authorId ?? null;
+
+  return {
+    ...post,
+    id: post.id,
+    owner: post.owner ?? loginId,
+    author: {
+      ...author,
+      id: author.id ?? loginId ?? (userId == null ? '' : String(userId)),
+      userId,
+      loginId,
+      nickname: author.nickname ?? loginId,
+      profileImage: resolveApiAssetUrl(author.profileImageUrl ?? author.profileImage ?? ''),
+    },
+    image: resolveApiAssetUrl(post.imageUrl ?? post.image ?? ''),
+    likeCount: Number(post.likeCount ?? 0),
+    isLiked: post.likedByMe ?? post.isLiked ?? false,
+    comments: Array.isArray(post.comments)
+      ? post.comments.map((comment) => ({
+          ...comment,
+          profileId:
+            comment.profileId ??
+            comment.author?.loginId ??
+            comment.authorLoginId ??
+            (comment.authorId == null ? '' : String(comment.authorId)),
+          profileImage: resolveApiAssetUrl(
+            comment.profileImageUrl ?? comment.author?.profileImageUrl ?? comment.profileImage ?? '',
+          ),
+        }))
+      : [],
+  };
+}
+
 export function toMeetingMember(member = {}) {
   return {
     ...member,

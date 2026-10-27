@@ -1,7 +1,37 @@
-import { familyApi, guardianApi, medicationApi, notificationApi } from '../client';
+import { connectionApi, familyApi, guardianApi, medicationApi, notificationApi } from '../client';
 import { elapsedLoginText, formatMedicationTime, toGuardianMedication } from '../adapters';
-import { readDemoValue } from '../demoStore';
+import { isDemoFallbackError, readDemoValue } from '../demoStore';
 import { asArray, loadApiOrDemo } from './common';
+
+function getItems(response) {
+  if (Array.isArray(response)) return response;
+  return asArray(response?.content ?? response?.connections ?? response?.requests ?? response?.data);
+}
+
+async function loadConnections(demoScope) {
+  try {
+    return getItems(await connectionApi.list());
+  } catch (error) {
+    if (!isDemoFallbackError(error)) throw error;
+    try {
+      // 배포 환경에 최신 목록 API가 아직 반영되지 않은 경우 기존 API를 사용합니다.
+      return getItems(await familyApi.list());
+    } catch (legacyError) {
+      if (!isDemoFallbackError(legacyError)) throw legacyError;
+      return asArray(readDemoValue('family', [], demoScope));
+    }
+  }
+}
+
+async function loadPendingConnections(role) {
+  if (role !== 'ROLE_SENIOR') return [];
+  try {
+    return getItems(await connectionApi.pending());
+  } catch (error) {
+    if (!isDemoFallbackError(error)) throw error;
+    return [];
+  }
+}
 
 export async function loadGuardianPage({ demoScope }) {
   const elders = asArray(
@@ -48,16 +78,18 @@ export async function loadGuardianPage({ demoScope }) {
 }
 
 export async function loadSettingsPage({ role, demoScope }) {
-  const [notificationSettings, family, medications] = await Promise.all([
+  const [notificationSettings, family, pendingConnections, medications] = await Promise.all([
     loadApiOrDemo(() => notificationApi.getSettings(), 'settings', {}, demoScope),
-    loadApiOrDemo(() => familyApi.list(), 'family', [], demoScope),
+    loadConnections(demoScope),
+    loadPendingConnections(role),
     role === 'ROLE_SENIOR'
       ? loadApiOrDemo(() => medicationApi.list(), 'medications', [], demoScope)
       : Promise.resolve([]),
   ]);
 
   const localSettings = readDemoValue('settings', {}, demoScope);
-  const savedMedications = readDemoValue('medications', [], demoScope);
+  const savedMedications =
+    role === 'ROLE_SENIOR' ? readDemoValue('medications', [], demoScope) : [];
   const uniqueMedications = [...asArray(medications), ...asArray(savedMedications)].filter(
     (medication, index, list) =>
       list.findIndex(
@@ -76,10 +108,15 @@ export async function loadSettingsPage({ role, demoScope }) {
       guardianLocation: false,
       ...localSettings,
     },
-    guardians: asArray(family).map((person) => ({
+    guardians: getItems(family).map((person) => ({
       ...person,
-      id: person.loginId,
-      name: person.nickname,
+      id: person.loginId ?? person.userId ?? person.connectionId,
+      name: person.nickname ?? person.loginId,
+    })),
+    pendingConnections: pendingConnections.map((person) => ({
+      ...person,
+      id: person.connectionId,
+      name: person.loginId ?? person.nickname ?? '계정',
     })),
     medicationSchedule: uniqueMedications.map((medication) => ({
       id: medication.medicationId,

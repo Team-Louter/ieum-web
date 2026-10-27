@@ -6,11 +6,6 @@ import './MeetingMyPage.css';
 import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
-import {
-  dummyMeetingAnnouncement,
-  dummyMeetingMembers,
-  dummyMyMeetings,
-} from '../../../constants/dummy/dummyMeetings';
 
 const ACTIVE_MEMBERSHIP_STATUSES = ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'];
 const PENDING_MEMBERSHIP_STATUSES = [
@@ -52,9 +47,9 @@ function getRoleLabel(role) {
 }
 
 export default function MeetingMyPage({
-  meeting = dummyMyMeetings[0],
-  announcement = dummyMeetingAnnouncement,
-  members = dummyMeetingMembers,
+  meeting = {},
+  announcement = {},
+  members = [],
   membership,
   notices = [],
   currentLoginId,

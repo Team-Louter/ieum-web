@@ -2,10 +2,9 @@ import './MeetingMemberListPage.css';
 import MemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
-import { dummyMeetingMembers } from '../../../constants/dummy/dummyMeetings';
 
 export default function MeetingMemberListPage({
-  members = dummyMeetingMembers,
+  members = [],
   meeting,
   membership,
   currentUserId,
