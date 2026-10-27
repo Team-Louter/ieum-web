@@ -1,15 +1,26 @@
+import { useEffect, useState } from 'react';
 import './MeetingInputBox.css';
 import upload from '../../../assets/images/meeting-upload.png';
 
 export default function MeetingInputBox({ values = {}, onChange }) {
+  const [preview, setPreview] = useState({ file: null, url: '' });
+  useEffect(() => () => {
+    if (preview.url) URL.revokeObjectURL(preview.url);
+  }, [preview.url]);
+  function changeImage(event) {
+    const file = event.target.files?.[0] ?? null;
+    setPreview({ file, url: file ? URL.createObjectURL(file) : '' });
+    onChange?.('image', file);
+  }
+  const imageUrl = typeof values.image === 'string' ? values.image : preview.file === values.image ? preview.url : '';
   return (
     <div className="input-container">
       <label htmlFor="input-img" className="meeting-input-picture">
         <div className="meeting-input-picture-guide">
-          {typeof values.image === 'string' && values.image ? (
+          {imageUrl ? (
             <img
               className="meeting-input-picture-guide-image meeting-input-picture-guide-image--preview"
-              src={values.image}
+              src={imageUrl}
               alt="모임 미리보기"
             />
           ) : values.image ? (
@@ -24,10 +35,10 @@ export default function MeetingInputBox({ values = {}, onChange }) {
       </label>
       <input
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png"
         hidden
         id="input-img"
-        onChange={(event) => onChange?.('image', event.target.files?.[0] ?? null)}
+        onChange={changeImage}
       />
       <div className="meeting-input-subcontainer">
         <input
