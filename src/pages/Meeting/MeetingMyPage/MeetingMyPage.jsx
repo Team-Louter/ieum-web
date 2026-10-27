@@ -6,11 +6,6 @@ import './MeetingMyPage.css';
 import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
-import {
-  dummyMeetingAnnouncement,
-  dummyMeetingMembers,
-  dummyMyMeetings,
-} from '../../../constants/dummy/dummyMeetings';
 
 const ACTIVE_MEMBERSHIP_STATUSES = ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'];
 const PENDING_MEMBERSHIP_STATUSES = [
@@ -19,6 +14,16 @@ const PENDING_MEMBERSHIP_STATUSES = [
   'WAITING',
   'WAITING_APPROVAL',
   'REQUESTED',
+];
+const NOT_JOINED_MEMBERSHIP_STATUSES = [
+  'NONE',
+  'NOT_JOINED',
+  'NOT_MEMBER',
+  'REJECTED',
+  'DECLINED',
+  'LEFT',
+  'WITHDRAWN',
+  'INACTIVE',
 ];
 
 function getRoleLabel(role) {
@@ -42,9 +47,9 @@ function getRoleLabel(role) {
 }
 
 export default function MeetingMyPage({
-  meeting = dummyMyMeetings[0],
-  announcement = dummyMeetingAnnouncement,
-  members = dummyMeetingMembers,
+  meeting = {},
+  announcement = {},
+  members = [],
   membership,
   notices = [],
   currentLoginId,
@@ -77,10 +82,12 @@ export default function MeetingMyPage({
       (currentLoginId && member.loginId === currentLoginId),
   );
   const membershipStatus = String(
-    meeting.membershipStatus ??
-      membership?.status ??
+    membership?.status ??
       membership?.membershipStatus ??
       membership?.data?.status ??
+      membership?.data?.membershipStatus ??
+      meeting.membershipStatus ??
+      currentMember?.status ??
       '',
   ).toUpperCase();
   const roleLabel = getRoleLabel(
@@ -95,6 +102,11 @@ export default function MeetingMyPage({
     (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
     Boolean(currentLoginId && meeting.owner === currentLoginId);
   const isPending = PENDING_MEMBERSHIP_STATUSES.includes(membershipStatus);
+  const hasExplicitNotJoinedStatus = NOT_JOINED_MEMBERSHIP_STATUSES.includes(membershipStatus);
+  const isActiveMember =
+    ACTIVE_MEMBERSHIP_STATUSES.includes(membershipStatus) ||
+    ACTIVE_MEMBERSHIP_STATUSES.includes(String(currentMember?.status ?? '').toUpperCase()) ||
+    (!membershipStatus && roleLabel === '회원');
   const canManage = Boolean(
     membership?.canManage ||
       membership?.data?.canManage ||
@@ -107,9 +119,7 @@ export default function MeetingMyPage({
     : (membership?.canLeave ??
       membership?.data?.canLeave ??
       meeting.canLeave ??
-      (ACTIVE_MEMBERSHIP_STATUSES.includes(membershipStatus) ||
-        (!isPending && Boolean(membership || currentMember)) ||
-        roleLabel === '회원'));
+      (isActiveMember && !hasExplicitNotJoinedStatus));
   const myRoleLabel =
     roleLabel ||
     (isOwner

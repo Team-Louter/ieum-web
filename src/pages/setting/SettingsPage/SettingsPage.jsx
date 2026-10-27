@@ -25,7 +25,11 @@ function SettingsPage({
   settings: settingsFromProps,
   onSettingChange,
   onFamilyConnect,
+  onFamilyRequestElder,
+  onFamilyAccept,
+  onFamilyReject,
   onFamilyDisconnect,
+  pendingConnections = [],
   role,
   currentLoginId,
   accountEmail,
@@ -40,20 +44,12 @@ function SettingsPage({
   apiError = '',
 }) {
   const [activeSection, setActiveSection] = useState('general');
-  const [localSettings, setLocalSettings] = useState(() => {
-    const savedSettings = {};
-    ['interactionAlert', 'mentionAlert', 'guardianLocation'].forEach((key) => {
-      const savedValue = window.localStorage.getItem(`ieum.setting.${key}`);
-      if (savedValue !== null) savedSettings[key] = savedValue === 'true';
-    });
-    return savedSettings;
-  });
+  const [localSettings, setLocalSettings] = useState({});
   const settings = { ...initialSettings, ...(settingsFromProps ?? {}), ...localSettings };
 
   const toggle = (key) => {
     const nextValue = !settings[key];
     if (['interactionAlert', 'mentionAlert', 'guardianLocation'].includes(key)) {
-      window.localStorage.setItem(`ieum.setting.${key}`, String(nextValue));
       setLocalSettings((currentSettings) => ({ ...currentSettings, [key]: nextValue }));
       return;
     }
@@ -72,22 +68,28 @@ function SettingsPage({
         onResetPassword={onResetPassword}
       />
     ),
-    guardian: (
-      <SettingGuardianPage
-        {...pageProps}
-        guardians={guardians}
-        onConnect={onFamilyConnect}
-        onDisconnect={onFamilyDisconnect}
-      />
-    ),
     general: (
-      <SettingGeneralPage
-        {...pageProps}
-        medicationSchedule={medicationSchedule}
-        onMedicationScheduleEdit={onMedicationScheduleEdit}
-        onMedicationCreate={onMedicationCreate}
-        onMedicationDelete={onMedicationDelete}
-      />
+      <div className="settings-page__combined-sections">
+        {role !== 'ROLE_GUARDIAN' && (
+          <SettingGeneralPage
+            {...pageProps}
+            medicationSchedule={medicationSchedule}
+            onMedicationScheduleEdit={onMedicationScheduleEdit}
+            onMedicationCreate={onMedicationCreate}
+            onMedicationDelete={onMedicationDelete}
+          />
+        )}
+        <SettingGuardianPage
+          {...pageProps}
+          guardians={guardians}
+          pendingConnections={pendingConnections}
+          onConnect={onFamilyConnect}
+          onRequestElder={onFamilyRequestElder}
+          onAccept={onFamilyAccept}
+          onReject={onFamilyReject}
+          onDisconnect={onFamilyDisconnect}
+        />
+      </div>
     ),
     feature: <SettingFeaturePage />,
     support: (

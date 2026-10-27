@@ -1,63 +1,18 @@
 import { meetingApi } from '../client';
 import { toMeetingCard, toMeetingMember, toMeetingNotice } from '../adapters';
-import { readDemoValue } from '../demoStore';
 import { asArray, loadApiOrEmpty } from './common';
 
-const ACTIVE_MEMBERSHIP_STATUSES = new Set(['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER']);
-const PENDING_MEMBERSHIP_STATUSES = new Set([
-  'PENDING',
-  'PENDING_APPROVAL',
-  'WAITING',
-  'WAITING_APPROVAL',
-  'REQUESTED',
-]);
-
-function isParticipatingMeeting(meeting) {
-  const status = String(meeting.membershipStatus ?? '').toUpperCase();
-  return (
-    meeting.canLeave === true ||
-    ACTIVE_MEMBERSHIP_STATUSES.has(status) ||
-    PENDING_MEMBERSHIP_STATUSES.has(status)
-  );
-}
-
-export async function loadMeetingListPage({ path, demoScope, loginId, userId }) {
-  const remoteMeetings = asArray(await loadApiOrEmpty(() => meetingApi.list()));
-  const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
-
-  const meetings = [...localMeetings, ...remoteMeetings]
-    .filter(
-      (meeting, index, list) =>
-        list.findIndex((candidate) => String(candidate.id) === String(meeting.id)) === index,
-    )
-    .map(toMeetingCard);
-
+export async function loadMeetingListPage({ path }) {
+  const response = path === '/meeting/my' ? await meetingApi.mine() : await meetingApi.list();
+  const apiMeetings = Array.isArray(response)
+    ? response
+    : (response?.meetings ?? response?.content ?? []);
   return {
-    meetings:
-      path === '/meeting/my'
-        ? meetings.filter(
-            (meeting) =>
-              (meeting.ownerId != null && String(meeting.ownerId) === String(userId)) ||
-              meeting.owner === loginId ||
-              isParticipatingMeeting(meeting),
-          )
-        : meetings,
+    meetings: asArray(apiMeetings).map(toMeetingCard),
   };
 }
 
-export async function loadMeetingDetailPage({ selectedId, demoScope }) {
-  const localMeetings = asArray(readDemoValue('meetings', [], demoScope));
-  const localMeeting = localMeetings.find((meeting) => String(meeting.id) === String(selectedId));
-  if (localMeeting && !localMeeting._apiBacked) {
-    return {
-      meeting: toMeetingCard(localMeeting),
-      membership: null,
-      announcement: readDemoValue('meeting.announcement', {}, demoScope),
-      notices: [],
-      members: asArray(readDemoValue('meeting.members', [], demoScope)).map(toMeetingMember),
-    };
-  }
-
+export async function loadMeetingDetailPage({ selectedId }) {
   const [remoteMeeting, remoteMembers, membership, noticePage] = await Promise.all([
     meetingApi.get(selectedId),
     loadApiOrEmpty(() => meetingApi.members(selectedId)),
@@ -78,7 +33,6 @@ export async function loadMeetingDetailPage({ selectedId, demoScope }) {
     });
   const meeting = toMeetingCard({
     ...remoteMeeting,
-    ...(localMeeting ?? {}),
     memberCount: remoteMeeting.memberCount ?? members.length,
   });
 

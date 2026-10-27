@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { authApi } from '../../api/client';
+import { isPasswordValid } from '../../utils/validation';
 import './IDsearch.css';
 
 function isEmailFormatValid(emailValue) {
@@ -61,8 +62,8 @@ function IDsearch({ type, onClose }) {
 
     async function handleReset(event) {
         event.preventDefault();
-        if (newPassword.length < 8) {
-            setErrorMessage('새 비밀번호는 8자 이상 입력해 주세요.');
+        if (!isPasswordValid(newPassword)) {
+            setErrorMessage('비밀번호는 8자 이상, 영문자·숫자·특수문자를 포함해야 합니다.');
             return;
         }
         setIsSubmitting(true);

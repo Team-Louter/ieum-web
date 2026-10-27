@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
+import { isPasswordValid } from '../../../utils/validation';
 import SettingLegalDocument from './SettingLegalDocument';
 import './SettingLegalDocument.css';
 
@@ -149,6 +150,11 @@ function SettingAccountPage({
     event.preventDefault();
     if (!verified) {
       setMessage('먼저 이메일 인증을 완료해 주세요.');
+      setMessageIsError(true);
+      return;
+    }
+    if (!isPasswordValid(newPassword)) {
+      setMessage('비밀번호는 8자 이상, 영문자·숫자·특수문자를 포함해야 합니다.');
       setMessageIsError(true);
       return;
     }

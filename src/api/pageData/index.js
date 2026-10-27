@@ -1,4 +1,5 @@
-import { notificationApi } from '../client';
+import { communityPostApi, notificationApi } from '../client';
+import { toCommunityPost } from '../adapters';
 import { asArray, loadApiOrDemo } from './common';
 import { loadChatPage } from './chat';
 import { loadAddFriendPage } from './friends';
@@ -6,7 +7,7 @@ import { loadGuardianPage, loadSettingsPage } from './guardian';
 import { loadMarketDetailPage, loadMarketListPage } from './market';
 import { loadMeetingDetailPage, loadMeetingListPage } from './meetings';
 import { loadMyProfilePage } from './profile';
-import { readDemoValue } from '../demoStore';
+import { isDemoFallbackError, readDemoValue } from '../demoStore';
 
 // 화면 경로에 맞는 데이터 함수를 찾아 실행합니다.
 export default async function loadPageData({
@@ -28,12 +29,23 @@ export default async function loadPageData({
   if (path === '/settings') return loadSettingsPage({ role, demoScope });
 
   if (path === '/neighbor' || path === '/neighbor/my') {
-    const posts = asArray(readDemoValue('neighbor.posts', [], demoScope));
-    return {
-      posts:
+    let posts;
+    try {
+      const response = await communityPostApi.list({ mine: path === '/neighbor/my' });
+      const apiPosts = Array.isArray(response)
+        ? response
+        : (response?.posts ?? response?.content ?? []);
+      posts = asArray(apiPosts).map(toCommunityPost);
+    } catch (requestError) {
+      if (!isDemoFallbackError(requestError)) throw requestError;
+      const localPosts = asArray(readDemoValue('neighbor.posts', [], demoScope));
+      posts =
         path === '/neighbor/my'
-          ? posts.filter((post) => post.owner === loginId || post.author?.id === loginId)
-          : posts,
+          ? localPosts.filter((post) => post.owner === loginId || post.author?.id === loginId)
+          : localPosts;
+    }
+    return {
+      posts,
     };
   }
 
@@ -42,18 +54,18 @@ export default async function loadPageData({
   }
 
   if (path === '/meeting' || path === '/meeting/my') {
-    return loadMeetingListPage({ path, demoScope, loginId, userId });
+    return loadMeetingListPage({ path });
   }
 
   if (
     (path === '/meeting/detail' || path === '/meeting/my/detail' || path === '/meeting/my/member-list') &&
     selectedId
   ) {
-    return loadMeetingDetailPage({ selectedId, demoScope });
+    return loadMeetingDetailPage({ selectedId });
   }
 
   if (path === '/meeting/management' && selectedId) {
-    return loadMeetingDetailPage({ selectedId, demoScope });
+    return loadMeetingDetailPage({ selectedId });
   }
 
   if (path === '/market' || path === '/market/my') {

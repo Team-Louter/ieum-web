@@ -4,6 +4,7 @@ import EmptyState from '../../common/EmptyState/EmptyState';
 
 function SettingGuardianList({
   guardians = [],
+  displayLoginId = false,
   isEditing = false,
   isBusy = false,
   onRemove,
@@ -30,7 +31,9 @@ function SettingGuardianList({
         const guardianName =
           typeof guardian === 'string'
             ? guardian
-            : (guardian.nickname ?? guardian.name ?? guardian.id ?? '');
+            : displayLoginId
+              ? (guardian.loginId ?? guardian.id ?? guardian.nickname ?? guardian.name ?? '')
+              : (guardian.nickname ?? guardian.name ?? guardian.loginId ?? guardian.id ?? '');
         const guardianImage =
           typeof guardian === 'string'
             ? profileImg
@@ -53,8 +56,8 @@ function SettingGuardianList({
               <button
                 type="button"
                 className="setting-guardian-list__remove"
-                onClick={() => onRemove(targetLoginId)}
-                disabled={!targetLoginId || isBusy}
+                onClick={() => onRemove(guardian)}
+                disabled={!(targetLoginId || guardian?.connectionId) || isBusy}
               >
                 {isBusy ? '처리 중…' : '삭제'}
               </button>

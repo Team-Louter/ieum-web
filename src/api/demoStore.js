@@ -1,27 +1,17 @@
-const DEMO_STORE_KEY = 'ieum.demoStore.v1';
-
-function getStore() {
-  try {
-    return JSON.parse(window.localStorage.getItem(DEMO_STORE_KEY) ?? '{}');
-  } catch {
-    return {};
-  }
-}
+const memoryValues = new Map();
 
 function getScopedKey(key, scope = 'guest') {
   return `${scope}:${key}`;
 }
 
 export function readDemoValue(key, fallback, scope) {
-  const store = getStore();
   const scopedKey = getScopedKey(key, scope);
-  return Object.prototype.hasOwnProperty.call(store, scopedKey) ? store[scopedKey] : fallback;
+  return memoryValues.has(scopedKey) ? memoryValues.get(scopedKey) : fallback;
 }
 
 export function writeDemoValue(key, value, scope) {
-  const store = getStore();
-  store[getScopedKey(key, scope)] = value;
-  window.localStorage.setItem(DEMO_STORE_KEY, JSON.stringify(store));
+  const scopedKey = getScopedKey(key, scope);
+  memoryValues.set(scopedKey, value);
   return value;
 }
 
@@ -31,12 +21,10 @@ export function updateDemoValue(key, updater, fallback, scope) {
 }
 
 export function clearDemoScope(scope = 'guest') {
-  const store = getStore();
   const prefix = `${scope}:`;
-  Object.keys(store).forEach((key) => {
-    if (key.startsWith(prefix)) delete store[key];
-  });
-  window.localStorage.setItem(DEMO_STORE_KEY, JSON.stringify(store));
+  for (const key of memoryValues.keys()) {
+    if (key.startsWith(prefix)) memoryValues.delete(key);
+  }
 }
 
 export function isDemoFallbackError(error) {

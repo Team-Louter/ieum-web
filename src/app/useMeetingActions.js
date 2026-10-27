@@ -1,45 +1,34 @@
 import { meetingApi } from '../api/client';
-import { fileToDataUrl, readDemoValue, updateDemoValue } from '../api/demoStore';
 
-function getMeetingRequest(values, owner) {
+function getMeetingRequest(values) {
   return {
     name: values.title ?? values.name ?? '',
     description: values.description ?? '',
     region: values.region ?? '',
-    owner,
     approvalRequired: Boolean(values.requireApproval ?? values.approvalRequired),
     isPrivate: Boolean(values.isPrivate ?? values.private),
   };
 }
 
-// 모임과 모임 안에서 사용하는 동작을 API 명세에 맞춰 처리합니다.
-export default function useMeetingActions({ demoScope, user, runAction, movePage }) {
-  async function createMeeting(values) {
-    const result = await runAction(async () => {
-      const imageUrl =
-        values.image instanceof File ? await fileToDataUrl(values.image) : (values.image ?? '');
-      const meeting = await meetingApi.create(getMeetingRequest(values, user.loginId));
+function getMeetingUpdateRequest(values) {
+  return {
+    name: values.title ?? values.name ?? '',
+    description: values.description ?? '',
+    region: values.region ?? '',
+  };
+}
 
-      // 대표 이미지 업로드 API가 없어 이미지 파일만 현재 브라우저에 보관합니다.
-      if (values.image instanceof File && meeting?.id != null) {
-        const localImage = {
-          ...meeting,
-          id: meeting.id,
-          imageUrl,
-          _apiBacked: true,
-        };
-        updateDemoValue(
-          'meetings',
-          (meetings) => [
-            localImage,
-            ...meetings.filter((item) => String(item.id) !== String(meeting.id)),
-          ],
-          [],
-          demoScope,
-        );
-      }
-      return meeting;
-    }, '모임을 만들었습니다.');
+// 모임과 모임 안에서 사용하는 동작을 API 명세에 맞춰 처리합니다.
+export default function useMeetingActions({ runAction, movePage }) {
+  async function createMeeting(values) {
+    if (typeof File !== 'undefined' && values.image instanceof File) {
+      throw new Error('모임 대표 이미지 업로드 API가 아직 연결되지 않았습니다.');
+    }
+
+    const result = await runAction(
+      () => meetingApi.create(getMeetingRequest(values)),
+      '모임을 만들었습니다.',
+    );
 
     movePage('/meeting');
     return result;
@@ -48,59 +37,20 @@ export default function useMeetingActions({ demoScope, user, runAction, movePage
   async function updateMeeting(meeting, values) {
     const meetingId = meeting?.id;
     if (meetingId == null) throw new Error('수정할 모임을 찾을 수 없습니다.');
-    const request = getMeetingRequest({ ...meeting, ...values }, meeting.owner ?? user.loginId);
+    if (typeof File !== 'undefined' && values.image instanceof File) {
+      throw new Error('모임 대표 이미지 업로드 API가 아직 연결되지 않았습니다.');
+    }
+    const request = getMeetingUpdateRequest({ ...meeting, ...values });
 
-    return runAction(async () => {
-      const updatedMeeting = await meetingApi.update(meetingId, request);
-      if (values.image instanceof File) {
-        const imageUrl = await fileToDataUrl(values.image);
-        updateDemoValue(
-          'meetings',
-          (meetings) => [
-            {
-              ...meeting,
-              ...updatedMeeting,
-              ...request,
-              id: meetingId,
-              title: request.name,
-              imageUrl,
-              _apiBacked: true,
-            },
-            ...meetings.filter((item) => String(item.id) !== String(meetingId)),
-          ],
-          [],
-          demoScope,
-        );
-      }
-      return updatedMeeting;
-    }, '모임 정보를 수정했습니다.');
+    return runAction(
+      () => meetingApi.update(meetingId, request),
+      '모임 정보를 수정했습니다.',
+    );
   }
 
   async function deleteMeeting(meetingId) {
     if (meetingId == null) throw new Error('삭제할 모임을 찾을 수 없습니다.');
-    const localMeeting = readDemoValue('meetings', [], demoScope).find(
-      (meeting) => String(meeting.id) === String(meetingId),
-    );
-    if (localMeeting && !localMeeting._apiBacked) {
-      await runAction(async () => {
-        updateDemoValue(
-          'meetings',
-          (meetings) => meetings.filter((meeting) => String(meeting.id) !== String(meetingId)),
-          [],
-          demoScope,
-        );
-      }, '모임을 삭제했습니다.');
-    } else {
-      await runAction(async () => {
-        await meetingApi.remove(meetingId);
-        updateDemoValue(
-          'meetings',
-          (meetings) => meetings.filter((meeting) => String(meeting.id) !== String(meetingId)),
-          [],
-          demoScope,
-        );
-      }, '모임을 삭제했습니다.');
-    }
+    await runAction(() => meetingApi.remove(meetingId), '모임을 삭제했습니다.');
     movePage('/meeting/my');
   }
 
