@@ -13,7 +13,7 @@ async function loadMeetingSection(request) {
 }
 
 export async function loadMeetingListPage({ path }) {
-  const response = path === '/meeting/my' ? await meetingApi.mine() : await meetingApi.list();
+  const response = path === '/meeting/my' ? await meetingApi.mine(true) : await meetingApi.list();
   const apiMeetings = Array.isArray(response)
     ? response
     : (response?.meetings ?? response?.content ?? []);
@@ -23,14 +23,17 @@ export async function loadMeetingListPage({ path }) {
 }
 
 export async function loadMeetingDetailPage({ selectedId }) {
-  const [remoteMeeting, remoteMembers, membership, noticePage] = await Promise.all([
+  const [remoteMeeting, membership] = await Promise.all([
     meetingApi.get(selectedId),
-    loadMeetingSection(() => meetingApi.members(selectedId)),
-    meetingApi.membership(selectedId).catch((error) => {
-      if (error?.status === 404) return null;
-      throw error;
-    }),
-    loadMeetingSection(() => meetingApi.notices(selectedId)),
+    meetingApi.membership(selectedId),
+  ]);
+  const state = membership?.membershipStatus ?? membership?.status;
+  const canReadNotices = ['OWNER', 'JOINED'].includes(state);
+  const [remoteMembers, noticePage] = await Promise.all([
+    membership?.canManage
+      ? loadMeetingSection(() => meetingApi.members(selectedId))
+      : [],
+    canReadNotices ? loadMeetingSection(() => meetingApi.notices(selectedId)) : [],
   ]);
 
   const members = asArray(remoteMembers).map(toMeetingMember);

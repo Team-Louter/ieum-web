@@ -2,7 +2,7 @@ import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'vite';
 
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' });
 after(() => server.close());
 const memory = new Map();
 const events = new EventTarget();
