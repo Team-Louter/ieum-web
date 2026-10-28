@@ -235,15 +235,15 @@ function AddFriendPage({
           ) : searchState.error ? (
             <section className="add-friend-error-state" role="alert">
               <h2>
-                {normalizedSearchText ? '검색을 완료하지 못했어요' : '계정 목록을 불러오지 못했어요'}
+                {normalizedSearchText ? '검색을 완료하지 못했어요' : '검색창에 아이디를 입력하여 친구를 추가해보세요'}
               </h2>
               <p>
                 {normalizedSearchText
                   ? '잠시 후 다시 시도해 주세요.'
-                  : '아이디로 검색하거나 다시 시도해 주세요.'}
+                  : '친구가 되면 채팅을 할수 있고 위치도 볼수 있어요.'}
               </p>
               <button type="button" onClick={retrySearch}>
-                다시 시도
+                새로고침
               </button>
             </section>
           ) : isEmptyDirectory ? (
