@@ -29,7 +29,7 @@ export async function loadChatPage({ demoScope, userId, onDefaultChatRoom }) {
 
   const [roomResponse, friends] = await Promise.all([roomsRequest, friendsRequest]);
   const friendById = new Map(asArray(friends).map((friend) => [Number(friend.userId), friend]));
-  const contacts = asArray(roomResponse?.rooms)
+  const roomContacts = asArray(roomResponse?.rooms)
     .slice()
     .sort((roomA, roomB) => {
       const timeA = getRoomActivityTime(roomA);
@@ -43,6 +43,7 @@ export async function loadChatPage({ demoScope, userId, onDefaultChatRoom }) {
 
       return {
         id: Number(room.id),
+        roomId: Number(room.id),
         partnerId: Number(room.partnerId),
         loginId,
         name:
@@ -55,9 +56,29 @@ export async function loadChatPage({ demoScope, userId, onDefaultChatRoom }) {
       };
     });
 
+  // 대화방이 아직 없는 친구도 목록에 보여줍니다.
+  const roomPartnerIds = new Set(roomContacts.map((contact) => contact.partnerId));
+  const friendContacts = asArray(friends)
+    .filter((friend) => Number.isFinite(Number(friend.userId)) && !roomPartnerIds.has(Number(friend.userId)))
+    .map((friend) => {
+      const userId = Number(friend.userId);
+      const loginId = friend.loginId ?? '';
+
+      return {
+        id: `friend-${userId}`,
+        roomId: null,
+        partnerId: userId,
+        loginId,
+        name: loginId || friend.nickname || `사용자 ${userId}`,
+        profileImage: resolveApiAssetUrl(friend.profileImageUrl ?? ''),
+      };
+    });
+
+  const contacts = [...roomContacts, ...friendContacts];
+
   onDefaultChatRoom?.(
-    contacts[0]?.id ?? null,
-    contacts.map((contact) => contact.id),
+    roomContacts[0]?.id ?? null,
+    roomContacts.map((contact) => contact.id),
   );
   return { contacts };
 }
