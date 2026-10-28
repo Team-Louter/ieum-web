@@ -17,6 +17,7 @@ const defaultMeetingValues = {
 export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
   const [values, setValues] = useState(() => ({ ...defaultMeetingValues, ...initialValues }));
   const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -30,12 +31,14 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     setSubmitError('');
     try {
       await onSubmit?.(values);
     } catch (error) {
       setSubmitError(error?.message ?? '모임을 만들지 못했습니다.');
-    }
+    } finally { setSubmitting(false); }
   }
 
   return (
@@ -59,7 +62,7 @@ export default function MeetingCreatePage({ initialValues = {}, onSubmit }) {
             desc="모임이 비공개로 전환되고 초대 링크로만 초대가 가능합니다."
           />
         </div>
-        <button className="meeting-make-button" type="submit">
+        <button className="meeting-make-button" type="submit" disabled={submitting}>
           모임 만들기
         </button>
         {submitError && (

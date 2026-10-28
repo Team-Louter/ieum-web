@@ -159,7 +159,7 @@ export async function apiRequest(path, options = {}) {
   if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
 
   let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
-  if ((response.status === 401 || response.status === 403) && auth && retryAuth) {
+  if (response.status === 401 && auth && retryAuth) {
     const nextToken = await refreshAccessToken();
     if (nextToken) {
       headers.set('Authorization', `Bearer ${nextToken}`);
@@ -277,8 +277,8 @@ export const meetingApi = {
   mine: (includePending = false) =>
     apiGet(`/api/community/meetings/my${includePending ? '?includePending=true' : ''}`),
   get: (id) => apiGet(`/api/community/meetings/${id}`),
-  create: (meeting) => apiPost('/api/community/meetings', meeting),
-  update: (id, meeting) => apiPut(`/api/community/meetings/${id}`, meeting),
+  create: (meeting, imageFile) => apiPost('/api/community/meetings', imageFile ? makeRequestWithFile(meeting, imageFile) : meeting),
+  update: (id, meeting, imageFile) => apiPut(`/api/community/meetings/${id}`, imageFile ? makeRequestWithFile(meeting, imageFile) : meeting),
   remove: (id) => apiDelete(`/api/community/meetings/${id}`),
   membership: (id) => apiGet(`/api/community/meetings/${id}/membership`),
   members: (id) => apiGet(`/api/community/meetings/${id}/members`),

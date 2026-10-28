@@ -21,29 +21,31 @@ function getMeetingUpdateRequest(values) {
 // 모임과 모임 안에서 사용하는 동작을 API 명세에 맞춰 처리합니다.
 export default function useMeetingActions({ runAction, movePage }) {
   async function createMeeting(values) {
-    if (typeof File !== 'undefined' && values.image instanceof File) {
-      throw new Error('모임 대표 이미지 업로드 API가 아직 연결되지 않았습니다.');
+    const imageFile = typeof File !== 'undefined' && values.image instanceof File ? values.image : null;
+    if (imageFile && (!['image/jpeg', 'image/png'].includes(imageFile.type) || imageFile.size > 5 * 1024 * 1024)) {
+      throw new Error('모임 사진은 5MB 이하의 JPEG 또는 PNG 파일이어야 합니다.');
     }
 
     const result = await runAction(
-      () => meetingApi.create(getMeetingRequest(values)),
+      () => meetingApi.create(getMeetingRequest(values), imageFile),
       '모임을 만들었습니다.',
     );
 
-    movePage('/meeting');
+    movePage('/meeting/my');
     return result;
   }
 
   async function updateMeeting(meeting, values) {
     const meetingId = meeting?.id;
     if (meetingId == null) throw new Error('수정할 모임을 찾을 수 없습니다.');
-    if (typeof File !== 'undefined' && values.image instanceof File) {
-      throw new Error('모임 대표 이미지 업로드 API가 아직 연결되지 않았습니다.');
+    const imageFile = typeof File !== 'undefined' && values.image instanceof File ? values.image : null;
+    if (imageFile && (!['image/jpeg', 'image/png'].includes(imageFile.type) || imageFile.size > 5 * 1024 * 1024)) {
+      throw new Error('모임 사진은 5MB 이하의 JPEG 또는 PNG 파일이어야 합니다.');
     }
     const request = getMeetingUpdateRequest({ ...meeting, ...values });
 
     return runAction(
-      () => meetingApi.update(meetingId, request),
+      () => meetingApi.update(meetingId, request, imageFile),
       '모임 정보를 수정했습니다.',
     );
   }
