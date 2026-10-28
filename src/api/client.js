@@ -231,11 +231,11 @@ export const familyApi = {
   disconnect: (loginId) => apiDelete(`/api/connect/${encodeURIComponent(loginId)}`),
 };
 
-// 보호자 연결 요청은 어르신이 수락하기 전까지 대기 상태로 관리합니다.
+// 어르신이 보낸 보호자 연결 요청을 관리합니다.
 export const connectionApi = {
   list: () => apiGet('/api/connections'),
   pending: () => apiGet('/api/connections/pending'),
-  requestElder: (seniorEmail) => apiPost('/api/connections/request', { seniorEmail }),
+  requestGuardian: (guardianEmail) => apiPost('/api/connections/request', { guardianEmail }),
   accept: (connectionId) =>
     apiPatch(`/api/connections/${encodeURIComponent(String(connectionId))}/accept`),
   remove: (connectionId) =>

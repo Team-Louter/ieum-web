@@ -12,7 +12,6 @@ function SettingGuardianPage({
   pendingConnections = [],
   role,
   onConnect,
-  onRequestElder,
   onAccept,
   onReject,
   onDisconnect,
@@ -27,14 +26,13 @@ function SettingGuardianPage({
   const [isBusy, setIsBusy] = useState(false);
   const canEditPermissions = role === 'ROLE_SENIOR';
   const isGuardian = role === 'ROLE_GUARDIAN';
-  const canManageConnections = role === 'ROLE_SENIOR' || isGuardian;
 
   const handleAddAccount = async (event) => {
     event.preventDefault();
     const identifier = accountIdentifier.trim();
     if (!identifier) return;
     if (!/^\S+@\S+\.\S+$/.test(identifier)) {
-      setFormMessage(isGuardian ? '어르신 계정의 가입 이메일을 입력해 주세요.' : '보호자 계정의 가입 이메일을 입력해 주세요.');
+      setFormMessage('보호자 계정의 가입 이메일을 입력해 주세요.');
       return;
     }
     const normalizedIdentifier = identifier.toLowerCase();
@@ -47,17 +45,16 @@ function SettingGuardianPage({
       setFormMessage('이미 연결된 계정입니다.');
       return;
     }
-    const connectAccount = isGuardian ? onRequestElder : onConnect;
-    if (typeof connectAccount !== 'function') {
-      setFormMessage(isGuardian ? '어르신 연결 요청 API를 사용할 수 없습니다.' : '보호자 연결 API를 사용할 수 없습니다.');
+    if (typeof onConnect !== 'function') {
+      setFormMessage('보호자 연결 요청 API를 사용할 수 없습니다.');
       return;
     }
     setIsBusy(true);
     setFormMessage('');
     try {
-      await connectAccount(identifier);
+      await onConnect(identifier);
       setAccountIdentifier('');
-      setFormMessage(isGuardian ? '어르신 연결 요청을 보냈습니다.' : '보호자 계정을 연결했습니다.');
+      setFormMessage('보호자에게 연결 요청을 보냈습니다.');
     } catch (error) {
       setFormMessage(error?.message ?? '보호자 계정을 연결하지 못했습니다.');
     } finally {
@@ -108,8 +105,8 @@ function SettingGuardianPage({
         title={isGuardian ? '연결된 어르신' : '보호자 명단'}
         description={
           isGuardian
-            ? '연결된 어르신 계정을 확인하고 관리할 수 있습니다.'
-            : '연결된 보호자 계정을 확인하고 관리할 수 있습니다.'
+              ? '연결된 어르신과 받은 연결 요청을 확인할 수 있습니다.'
+              : '연결된 보호자 계정을 확인하고 관리할 수 있습니다.'
         }
         actionLabel="수정하기"
         onAction={() => {
@@ -166,8 +163,8 @@ function SettingGuardianPage({
           title={isGuardian ? '연결된 어르신 관리' : '보호자 명단 관리'}
           description={
             isGuardian
-              ? '어르신 계정을 연결하거나 기존 연결을 해제할 수 있습니다.'
-              : '보호자 계정을 추가하거나 기존 연결을 해제할 수 있습니다.'
+              ? '어르신이 보낸 연결 요청을 확인하고 수락하거나 거절할 수 있습니다.'
+              : '보호자 이메일로 연결 요청을 보내거나 기존 연결을 해제할 수 있습니다.'
           }
           className="setting-dialog--guardian-manager"
           onClose={() => setIsManageDialogOpen(false)}
@@ -184,13 +181,13 @@ function SettingGuardianPage({
               apiError={apiError}
             />
           </div>
-          {!isGuardian && sourcePendingConnections.length > 0 && (
+          {isGuardian && sourcePendingConnections.length > 0 && (
             <section className="setting-guardian-manager__pending" aria-label="받은 연결 요청">
-              <h3>받은 보호자 연결 요청</h3>
+              <h3>받은 어르신 연결 요청</h3>
               <ul>
                 {sourcePendingConnections.map((connection, index) => (
                   <li key={connection.connectionId ?? connection.id ?? index}>
-                    <span>{connection.loginId ?? connection.nickname ?? connection.name ?? '보호자 계정'}</span>
+                    <span>{connection.seniorLoginId ?? connection.elderLoginId ?? connection.loginId ?? connection.nickname ?? connection.name ?? connection.seniorEmail ?? '어르신 계정'}</span>
                     <div className="setting-guardian-manager__pending-actions">
                       <button
                         type="button"
@@ -214,18 +211,18 @@ function SettingGuardianPage({
               </ul>
             </section>
           )}
-          {canManageConnections ? (
+          {role === 'ROLE_SENIOR' ? (
             <form
               className="setting-dialog__form setting-guardian-manager__form"
               onSubmit={handleAddAccount}
             >
               <label className="setting-dialog__field">
-                {isGuardian ? '어르신 계정 이메일' : '보호자 계정 이메일'}
+                보호자 계정 이메일
                 <input
                   type="email"
                   value={accountIdentifier}
                   onChange={(event) => setAccountIdentifier(event.target.value)}
-                  placeholder={isGuardian ? '어르신 가입 이메일' : '보호자 가입 이메일'}
+                  placeholder="보호자 가입 이메일"
                   required
                 />
               </label>
@@ -240,7 +237,7 @@ function SettingGuardianPage({
                   type="submit"
                   disabled={isBusy || !accountIdentifier.trim()}
                 >
-                  {isBusy ? '연결 중…' : isGuardian ? '어르신 연결 요청' : '보호자 연결'}
+                  {isBusy ? '요청 중…' : '보호자 연결 요청'}
                 </button>
                 <button
                   className="setting-dialog__button"
@@ -254,7 +251,7 @@ function SettingGuardianPage({
           ) : (
             <div className="setting-dialog__form setting-guardian-manager__form">
               <p className="setting-dialog__note">
-                어르신 계정에서 보호자 이메일을 입력해 연결할 수 있습니다.
+                어르신이 보낸 연결 요청을 여기서 수락하거나 거절할 수 있습니다.
               </p>
               <div className="setting-dialog__actions setting-guardian-manager__actions">
                 <button

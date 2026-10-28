@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import Layout from '../../../components/common/Layout/Layout';
 import MeetingMyAnnouncement from '../../../components/meeting/MeetingMy/MeetingMyAnnouncement';
 import mulchongsae from '../../../assets/images/meeting-cover.jpg';
@@ -48,6 +49,7 @@ function getRoleLabel(role) {
 
 export default function MeetingMyPage({
   meeting = {},
+  meetingId,
   announcement = {},
   members = [],
   membership,
@@ -64,6 +66,8 @@ export default function MeetingMyPage({
   isLoading = false,
   apiError = '',
 }) {
+  const [isJoining, setIsJoining] = useState(false);
+  const joinStarted = useRef(false);
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const isMyMeetingDetail = currentPath.startsWith('/meeting/my/detail');
   const menuItems = [
@@ -129,7 +133,28 @@ export default function MeetingMyPage({
           : canLeave
             ? '회원'
             : '');
-  const canJoin = !isMyMeetingDetail && !canManage && !canLeave && !isPending;
+  const serverCanJoin = membership?.canJoin ?? membership?.data?.canJoin ?? meeting.canJoin;
+  const canJoin =
+    !isLoading &&
+    !apiError &&
+    !isMyMeetingDetail &&
+    (serverCanJoin != null
+      ? Boolean(serverCanJoin)
+      : !isOwner && !isActiveMember && !canManage && !canLeave && !isPending);
+
+  async function joinMeeting() {
+    const id = meeting.id ?? meetingId;
+    if (joinStarted.current || id == null) return;
+
+    joinStarted.current = true;
+    setIsJoining(true);
+    try {
+      await onJoin?.(id);
+    } finally {
+      joinStarted.current = false;
+      setIsJoining(false);
+    }
+  }
 
   return (
     <Layout>
@@ -164,9 +189,14 @@ export default function MeetingMyPage({
               <button
                 className="meeting-my-card__join"
                 type="button"
-                onClick={() => onJoin?.(meeting.id)}
+                onClick={joinMeeting}
+                disabled={isJoining}
               >
-                {meeting.approvalRequired ? '가입 신청하기' : '모임 가입하기'}
+                {isJoining
+                  ? '처리 중입니다'
+                  : meeting.approvalRequired
+                    ? '가입 신청하기'
+                    : '모임 가입하기'}
               </button>
             )}
             {isPending && (

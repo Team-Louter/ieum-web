@@ -56,15 +56,8 @@ export default function useAccountActions({
 
   async function connectGuardian(guardianEmail) {
     return runAction(
-      () => familyApi.connect(guardianEmail),
-      '보호자 계정을 연결했습니다.',
-    );
-  }
-
-  async function requestElderConnection(seniorEmail) {
-    return runAction(
-      () => connectionApi.requestElder(seniorEmail),
-      '어르신 연결 요청을 보냈습니다.',
+      () => connectionApi.requestGuardian(guardianEmail),
+      '보호자에게 연결 요청을 보냈습니다.',
     );
   }
 
@@ -230,7 +223,6 @@ export default function useAccountActions({
     login,
     signup,
     connectGuardian,
-    requestElderConnection,
     acceptFamilyConnection,
     rejectFamilyConnection,
     disconnectFamily,

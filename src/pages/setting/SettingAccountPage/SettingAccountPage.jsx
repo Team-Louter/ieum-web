@@ -4,6 +4,7 @@ import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import { isPasswordValid } from '../../../utils/validation';
 import SettingLegalDocument from './SettingLegalDocument';
 import './SettingLegalDocument.css';
+import './SettingAccountPage.css';
 
 const accountItems = [
   { id: 'loginId', title: '아이디', description: '회원가입할 때 설정한 로그인 아이디입니다.' },
@@ -170,6 +171,7 @@ function SettingAccountPage({
       {accountItems.map((item) => (
         <SettingItem
           key={item.id}
+          className={item.id === 'email' ? 'setting-account-page__email' : ''}
           title={item.title}
           description={
             item.id === 'loginId' && currentLoginId

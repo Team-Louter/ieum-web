@@ -1,6 +1,16 @@
 import { meetingApi } from '../client';
 import { toMeetingCard, toMeetingMember, toMeetingNotice } from '../adapters';
-import { asArray, loadApiOrEmpty } from './common';
+import { asArray } from './common';
+
+async function loadMeetingSection(request) {
+  try {
+    return await request();
+  } catch (error) {
+    // 미가입자는 회원 목록과 공지를 볼 수 없어 서버가 403을 보냅니다.
+    if ([403, 404, 405, 501].includes(error?.status)) return [];
+    throw error;
+  }
+}
 
 export async function loadMeetingListPage({ path }) {
   const response = path === '/meeting/my' ? await meetingApi.mine(true) : await meetingApi.list();
@@ -20,8 +30,10 @@ export async function loadMeetingDetailPage({ selectedId }) {
   const state = membership?.membershipStatus ?? membership?.status;
   const canReadNotices = ['OWNER', 'JOINED'].includes(state);
   const [remoteMembers, noticePage] = await Promise.all([
-    membership?.canManage ? meetingApi.members(selectedId) : [],
-    canReadNotices ? loadApiOrEmpty(() => meetingApi.notices(selectedId)) : [],
+    membership?.canManage
+      ? loadMeetingSection(() => meetingApi.members(selectedId))
+      : [],
+    canReadNotices ? loadMeetingSection(() => meetingApi.notices(selectedId)) : [],
   ]);
 
   const members = asArray(remoteMembers).map(toMeetingMember);

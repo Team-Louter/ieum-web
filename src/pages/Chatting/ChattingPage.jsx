@@ -17,6 +17,7 @@ function ChattingPage({
   messages,
   messagesRoomId,
   onSelectContact,
+  onStartChat,
   onSendMessage,
   accessToken,
   currentUserId,
@@ -38,7 +39,10 @@ function ChattingPage({
   useEffect(() => {
     onChatReconnectedRef.current = onChatReconnected;
   }, [onChatReconnected]);
-  const selectedContactId = activeContactId ?? localActiveContactId ?? contactItems[0]?.id ?? null;
+  const firstChatContact = contactItems.find(
+    (contact) => contact.roomId != null || contact.partnerId == null,
+  );
+  const selectedContactId = activeContactId ?? localActiveContactId ?? firstChatContact?.id ?? null;
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
   const isContactsEmpty = contactItems.length === 0 && !isLoading && !apiError;
   const visibleContacts = useMemo(() => {
@@ -125,8 +129,14 @@ function ChattingPage({
   }, [accessToken, currentUserId]);
 
   function selectContact(contactId) {
+    const contact = contactItems.find((item) => item.id === contactId);
+    if (contact?.roomId == null && contact?.partnerId != null && onStartChat) {
+      void Promise.resolve(onStartChat(contact.partnerId)).catch(() => {});
+      return;
+    }
+
     setLocalActiveContactId(contactId);
-    onSelectContact?.(contactId);
+    onSelectContact?.(contact?.roomId ?? contactId);
   }
 
   async function submitMessage(event) {
