@@ -54,11 +54,10 @@ export default function useAccountActions({
     movePage('/neighbor');
   }
 
+  // 어르신 계정은 POST /api/connect 로 보호자 이메일만 보내 보호자를 바로 연결합니다.
+  // (/api/connections/request 는 어르신 이메일 검증 때문에 어르신 계정에서 400을 반환합니다.)
   async function connectGuardian(guardianEmail) {
-    return runAction(
-      () => connectionApi.requestGuardian(guardianEmail),
-      '보호자에게 연결 요청을 보냈습니다.',
-    );
+    return runAction(() => familyApi.connect(guardianEmail), '보호자를 연결했습니다.');
   }
 
   async function acceptFamilyConnection(connectionId) {

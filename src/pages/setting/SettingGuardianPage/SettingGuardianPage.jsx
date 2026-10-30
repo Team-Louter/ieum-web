@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingGuardianList from '../../../components/setting/SettingGuardianList/SettingGuardianList';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
@@ -24,11 +24,13 @@ function SettingGuardianPage({
   const sourcePendingConnections = Array.isArray(pendingConnections) ? pendingConnections : [];
   const [formMessage, setFormMessage] = useState('');
   const [isBusy, setIsBusy] = useState(false);
+  const submittingRef = useRef(false);
   const canEditPermissions = role === 'ROLE_SENIOR';
   const isGuardian = role === 'ROLE_GUARDIAN';
 
   const handleAddAccount = async (event) => {
     event.preventDefault();
+    if (submittingRef.current) return;
     const identifier = accountIdentifier.trim();
     if (!identifier) return;
     if (!/^\S+@\S+\.\S+$/.test(identifier)) {
@@ -49,15 +51,17 @@ function SettingGuardianPage({
       setFormMessage('보호자 연결 요청 API를 사용할 수 없습니다.');
       return;
     }
+    submittingRef.current = true;
     setIsBusy(true);
     setFormMessage('');
     try {
       await onConnect(identifier);
       setAccountIdentifier('');
-      setFormMessage('보호자에게 연결 요청을 보냈습니다.');
+      setFormMessage('보호자를 연결했습니다.');
     } catch (error) {
       setFormMessage(error?.message ?? '보호자 계정을 연결하지 못했습니다.');
     } finally {
+      submittingRef.current = false;
       setIsBusy(false);
     }
   };
