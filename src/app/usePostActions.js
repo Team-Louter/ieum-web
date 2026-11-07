@@ -14,6 +14,25 @@ export default function usePostActions({
   runAction,
   movePage,
 }) {
+  async function updateSharing(original, values) {
+    const imageFile = values.media instanceof File ? values.media : null;
+    await runAction(async () => {
+      const request = {
+        name: values.title,
+        description: values.content,
+        region: values.region,
+        price: Number(values.price),
+        complete: Boolean(original.complete),
+      };
+      // 새 파일을 고르지 않으면 기존 이미지 주소를 그대로 유지합니다.
+      if (!imageFile && (original.imageUrl || original.image)) {
+        request.imageUrl = original.imageUrl ?? original.image;
+      }
+      return sharingApi.update(original.id, request, imageFile);
+    }, '나눔 게시물을 수정했습니다.');
+    movePage('/market/my');
+  }
+
   async function createSharing(values) {
     const result = await runAction(async () => {
       const imageFile = values.media instanceof File ? values.media : null;
@@ -210,6 +229,7 @@ export default function usePostActions({
   }
 
   return {
+    updateSharing,
     createSharing,
     createNeighborPost,
     toggleNeighborLike,

@@ -3,7 +3,7 @@ import './MarketPostForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
-function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
+function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit = false, onSubmit }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [title, setTitle] = useState(initialValues.title ?? '');
@@ -53,7 +53,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
     event.preventDefault();
 
     const nextErrors = {
-      media: selectedFile ? '' : '필수 입력 정보입니다.',
+      media: selectedFile || initialImageUrl ? '' : '필수 입력 정보입니다.',
       title: title.trim() ? '' : '필수 입력 정보입니다.',
       price: !price.trim()
         ? '필수 입력 정보입니다.'
@@ -80,7 +80,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
         media: selectedFile,
       });
     } catch (error) {
-      setSubmitError(error?.message ?? '게시물을 등록하지 못했습니다.');
+      setSubmitError(error?.message ?? (isEdit ? '게시물을 수정하지 못했습니다.' : '게시물을 등록하지 못했습니다.'));
     }
   }
 
@@ -94,11 +94,11 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
             onClick={handleFileSelectClick}
             aria-label="사진 또는 동영상 선택"
           >
-            {previewUrl ? (
-              selectedFile.type.startsWith('image/') ? (
+            {previewUrl || initialImageUrl ? (
+              !selectedFile || selectedFile.type.startsWith('image/') ? (
                 <img
                   className="market-post-create-form__preview"
-                  src={previewUrl}
+                  src={previewUrl || initialImageUrl}
                   alt="선택한 이미지 미리보기"
                 />
               ) : (
@@ -116,7 +116,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
               </span>
             )}
           </button>
-          {previewUrl && (
+          {(previewUrl || initialImageUrl) && (
             <button
               type="button"
               className="market-post-create-form__change-button"
@@ -160,7 +160,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
               inputMode="numeric"
               placeholder="숫자만 입력해 주세요"
               value={price}
-              onChange={(event) => setPrice(event.target.value)}
+              onChange={(event) => setPrice(event.target.value.replace(/\D/g, ''))}
               aria-invalid={Boolean(errors.price)}
             />
             <p className="market-post-create-form__error" role={errors.price ? 'alert' : undefined}>
@@ -203,7 +203,7 @@ function MarketPostCreateForm({ initialValues = {}, onSubmit }) {
         </div>
       </div>
       <button type="submit" className="market-post-create-form__submit">
-        게시물 만들기
+        {isEdit ? '게시물 수정하기' : '게시물 만들기'}
       </button>
       {submitError && (
         <p className="market-post-create-form__submit-error" role="alert">
