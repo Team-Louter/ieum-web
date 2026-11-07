@@ -1,7 +1,14 @@
 import './SettingMedicationList.css';
 import EmptyState from '../../common/EmptyState/EmptyState';
 
-function SettingMedicationList({ schedule = [], onDelete, isLoading = false, apiError = '' }) {
+function SettingMedicationList({
+  schedule = [],
+  onDelete,
+  onCheck,
+  checkedIds = [],
+  isLoading = false,
+  apiError = '',
+}) {
   const scheduleItems = Array.isArray(schedule) ? schedule : [];
 
   if (!scheduleItems.length) {
@@ -19,10 +26,23 @@ function SettingMedicationList({ schedule = [], onDelete, isLoading = false, api
 
   return (
     <ul className="setting-medication-list">
-      {scheduleItems.map(({ id, time, label, medicationName }) => (
+      {scheduleItems.map(({ id, time, label, medicationName, taken }) => {
+        const isTaken = Boolean(taken) || checkedIds.some((checkedId) => String(checkedId) === String(id));
+
+        return (
         <li key={id ?? `${time}-${label}`}>
           <span className="setting-medication-list__time">{time}</span>
           <span className="setting-medication-list__name">{label ?? medicationName}</span>
+          {onCheck && (
+            <button
+              type="button"
+              className={`setting-medication-list__check${isTaken ? ' is-taken' : ''}`}
+              onClick={() => onCheck(id)}
+              disabled={id == null || isTaken}
+            >
+              {isTaken ? '복용 완료' : '복용 확인'}
+            </button>
+          )}
           {onDelete && (
             <button
               type="button"
@@ -34,7 +54,8 @@ function SettingMedicationList({ schedule = [], onDelete, isLoading = false, api
             </button>
           )}
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 }

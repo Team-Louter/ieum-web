@@ -94,7 +94,7 @@
 
 .setting-support-page__field textarea {
   min-height: 190px;
-  resize: vertical;
+  resize: none;
   line-height: 1.5;
 }
 
