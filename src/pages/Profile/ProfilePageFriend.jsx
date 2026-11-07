@@ -6,13 +6,11 @@ import PageTabNavigation from '../../components/common/PageTabNavigation/PageTab
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
 import profileImage from '../../assets/images/profile.png';
-import { dummyFriendLocations } from '../../constants/dummy/dummyFriendLocations';
-import { dummyOtherProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function ProfilePageFriend({
-  profile = dummyOtherProfile,
-  friends = dummyFriendLocations,
+  profile = {},
+  friends = [],
   isLoading = false,
   apiError = '',
 }) {

@@ -5,11 +5,10 @@ import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButton
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MeetingCard from '../../components/meeting/MeetingCard/MeetingCard';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import { dummyMyProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageMeeting({
-  profile = dummyMyProfile,
+  profile = {},
   meetings = [],
   onProfileUpdate,
   onNavigate,
