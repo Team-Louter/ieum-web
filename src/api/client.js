@@ -5,7 +5,9 @@ const REFRESH_TOKEN_KEY = 'ieum.refreshToken';
 let refreshPromise;
 export const AUTH_SESSION_EVENT = 'ieum:auth-session-change';
 
-function notifySessionChange() { window.dispatchEvent(new Event(AUTH_SESSION_EVENT)); }
+function notifySessionChange() {
+  window.dispatchEvent(new Event(AUTH_SESSION_EVENT));
+}
 
 function isFormData(value) {
   return typeof FormData !== 'undefined' && value instanceof FormData;
@@ -121,10 +123,20 @@ async function refreshAccessToken() {
     const payload = await parseResponse(response);
     if (getRefreshToken() !== refreshToken) return getAccessToken();
     if (!response.ok) {
-      if ([400, 401, 403].includes(response.status)) { clearTokens(); return null; }
-      throw new ApiError('로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.', response.status, null);
+      if ([400, 401, 403].includes(response.status)) {
+        clearTokens();
+        return null;
+      }
+      throw new ApiError(
+        '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        response.status,
+        null,
+      );
     }
-    if (!payload?.accessToken) { clearTokens(); return null; }
+    if (!payload?.accessToken) {
+      clearTokens();
+      return null;
+    }
     saveTokens({
       accessToken: payload.accessToken,
       refreshToken: payload.refreshToken ?? refreshToken,
@@ -141,7 +153,8 @@ export async function getValidAccessToken() {
   const token = getAccessToken();
   const claims = readTokenClaims(token);
   const expiresAt = Number(claims.exp) * 1000;
-  if (token && claims.sub && Number.isFinite(expiresAt) && expiresAt > Date.now() + 60_000) return token;
+  if (token && claims.sub && Number.isFinite(expiresAt) && expiresAt > Date.now() + 60_000)
+    return token;
   if (getRefreshToken()) return refreshAccessToken();
   if (token) clearTokens();
   return null;
@@ -277,14 +290,21 @@ export const meetingApi = {
   mine: (includePending = false) =>
     apiGet(`/api/community/meetings/my${includePending ? '?includePending=true' : ''}`),
   get: (id) => apiGet(`/api/community/meetings/${id}`),
-  create: (meeting, imageFile) => apiPost('/api/community/meetings', imageFile ? makeRequestWithFile(meeting, imageFile) : meeting),
-  update: (id, meeting, imageFile) => apiPut(`/api/community/meetings/${id}`, imageFile ? makeRequestWithFile(meeting, imageFile) : meeting),
+  create: (meeting, imageFile) =>
+    apiPost(
+      '/api/community/meetings',
+      imageFile ? makeRequestWithFile(meeting, imageFile) : meeting,
+    ),
+  update: (id, meeting, imageFile) =>
+    apiPut(
+      `/api/community/meetings/${id}`,
+      imageFile ? makeRequestWithFile(meeting, imageFile) : meeting,
+    ),
   remove: (id) => apiDelete(`/api/community/meetings/${id}`),
   membership: (id) => apiGet(`/api/community/meetings/${id}/membership`),
   members: (id) => apiGet(`/api/community/meetings/${id}/members`),
   join: (id) => apiPost(`/api/community/meetings/${id}/join`),
-  approveMember: (id, userId) =>
-    apiPost(`/api/community/meetings/${id}/members/${userId}/approve`),
+  approveMember: (id, userId) => apiPost(`/api/community/meetings/${id}/members/${userId}/approve`),
   updateMemberRole: (id, userId, role) =>
     apiPatch(`/api/community/meetings/${id}/members/${userId}/role`, { role }),
   removeMember: (id, userId) => apiDelete(`/api/community/meetings/${id}/members/${userId}`),
