@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { resolveApiAssetUrl } from '../../api/client';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
@@ -32,10 +32,12 @@ function AddFriendPage({
   onAcceptFriendRequest,
   onRejectFriendRequest,
   onRefreshFriendRequests,
+  onNavigate,
   isLoading = false,
   apiError = '',
 }) {
   const [searchText, setSearchText] = useState('');
+  const [submittedText, setSubmittedText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchRetryCount, setSearchRetryCount] = useState(0);
   const [searchState, setSearchState] = useState({
@@ -50,7 +52,8 @@ function AddFriendPage({
   const [openFriendId, setOpenFriendId] = useState(null);
   const [requestedUserIds, setRequestedUserIds] = useState(() => new Set());
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
-  const normalizedSearchText = searchText.trim();
+  const hasAcceptedRequestRef = useRef(false);
+  const normalizedSearchText = submittedText.trim();
   const isCurrentSearch =
     searchState.query === normalizedSearchText &&
     searchState.page === currentPage &&
@@ -87,7 +90,7 @@ function AddFriendPage({
           error: error?.message ?? '계정을 검색하지 못했습니다.',
         });
       }
-    }, normalizedSearchText ? 250 : 0);
+    }, 0);
 
     return () => {
       isActive = false;
@@ -138,8 +141,19 @@ function AddFriendPage({
     .filter(Boolean)
     .join(' ');
 
-  function handleSearch(event) {
+  /** 입력 중인 글자만 바꾸고, 검색은 검색 버튼을 눌렀을 때만 실행합니다. */
+  function handleSearchTextChange(event) {
     setSearchText(event.target.value);
+  }
+
+  /** 검색 버튼(또는 Enter)을 눌렀을 때 입력한 아이디로 검색합니다. */
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+    const nextText = searchText.trim();
+    if (nextText === submittedText.trim()) {
+      setSearchRetryCount((count) => count + 1);
+    }
+    setSubmittedText(nextText);
     setCurrentPage(1);
     setOpenFriendId(null);
   }
@@ -163,6 +177,7 @@ function AddFriendPage({
   async function handleAcceptRequest(friendshipId) {
     try {
       await onAcceptFriendRequest?.(friendshipId);
+      hasAcceptedRequestRef.current = true;
     } catch {
       // App의 공통 API 오류 알림을 표시합니다.
     }
@@ -188,14 +203,17 @@ function AddFriendPage({
     <Layout className="add-friend-layout">
       <section className="add-friend-page">
         <div className="add-friend-toolbar">
-          <label className="add-friend-search">
+          <form className="add-friend-search" role="search" onSubmit={handleSearchSubmit}>
             <input
               type="search"
               value={searchText}
-              onChange={handleSearch}
+              onChange={handleSearchTextChange}
               placeholder="사용자 아이디 검색"
             />
-          </label>
+            <button className="add-friend-search__button" type="submit">
+              검색
+            </button>
+          </form>
           <button
             className="add-friend-requests-button"
             type="button"
@@ -313,7 +331,14 @@ function AddFriendPage({
           onReject={handleRejectRequest}
           isLoading={isLoading}
           apiError={apiError}
-          onClose={() => setIsRequestsModalOpen(false)}
+          onClose={() => {
+            setIsRequestsModalOpen(false);
+            // 친구 신청을 수락한 뒤 창을 닫으면 바로 내 프로필의 친구 목록으로 이동합니다.
+            if (hasAcceptedRequestRef.current) {
+              hasAcceptedRequestRef.current = false;
+              onNavigate?.('/myProfile/friends');
+            }
+          }}
         />
       )}
     </Layout>
