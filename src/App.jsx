@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
+import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkeleton/PageSkeleton';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
@@ -86,7 +87,7 @@ function AppContent({ accessToken, setAccessToken }) {
   );
 
   // 현재 화면에 필요한 API 데이터를 불러옵니다.
-  const { data, error, loading, user } = usePageApiData({
+  const { data, error, loading, initialLoading, user } = usePageApiData({
     path: routeKey,
     selectedId,
     activeChatRoomId,
@@ -110,8 +111,11 @@ function AppContent({ accessToken, setAccessToken }) {
         typeof successMessage === 'function'
           ? successMessage(result)
           : (successMessage ?? '저장했습니다.');
-      setFeedback(message);
-      setFeedbackIsError(false);
+      // successMessage가 null이면 성공 알림(토스트)을 띄우지 않습니다.
+      if (successMessage !== null) {
+        setFeedback(message);
+        setFeedbackIsError(false);
+      }
       setReloadKey((value) => value + 1);
       return result;
     } catch (actionError) {
@@ -163,7 +167,10 @@ function AppContent({ accessToken, setAccessToken }) {
   const savedAccount = readDemoValue('account', {}, demoScope);
   const submitHandlers = {
     '/neighbor/create': postActions.createNeighborPost,
-    '/market/create': postActions.createSharing,
+    '/market/create': (values) =>
+      location.state?.editPost
+        ? postActions.updateSharing(location.state.editPost, values)
+        : postActions.createSharing(values),
     '/meeting/make': meetingActions.createMeeting,
     '/meeting/announcement/make': (values) => meetingActions.createNotice(selectedId, values),
     '/meeting/management': (values) =>
@@ -249,6 +256,8 @@ function AppContent({ accessToken, setAccessToken }) {
     onAnnouncementUpdate: (noticeId, values) =>
       meetingActions.updateNotice(selectedId, noticeId, values),
     onAnnouncementDelete: (noticeId) => meetingActions.deleteNotice(selectedId, noticeId),
+    onAnnouncementLoad: (noticeId) => meetingActions.getNotice(selectedId, noticeId),
+    onEditPost: (post) => movePage('/market/create', { state: { editPost: post } }),
     onProductSelect: (product) =>
       movePage(`/market/feedin/${product.id}`, { state: { post: product } }),
     onLike: postActions.toggleNeighborLike,
@@ -283,11 +292,7 @@ function AppContent({ accessToken, setAccessToken }) {
   };
 
   if (!Page) {
-    return (
-      <NotFoundPage
-        onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')}
-      />
-    );
+    return <NotFoundPage onNavigate={() => movePage(accessToken ? '/neighbor' : '/login')} />;
   }
 
   // 로그인하지 않았다면 서비스 화면 대신 로그인 화면으로 보냅니다.
@@ -299,12 +304,13 @@ function AppContent({ accessToken, setAccessToken }) {
     return <Navigate to={accessToken ? '/neighbor' : '/login'} replace />;
   }
 
+  // 화면 데이터를 처음 불러오는 동안에는 전체를 가리는 대신 스켈레톤을 보여줍니다.
+  const skeletonVariant = initialLoading && accessToken ? getSkeletonVariant(routeKey) : null;
+
   return (
     <>
       {!publicRoutes.includes(routeKey) && <Sidebar role={user.role} />}
-      <Page {...commonProps} />
-
-      {loading && accessToken && <LoadingMessage />}
+      {skeletonVariant ? <PageSkeleton variant={skeletonVariant} /> : <Page {...commonProps} />}
       {feedback && (
         <FeedbackMessage
           message={error || feedback}
@@ -317,17 +323,6 @@ function AppContent({ accessToken, setAccessToken }) {
         />
       )}
     </>
-  );
-}
-
-function LoadingMessage() {
-  return (
-    <div className="app-loading-overlay" role="status" aria-live="polite">
-      <div className="app-loading-card">
-        <span className="app-loading-spinner" aria-hidden="true" />
-        <span>데이터 불러오는 중입니다</span>
-      </div>
-    </div>
   );
 }
 
@@ -359,8 +354,16 @@ function SessionApp() {
   const session = useAuthSession();
   const path = location.pathname.replace(/\/$/, '') || '/login';
   if (!publicRoutes.includes(path)) {
-    if (session.checking) return <LoadingMessage />;
-    if (session.error) return <div role="alert">{session.error}<button type="button" onClick={session.retry}>다시 시도</button></div>;
+    if (session.checking) return <PageSkeleton variant={getSkeletonVariant(getRouteKey(path)) ?? 'settings'} />;
+    if (session.error)
+      return (
+        <div role="alert">
+          {session.error}
+          <button type="button" onClick={session.retry}>
+            다시 시도
+          </button>
+        </div>
+      );
     if (!session.accessToken) return <Navigate to="/login" replace />;
   }
   return <AppContent accessToken={session.accessToken} setAccessToken={session.setAccessToken} />;
