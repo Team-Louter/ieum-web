@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 475px;
+  width: min(32.99vw, 475px);
   height: 60px;
   font-size: var(--font-size-subtitle);
   font-weight: bold;

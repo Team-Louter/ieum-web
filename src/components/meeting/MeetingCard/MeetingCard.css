@@ -6,7 +6,7 @@
 .meeting-card {
   display: flex;
   align-items: stretch;
-  width: 700px;
+  width: min(48.61vw, 700px);
   /* margin-bottom: 40px; */
   font-size: var(--font-size-subtitle);
   border-radius: 15px;

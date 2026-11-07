@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
 
-  width: 1000px;
+  width: min(69.44vw, 1000px);
   height: auto;
 }
 
