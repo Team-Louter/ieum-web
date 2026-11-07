@@ -3,6 +3,7 @@ import './MeetingMyAnnouncement.css';
 import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 
 export default function MeetingMyAnnouncement({
   announcement = {},
@@ -12,11 +13,13 @@ export default function MeetingMyAnnouncement({
   onCreate,
   onUpdate,
   onDelete,
+  onLoad,
   isLoading = false,
   apiError = '',
 }) {
   const navigate = useNavigate();
   const [isListOpen, setIsListOpen] = useState(false);
+  const [noticeToDelete, setNoticeToDelete] = useState(null);
   const [editingNoticeId, setEditingNoticeId] = useState(null);
   const [editValues, setEditValues] = useState({ title: '', content: '' });
   const noticeItems = Array.isArray(notices) ? notices : [];
@@ -33,9 +36,22 @@ export default function MeetingMyAnnouncement({
     else navigate('/meeting/announcement/make', { state: { meetingId } });
   }
 
-  function startEditing(notice) {
+  async function startEditing(notice) {
     setEditingNoticeId(notice.id);
     setEditValues({ title: notice.title ?? '', content: notice.content ?? '' });
+    if (typeof onLoad !== 'function') return;
+    // 다른 관리자가 먼저 고쳤을 수 있어 최신 공지를 단건 조회로 다시 불러옵니다.
+    try {
+      const latest = await onLoad(notice.id);
+      if (latest) {
+        setEditValues({
+          title: latest.title ?? notice.title ?? '',
+          content: latest.content ?? notice.content ?? '',
+        });
+      }
+    } catch {
+      // 조회에 실패해도 목록에 있던 내용으로 계속 수정할 수 있습니다.
+    }
   }
 
   async function saveEdit(event) {
@@ -49,7 +65,7 @@ export default function MeetingMyAnnouncement({
   }
 
   async function removeNotice(notice) {
-    if (!window.confirm('이 공지사항을 삭제할까요?')) return;
+    setNoticeToDelete(null);
     try {
       await onDelete?.(notice.id);
     } catch {
@@ -174,7 +190,7 @@ export default function MeetingMyAnnouncement({
                               <button
                                 className="announcement-dialog__delete"
                                 type="button"
-                                onClick={() => removeNotice(notice)}
+                                onClick={() => setNoticeToDelete(notice)}
                               >
                                 삭제
                               </button>
@@ -195,6 +211,13 @@ export default function MeetingMyAnnouncement({
             </div>
           </section>
         </div>
+      )}
+      {noticeToDelete && (
+        <ConfirmationModal
+          message="이 공지사항을 삭제하시겠습니까?"
+          onCancel={() => setNoticeToDelete(null)}
+          onConfirm={() => removeNotice(noticeToDelete)}
+        />
       )}
     </div>
   );

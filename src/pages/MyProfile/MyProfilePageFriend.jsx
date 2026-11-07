@@ -6,14 +6,13 @@ import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButton
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import profileImage from '../../assets/images/profile.png';
-import { dummyFriendLocations } from '../../constants/dummy/dummyFriendLocations';
+import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
-import { dummyMyProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageFriend({
-  profile = dummyMyProfile,
-  friends = dummyFriendLocations,
+  profile = {},
+  friends = [],
   onProfileUpdate,
   onRemoveFriend,
   onNavigate,
@@ -21,6 +20,7 @@ function MyProfilePageFriend({
   apiError = '',
 }) {
   const [openFriendId, setOpenFriendId] = useState(null);
+  const [friendToRemove, setFriendToRemove] = useState(null);
   const friendItems = Array.isArray(friends) ? friends : [];
   const isEmpty = friendItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
@@ -29,12 +29,13 @@ function MyProfilePageFriend({
     { label: '내 친구', href: '/myProfile/friends', isActive: true },
   ];
 
-  async function handleRemoveFriend(friend) {
+  function requestRemoveFriend(friend) {
     if (friend.friendshipId == null || !onRemoveFriend) return;
+    setFriendToRemove(friend);
+  }
 
-    const friendName = friend.nickname ?? friend.name ?? '이 친구';
-    if (!window.confirm(`${friendName}님을 친구 목록에서 삭제할까요?`)) return;
-
+  async function handleRemoveFriend(friend) {
+    setFriendToRemove(null);
     try {
       await onRemoveFriend(friend.friendshipId);
       setOpenFriendId(null);
@@ -67,7 +68,7 @@ function MyProfilePageFriend({
                   }
                   actionItems={friend.friendshipId == null ? [] : ['친구 삭제']}
                   dangerActionItems={['친구 삭제']}
-                  onAction={() => handleRemoveFriend(friend)}
+                  onAction={() => requestRemoveFriend(friend)}
                   interactive={friend.friendshipId != null}
                 />
               </li>
@@ -84,6 +85,14 @@ function MyProfilePageFriend({
           ) : null}
         </ul>
       </div>
+      {friendToRemove && (
+        <ConfirmationModal
+          message={`${friendToRemove.nickname ?? friendToRemove.name ?? '이 친구'}님을 친구 목록에서 삭제하시겠습니까?`}
+          confirmLabel="삭제하기"
+          onCancel={() => setFriendToRemove(null)}
+          onConfirm={() => handleRemoveFriend(friendToRemove)}
+        />
+      )}
     </Layout>
   );
 }
