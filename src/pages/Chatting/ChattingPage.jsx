@@ -6,6 +6,7 @@ import profileImage from '../../assets/images/profile.png';
 import { dummyChatContacts, dummyChatThreads } from '../../constants/dummy/dummyChats';
 import { getValidAccessToken } from '../../api/client';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import Skeleton from '../../components/common/Skeleton/Skeleton';
 
 const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
 
@@ -34,6 +35,8 @@ function ChattingPage({
   const [realtimeThreads, setRealtimeThreads] = useState({});
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
+  // 모바일에서는 대화 목록을 먼저 보여 주고, 대화를 누르면 채팅창으로 넘어갑니다.
+  const [isRoomOpen, setIsRoomOpen] = useState(false);
   const messagesContainerRef = useRef(null);
   const onChatReconnectedRef = useRef(onChatReconnected);
   useEffect(() => {
@@ -130,6 +133,7 @@ function ChattingPage({
 
   function selectContact(contactId) {
     const contact = contactItems.find((item) => item.id === contactId);
+    setIsRoomOpen(true);
     if (contact?.roomId == null && contact?.partnerId != null && onStartChat) {
       void Promise.resolve(onStartChat(contact.partnerId)).catch(() => {});
       return;
@@ -188,7 +192,7 @@ function ChattingPage({
   }
 
   return (
-    <div className="chatting-page">
+    <div className={`chatting-page${isRoomOpen ? ' chatting-page--room-open' : ''}`}>
       {/* 채팅 목록 */}
       <div className="user-list-section">
         <div className="user-search">
@@ -214,7 +218,14 @@ function ChattingPage({
                 <span>{contact.name}</span>
               </button>
             ))
-          ) : !isLoading && !apiError ? (
+          ) : isLoading && !apiError ? (
+            Array.from({ length: 3 }, (_, index) => (
+              <div className="user-list-item" key={index} aria-hidden="true">
+                <Skeleton circle width={50} height={50} />
+                <Skeleton text width={46} height={24} />
+              </div>
+            ))
+          ) : !apiError ? (
             <EmptyState
               compact
               title={searchTerm.trim() ? '검색 결과가 없어요' : '대화할 친구가 없어요'}
@@ -235,6 +246,16 @@ function ChattingPage({
         {selectedContact ? (
           <>
             <div className="chat-room-header">
+              <button
+                className="mobile-back-button mobile-back-button--chat"
+                type="button"
+                aria-label="대화 목록으로"
+                onClick={() => setIsRoomOpen(false)}
+              >
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M15 5l-7 7 7 7" />
+                </svg>
+              </button>
               <img src={selectedContact.profileImage || profileImage} alt="" />
               <span>{selectedContact.name}</span>
               {socketStatus !== '실시간 연결됨' && (
@@ -254,7 +275,17 @@ function ChattingPage({
                     </div>
                   );
                 })
-              ) : !isLoading && !apiError ? (
+              ) : isLoading && !apiError ? (
+                [
+                  ['received', 180],
+                  ['sent', 120],
+                  ['received', 240],
+                ].map(([side, width], index) => (
+                  <div className={`message ${side}`} key={index} aria-hidden="true">
+                    <Skeleton text width={width} height={22} />
+                  </div>
+                ))
+              ) : !apiError ? (
                 <EmptyState
                   compact
                   title="아직 대화가 없어요"
