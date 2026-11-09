@@ -24,7 +24,14 @@
 
   color: #bbffbf;
   background-color: #42b66b;
+  cursor: pointer;
 }
+
+.meeting-make-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .meeting-make-error {
   color: #c62424;
   text-align: center;

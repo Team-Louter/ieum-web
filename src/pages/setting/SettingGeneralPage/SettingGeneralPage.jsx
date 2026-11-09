@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Button from '../../../components/common/Button/Button';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import SettingMedicationList from '../../../components/setting/SettingMedicationList/SettingMedicationList';
@@ -122,13 +123,15 @@ function SettingGeneralPage({
                 </p>
               )}
               <div className="setting-dialog__actions">
-                <button
+                <Button
                   className="setting-dialog__button setting-dialog__button--primary"
                   type="submit"
                   disabled={busy || !name.trim()}
+                  loading={busy}
+                  loadingText="등록 중…"
                 >
-                  {busy ? '등록 중…' : '복약 추가'}
-                </button>
+                  복약 추가
+                </Button>
               </div>
             </form>
           </div>

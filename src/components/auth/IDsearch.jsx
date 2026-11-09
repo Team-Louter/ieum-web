@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { authApi } from '../../api/client';
 import { isPasswordValid } from '../../utils/validation';
+import Button from '../common/Button/Button';
 import './IDsearch.css';
 
 function isEmailFormatValid(emailValue) {
@@ -92,19 +93,19 @@ function IDsearch({ type, onClose }) {
                         {phase === 'email' && (
                             <div className="modal-email-row">
                                 <input type="email" placeholder="이메일" aria-label="이메일" value={email} onChange={(event) => setEmail(event.target.value)} required />
-                                <button type="submit" className="modal-check-btn" disabled={isSubmitting}>{isSubmitting ? '전송 중…' : '인증하기'}</button>
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="전송 중…">인증하기</Button>
                             </div>
                         )}
                         {phase === 'verify' && (
                             <div className="modal-email-row">
                                 <input type="text" inputMode="numeric" placeholder="인증 번호" aria-label="인증 번호" value={code} onChange={(event) => setCode(event.target.value)} required />
-                                <button type="submit" className="modal-check-btn" disabled={isSubmitting}>{isSubmitting ? '확인 중…' : '인증 확인'}</button>
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="확인 중…">인증 확인</Button>
                             </div>
                         )}
                         {phase === 'reset' && (
                             <div className="modal-email-row">
                                 <input type="password" placeholder="새 비밀번호 (8자 이상)" aria-label="새 비밀번호" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required />
-                                <button type="submit" className="modal-check-btn" disabled={isSubmitting}>{isSubmitting ? '변경 중…' : '변경하기'}</button>
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="변경 중…">변경하기</Button>
                             </div>
                         )}
                         {errorMessage ? (
