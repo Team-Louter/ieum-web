@@ -335,6 +335,19 @@ video {
 
 /* 폼 화면: 사진과 입력칸을 위아래로 쌓습니다. */
 @media (max-width: 768px) {
+  .meeting-make-option-text-container {
+    flex: 0 1 calc(100% - 76px);
+    width: calc(100% - 76px);
+    max-width: calc(100% - 76px);
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .meeting-make-option-title,
+  .meeting-make-option-desc {
+    overflow-wrap: anywhere;
+  }
+
   .meeting-make-layout,
   .meeting-management,
   .meeting-management-form {
