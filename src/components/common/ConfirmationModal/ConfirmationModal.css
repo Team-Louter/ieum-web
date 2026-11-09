@@ -1,6 +1,6 @@
 .confirmation-modal {
   position: fixed;
-  z-index: 100;
+  z-index: 12000;
   inset: 0;
   display: flex;
   justify-content: center;
@@ -70,6 +70,11 @@
 .confirmation-modal__button-group > button:last-child {
   background: #c62424;
   color: #ffc2c2;
+}
+
+.confirmation-modal__button-group > button.confirmation-modal__confirm--primary {
+  background: #42b66b;
+  color: #fff;
 }
 
 @media (max-width: 600px) {

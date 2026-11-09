@@ -7,7 +7,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 18px 20px;
-  width: 700px;
+  width: min(48.61vw, 700px);
 }
 
 .member-list__empty {

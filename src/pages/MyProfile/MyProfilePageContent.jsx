@@ -5,12 +5,11 @@ import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButton
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import { dummyMyPosts, dummyMyProfile } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageContent({
-  profile = dummyMyProfile,
-  posts = dummyMyPosts,
+  profile = {},
+  posts = [],
   onDeletePost,
   onProfileUpdate,
   onNavigate,

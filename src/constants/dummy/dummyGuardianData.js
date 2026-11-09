@@ -1,6 +1,6 @@
 export const dummyGuardian = {
   elderName: '어르신',
-  homeAddress: '대구광역시 달성군 구지면 창리로11길 93',
+  homeAddress: '대구광역시 달성군 구지읍 창리로11길 93',
   homeCoordinates: { latitude: 35.8534, longitude: 128.4722 },
   homeRadiusMeters: 100,
   lastLoginText: '어르신께서 0시간 전에 접속하셨습니다.',

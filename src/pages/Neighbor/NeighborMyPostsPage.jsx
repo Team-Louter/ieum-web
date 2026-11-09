@@ -3,11 +3,10 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
-import { dummyNeighborPosts } from '../../constants/dummy/dummyProfiles';
 
 /** 사용자가 작성한 게시물 목록을 표시합니다. */
 function NeighborMyPostsPage({
-  posts = dummyNeighborPosts,
+  posts = [],
   onDeletePost,
   onNavigate,
   isLoading = false,

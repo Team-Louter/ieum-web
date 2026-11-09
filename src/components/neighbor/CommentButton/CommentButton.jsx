@@ -40,7 +40,7 @@ function CommentButton({
     <>
       <button type="button" onClick={onToggle} aria-expanded={isOpen}>
         <img src={commentImg} alt="댓글 아이콘" />
-        <p>댓글</p>
+        <p>댓글{commentItems.length > 0 ? ` ${commentItems.length}` : ''}</p>
       </button>
       {commentModal}
     </>

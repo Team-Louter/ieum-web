@@ -1,0 +1,13 @@
+{
+  "name": "이음",
+  "short_name": "이음",
+  "description": "이웃과 가족을 이어주는 이음",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#42b66b",
+  "lang": "ko",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

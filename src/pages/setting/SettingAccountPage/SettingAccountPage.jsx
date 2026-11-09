@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '../../../components/common/Button/Button';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
+import ConfirmationModal from '../../../components/common/ConfirmationModal/ConfirmationModal';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import { isPasswordValid } from '../../../utils/validation';
 import SettingLegalDocument from './SettingLegalDocument';
@@ -54,11 +55,21 @@ function SettingAccountPage({
   const [messageIsError, setMessageIsError] = useState(false);
   const [displayEmail, setDisplayEmail] = useState(accountEmail);
   const [fieldValue, setFieldValue] = useState('');
+  const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
 
   const closeDialog = () => {
     setActiveDialog('');
     setMessage('');
     setMessageIsError(false);
+  };
+
+  // 비밀번호 변경 중 창을 닫으려 하면 한 번 더 물어봅니다.
+  const requestCloseDialog = () => {
+    if (activeDialog === 'password') {
+      setIsLeaveConfirmOpen(true);
+      return;
+    }
+    closeDialog();
   };
 
   const openDialog = (itemId) => {
@@ -187,7 +198,7 @@ function SettingAccountPage({
       ))}
 
       {activeDialog === 'email' && (
-        <SettingDialog title="이메일" onClose={closeDialog}>
+        <SettingDialog title="이메일" onClose={requestCloseDialog}>
           <form
             className="setting-dialog__form"
             onSubmit={(event) => saveLocalAccountField(event, 'email')}
@@ -225,7 +236,7 @@ function SettingAccountPage({
         <SettingDialog
           title="비밀번호 변경"
           description="가입 이메일 인증을 마친 뒤 새 비밀번호를 설정해 주세요."
-          onClose={closeDialog}
+          onClose={requestCloseDialog}
         >
           <form className="setting-dialog__form" onSubmit={handleResetPassword}>
             <label className="setting-dialog__field">
@@ -313,10 +324,23 @@ function SettingAccountPage({
         </SettingDialog>
       )}
 
+      {isLeaveConfirmOpen && (
+        <ConfirmationModal
+          message="정말 나가시겠습니까? 입력한 내용은 저장되지 않습니다."
+          confirmLabel="나가기"
+          cancelLabel="계속 변경하기"
+          onCancel={() => setIsLeaveConfirmOpen(false)}
+          onConfirm={() => {
+            setIsLeaveConfirmOpen(false);
+            closeDialog();
+          }}
+        />
+      )}
+
       {(activeDialog === 'terms' || activeDialog === 'privacy') && (
         <SettingDialog
           title={activeDialog === 'terms' ? '이용약관' : '개인정보 처리방침'}
-          onClose={closeDialog}
+          onClose={requestCloseDialog}
           className="setting-dialog--document"
         >
           <SettingLegalDocument type={activeDialog} />

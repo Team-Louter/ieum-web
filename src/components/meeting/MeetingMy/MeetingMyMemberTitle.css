@@ -1,6 +1,6 @@
 .member-header {
   display: flex;
-  width: 700px;
+  width: min(48.61vw, 700px);
   justify-content: space-between;
   align-items: center;
   font-size: var(--font-size-subtitle);

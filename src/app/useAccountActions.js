@@ -199,11 +199,6 @@ export default function useAccountActions({
   }
 
   async function deleteAccount() {
-    const shouldDelete = window.confirm(
-      '계정을 삭제할까요? 삭제한 계정은 되돌릴 수 없습니다.',
-    );
-    if (!shouldDelete) return;
-
     try {
       await userApi.removeCurrent();
       clearDemoScope(demoScope);

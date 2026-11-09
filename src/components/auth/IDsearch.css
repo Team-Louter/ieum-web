@@ -10,7 +10,7 @@
 }
 
 .modal-box {
-    width: 700px;
+    width: min(48.61vw, 700px);
     min-height: 340px;
     max-width: 100%;
     padding: 32px 50px;
@@ -32,7 +32,7 @@
 
 .modal-box form,
 .modal-result {
-    width: 600px;
+    width: min(41.67vw, 600px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,11 +72,11 @@
     display: flex;
     align-items: center;
     gap: 25px;
-    width: 600px;
+    width: min(41.67vw, 600px);
 }
 
 .modal-email-row input {
-    width: 450px;
+    width: min(31.25vw, 450px);
     height: 60px;
     padding: 0 16px;
     border: 2px solid #dedede;
@@ -103,7 +103,7 @@
 }
 
 .modal-login-btn {
-    width: 600px;
+    width: min(41.67vw, 600px);
     height: 60px;
     margin-top: 0;
     border: none;

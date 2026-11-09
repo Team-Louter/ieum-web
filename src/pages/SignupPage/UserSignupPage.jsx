@@ -113,7 +113,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
                     <FieldWithButton id="user-id" label="아이디" value={loginId} onChange={(event) => setLoginId(event.target.value)} buttonText="중복확인" onButtonClick={() => { setMessage('아이디 중복확인 API가 없어 회원가입 시 서버에서 확인합니다.'); setMessageIsError(false); }} />
                 </div>
                 <div className="signup-field">
-                    <PasswordField id="user-password" label="비밀번호 (8자 이상, 영문자/숫자/특수문자 사용)" value={password} onChange={(event) => setPassword(event.target.value)} />
+                    <PasswordField id="user-password" label="비밀번호" hint="8자 이상, 영문자·숫자·특수문자를 사용해 주세요." value={password} onChange={(event) => setPassword(event.target.value)} />
                 </div>
                 <div className="signup-field">
                     <PasswordField id="user-password-check" label="비밀번호 확인" value={passwordCheck} onChange={(event) => setPasswordCheck(event.target.value)} />

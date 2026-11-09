@@ -1,5 +1,6 @@
 :root {
   --sidebar-collapsed-width: 72px;
+  --content-offset: 70px;
 }
 
 .sidebar {

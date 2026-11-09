@@ -1,7 +1,7 @@
 .announcement-make {
   display: flex;
   flex-direction: column;
-  width: 700px;
+  width: min(48.61vw, 700px);
   gap: 24px;
 }
 

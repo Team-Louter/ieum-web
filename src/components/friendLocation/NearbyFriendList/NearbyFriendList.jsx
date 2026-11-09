@@ -1,10 +1,9 @@
 import profileImage from '../../../assets/images/profile.png';
-import { dummyFriendLocations } from '../../../constants/dummy/dummyFriendLocations';
 import './NearbyFriendList.css';
 import EmptyState from '../../common/EmptyState/EmptyState';
 
 /** 현재 위치 주변에 있는 친구 목록을 표시합니다. */
-function NearbyFriendList({ friends = dummyFriendLocations }) {
+function NearbyFriendList({ friends = [] }) {
   const friendItems = Array.isArray(friends) ? friends : [];
 
   return (

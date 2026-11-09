@@ -12,7 +12,7 @@ function GuardianLocationStatus({
 }) {
   return (
     <section
-      className={`guardian-info-card guardian-location-status${isOutside ? ' guardian-location-status--warning' : ''}`}
+      className={`guardian-info-card guardian-location-status${isOutside ? ' guardian-location-status--warning' : ''}${isOutside == null ? ' guardian-location-status--unknown' : ''}`}
       aria-labelledby="guardian-location-title"
       aria-live="polite"
     >

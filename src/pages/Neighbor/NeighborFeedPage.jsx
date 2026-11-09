@@ -4,11 +4,10 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import PostCard from '../../components/neighbor/PostCard/PostCard';
-import { dummyNeighborFeedPosts } from '../../constants/dummy/dummyPosts';
 
 /** 이웃마당 게시물 목록과 댓글 모달 상태를 관리합니다. */
 function NeighborFeedPage({
-  posts = dummyNeighborFeedPosts,
+  posts = [],
   onLike,
   onSubmitComment,
   onNavigate,

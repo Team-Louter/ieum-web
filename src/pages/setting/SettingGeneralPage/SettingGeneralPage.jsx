@@ -13,6 +13,8 @@ function SettingGeneralPage({
   onMedicationScheduleEdit,
   onMedicationCreate,
   onMedicationDelete,
+  onMedicationCheck,
+  checkedMedicationIds = [],
   isLoading = false,
   apiError = '',
 }) {
@@ -48,6 +50,15 @@ function SettingGeneralPage({
     }
   };
 
+  const handleMedicationCheck = async (medicationId) => {
+    if (medicationId == null || typeof onMedicationCheck !== 'function') return;
+    try {
+      await onMedicationCheck(medicationId);
+    } catch {
+      // The app-level API notice exposes the server error.
+    }
+  };
+
   const handleMedicationDelete = async (medicationId) => {
     if (!medicationId || typeof onMedicationDelete !== 'function') return;
     try {
@@ -79,6 +90,8 @@ function SettingGeneralPage({
         >
           <SettingMedicationList
             schedule={medicationSchedule}
+            onCheck={handleMedicationCheck}
+            checkedIds={checkedMedicationIds}
             isLoading={isLoading}
             apiError={apiError}
           />

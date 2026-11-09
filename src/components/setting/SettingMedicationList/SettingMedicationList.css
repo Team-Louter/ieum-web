@@ -53,3 +53,26 @@
   font-weight: 700;
   text-align: center;
 }
+
+.setting-medication-list__check {
+  flex: none;
+  padding: 5px 12px;
+  border: 1px solid #42b66b;
+  border-radius: 7px;
+  background: #fff;
+  color: #248e4b;
+  font: inherit;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.setting-medication-list__check:hover:not(:disabled) {
+  background: #f1faf4;
+}
+
+.setting-medication-list__check.is-taken {
+  border-color: transparent;
+  background: #e6f9ed;
+  color: #25834a;
+  cursor: default;
+}
