@@ -15,7 +15,17 @@ export default function MeetingMakeOption({ title, desc, checked = false, onChan
           checked={checked}
           onChange={(event) => onChange?.(event.target.checked)}
         />
-        <span className="meeting-option-switch__track" aria-hidden="true"></span>
+        <svg
+          className="meeting-option-switch__track"
+          width="60"
+          height="30"
+          viewBox="0 0 60 30"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <rect width="60" height="30" rx="15" fill={checked ? '#21b35e' : '#e0e0e0'} />
+          <circle cx={checked ? 45 : 15} cy="15" r="11" fill="white" />
+        </svg>
       </label>
     </div>
   );
