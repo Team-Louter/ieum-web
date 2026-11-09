@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MeetingKebabMenu.css';
+import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 
 export default function MeetingKebabMenu({
   image,
@@ -11,6 +12,7 @@ export default function MeetingKebabMenu({
   onDelete,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const navigate = useNavigate();
 
   if (!canManage && !canLeave) return null;
@@ -64,7 +66,7 @@ export default function MeetingKebabMenu({
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
-                  onDelete?.(meeting.id);
+                  setIsDeleteConfirmOpen(true);
                 }}
               >
                 모임 삭제하기
@@ -72,6 +74,16 @@ export default function MeetingKebabMenu({
             </li>
           )}
         </ul>
+      )}
+      {isDeleteConfirmOpen && (
+        <ConfirmationModal
+          message="정말로 모임을 삭제하시겠습니까?"
+          onCancel={() => setIsDeleteConfirmOpen(false)}
+          onConfirm={() => {
+            setIsDeleteConfirmOpen(false);
+            onDelete?.(meeting.id);
+          }}
+        />
       )}
     </div>
   );

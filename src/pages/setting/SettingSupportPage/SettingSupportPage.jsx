@@ -81,9 +81,13 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
       );
       setInquiries(nextInquiries);
       setForm((current) => ({ ...current, subject: '', message: '' }));
-      setNotice({ type: 'success', text: `문의가 등록되었습니다. 접수 번호 ${inquiry.id}` });
+      setIsInquiryOpen(false);
+      setNotice({
+        type: 'success',
+        text: `문의가 접수되었어요. 확인 후 입력하신 이메일로 답변드릴게요. (접수 번호 ${inquiry.id})`,
+      });
     } catch {
-      setNotice({ type: 'error', text: '문의 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.' });
+      setNotice({ type: 'error', text: '문의를 접수하지 못했어요. 잠시 후 다시 시도해 주세요.' });
     }
   };
 
@@ -108,9 +112,21 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
         title="고객센터 문의"
         description="문의 내용을 남겨 주시면 확인할 수 있습니다."
         actionLabel="문의 작성"
-        onAction={() => setIsInquiryOpen(true)}
+        onAction={() => {
+          setNotice(null);
+          setIsInquiryOpen(true);
+        }}
         className="setting-support-page__card"
       />
+
+      {!isInquiryOpen && notice && (
+        <p
+          className={`setting-support-page__notice setting-support-page__notice--${notice.type}`}
+          role="status"
+        >
+          {notice.text}
+        </p>
+      )}
 
       <SettingItem title="최근 문의" className="setting-support-page__card">
         {inquiries.length > 0 ? (
@@ -138,7 +154,10 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
             title="등록된 문의가 없어요"
             description="고객센터에 문의를 남기면 이곳에서 확인할 수 있어요."
             actionLabel="문의 작성"
-            onAction={() => setIsInquiryOpen(true)}
+            onAction={() => {
+          setNotice(null);
+          setIsInquiryOpen(true);
+        }}
           />
         )}
       </SettingItem>
@@ -199,7 +218,7 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
               <span>{form.message.length}/2000</span>
               <button type="submit">문의 등록</button>
             </div>
-            {notice && (
+            {isInquiryOpen && notice && (
               <p
                 className={`setting-support-page__notice setting-support-page__notice--${notice.type}`}
                 role="status"

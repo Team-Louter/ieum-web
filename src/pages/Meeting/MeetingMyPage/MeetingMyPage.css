@@ -11,7 +11,7 @@
 .meeting-my-card {
   display: flex;
   justify-content: space-between;
-  width: 700px;
+  width: min(48.61vw, 700px);
 
   font-size: var(--font-size-subtitle);
   border-radius: 15px;

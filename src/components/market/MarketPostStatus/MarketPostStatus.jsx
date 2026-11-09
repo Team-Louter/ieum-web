@@ -8,7 +8,7 @@ function MarketPostStatus({ complete = false }) {
 
   return (
     <span className={`market-post-status ${statusClass}`}>
-      {isComplete ? '거래완료' : '거래중'}
+      {isComplete ? '거래완료' : '판매중'}
     </span>
   );
 }

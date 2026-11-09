@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import './components/auth/AuthField.css';
+import './responsive.css';
 
 // localhost can still be controlled by a worker from a previously run project.
 // This Vite app does not use a service worker in development.

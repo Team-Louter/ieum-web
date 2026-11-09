@@ -4,12 +4,11 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MarketPostCard from '../../components/market/MarketPostCard/MarketPostCard';
-import { dummyMarketProducts } from '../../constants/dummy/dummyMarketProducts';
 
 const PAGE_SIZE = 12;
 
 function MarketFeedPage({
-  products = dummyMarketProducts,
+  products = [],
   onProductSelect,
   onNavigate,
   isLoading = false,

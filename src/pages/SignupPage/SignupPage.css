@@ -27,7 +27,7 @@
 
 /* 폼 전체 폭: 아래의 큰 버튼과 각 입력 줄이 같은 폭을 사용한다. */
 .signup-page .signup-form {
-    width: 600px;
+    width: min(41.67vw, 600px);
     max-width: 100%;
     display: flex;
     flex-direction: column;

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import './SettingSidebar.css';
+import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 import myAccountIcon from '../../../assets/images/myAccount.svg';
 import generalSettingsIcon from '../../../assets/images/generalSettings.svg';
 import newFeatureIcon from '../../../assets/images/newFeature.svg';
@@ -24,6 +26,8 @@ const settingMenuGroups = [
 ];
 
 function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) {
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   return (
     <aside className="setting-sidebar" aria-label="설정 메뉴">
       {settingMenuGroups.map((group) => (
@@ -58,12 +62,23 @@ function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) 
         <button
           className="setting-sidebar__account-action setting-sidebar__account-action--danger"
           type="button"
-          onClick={onAccountDelete}
+          onClick={() => setIsDeleteConfirmOpen(true)}
         >
           <img src={deleteAccountIcon} alt="계정 삭제 아이콘" />
           계정 삭제하기
         </button>
       </div>
+      {isDeleteConfirmOpen && (
+        <ConfirmationModal
+          message="계정을 삭제하시겠습니까? 삭제한 계정은 되돌릴 수 없습니다."
+          confirmLabel="계정 삭제"
+          onCancel={() => setIsDeleteConfirmOpen(false)}
+          onConfirm={() => {
+            setIsDeleteConfirmOpen(false);
+            onAccountDelete?.();
+          }}
+        />
+      )}
     </aside>
   );
 }

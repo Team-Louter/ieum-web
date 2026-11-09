@@ -1,7 +1,7 @@
 import profileImg from '../../../assets/images/profile.png';
 
 /** 지도 커스텀 오버레이에 사용할 친구 위치 핑 DOM 요소를 생성합니다. */
-function createNearbyFriendPingElement(nickname) {
+function createNearbyFriendPingElement(nickname, profileImage) {
   const pingElement = document.createElement('div');
   pingElement.className = 'nearby-friend-ping';
   pingElement.setAttribute('aria-label', `${nickname}의 위치`);
@@ -10,7 +10,7 @@ function createNearbyFriendPingElement(nickname) {
   circleElement.className = 'nearby-friend-ping__circle';
 
   const profileImageElement = document.createElement('img');
-  profileImageElement.src = profileImg;
+  profileImageElement.src = profileImage || profileImg;
   profileImageElement.alt = `${nickname} 프로필 사진`;
 
   const triangleElement = document.createElement('div');

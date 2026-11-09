@@ -63,6 +63,7 @@ export default function MeetingMyPage({
   onAnnouncementCreate,
   onAnnouncementUpdate,
   onAnnouncementDelete,
+  onAnnouncementLoad,
   isLoading = false,
   apiError = '',
 }) {
@@ -223,6 +224,7 @@ export default function MeetingMyPage({
           onCreate={onAnnouncementCreate}
           onUpdate={onAnnouncementUpdate}
           onDelete={onAnnouncementDelete}
+          onLoad={onAnnouncementLoad}
           isLoading={isLoading}
           apiError={apiError}
         />

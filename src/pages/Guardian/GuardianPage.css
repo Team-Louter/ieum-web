@@ -100,26 +100,30 @@
   min-width: 0;
   min-height: clamp(112px, 20vh, 150px);
   padding: clamp(12px, 2vh, 20px) 22px;
-  border: 1px solid #dedede;
-  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
   background-color: #fff;
 }
 
 .guardian-medication-list {
   display: flex;
   flex-direction: column;
-  max-height: clamp(180px, 28vh, 280px);
+  min-height: 0;
   gap: 11px;
   overflow: hidden;
+  /* 복약 항목 한 줄 높이: 알약 세로 패딩 + 글자 줄 높이 */
+  --medication-gap: 11px;
+  --medication-row: calc(var(--font-size-small) * 1.25 + 10px);
 }
 
 .guardian-medication-list__items {
   display: grid;
   flex: 1 1 auto;
   align-content: start;
-  gap: 11px;
-  height: 300px;
-  overflow-y: scroll;
+  gap: var(--medication-gap);
+  /* 항목 3개가 딱 맞는 높이, 더 늘어나면 스크롤 */
+  max-height: calc(var(--medication-row) * 3 + var(--medication-gap) * 2);
+  overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
@@ -142,7 +146,7 @@
   margin: 0;
   color: #111;
   font-size: var(--font-size-small);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.3;
 }
 
@@ -171,8 +175,10 @@
   border-radius: 999px;
   color: #111;
   font-size: var(--font-size-small);
+  font-weight: 600;
   line-height: 1.25;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .guardian-medication-list__time--complete {
@@ -186,14 +192,15 @@
 }
 
 .guardian-medication-list__time--upcoming {
-  background-color: #efefef;
+  background-color: #f1f3f1;
+  color: #444;
 }
 
 .guardian-medication-list__name {
   overflow: hidden;
   color: #111;
   font-size: var(--font-size-small);
-  font-weight: 500;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -228,18 +235,19 @@
 
 .guardian-location-status__refresh {
   flex: 0 0 auto;
-  padding: 5px 9px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: #666;
+  padding: 5px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background: #fff;
+  color: #555;
   cursor: pointer;
   font: inherit;
   font-size: var(--font-size-small);
 }
 
 .guardian-location-status__refresh:hover:not(:disabled) {
-  background: #f2f2f2;
+  border-color: #42b66b;
+  background: #f1faf4;
   color: #248e4b;
 }
 
@@ -278,6 +286,11 @@
 
 .guardian-location-status--warning strong {
   color: #d72f2f;
+}
+
+.guardian-location-status--unknown strong {
+  color: #888;
+  font-weight: 600;
 }
 
 .guardian-location-status__error {
@@ -372,10 +385,8 @@
 
   .guardian-medication-list {
     gap: 6px;
-  }
-
-  .guardian-medication-list__items {
-    gap: 6px;
+    --medication-gap: 6px;
+    --medication-row: calc(var(--font-size-small) * 1.25 + 6px);
   }
 
   .guardian-medication-list__item {

@@ -139,7 +139,13 @@ export default function useMeetingActions({ runAction, movePage }) {
     );
   }
 
+  // 공지 수정을 시작할 때 최신 공지 내용을 단건 조회로 가져옵니다.
+  function getNotice(meetingId, noticeId) {
+    return meetingApi.getNotice(meetingId, noticeId);
+  }
+
   return {
+    getNotice,
     createMeeting,
     updateMeeting,
     deleteMeeting,

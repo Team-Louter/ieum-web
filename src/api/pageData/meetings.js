@@ -30,9 +30,7 @@ export async function loadMeetingDetailPage({ selectedId }) {
   const state = membership?.membershipStatus ?? membership?.status;
   const canReadNotices = ['OWNER', 'JOINED'].includes(state);
   const [remoteMembers, noticePage] = await Promise.all([
-    membership?.canManage
-      ? loadMeetingSection(() => meetingApi.members(selectedId))
-      : [],
+    membership?.canManage ? loadMeetingSection(() => meetingApi.members(selectedId)) : [],
     canReadNotices ? loadMeetingSection(() => meetingApi.notices(selectedId)) : [],
   ]);
 

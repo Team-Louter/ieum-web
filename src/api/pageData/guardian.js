@@ -122,6 +122,7 @@ export async function loadSettingsPage({ role, demoScope }) {
       id: medication.medicationId,
       time: formatMedicationTime(medication.takeTime),
       label: medication.name,
+      taken: Boolean(medication.taken),
     })),
   };
 }

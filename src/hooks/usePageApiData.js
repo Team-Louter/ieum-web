@@ -29,6 +29,8 @@ export default function usePageApiData({
       ? savedError.message
       : '';
   const loading = !needsLogin && (requestState.path !== path || requestState.loading);
+  // 같은 화면의 새로고침이 아니라 이 경로의 데이터를 처음 불러오는 중인지 알려줍니다.
+  const initialLoading = loading && savedResource.path !== path;
 
   useEffect(() => {
     let isActive = true;
@@ -127,5 +129,5 @@ export default function usePageApiData({
     };
   }, [path, activeChatRoomId, accessToken, reloadKey, user.userId, demoScope]);
 
-  return { data, error, loading, user };
+  return { data, error, loading, initialLoading, user };
 }

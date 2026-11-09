@@ -3,13 +3,13 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MarketMyPostCard from '../../components/market/MarketMyPostCard/MarketMyPostCard';
-import { dummyMyMarketProducts } from '../../constants/dummy/dummyMarketProducts';
 
 /** 사용자가 등록한 중고장터 게시물을 표시합니다. */
 function MarketMyPostPage({
-  posts = dummyMyMarketProducts,
+  posts = [],
   onMarkSold,
   onDeletePost,
+  onEditPost,
   onNavigate,
   isLoading = false,
   apiError = '',
@@ -33,6 +33,7 @@ function MarketMyPostPage({
               key={post.id}
               post={post}
               onMarkSold={onMarkSold}
+              onEdit={onEditPost}
               onDelete={onDeletePost}
             />
           ))

@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(870px, calc(100vw - 70px));
+  width: min(870px, calc(100vw - var(--content-offset, 70px)));
   min-height: calc(100dvh - 175px);
 }
 

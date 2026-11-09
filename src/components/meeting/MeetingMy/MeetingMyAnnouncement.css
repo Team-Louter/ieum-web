@@ -11,7 +11,7 @@
 
 .Announcement-header {
   display: flex;
-  width: 700px;
+  width: min(48.61vw, 700px);
   justify-content: space-between;
   align-items: center;
 }
@@ -52,7 +52,7 @@
 }
 
 .Announcement-card {
-  width: 700px;
+  width: min(48.61vw, 700px);
   height: 250px;
   font-size: var(--font-size-subtitle);
   border-radius: 15px;
@@ -93,7 +93,7 @@
 }
 
 .Announcement-card--empty {
-  width: 700px;
+  width: min(48.61vw, 700px);
   min-height: 200px;
   margin-top: 20px;
 }

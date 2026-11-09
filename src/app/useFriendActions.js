@@ -53,7 +53,7 @@ export default function useFriendActions({
         updateDemoValue('chat.rooms', (currentRooms) => [newRoom, ...currentRooms], [], demoScope);
         return newRoom;
       }
-    }, '채팅방을 열었습니다.');
+    }, null);
 
     setChatSelection({ path: '/chatting', roomId: Number(room.id) });
     movePage('/chatting');
@@ -81,7 +81,7 @@ export default function useFriendActions({
         );
         return localMessage;
       }
-    }, '메시지를 보냈습니다.');
+    }, null);
   }
 
   return {
