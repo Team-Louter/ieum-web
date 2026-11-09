@@ -101,7 +101,8 @@ video {
 /* 모바일에서는 vw 비례가 너무 작아지므로 화면 폭에 맞춰 채웁니다. */
 @media (max-width: 768px) {
   .meeting-list:not(.meeting-list--empty),
-  .meeting-my-list:not(.meeting-my-list--empty) {
+  .meeting-my-list:not(.meeting-my-list--empty),
+  .page-skeleton--meetingList {
     width: calc(100% - 16px);
     gap: clamp(8px, 2vw, 14px);
   }
@@ -130,6 +131,11 @@ video {
     flex: 1;
     min-width: 0;
     gap: clamp(4px, 1.5vw, 8px);
+  }
+
+  .meeting-card .meeting-card-info > .skeleton {
+    max-width: 100%;
+    max-height: 1.2em;
   }
 
   .meeting-card .meeting-card-info-title,
