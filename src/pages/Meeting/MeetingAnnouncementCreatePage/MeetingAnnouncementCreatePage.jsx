@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './MeetingAnnouncementCreatePage.css';
+import Button from '../../../components/common/Button/Button';
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 
@@ -51,9 +52,9 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
             setValues((currentValues) => ({ ...currentValues, content: event.target.value }))
           }
         />
-        <button className="announcement-make-submit" type="submit">
+        <Button className="announcement-make-submit" type="submit">
           공지사항 올리기
-        </button>
+        </Button>
         {submitError && <p role="alert">{submitError}</p>}
       </form>
     </Layout>

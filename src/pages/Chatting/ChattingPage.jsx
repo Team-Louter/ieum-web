@@ -6,6 +6,7 @@ import profileImage from '../../assets/images/profile.png';
 import { dummyChatContacts, dummyChatThreads } from '../../constants/dummy/dummyChats';
 import { getValidAccessToken } from '../../api/client';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import Button from '../../components/common/Button/Button';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 
 const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
@@ -35,6 +36,8 @@ function ChattingPage({
   const [realtimeThreads, setRealtimeThreads] = useState({});
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const sendingRef = useRef(false);
   // 모바일에서는 대화 목록을 먼저 보여 주고, 대화를 누르면 채팅창으로 넘어갑니다.
   const [isRoomOpen, setIsRoomOpen] = useState(false);
   const messagesContainerRef = useRef(null);
@@ -146,7 +149,9 @@ function ChattingPage({
   async function submitMessage(event) {
     event.preventDefault();
     const content = messageDraft.trim();
-    if (!content || !selectedContactId) return;
+    if (sendingRef.current || !content || !selectedContactId) return;
+    sendingRef.current = true;
+    setIsSending(true);
 
     const message = {
       id: `message-${Date.now()}`,
@@ -154,8 +159,8 @@ function ChattingPage({
       content,
       time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     };
-    if (onSendMessage) {
-      try {
+    try {
+      if (onSendMessage) {
         setSendError('');
         const savedMessage = await onSendMessage({ contactId: selectedContactId, message });
         const normalized = savedMessage
@@ -178,17 +183,19 @@ function ChattingPage({
             normalized,
           ],
         }));
-      } catch (error) {
-        setSendError(error?.message ?? '메시지를 보내지 못했습니다.');
-        return;
+      } else {
+        setLocalThreads((currentThreads) => ({
+          ...currentThreads,
+          [selectedContactId]: [...(currentThreads[selectedContactId] ?? []), message],
+        }));
       }
-    } else {
-      setLocalThreads((currentThreads) => ({
-        ...currentThreads,
-        [selectedContactId]: [...(currentThreads[selectedContactId] ?? []), message],
-      }));
+      setMessageDraft('');
+    } catch (error) {
+      setSendError(error?.message ?? '메시지를 보내지 못했습니다.');
+    } finally {
+      sendingRef.current = false;
+      setIsSending(false);
     }
-    setMessageDraft('');
   }
 
   return (
@@ -306,9 +313,14 @@ function ChattingPage({
                 value={messageDraft}
                 onChange={(event) => setMessageDraft(event.target.value)}
               />
-              <button type="submit" disabled={!messageDraft.trim()}>
+              <Button
+                type="submit"
+                loading={isSending}
+                loadingText="전송 중..."
+                disabled={!messageDraft.trim()}
+              >
                 전송
-              </button>
+              </Button>
             </form>
           </>
         ) : !isLoading && !apiError ? (

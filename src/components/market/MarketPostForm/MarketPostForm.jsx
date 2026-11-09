@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './MarketPostForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
+import Button from '../../common/Button/Button';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
 function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit = false, onSubmit }) {
@@ -202,9 +203,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
           </div>
         </div>
       </div>
-      <button type="submit" className="market-post-create-form__submit">
+      <Button type="submit" className="market-post-create-form__submit">
         {isEdit ? '게시물 수정하기' : '게시물 만들기'}
-      </button>
+      </Button>
       {submitError && (
         <p className="market-post-create-form__submit-error" role="alert">
           {submitError}

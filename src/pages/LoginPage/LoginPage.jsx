@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './LoginPage.css';
+import Button from '../../components/common/Button/Button';
 
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import googleLogo from '../../assets/images/GoogleLogo.svg';
@@ -67,9 +68,9 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
                         <p className="error-msg">{errorMessage}</p>
                 )}
 
-                <button type="submit" className="login" disabled={isSubmitting}>
-                    {isSubmitting ? '로그인 중…' : '로그인'}
-                </button>
+                <Button type="submit" className="login" loading={isSubmitting} loadingText="로그인 중…">
+                    로그인
+                </Button>
 
                 <button type="button" className="google-login" onClick={() => {
                     setErrorMessage('현재 API 명세에는 Google 로그인 기능이 없어 사용할 수 없습니다.');

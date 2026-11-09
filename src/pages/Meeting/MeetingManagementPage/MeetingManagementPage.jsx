@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
 import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
+import Button from '../../../components/common/Button/Button';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import './MeetingManagementPage.css';
 import Layout from '../../../components/common/Layout/Layout';
@@ -85,9 +86,9 @@ export default function MeetingManagementPage({
               desc="비공개 모임은 목록에 공개되지 않습니다."
             />
           </div>
-          <button className="meeting-management-save" type="submit" disabled={!canManage}>
+          <Button className="meeting-management-save" type="submit" disabled={!canManage}>
             변경 사항 저장
-          </button>
+          </Button>
           {!canManage && (
             <p className="meeting-management-message" role="status">
               모임 관리자만 정보를 수정할 수 있습니다.

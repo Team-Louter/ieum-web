@@ -3,6 +3,7 @@ import { readDemoValue, updateDemoValue } from '../../../api/demoStore';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import EmptyState from '../../../components/common/EmptyState/EmptyState';
+import Button from '../../../components/common/Button/Button';
 import './SettingSupportPage.css';
 
 const questions = [
@@ -216,7 +217,7 @@ function SettingSupportPage({ accountEmail = '', signupEmail = '', currentLoginI
             </label>
             <div className="setting-support-page__form-footer">
               <span>{form.message.length}/2000</span>
-              <button type="submit">문의 등록</button>
+              <Button type="submit">문의 등록</Button>
             </div>
             {isInquiryOpen && notice && (
               <p

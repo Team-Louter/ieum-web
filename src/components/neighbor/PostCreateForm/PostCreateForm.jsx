@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './PostCreateForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
+import Button from '../../common/Button/Button';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
 function PostCreateForm({ initialValues = {}, onSubmit }) {
@@ -160,9 +161,9 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
           </div>
         </div>
       </div>
-      <button type="submit" className="neighbor-post-create-form__submit">
+      <Button type="submit" className="neighbor-post-create-form__submit">
         게시물 만들기
-      </button>
+      </Button>
     </form>
   );
 }
