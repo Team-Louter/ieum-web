@@ -1,6 +1,9 @@
 import AddFriendPage from '../pages/AddFriend/AddFriendPage';
 import ChattingPage from '../pages/Chatting/ChattingPage';
 import FriendLocationPage from '../pages/FriendLocation/FriendLocationPage';
+import InvitePage from '../pages/Invite/InvitePage';
+import NotificationsPage from '../pages/Notifications/NotificationsPage';
+import MedicationCheckPage from '../pages/Medication/MedicationCheckPage';
 import GuardianPage from '../pages/Guardian/GuardianPage';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import MarketFeedInPage from '../pages/market/MarketFeedInPage';
@@ -41,6 +44,9 @@ export const pageRoutes = {
   '/profile/meetings': ProfilePageMeeting,
   '/profile/friends': ProfilePageFriend,
   '/guardian': GuardianPage,
+  '/medications': MedicationCheckPage,
+  '/notifications': NotificationsPage,
+  '/invite': InvitePage,
   '/meeting': MeetingShowPage,
   '/meeting/detail': MeetingMyPage,
   '/meeting/my': MeetingMyListPage,

@@ -1,10 +1,7 @@
 import { chatApi, friendApi } from '../api/client';
-import { isDemoFallbackError, readDemoValue, updateDemoValue } from '../api/demoStore';
 
 // 친구 신청/수락과 친구와의 채팅 동작을 모아둡니다.
 export default function useFriendActions({
-  demoScope,
-  user,
   runAction,
   movePage,
   setChatSelection,
@@ -35,53 +32,14 @@ export default function useFriendActions({
   }
 
   async function startChat(targetUserId) {
-    const room = await runAction(async () => {
-      try {
-        return await chatApi.createRoom(targetUserId);
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-
-        const rooms = readDemoValue('chat.rooms', [], demoScope);
-        const existingRoom = rooms.find((item) => String(item.partnerId) === String(targetUserId));
-        if (existingRoom) return existingRoom;
-
-        const newRoom = {
-          id: Date.now(),
-          partnerId: Number(targetUserId),
-          name: `사용자 ${targetUserId}`,
-        };
-        updateDemoValue('chat.rooms', (currentRooms) => [newRoom, ...currentRooms], [], demoScope);
-        return newRoom;
-      }
-    }, null);
+    const room = await runAction(() => chatApi.createRoom(targetUserId), null);
 
     setChatSelection({ path: '/chatting', roomId: Number(room.id) });
     movePage('/chatting');
   }
 
   async function sendChatMessage({ contactId, message }) {
-    return runAction(async () => {
-      try {
-        return await chatApi.sendMessage(contactId, message.content);
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-
-        const localMessage = {
-          id: Date.now(),
-          sender: 'me',
-          senderId: user.userId,
-          content: message.content,
-          createdAt: new Date().toISOString(),
-        };
-        updateDemoValue(
-          `chat.messages.${contactId}`,
-          (messages) => [localMessage, ...messages],
-          [],
-          demoScope,
-        );
-        return localMessage;
-      }
-    }, null);
+    return runAction(() => chatApi.sendMessage(contactId, message.content), null);
   }
 
   return {
