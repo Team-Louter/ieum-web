@@ -187,15 +187,12 @@ function ChattingPage({
           [selectedContactId]: [...(currentThreads[selectedContactId] ?? []), message],
         }));
       }
-<<<<<<< HEAD
-=======
       setMessageDraft('');
     } catch (error) {
       setSendError(error?.message ?? '메시지를 보내지 못했습니다.');
     } finally {
       sendingRef.current = false;
       setIsSending(false);
->>>>>>> origin/develop
     }
   }
 
