@@ -1,6 +1,5 @@
-import EmptyState from '../../components/common/EmptyState/EmptyState';
-import Layout from '../../components/common/Layout/Layout';
-import './MedicationCheckPage.css';
+import EmptyState from '../common/EmptyState/EmptyState';
+import './MedicationCheckSection.css';
 
 /** takeTime("HH:mm:ss")이 지금보다 이전이면 복용할 시간이 지난 것으로 봅니다. */
 function isPastTime(takeTime = '') {
@@ -10,8 +9,8 @@ function isPastTime(takeTime = '') {
   return scheduledAt.getTime() <= Date.now();
 }
 
-/** 어르신이 오늘 먹을 약을 확인하고 복용했는지 체크하는 화면입니다. */
-function MedicationCheckPage({
+/** 어르신이 오늘 먹을 약을 확인하고 복용했는지 체크하는 영역입니다. 알림 화면에 함께 표시합니다. */
+function MedicationCheckSection({
   medicationSchedule = [],
   onMedicationCheck,
   checkedMedicationIds = [],
@@ -38,10 +37,9 @@ function MedicationCheckPage({
   }
 
   return (
-    <Layout className="medication-check-layout">
-      <section className="medication-check-page" aria-labelledby="medication-check-title">
+    <section className="medication-check-page" aria-labelledby="medication-check-title">
         <header className="medication-check-page__header">
-          <h1 id="medication-check-title">복약 알림</h1>
+          <h2 id="medication-check-title">오늘 복약</h2>
           {items.length > 0 && (
             <p>
               오늘 {items.length}개 중 {takenCount}개를 먹었어요
@@ -89,9 +87,8 @@ function MedicationCheckPage({
             description="설정에서 복약 정보를 등록하면 이곳에서 확인할 수 있어요."
           />
         )}
-      </section>
-    </Layout>
+    </section>
   );
 }
 
-export default MedicationCheckPage;
+export default MedicationCheckSection;
