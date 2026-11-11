@@ -1,5 +1,6 @@
 import Layout from '../../components/common/Layout/Layout';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import MedicationCheckSection from '../../components/medication/MedicationCheckSection';
 import useNotifications from '../../hooks/useNotifications';
 import './NotificationsPage.css';
 
@@ -25,7 +26,14 @@ function formatTime(value) {
 }
 
 /** 알림 목록을 보여주고 읽음 처리, 이전 알림 더 보기를 제공하는 임시 화면입니다. */
-function NotificationsPage() {
+function NotificationsPage({
+  role,
+  medicationSchedule = [],
+  onMedicationCheck,
+  checkedMedicationIds = [],
+  isLoading: isPageLoading = false,
+  apiError = '',
+}) {
   const { notifications, error, isLoading, markRead, loadOlder } = useNotifications();
 
   async function handleRead(notificationId) {
@@ -40,6 +48,15 @@ function NotificationsPage() {
     <Layout className="notifications-layout">
       <section className="notifications-page" aria-labelledby="notifications-title">
         <h1 id="notifications-title">알림</h1>
+        {role === 'ROLE_SENIOR' && (
+          <MedicationCheckSection
+            medicationSchedule={medicationSchedule}
+            onMedicationCheck={onMedicationCheck}
+            checkedMedicationIds={checkedMedicationIds}
+            isLoading={isPageLoading}
+            apiError={apiError}
+          />
+        )}
         {error && (
           <p className="notifications-page__error" role="alert">
             {error}

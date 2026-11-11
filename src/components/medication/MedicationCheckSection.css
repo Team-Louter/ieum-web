@@ -1,18 +1,12 @@
-#default-layout.medication-check-layout main {
-  align-items: flex-start;
-  padding-top: 48px;
-}
-
 .medication-check-page {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: min(700px, calc(100vw - var(--sidebar-collapsed-width) - 48px));
-  margin: 0 auto;
+  width: 100%;
 }
 
-.medication-check-page__header h1 {
-  font-size: 28px;
+.medication-check-page__header h2 {
+  font-size: 22px;
 }
 
 .medication-check-page__header p {
@@ -115,14 +109,6 @@
 }
 
 @media (max-width: 768px) {
-  #default-layout.medication-check-layout main {
-    padding-top: 24px;
-  }
-
-  .medication-check-page {
-    width: calc(100% - 32px);
-  }
-
   .medication-check-page__item {
     flex-wrap: wrap;
     gap: 12px;

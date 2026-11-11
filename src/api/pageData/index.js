@@ -25,7 +25,8 @@ export default async function loadPageData({
   }
 
   if (path === '/settings') return loadSettingsPage({ role });
-  if (path === '/medications') return loadMedicationPage();
+  // 알림 화면은 목록을 직접 불러오고, 어르신 계정에는 오늘 복약 목록도 함께 보여줍니다.
+  if (path === '/notifications') return role === 'ROLE_SENIOR' ? loadMedicationPage() : {};
 
   if (path === '/neighbor' || path === '/neighbor/my') {
     const response = await communityPostApi.list({ mine: path === '/neighbor/my' });

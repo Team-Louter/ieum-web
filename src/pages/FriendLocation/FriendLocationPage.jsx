@@ -15,13 +15,8 @@ function FriendLocationPage() {
   const [isMapReady, setIsMapReady] = useState(false);
   const [myProfileImage, setMyProfileImage] = useState('');
   const handleMapReady = useCallback(() => setIsMapReady(true), []);
-  const { coordinates, address, isLoading, locationError, addressError, refresh } =
+  const { coordinates, address, isLoading, locationError, addressError } =
     useCurrentLocation(isMapReady);
-
-  const handleLocationRefresh = useCallback(() => {
-    setIsMapReady(false);
-    refresh();
-  }, [refresh]);
 
   // 지도를 열 때마다 최신 프로필 사진을 받아 내 위치 핑에 반영합니다.
   useEffect(() => {
@@ -81,9 +76,6 @@ function FriendLocationPage() {
               <span>내 현재 위치</span>
             </div>
             <p>{addressText}</p>
-            <button type="button" onClick={handleLocationRefresh} disabled={isLoading}>
-              {isLoading ? '확인 중' : '새로고침'}
-            </button>
           </div>
         </div>
       </section>
