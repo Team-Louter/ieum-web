@@ -67,6 +67,11 @@
   height: 40px;
 }
 
+.sidebar__profile .sidebar__icon {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .sidebar__label {
   position: absolute;
   left: 60px;
