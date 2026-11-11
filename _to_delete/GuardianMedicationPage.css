@@ -1,0 +1,98 @@
+#default-layout.guardian-medication-layout main {
+  align-items: flex-start;
+  padding-top: 48px;
+}
+
+.guardian-medication-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(700px, calc(100vw - var(--sidebar-collapsed-width) - 48px));
+  margin: 0 auto;
+}
+
+.guardian-medication-page h1 {
+  font-size: var(--font-size-title, 24px);
+}
+
+.guardian-medication-page__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.guardian-medication-page__tab {
+  padding: 8px 16px;
+  border: 1px solid #e3e3e3;
+  border-radius: 999px;
+  background-color: #fff;
+  color: #444;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.guardian-medication-page__tab--active {
+  border-color: #42b66b;
+  background-color: #42b66b;
+  color: #fff;
+}
+
+.guardian-medication-page__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guardian-medication-page__count {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: var(--font-size-small);
+}
+
+.guardian-medication-page__count strong {
+  font-size: 24px;
+}
+
+.guardian-medication-page__count--complete strong {
+  color: #42b66b;
+}
+
+.guardian-medication-page__count--missed strong {
+  color: #d72f2f;
+}
+
+.guardian-medication-page__list {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background-color: #fff;
+  list-style: none;
+}
+
+.guardian-medication-page__item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+.guardian-medication-page__message {
+  color: #c93434;
+}
+
+@media (max-width: 768px) {
+  #default-layout.guardian-medication-layout main {
+    padding-top: 24px;
+  }
+
+  .guardian-medication-page {
+    width: calc(100% - 32px);
+  }
+}

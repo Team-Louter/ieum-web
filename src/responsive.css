@@ -39,7 +39,7 @@ video {
     left: 0;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
     height: var(--bottom-nav-height);
     padding: 6px 8px env(safe-area-inset-bottom, 0px);
@@ -65,12 +65,9 @@ video {
     display: none;
   }
 
+  /* 프로필과 메뉴 항목이 같은 줄에서 같은 간격이 되도록 메뉴 래퍼를 풀어줍니다. */
   .sidebar__menu {
-    flex: 1;
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 0;
-    margin: 0;
+    display: contents;
   }
 
   /* 본문 */
@@ -180,6 +177,17 @@ video {
   .modal-box {
     width: calc(100% - 32px);
     max-width: 100%;
+  }
+
+  /* 내 게시물: 좌우 여백을 두고 2열로 보여줍니다. */
+  .my-content-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: calc(100% - 32px);
+  }
+
+  .my-content {
+    padding: 10px;
   }
 
   .content-video,

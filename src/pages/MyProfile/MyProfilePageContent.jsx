@@ -11,6 +11,7 @@ function MyProfilePageContent({
   profile = {},
   posts = [],
   onDeletePost,
+  onUpdatePost,
   onProfileUpdate,
   onNavigate,
   isLoading = false,
@@ -33,7 +34,12 @@ function MyProfilePageContent({
         <div id="content-container">
           {postItems.length > 0 ? (
             postItems.map((post, index) => (
-              <MyPostCard key={post.id ?? index} post={post} onDelete={onDeletePost} />
+              <MyPostCard
+                key={post.id ?? index}
+                post={post}
+                onDelete={onDeletePost}
+                onUpdate={onUpdatePost}
+              />
             ))
           ) : isEmpty ? (
             <EmptyState

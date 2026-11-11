@@ -1,46 +1,29 @@
-import { connectionApi, familyApi, guardianApi, medicationApi, notificationApi } from '../client';
+import { connectionApi, guardianApi, medicationApi, notificationApi } from '../client';
 import { elapsedLoginText, formatMedicationTime, toGuardianMedication } from '../adapters';
-import { isDemoFallbackError, readDemoValue } from '../demoStore';
-import { asArray, loadApiOrDemo } from './common';
+import { asArray } from './common';
 
 function getItems(response) {
   if (Array.isArray(response)) return response;
   return asArray(response?.content ?? response?.connections ?? response?.requests ?? response?.data);
 }
 
-async function loadConnections(demoScope) {
-  try {
-    return getItems(await connectionApi.list());
-  } catch (error) {
-    if (!isDemoFallbackError(error)) throw error;
-    try {
-      // 배포 환경에 최신 목록 API가 아직 반영되지 않은 경우 기존 API를 사용합니다.
-      return getItems(await familyApi.list());
-    } catch (legacyError) {
-      if (!isDemoFallbackError(legacyError)) throw legacyError;
-      return asArray(readDemoValue('family', [], demoScope));
-    }
-  }
+async function loadConnections() {
+  return getItems(await connectionApi.list());
 }
 
 async function loadPendingConnections(role) {
   if (role !== 'ROLE_GUARDIAN') return [];
-  try {
-    return getItems(await connectionApi.pending());
-  } catch (error) {
-    if (!isDemoFallbackError(error)) throw error;
-    return [];
-  }
+  return getItems(await connectionApi.pending());
 }
 
-export async function loadGuardianPage({ demoScope }) {
+export async function loadGuardianPage() {
   const elders = asArray(
-    await loadApiOrDemo(() => guardianApi.dashboard(), 'guardian.dashboard', [], demoScope),
+    await guardianApi.dashboard(),
   ).map((elder, index) => ({
     id: String(elder.loginId ?? elder.userId ?? elder.id ?? `elder-${index + 1}`),
     loginId: elder.loginId ?? '',
     elderName: elder.loginId || elder.nickname || '어르신',
-    homeAddress: elder.homeAddress ?? '',
+    homeAddress: elder.homeAddress ?? elder.address ?? '',
     homeCoordinates: elder.homeCoordinates ?? null,
     homeRadiusMeters: elder.homeRadiusMeters,
     lastLoginText: elapsedLoginText(elder.lastActiveAt),
@@ -77,27 +60,13 @@ export async function loadGuardianPage({ demoScope }) {
   };
 }
 
-export async function loadSettingsPage({ role, demoScope }) {
+export async function loadSettingsPage({ role }) {
   const [notificationSettings, family, pendingConnections, medications] = await Promise.all([
-    loadApiOrDemo(() => notificationApi.getSettings(), 'settings', {}, demoScope),
-    loadConnections(demoScope),
+    notificationApi.getSettings(),
+    loadConnections(),
     loadPendingConnections(role),
-    role === 'ROLE_SENIOR'
-      ? loadApiOrDemo(() => medicationApi.list(), 'medications', [], demoScope)
-      : Promise.resolve([]),
+    role === 'ROLE_SENIOR' ? medicationApi.list() : Promise.resolve([]),
   ]);
-
-  const localSettings = readDemoValue('settings', {}, demoScope);
-  const savedMedications =
-    role === 'ROLE_SENIOR' ? readDemoValue('medications', [], demoScope) : [];
-  const uniqueMedications = [...asArray(medications), ...asArray(savedMedications)].filter(
-    (medication, index, list) =>
-      list.findIndex(
-        (candidate) =>
-          String(candidate.medicationId ?? candidate.id) ===
-          String(medication.medicationId ?? medication.id),
-      ) === index,
-  );
 
   return {
     settings: {
@@ -105,8 +74,8 @@ export async function loadSettingsPage({ role, demoScope }) {
       darkMode: false,
       interactionAlert: false,
       mentionAlert: false,
+      guardianMedication: Boolean(notificationSettings?.guardianMedication),
       guardianLocation: false,
-      ...localSettings,
     },
     guardians: getItems(family).map((person) => ({
       ...person,
@@ -118,9 +87,24 @@ export async function loadSettingsPage({ role, demoScope }) {
       id: person.connectionId,
       name: person.seniorLoginId ?? person.elderLoginId ?? person.loginId ?? person.nickname ?? '어르신 계정',
     })),
-    medicationSchedule: uniqueMedications.map((medication) => ({
+    medicationSchedule: asArray(medications).map((medication) => ({
       id: medication.medicationId,
       time: formatMedicationTime(medication.takeTime),
+      label: medication.name,
+      taken: Boolean(medication.taken),
+    })),
+  };
+}
+
+/** 어르신 본인의 복약 알림 화면에 필요한 오늘의 복약 목록입니다. */
+export async function loadMedicationPage() {
+  const medications = asArray(await medicationApi.list());
+
+  return {
+    medicationSchedule: medications.map((medication) => ({
+      id: medication.medicationId,
+      time: formatMedicationTime(medication.takeTime),
+      takeTime: medication.takeTime,
       label: medication.name,
       taken: Boolean(medication.taken),
     })),

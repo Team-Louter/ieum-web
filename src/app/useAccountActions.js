@@ -8,18 +8,10 @@ import {
   saveTokens,
   userApi,
 } from '../api/client';
-import {
-  clearDemoScope,
-  fileToDataUrl,
-  isDemoFallbackError,
-  readDemoValue,
-  writeDemoValue,
-} from '../api/demoStore';
 import { settingApiFields } from './constants';
 
 // 로그인, 가입, 프로필, 계정 설정처럼 계정과 관련된 동작을 모아둡니다.
 export default function useAccountActions({
-  demoScope,
   user,
   runAction,
   movePage,
@@ -38,11 +30,8 @@ export default function useAccountActions({
     movePage('/neighbor');
   }
 
-  async function signup({ loginId, nickname, email, password, address, role }) {
-    await authApi.signup({ loginId, nickname, email, password, address, role });
-
-    const savedAccount = readDemoValue('account', {}, loginId.trim());
-    writeDemoValue('account', { ...savedAccount, registrationEmail: email }, loginId.trim());
+  async function signup({ loginId, nickname, email, password, address, role, verificationToken }) {
+    await authApi.signup({ loginId, nickname, email, password, address, role, verificationToken });
 
     const tokens = await authApi.login(loginId, password);
     saveTokens(tokens);
@@ -58,6 +47,14 @@ export default function useAccountActions({
   // (/api/connections/request 는 어르신 이메일 검증 때문에 어르신 계정에서 400을 반환합니다.)
   async function connectGuardian(guardianEmail) {
     return runAction(() => familyApi.connect(guardianEmail), '보호자를 연결했습니다.');
+  }
+
+  // 보호자 계정은 POST /api/connections/request 로 어르신 이메일(seniorEmail)을 보내 연결을 요청합니다.
+  async function requestSenior(seniorEmail) {
+    return runAction(
+      () => connectionApi.requestSenior(seniorEmail),
+      '어르신에게 연결 요청을 보냈습니다.',
+    );
   }
 
   async function acceptFamilyConnection(connectionId) {
@@ -85,62 +82,17 @@ export default function useAccountActions({
 
   async function updateProfile(updatedProfile) {
     return runAction(async () => {
-      const previousProfile = readDemoValue('profile', {}, demoScope);
       const profileImage =
         updatedProfile.profileImage instanceof File ? updatedProfile.profileImage : null;
-      let serverProfile = null;
-
-      try {
-        const response = await profileApi.update(
-          {
-            nickname:
-              updatedProfile.nickname ??
-              updatedProfile.id ??
-              previousProfile.nickname ??
-              user.loginId,
-            bio: updatedProfile.bio ?? updatedProfile.introduction ?? previousProfile.bio ?? '',
-          },
-          profileImage,
-        );
-        // 수정 응답이 안내 문자열이면 프로필을 다시 읽어 서버에 저장된 이미지 경로를 받습니다.
-        serverProfile =
-          response && typeof response === 'object' ? response : await profileApi.get();
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-      }
-
-      const fallbackImage =
-        profileImage && !serverProfile?.profileImageUrl
-          ? await fileToDataUrl(profileImage)
-          : (previousProfile.profileImageUrl ?? previousProfile.profileImage ?? '');
-      const image = serverProfile?.profileImageUrl ?? fallbackImage;
-      const profile = {
-        ...previousProfile,
-        ...serverProfile,
-        nickname:
-          serverProfile?.nickname ??
-          updatedProfile.nickname ??
-          previousProfile.nickname ??
-          user.loginId,
-        bio:
-          serverProfile?.bio ??
-          updatedProfile.bio ??
-          updatedProfile.introduction ??
-          previousProfile.bio ??
-          '',
-        profileImageUrl: image,
-        id: updatedProfile.id ?? previousProfile.id,
-        introduction:
-          serverProfile?.bio ??
-          updatedProfile.introduction ??
-          updatedProfile.bio ??
-          previousProfile.introduction ??
-          '',
-        profileImage: image,
-      };
-
-      writeDemoValue('profile', profile, demoScope);
-      return profile;
+      const response = await profileApi.update(
+        {
+          nickname: updatedProfile.nickname ?? updatedProfile.id ?? user.loginId,
+          bio: updatedProfile.bio ?? updatedProfile.introduction ?? '',
+        },
+        profileImage,
+      );
+      // 수정 응답이 안내 문자열이면 프로필을 다시 읽어 서버에 저장된 값을 돌려줍니다.
+      return response && typeof response === 'object' ? response : profileApi.get();
     }, '프로필을 수정했습니다.');
   }
 
@@ -148,23 +100,15 @@ export default function useAccountActions({
     const apiField = settingApiFields[key];
 
     if (!apiField) {
-      const currentSettings = readDemoValue('settings', {}, demoScope);
-      writeDemoValue('settings', { ...currentSettings, [key]: value }, demoScope);
-      setFeedback('설정을 저장했습니다.');
-      setFeedbackIsError(false);
-      setReloadKey((current) => current + 1);
+      setFeedback('서버에서 아직 지원하지 않는 설정입니다.');
+      setFeedbackIsError(true);
       return;
     }
 
-    await runAction(async () => {
-      try {
-        await notificationApi.updateSettings({ [apiField]: value });
-      } catch (error) {
-        if (!isDemoFallbackError(error)) throw error;
-        const currentSettings = readDemoValue('settings', {}, demoScope);
-        writeDemoValue('settings', { ...currentSettings, [key]: value }, demoScope);
-      }
-    }, '알림 설정을 저장했습니다.');
+    await runAction(
+      () => notificationApi.updateSettings({ [apiField]: value }),
+      '알림 설정을 저장했습니다.',
+    );
   }
 
   async function sendRecoveryCode(email) {
@@ -178,8 +122,11 @@ export default function useAccountActions({
     return runAction(() => authApi.verifyEmailCode(email, code), '이메일 인증이 완료되었습니다.');
   }
 
-  async function resetPassword(email, newPassword) {
-    return runAction(() => authApi.resetPassword(email, newPassword), '비밀번호를 변경했습니다.');
+  async function resetPassword(email, newPassword, verificationToken) {
+    return runAction(
+      () => authApi.resetPassword(email, newPassword, verificationToken),
+      '비밀번호를 변경했습니다.',
+    );
   }
 
   function logout() {
@@ -190,18 +137,9 @@ export default function useAccountActions({
     movePage('/login');
   }
 
-  function saveLocalAccountField(field, value) {
-    const savedAccount = readDemoValue('account', {}, demoScope);
-    writeDemoValue('account', { ...savedAccount, [field]: value }, demoScope);
-    setFeedback('데모 계정 정보를 저장했습니다.');
-    setFeedbackIsError(false);
-    return value;
-  }
-
   async function deleteAccount() {
     try {
       await userApi.removeCurrent();
-      clearDemoScope(demoScope);
       clearTokens();
       setAccessToken(null);
       setFeedback('계정을 삭제했습니다.');
@@ -217,6 +155,7 @@ export default function useAccountActions({
     login,
     signup,
     connectGuardian,
+    requestSenior,
     acceptFamilyConnection,
     rejectFamilyConnection,
     disconnectFamily,
@@ -226,7 +165,6 @@ export default function useAccountActions({
     verifyRecoveryCode,
     resetPassword,
     logout,
-    saveLocalAccountField,
     deleteAccount,
   };
 }

@@ -7,7 +7,7 @@ async function loadMeetingSection(request) {
     return await request();
   } catch (error) {
     // 미가입자는 회원 목록과 공지를 볼 수 없어 서버가 403을 보냅니다.
-    if ([403, 404, 405, 501].includes(error?.status)) return [];
+    if ([403].includes(error?.status)) return [];
     throw error;
   }
 }

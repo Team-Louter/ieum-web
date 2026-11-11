@@ -12,6 +12,9 @@ function PostCard({
   onCommentToggle,
   onLikeToggle,
   onSubmitComment,
+  currentLoginId,
+  onUpdateComment,
+  onDeleteComment,
   isLoading = false,
   apiError = '',
 }) {
@@ -52,6 +55,9 @@ function PostCard({
           onToggle={onCommentToggle}
           comments={post.comments}
           onSubmitComment={onSubmitComment}
+          currentLoginId={currentLoginId}
+          onUpdateComment={onUpdateComment}
+          onDeleteComment={onDeleteComment}
           isLoading={isLoading}
           apiError={apiError}
         />

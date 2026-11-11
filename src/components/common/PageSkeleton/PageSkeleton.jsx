@@ -256,7 +256,7 @@ function renderVariant(variant) {
               <p>프로필 보기</p>
             </a>
           </div>
-          <Skeleton width="100%" height={522} style={{ borderRadius: 10 }} />
+          <Skeleton className="content-video" />
           <div className="content-info-icon-container">
             <LikeButton likeCount={0} />
             <CommentButton />

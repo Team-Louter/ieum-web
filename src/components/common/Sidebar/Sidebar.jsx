@@ -10,6 +10,8 @@ import addfriendIcon from '../../../assets/images/addfriend.svg';
 import mapfriendIcon from '../../../assets/images/mapfriend.svg';
 import chattingIcon from '../../../assets/images/chatting.svg';
 import guardianIcon from '../../../assets/images/guardian.svg';
+import medicationIcon from '../../../assets/images/medication.svg';
+import notificationIcon from '../../../assets/images/notification.svg';
 import settingIcon from '../../../assets/images/setting.svg';
 
 const sidebarMenuItems = [
@@ -20,17 +22,21 @@ const sidebarMenuItems = [
   { id: 'friend-location', href: '/friends/location', icon: mapfriendIcon, label: '친구 위치' },
   { id: 'chat', href: '/chatting', icon: chattingIcon, label: '채팅' },
   { id: 'guardian', href: '/guardian', icon: guardianIcon, label: '보호자 기능' },
+  { id: 'medication', href: '/medications', icon: medicationIcon, label: '복약 알림' },
+  { id: 'notifications', href: '/notifications', icon: notificationIcon, label: '알림' },
   { id: 'setting', href: '/settings', icon: settingIcon, label: '설정' },
 ];
 
-/** 현재 주소와 일치하는 메뉴의 식별자를 반환합니다. */
+/** 현재 주소와 일치하는 메뉴의 식별자를 반환합니다. 주소가 가장 길게 맞는 메뉴를 고릅니다. */
 function getActiveMenuId(currentPath) {
   return (
-    sidebarMenuItems.find(
-      (menuItem) =>
-        menuItem.href !== '#' &&
-        (currentPath === menuItem.href || currentPath.startsWith(`${menuItem.href}/`)),
-    )?.id ?? null
+    sidebarMenuItems
+      .filter(
+        (menuItem) =>
+          menuItem.href !== '#' &&
+          (currentPath === menuItem.href || currentPath.startsWith(`${menuItem.href}/`)),
+      )
+      .sort((first, second) => second.href.length - first.href.length)[0]?.id ?? null
   );
 }
 
@@ -46,7 +52,8 @@ function Sidebar({ role }) {
   const isExpanded = isHovered || hasKeyboardFocus;
   const isMyProfileActive = currentPath === '/myProfile' || currentPath.startsWith('/myProfile/');
   const visibleMenuItems = sidebarMenuItems.filter(
-    (menuItem) => menuItem.id !== 'guardian' || role === 'ROLE_GUARDIAN',
+    (menuItem) => (menuItem.id !== 'guardian' || role === 'ROLE_GUARDIAN') &&
+      (menuItem.id !== 'medication' || role === 'ROLE_SENIOR'),
   );
 
   /** 키보드 사용자가 사이드바를 벗어났는지 확인합니다. */

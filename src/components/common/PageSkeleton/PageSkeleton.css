@@ -12,6 +12,7 @@
 }
 
 .page-skeleton--feed {
+  align-items: center;
   gap: 60px;
   width: min(418px, 100%);
 }

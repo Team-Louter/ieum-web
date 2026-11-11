@@ -8,6 +8,7 @@ import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 function NeighborMyPostsPage({
   posts = [],
   onDeletePost,
+  onUpdatePost,
   onNavigate,
   isLoading = false,
   apiError = '',
@@ -31,7 +32,12 @@ function NeighborMyPostsPage({
       <div className={`my-content-grid${isEmpty ? ' empty-state-page--centered' : ''}`}>
         {postItems.length > 0 ? (
           postItems.map((post, index) => (
-            <MyPostCard key={post.id ?? index} post={post} onDelete={onDeletePost} />
+            <MyPostCard
+              key={post.id ?? index}
+              post={post}
+              onDelete={onDeletePost}
+              onUpdate={onUpdatePost}
+            />
           ))
         ) : isEmpty ? (
           <EmptyState

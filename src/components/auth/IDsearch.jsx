@@ -13,6 +13,7 @@ function isEmailFormatValid(emailValue) {
 function IDsearch({ type, onClose }) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
+    const [verificationToken, setVerificationToken] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [resultMessage, setResultMessage] = useState('');
@@ -46,10 +47,12 @@ function IDsearch({ type, onClose }) {
         }
         setIsSubmitting(true);
         try {
-            await authApi.verifyEmailCode(email, code.trim());
+            const verification = await authApi.verifyEmailCode(email, code.trim());
+            const token = verification?.verificationToken ?? '';
+            setVerificationToken(token);
             setErrorMessage('');
             if (type === 'id') {
-                setResultMessage(await authApi.findLoginId(email));
+                setResultMessage(await authApi.findLoginId(email, token));
                 setPhase('done');
             } else {
                 setPhase('reset');
@@ -69,7 +72,7 @@ function IDsearch({ type, onClose }) {
         }
         setIsSubmitting(true);
         try {
-            setResultMessage(await authApi.resetPassword(email, newPassword));
+            setResultMessage(await authApi.resetPassword(email, newPassword, verificationToken));
             setErrorMessage('');
             setPhase('done');
         } catch (error) {

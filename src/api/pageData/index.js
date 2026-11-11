@@ -1,13 +1,12 @@
-import { communityPostApi, notificationApi } from '../client';
+import { communityPostApi } from '../client';
 import { toCommunityPost } from '../adapters';
-import { asArray, loadApiOrDemo } from './common';
+import { asArray } from './common';
 import { loadChatPage } from './chat';
 import { loadAddFriendPage } from './friends';
-import { loadGuardianPage, loadSettingsPage } from './guardian';
+import { loadGuardianPage, loadMedicationPage, loadSettingsPage } from './guardian';
 import { loadMarketDetailPage, loadMarketListPage } from './market';
 import { loadMeetingDetailPage, loadMeetingListPage } from './meetings';
 import { loadMyProfilePage } from './profile';
-import { isDemoFallbackError, readDemoValue } from '../demoStore';
 
 // 화면 경로에 맞는 데이터 함수를 찾아 실행합니다.
 export default async function loadPageData({
@@ -16,41 +15,31 @@ export default async function loadPageData({
   role,
   loginId,
   userId,
-  demoScope,
   onDefaultChatRoom,
 }) {
   if (path === '/guardian') {
     if (role !== 'ROLE_GUARDIAN') {
       throw new Error('보호자 계정으로 로그인해야 대시보드를 볼 수 있습니다.');
     }
-    return loadGuardianPage({ demoScope });
+    return loadGuardianPage();
   }
 
-  if (path === '/settings') return loadSettingsPage({ role, demoScope });
+  if (path === '/settings') return loadSettingsPage({ role });
+  if (path === '/medications') return loadMedicationPage();
 
   if (path === '/neighbor' || path === '/neighbor/my') {
-    let posts;
-    try {
-      const response = await communityPostApi.list({ mine: path === '/neighbor/my' });
-      const apiPosts = Array.isArray(response)
-        ? response
-        : (response?.posts ?? response?.content ?? []);
-      posts = asArray(apiPosts).map(toCommunityPost);
-    } catch (requestError) {
-      if (!isDemoFallbackError(requestError)) throw requestError;
-      const localPosts = asArray(readDemoValue('neighbor.posts', [], demoScope));
-      posts =
-        path === '/neighbor/my'
-          ? localPosts.filter((post) => post.owner === loginId || post.author?.id === loginId)
-          : localPosts;
-    }
+    const response = await communityPostApi.list({ mine: path === '/neighbor/my' });
+    const apiPosts = Array.isArray(response)
+      ? response
+      : (response?.posts ?? response?.content ?? []);
+    const posts = asArray(apiPosts).map(toCommunityPost);
     return {
       posts,
     };
   }
 
   if (path.startsWith('/myProfile')) {
-    return loadMyProfilePage({ path, demoScope, loginId, userId });
+    return loadMyProfilePage({ path, loginId, userId });
   }
 
   if (path === '/meeting' || path === '/meeting/my') {
@@ -69,26 +58,16 @@ export default async function loadPageData({
   }
 
   if (path === '/market' || path === '/market/my') {
-    return loadMarketListPage({ path, demoScope, loginId, userId });
+    return loadMarketListPage({ path, loginId, userId });
   }
 
   if (path === '/market/feedin' && selectedId) {
-    return loadMarketDetailPage({ selectedId, demoScope });
+    return loadMarketDetailPage({ selectedId });
   }
 
-  if (path === '/addfriend') return loadAddFriendPage({ demoScope });
+  if (path === '/addfriend') return loadAddFriendPage();
 
-  if (path === '/chatting') return loadChatPage({ demoScope, userId, onDefaultChatRoom });
-
-  if (path === '/notifications') {
-    const notifications = await loadApiOrDemo(
-      () => notificationApi.list(),
-      'notifications',
-      [],
-      demoScope,
-    );
-    return { notifications: asArray(notifications) };
-  }
+  if (path === '/chatting') return loadChatPage({ userId, onDefaultChatRoom });
 
   return {};
 }

@@ -5,7 +5,6 @@ import GuardianLocationStatus from '../../components/guardian/GuardianLocationSt
 import GuardianMedicationList from '../../components/guardian/GuardianMedicationList';
 import GuardianStatusBanner from '../../components/guardian/GuardianStatusBanner';
 import useCurrentLocation from '../../hooks/useCurrentLocation';
-import { dummyGuardian, dummyGuardianMedications } from '../../constants/dummy/dummyGuardianData';
 import mapIcon from '../../assets/images/mapfriend.svg';
 import './GuardianPage.css';
 
@@ -51,8 +50,8 @@ function findAddressCoordinates(address) {
  * 현재 기기 위치는 브라우저 위치 권한을 사용합니다.
  */
 function GuardianPage({
-  guardian = dummyGuardian,
-  medications = dummyGuardianMedications,
+  guardian = {},
+  medications = [],
   elders = [],
   onLocationRefresh,
   isLoading = false,
@@ -65,15 +64,14 @@ function GuardianPage({
     elders.find((elder) => String(elder.id) === selectedElderId) ?? elders[0] ?? null;
   const guardianSource = selectedElder ?? guardian ?? {};
   const guardianData = {
-    ...dummyGuardian,
     ...guardianSource,
     elderName:
-      guardianSource.elderName?.trim() || guardianSource.loginId?.trim() || dummyGuardian.elderName,
+      guardianSource.elderName?.trim() || guardianSource.loginId?.trim() || '어르신',
     homeAddress: guardianSource.homeAddress?.trim() || '',
     homeCoordinates: guardianSource.homeCoordinates ?? null,
-    homeRadiusMeters: guardianSource.homeRadiusMeters ?? dummyGuardian.homeRadiusMeters,
-    lastLoginText: guardianSource.lastLoginText?.trim() || dummyGuardian.lastLoginText,
-    statusMessage: guardianSource.statusMessage?.trim() || dummyGuardian.statusMessage,
+    homeRadiusMeters: guardianSource.homeRadiusMeters ?? 100,
+    lastLoginText: guardianSource.lastLoginText?.trim() || '',
+    statusMessage: guardianSource.statusMessage?.trim() || '',
   };
   const selectedMedications = selectedElder ? selectedElder.medications : medications;
   const medicationItems = Array.isArray(selectedMedications) ? selectedMedications : [];

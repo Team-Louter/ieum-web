@@ -10,6 +10,9 @@ function NeighborFeedPage({
   posts = [],
   onLike,
   onSubmitComment,
+  onUpdateComment,
+  onDeleteComment,
+  currentLoginId,
   onNavigate,
   isLoading = false,
   apiError = '',
@@ -49,6 +52,9 @@ function NeighborFeedPage({
                 onCommentToggle={() => handleCommentToggle(postId)}
                 onLikeToggle={(nextIsLiked) => onLike?.(post, nextIsLiked)}
                 onSubmitComment={(comment) => onSubmitComment?.(post, comment)}
+                currentLoginId={currentLoginId}
+                onUpdateComment={(comment, content) => onUpdateComment?.(post, comment, content)}
+                onDeleteComment={(comment) => onDeleteComment?.(post, comment)}
                 isLoading={isLoading}
                 apiError={apiError}
               />

@@ -45,3 +45,68 @@
   justify-content: center;
   align-items: center;
 }
+
+.my-content > .my-content__edit {
+  margin-right: 8px;
+  background: #fff;
+  color: #42b66b;
+}
+
+.my-content-edit {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(0 0 0 / 40%);
+}
+
+.my-content-edit__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(480px, calc(100vw - 32px));
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #111;
+  cursor: default;
+}
+
+.my-content-edit__panel input,
+.my-content-edit__panel textarea {
+  padding: 10px 12px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: var(--font-size-body);
+}
+
+.my-content-edit__panel p {
+  color: #c93434;
+}
+
+.my-content-edit__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.my-content-edit__actions button {
+  width: auto;
+  height: auto;
+  padding: 10px 18px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.my-content-edit__actions button[type='submit'] {
+  border-color: #42b66b;
+  background: #42b66b;
+  color: #fff;
+}

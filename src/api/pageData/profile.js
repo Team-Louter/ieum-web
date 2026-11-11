@@ -1,7 +1,6 @@
 import { communityPostApi, friendApi, meetingApi, profileApi, resolveApiAssetUrl } from '../client';
 import { toCommunityPost, toMeetingCard } from '../adapters';
-import { isDemoFallbackError, readDemoValue } from '../demoStore';
-import { asArray, isOwnedBy, loadApiOrDemo } from './common';
+import { asArray } from './common';
 
 function toProfile(profile, friendCount, loginId, postCount = 0) {
   return {
@@ -15,47 +14,26 @@ function toProfile(profile, friendCount, loginId, postCount = 0) {
   };
 }
 
-export async function loadMyProfilePage({ path, demoScope, loginId, userId }) {
-  const profileRequest = loadApiOrDemo(
-    () => profileApi.get(),
-    'profile',
-    { nickname: loginId, bio: '' },
-    demoScope,
-  );
-  const friendRequest = loadApiOrDemo(() => friendApi.list(), 'friends', [], demoScope);
-  const postsRequest = communityPostApi.list({ mine: true }).catch((error) => {
-    if (!isDemoFallbackError(error)) throw error;
-    return null;
-  });
-
-  const [profile, friends, postsResponse] = await Promise.all([profileRequest, friendRequest, postsRequest]);
+export async function loadMyProfilePage({ path, loginId, userId }) {
+  const [profile, friends, postsResponse] = await Promise.all([
+    profileApi.get(),
+    friendApi.list(),
+    communityPostApi.list({ mine: true }),
+  ]);
   const friendItems = asArray(friends).map((friend) => ({
     ...friend,
     id: friend.userId,
     name: friend.nickname,
   }));
-  const savedProfile = readDemoValue('profile', {}, demoScope);
-  const ownPosts = postsResponse
-    ? asArray(
-        Array.isArray(postsResponse)
-          ? postsResponse
-          : (postsResponse.posts ?? postsResponse.content),
-      ).map(toCommunityPost)
-    : asArray(readDemoValue('neighbor.posts', [], demoScope))
-        .filter((post) => isOwnedBy(loginId, post))
-        .map(toCommunityPost);
-  const totalPostCount = postsResponse
-    ? Number(postsResponse.totalCount ?? ownPosts.length)
-    : ownPosts.length;
+  const ownPosts = asArray(
+    Array.isArray(postsResponse) ? postsResponse : (postsResponse.posts ?? postsResponse.content),
+  ).map(toCommunityPost);
+  const totalPostCount = Number(postsResponse?.totalCount ?? ownPosts.length);
 
   const result = {
     profile: {
       ...toProfile(profile, friendItems.length, loginId, totalPostCount),
-      ...savedProfile,
-      id: loginId || savedProfile.loginId || savedProfile.id || '',
-      nickname: profile.nickname ?? savedProfile.nickname ?? '',
       userId: profile.userId ?? userId ?? null,
-      friendCount: friendItems.length,
     },
     friends: friendItems,
     posts: ownPosts,

@@ -27,6 +27,7 @@ function SettingsPage({
   settings: settingsFromProps,
   onSettingChange,
   onFamilyConnect,
+  onRequestSenior,
   onFamilyAccept,
   onFamilyReject,
   onFamilyDisconnect,
@@ -34,8 +35,6 @@ function SettingsPage({
   role,
   currentLoginId,
   accountEmail,
-  signupEmail,
-  onLocalAccountChange,
   onLogout,
   onAccountDelete,
   onSendRecoveryCode,
@@ -65,7 +64,6 @@ function SettingsPage({
       <SettingAccountPage
         currentLoginId={currentLoginId}
         accountEmail={accountEmail}
-        onLocalAccountChange={onLocalAccountChange}
         onSendRecoveryCode={onSendRecoveryCode}
         onVerifyRecoveryCode={onVerifyRecoveryCode}
         onResetPassword={onResetPassword}
@@ -89,6 +87,7 @@ function SettingsPage({
           guardians={guardians}
           pendingConnections={pendingConnections}
           onConnect={onFamilyConnect}
+          onRequestSenior={onRequestSenior}
           onAccept={onFamilyAccept}
           onReject={onFamilyReject}
           onDisconnect={onFamilyDisconnect}
@@ -99,8 +98,6 @@ function SettingsPage({
     support: (
       <SettingSupportPage
         accountEmail={accountEmail}
-        signupEmail={signupEmail}
-        currentLoginId={currentLoginId}
       />
     ),
   };
