@@ -35,7 +35,7 @@ function getActiveMenuId(currentPath) {
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
-function Sidebar({ role }) {
+function Sidebar({ role, profileImage }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const location = useLocation();
@@ -76,7 +76,15 @@ function Sidebar({ role }) {
         aria-label={loginId ? `내 프로필: ${loginId}` : '내 프로필'}
         title={profileLabel}
       >
-        <img className="sidebar__icon" src={profileImg} alt="" />
+        <img
+          className="sidebar__icon"
+          src={profileImage || profileImg}
+          alt=""
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = profileImg;
+          }}
+        />
         <span className="sidebar__label">{profileLabel}</span>
       </Link>
 

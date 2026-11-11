@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'rea
 import Sidebar from './components/common/Sidebar/Sidebar';
 import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkeleton/PageSkeleton';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
-import { userApi } from './api/client';
+import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
 import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
@@ -38,6 +38,7 @@ function AppContent({ accessToken, setAccessToken }) {
   const [feedback, setFeedbackState] = useState('');
   const [feedbackVersion, setFeedbackVersion] = useState(0);
   const [feedbackIsError, setFeedbackIsError] = useState(false);
+  const [sidebarProfile, setSidebarProfile] = useState({ loginId: '', image: '' });
 
   const setFeedback = useCallback((message) => {
     setFeedbackState(message);
@@ -97,6 +98,24 @@ function AppContent({ accessToken, setAccessToken }) {
   });
 
   const demoScope = user.loginId || (user.userId ? String(user.userId) : 'guest');
+
+  useEffect(() => {
+    if (!accessToken) return undefined;
+
+    let isActive = true;
+    profileApi.get().then((profile) => {
+      if (isActive) {
+        setSidebarProfile({
+          loginId: user.loginId,
+          image: resolveApiAssetUrl(profile?.profileImageUrl ?? ''),
+        });
+      }
+    }).catch(() => {
+      // 프로필을 불러오지 못하면 기본 사진을 보여줍니다.
+    });
+
+    return () => { isActive = false; };
+  }, [accessToken, reloadKey, user.loginId]);
 
   function movePage(pageName, options) {
     window.scrollTo(0, 0);
@@ -309,7 +328,12 @@ function AppContent({ accessToken, setAccessToken }) {
 
   return (
     <>
-      {!publicRoutes.includes(routeKey) && <Sidebar role={user.role} />}
+      {!publicRoutes.includes(routeKey) && (
+        <Sidebar
+          role={user.role}
+          profileImage={sidebarProfile.loginId === user.loginId ? sidebarProfile.image : ''}
+        />
+      )}
       {skeletonVariant ? <PageSkeleton variant={skeletonVariant} /> : <Page {...commonProps} />}
       {feedback && (
         <FeedbackMessage
