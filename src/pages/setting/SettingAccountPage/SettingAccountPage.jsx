@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Button from '../../../components/common/Button/Button';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import ConfirmationModal from '../../../components/common/ConfirmationModal/ConfirmationModal';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
@@ -255,13 +256,15 @@ function SettingAccountPage({
             )}
             {verified && (
               <div className="setting-dialog__actions">
-                <button
+                <Button
                   className="setting-dialog__button setting-dialog__button--primary"
                   type="submit"
                   disabled={busy || !newPassword}
+                  loading={busy}
+                  loadingText="변경 중…"
                 >
-                  {busy ? '변경 중…' : '비밀번호 변경'}
-                </button>
+                  비밀번호 변경
+                </Button>
               </div>
             )}
           </form>

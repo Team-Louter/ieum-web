@@ -1,6 +1,7 @@
 .meeting-make-option-container {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
 
   width: min(69.44vw, 1000px);
   height: auto;
@@ -8,6 +9,8 @@
 
 .meeting-make-option-text-container {
   display: flex;
+  flex: 1;
+  min-width: 0;
   flex-direction: column;
   justify-content: space-between;
   font-size: var(--font-size-body);
@@ -21,51 +24,44 @@
   font-weight: 300;
 }
 
-/* ===============
-스위치 스타일 바꾸는겅ㅇㅇㅇㅇ
-=============== */
-
-.toggle-switch {
+.meeting-option-switch {
+  --switch-width: 60px;
+  --switch-height: 30px;
   position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 30px;
+  display: block;
+  flex: 0 0 var(--switch-width);
+  width: var(--switch-width);
+  min-width: var(--switch-width);
+  max-width: var(--switch-width);
+  height: var(--switch-height);
+  min-height: var(--switch-height);
+  max-height: var(--switch-height);
+  align-self: center;
 }
 
-.toggle-switch input {
+.meeting-option-switch input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
   opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #e0e0e0;
-  border-radius: 30px;
-  transition: 0.3s;
 }
 
-.slider::before {
-  content: '';
+.meeting-option-switch__track {
   position: absolute;
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.3s;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: var(--switch-height);
 }
 
-.toggle-switch input:checked + .slider {
-  background-color: #21b35e;
-}
-
-.toggle-switch input:checked + .slider::before {
-  transform: translateX(30px);
+.meeting-option-switch input:focus-visible + .meeting-option-switch__track {
+  outline: 2px solid #157a40;
+  outline-offset: -2px;
 }

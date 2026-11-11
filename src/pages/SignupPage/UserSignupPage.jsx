@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './SignupPage.css';
+import Button from '../../components/common/Button/Button';
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import FieldWithButton from '../../components/auth/FieldWithButton';
 import PasswordField from '../../components/auth/PasswordField';
@@ -131,7 +132,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
                     <FieldWithButton id="user-address" label="주소" value={address} onChange={(event) => setAddress(event.target.value)} buttonText="주소검색" onButtonClick={searchAddress} />
                 </div>
                 {message && <p className={messageIsError ? 'input-error-msg' : 'input-success-msg'} role={messageIsError ? 'alert' : 'status'}>{message}</p>}
-                <button type="submit" className="signup-submit" disabled={isSubmitting}>{isSubmitting ? '계정 생성 중…' : '계정 만들기'}</button>
+                <Button type="submit" className="signup-submit" loading={isSubmitting} loadingText="계정 생성 중…">계정 만들기</Button>
             </form>
             <button type="button" className="back-to-login" onClick={() => onNavigate('/login')}>로그인으로 돌아가기</button>
         </main>

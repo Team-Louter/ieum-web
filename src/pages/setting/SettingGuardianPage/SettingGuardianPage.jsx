@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import Button from '../../../components/common/Button/Button';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingGuardianList from '../../../components/setting/SettingGuardianList/SettingGuardianList';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
@@ -265,13 +266,15 @@ function SettingGuardianPage({
                 </p>
               )}
               <div className="setting-dialog__actions setting-guardian-manager__actions">
-                <button
+                <Button
                   className="setting-dialog__button setting-dialog__button--primary"
                   type="submit"
                   disabled={isBusy || !accountIdentifier.trim()}
+                  loading={isBusy}
+                  loadingText="요청 중…"
                 >
-                  {isBusy ? '요청 중…' : '보호자 연결 요청'}
-                </button>
+                  보호자 연결 요청
+                </Button>
                 <button
                   className="setting-dialog__button"
                   type="button"

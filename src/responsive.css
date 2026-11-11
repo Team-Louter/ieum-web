@@ -97,8 +97,64 @@ video {
 
 /* 모바일에서는 vw 비례가 너무 작아지므로 화면 폭에 맞춰 채웁니다. */
 @media (max-width: 768px) {
+  .meeting-list:not(.meeting-list--empty),
+  .meeting-my-list:not(.meeting-my-list--empty),
+  .page-skeleton--meetingList {
+    width: calc(100% - 16px);
+    gap: clamp(8px, 2vw, 14px);
+  }
+
+  .meeting-card {
+    --meeting-card-image-size: clamp(88px, 25vw, 144px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: clamp(10px, 2.5vw, 18px);
+    padding: clamp(8px, 2vw, 12px) 6px;
+    font-size: clamp(16px, 4.5vw, 22px);
+  }
+
+  .meeting-card > .meeting-card-img {
+    flex: 0 0 var(--meeting-card-image-size);
+    width: var(--meeting-card-image-size);
+    height: var(--meeting-card-image-size);
+    max-width: var(--meeting-card-image-size);
+    max-height: var(--meeting-card-image-size);
+    margin-right: 0;
+    object-fit: cover;
+  }
+
+  .meeting-card .meeting-card-info {
+    flex: 1;
+    min-width: 0;
+    gap: clamp(4px, 1.5vw, 8px);
+  }
+
+  .meeting-card .meeting-card-info > .skeleton {
+    max-width: 100%;
+    max-height: 1.2em;
+  }
+
+  .meeting-card .meeting-card-info-title,
+  .meeting-card .meeting-card-info-desc {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .meeting-card .meeting-card-info-desc {
+    -webkit-line-clamp: 2;
+    font-size: clamp(13px, 3.6vw, 16px);
+  }
+
+  .meeting-card .meeting-card-info-meta {
+    font-size: clamp(12px, 3.3vw, 15px);
+    overflow-wrap: anywhere;
+  }
+
   #feed-in-container,
-  .meeting-card,
   .input-container,
   .meeting-make-option-container,
   .Announcement-header,
@@ -287,6 +343,19 @@ video {
 
 /* 폼 화면: 사진과 입력칸을 위아래로 쌓습니다. */
 @media (max-width: 768px) {
+  .meeting-make-option-text-container {
+    flex: 0 1 calc(100% - 76px);
+    width: calc(100% - 76px);
+    max-width: calc(100% - 76px);
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .meeting-make-option-title,
+  .meeting-make-option-desc {
+    overflow-wrap: anywhere;
+  }
+
   .meeting-make-layout,
   .meeting-management,
   .meeting-management-form {

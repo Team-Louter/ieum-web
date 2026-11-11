@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './CommentModal.css';
 import closeImg from '../../../assets/images/close.svg';
+import Button from '../../common/Button/Button';
 
 /** 댓글 목록과 댓글 입력 영역을 표시하는 모달입니다. */
 function CommentModal({ children, onClose, onSubmit }) {
@@ -45,9 +46,9 @@ function CommentModal({ children, onClose, onSubmit }) {
             placeholder="댓글 입력하기"
             className="comment-modal__input"
           />
-          <button type="submit" className="comment-modal__submit">
+          <Button type="submit" className="comment-modal__submit">
             올리기
-          </button>
+          </Button>
         </form>
       </div>
     </section>

@@ -7,6 +7,7 @@ import './MeetingMyPage.css';
 import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
+import Button from '../../../components/common/Button/Button';
 
 const ACTIVE_MEMBERSHIP_STATUSES = ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'];
 const PENDING_MEMBERSHIP_STATUSES = [
@@ -187,18 +188,15 @@ export default function MeetingMyPage({
           </div>
           <div className="meeting-my-card__actions">
             {canJoin && (
-              <button
+              <Button
                 className="meeting-my-card__join"
                 type="button"
                 onClick={joinMeeting}
-                disabled={isJoining}
+                loading={isJoining}
+                loadingText="처리 중입니다"
               >
-                {isJoining
-                  ? '처리 중입니다'
-                  : meeting.approvalRequired
-                    ? '가입 신청하기'
-                    : '모임 가입하기'}
-              </button>
+                {meeting.approvalRequired ? '가입 신청하기' : '모임 가입하기'}
+              </Button>
             )}
             {isPending && (
               <span className="meeting-my-card__pending" role="status">
