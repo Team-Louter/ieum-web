@@ -1,9 +1,9 @@
 .member-header {
   display: flex;
-  width: 700px;
+  width: min(48.61vw, 700px);
   justify-content: space-between;
   align-items: center;
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
 }
 
 .member-title {
@@ -14,7 +14,7 @@
   border: 0;
   padding: 0;
   background: transparent;
-  font-size: 0.8em;
+  font-size: var(--font-size-small);
   color: #6f6f6f;
   cursor: pointer;
 }

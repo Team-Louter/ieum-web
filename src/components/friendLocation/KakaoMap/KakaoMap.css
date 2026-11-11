@@ -11,7 +11,10 @@
     linear-gradient(25deg, transparent 48%, #dfe3df 49%, #dfe3df 51%, transparent 52%),
     linear-gradient(-18deg, transparent 47%, #fff 48%, #fff 53%, transparent 54%),
     linear-gradient(90deg, transparent 48%, #e0e4e0 49%, #e0e4e0 51%, transparent 52%);
-  background-size: 210px 150px, 270px 190px, 180px 180px;
+  background-size:
+    210px 150px,
+    270px 190px,
+    180px 180px;
 }
 
 .kakao-map--fallback > p {
@@ -22,7 +25,7 @@
   border-radius: 8px;
   background: #ffffffdd;
   color: #555;
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 .kakao-map__fallback-ping {

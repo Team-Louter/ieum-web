@@ -1,0 +1,57 @@
+.app-api-notice {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(520px, calc(100vw - 40px));
+  padding: 12px 16px;
+  border: 1px solid #d6eadc;
+  border-radius: 10px;
+  background: #f0fbf3;
+  color: #245d38;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 10%);
+  font-size: var(--font-size-small);
+}
+
+.app-api-notice--error {
+  border-color: #f0caca;
+  background: #fff5f5;
+  color: #a52a2a;
+}
+
+.app-api-notice button {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.app-api-notice__retry {
+  text-decoration: underline;
+}
+
+.app-api-notice__message {
+  min-width: 0;
+}
+
+.app-api-notice__close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  margin: -4px -6px -4px 0;
+  border-radius: 50%;
+  font-size: 22px !important;
+  line-height: 1;
+  text-decoration: none !important;
+}
+
+textarea {
+  resize: none;
+}

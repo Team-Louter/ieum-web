@@ -8,22 +8,65 @@
   border: 1px #eee solid;
 }
 
-
-
-
 .meeting-my-card {
   display: flex;
   justify-content: space-between;
-  width: 700px;
+  width: min(48.61vw, 700px);
 
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   border-radius: 15px;
   padding: 15px;
 }
 
-.meeting-my-contents {
+.meeting-my-card__actions {
   display: flex;
-
+  align-items: flex-start;
+  gap: 10px;
 }
 
+.meeting-my-card__join {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #42b66b;
+  color: #fff;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
 
+.meeting-my-card__join:hover,
+.meeting-my-card__join:focus-visible {
+  background: #369b59;
+  outline: none;
+}
+
+.meeting-my-card__pending {
+  padding: 8px 12px;
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+.meeting-my-contents {
+  display: flex;
+}
+
+.meeting-my-card .meeting-card-info {
+  justify-content: center;
+  gap: 6px;
+}
+
+.meeting-my-card .meeting-card-info > p {
+  margin: 0;
+}
+
+.meeting-my-role {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e8f7ed;
+  color: #319b59;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}

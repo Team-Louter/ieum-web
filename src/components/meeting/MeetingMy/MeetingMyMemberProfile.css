@@ -1,5 +1,3 @@
-
-
 .member-profile-item {
   position: relative;
   width: 220px;
@@ -8,16 +6,33 @@
 .member-profile {
   display: flex;
   align-items: center;
-  padding: 0;
+  padding: 16px 20px;
   border: 0;
+  border-radius: 10px;
   background: transparent;
-  width: 220px;
-  font-size: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: var(--font-size-body);
   cursor: pointer;
   text-align: left;
+  transition: background-color 160ms ease;
 }
 
-.member-profile > img{
+.member-profile:hover,
+.member-profile:focus-visible {
+  background-color: #f0f0f0;
+}
+
+.member-profile:focus-visible {
+  outline: 2px solid #42b66b;
+  outline-offset: 2px;
+}
+
+.member-profile-static {
+  cursor: default;
+}
+
+.member-profile > img {
   width: 50px;
   margin-right: 10px;
 }
@@ -44,7 +59,7 @@
   border-radius: 10px;
   background: transparent;
   color: #e22a2a;
-  font-size: 18px;
+  font-size: var(--font-size-small);
   text-align: left;
   cursor: pointer;
 }
@@ -57,4 +72,9 @@
 .member-action-menu button:focus-visible {
   background-color: #f0f0f0;
   outline: none;
+}
+
+.member-action-menu button.member-action-menu__danger,
+.member-action-menu button.member-action-menu__danger:first-child {
+  color: #e22a2a;
 }

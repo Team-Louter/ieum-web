@@ -7,7 +7,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 18px 20px;
-  width: 700px;
+  width: min(48.61vw, 700px);
+}
+
+.member-list__empty {
+  width: 100%;
 }
 
 .member-pagination {
@@ -26,7 +30,7 @@
   background: transparent;
   color: #555;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 .member-pagination-button.is-active {
@@ -41,6 +45,5 @@
 
 .member-pagination-arrow {
   color: #888;
-  font-size: 18px;
+  font-size: var(--font-size-small);
 }
-

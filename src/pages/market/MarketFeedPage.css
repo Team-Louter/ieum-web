@@ -2,4 +2,50 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 30px;
+  scroll-margin-top: 110px;
+}
+
+.market-feed-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+  font-size: var(--font-size-small, 18px);
+}
+
+.market-feed-pagination button {
+  min-width: 32px;
+  height: 36px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.market-feed-pagination button.is-current {
+  color: #42b66b;
+  font-weight: 700;
+}
+
+.market-feed-pagination button:not(:disabled):hover {
+  color: #319b57;
+}
+
+.market-feed-pagination button:focus-visible {
+  outline: 2px solid #8ad5a4;
+  outline-offset: 2px;
+}
+
+.market-feed-pagination button:disabled {
+  color: #bbb;
+  cursor: default;
+}
+
+.market-feed-pagination__gap {
+  color: #888;
+  user-select: none;
 }

@@ -1,5 +1,5 @@
 #feed-in-container {
-  width: 900px;
+  width: min(62.5vw, 900px);
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -14,7 +14,7 @@
   height: 35px;
   background-color: transparent;
   border: none;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   color: #555;
 }
 
@@ -28,7 +28,7 @@
 }
 
 #feed-info > img {
-  width: 400px;
+  width: min(27.78vw, 400px);
   height: 400px;
 }
 
@@ -44,18 +44,24 @@
   gap: 10px;
 }
 
-#feed-info > div > div > p:nth-child(1) {
-  font-size: 25px;
+#feed-info .market-feed-info__title {
+  font-size: var(--font-size-subtitle);
   font-weight: 500;
 }
 
-#feed-info > div > div > p:nth-child(2) {
-  font-size: 25px;
+#feed-info .market-feed-info__price {
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
 }
 
-#feed-info > div > div > p:nth-child(3) {
-  font-size: 20px;
+#feed-info .market-feed-info__content {
+  font-size: var(--font-size-body);
+}
+
+.market-feed-info__status {
+  color: #616161;
+  font-size: var(--font-size-body);
+  font-weight: bold;
 }
 
 #feed-info > div > button {
@@ -65,11 +71,11 @@
   color: #bbffbf;
   border-radius: 10px;
   border: none;
-  width: 400px;
+  width: min(27.78vw, 400px);
   height: 50px;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -97,11 +103,11 @@
 }
 
 #user-info > div > p:nth-child(1) {
-  font-size: 25px;
+  font-size: var(--font-size-subtitle);
   font-weight: bold;
 }
 
 #user-info > div > p:nth-child(2) {
-  font-size: 20px;
+  font-size: var(--font-size-body);
   color: #555;
 }

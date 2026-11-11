@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 46px;
-  width: min(916px, calc(100vw - 110px));
+  width: min(916px, calc(100vw - var(--content-offset, 70px) - 40px));
 }
 
 #default-layout.profile-layout main {
-  width: calc(100vw - 70px);
-  margin-left: 70px;
+  width: calc(100vw - var(--content-offset, 70px));
+  margin-left: var(--content-offset, 70px);
   padding: 86px 0 50px;
 }
 
@@ -15,7 +15,33 @@
   margin-top: 18px;
 }
 
+#profile-box.profile-box--empty {
+  min-height: calc(100dvh - 136px);
+}
+
 #content-container {
   display: flex;
   gap: 30px;
+}
+
+.public-profile-meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: min(700px, 100%);
+  margin: 0 auto;
+}
+
+.public-profile-meeting-list .meeting-card {
+  max-width: 100%;
+}
+
+.public-profile-meeting-list--empty {
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  min-height: 0;
 }

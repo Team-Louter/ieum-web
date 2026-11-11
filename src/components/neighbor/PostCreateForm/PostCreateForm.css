@@ -19,7 +19,7 @@
   align-items: center;
   flex-direction: column;
   gap: 23px;
-  width: 404px;
+  width: min(28.06vw, 404px);
   height: 568px;
   border-radius: 10px;
   border: 2px solid #dfdfdf;
@@ -35,7 +35,7 @@
 }
 
 .neighbor-post-create-form__media-label > p {
-  font-size: 20px;
+  font-size: var(--font-size-body);
   color: #6f6f6f;
 }
 
@@ -68,16 +68,16 @@
 
 .neighbor-post-create-form__text-fields > input {
   padding: 0 20px;
-  width: 550px;
+  width: min(38.19vw, 550px);
   height: 60px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: 2px solid #dfdfdf;
 }
 
 .neighbor-post-create-form__text-fields > div {
   position: relative;
-  width: 550px;
+  width: min(38.19vw, 550px);
 }
 
 .neighbor-post-create-form__text-fields > div > input,
@@ -86,19 +86,19 @@
 }
 
 .neighbor-post-create-form__text-fields > div > input {
-  width: 550px;
+  width: min(38.19vw, 550px);
   height: 60px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: 2px solid #dfdfdf;
   padding: 20px;
 }
 
 .neighbor-post-create-form__text-fields > div > textarea {
-  width: 550px;
+  width: min(38.19vw, 550px);
   height: 471px;
   resize: none;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: 2px solid #dfdfdf;
   padding: 20px;
@@ -109,20 +109,20 @@
   top: 100%;
   left: 0;
   color: #c62424;
-  font-size: 16px;
+  font-size: var(--font-size-small);
   line-height: 19px;
   margin-top: 6px;
   white-space: nowrap;
 }
 
 .neighbor-post-create-form__submit {
-  width: 1004px;
+  width: min(69.72vw, 1004px);
   height: 50px;
   background: #42b66b;
   color: #bbffbf;
   border: none;
   border-radius: 10px;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   font-weight: bold;
   transition: all 0.2s ease;
   cursor: pointer;

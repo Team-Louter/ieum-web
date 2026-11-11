@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './CommentModal.css';
 import closeImg from '../../../assets/images/close.svg';
+import Button from '../../common/Button/Button';
 
 /** 댓글 목록과 댓글 입력 영역을 표시하는 모달입니다. */
-function CommentModal({ children, onClose }) {
+function CommentModal({ children, onClose, onSubmit }) {
+  const [comment, setComment] = useState('');
   useEffect(() => {
     /** Escape 키 입력 시 댓글 모달을 닫습니다. */
     function handleKeyDown(event) {
@@ -16,18 +18,37 @@ function CommentModal({ children, onClose }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    const trimmedComment = comment.trim();
+    if (!trimmedComment) return;
+    onSubmit?.(trimmedComment);
+    setComment('');
+  }
+
   return (
     <section className="comment-modal" aria-label="댓글">
       <div className="comment-modal__panel">
-        <button type="button" onClick={onClose} className="comment-modal__close" aria-label="댓글 창 닫기">
+        <button
+          type="button"
+          onClick={onClose}
+          className="comment-modal__close"
+          aria-label="댓글 창 닫기"
+        >
           <img src={closeImg} alt="닫기 아이콘" />
         </button>
         <div className="comment-modal__list">{children}</div>
-        <form className="comment-modal__form">
-          <input type="text" placeholder="댓글 입력하기" className="comment-modal__input" />
-          <button type="button" className="comment-modal__submit">
+        <form className="comment-modal__form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={comment}
+            onChange={(event) => setComment(event.target.value)}
+            placeholder="댓글 입력하기"
+            className="comment-modal__input"
+          />
+          <Button type="submit" className="comment-modal__submit">
             올리기
-          </button>
+          </Button>
         </form>
       </div>
     </section>

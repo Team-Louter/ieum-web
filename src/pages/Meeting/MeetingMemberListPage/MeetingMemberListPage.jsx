@@ -3,8 +3,15 @@ import MemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberLis
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 
-
-export default function MeetingMemberListPage() {
+export default function MeetingMemberListPage({
+  members = [],
+  meeting,
+  membership,
+  currentUserId,
+  onMemberAction,
+  isLoading = false,
+  apiError = '',
+}) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
@@ -16,8 +23,17 @@ export default function MeetingMemberListPage() {
     <Layout>
       <PageTabNavigation ariaLabel="모임 메뉴" isFixed items={menuItems} />
       <div>
-        <MemberList/>
+        <MemberList
+          members={members}
+          meetingId={meeting?.id}
+          canManage={Boolean(membership?.canManage ?? meeting?.canManage)}
+          isOwner={String(membership?.role ?? '').toUpperCase() === 'OWNER'}
+          currentUserId={currentUserId}
+          onMemberAction={onMemberAction}
+          isLoading={isLoading}
+          apiError={apiError}
+        />
       </div>
     </Layout>
-  )
+  );
 }

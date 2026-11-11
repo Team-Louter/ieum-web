@@ -7,27 +7,56 @@ export default function MeetingMyMemberProfile({
   role,
   isMenuOpen,
   onToggle,
+  onAction,
+  interactive = true,
   actionItems = ['관리자 임명', '추방하기', '차단하기'],
+  dangerActionItems = [],
 }) {
-  return(
+  const profileContent = (
+    <>
+      <img
+        src={profile_image || defaultImage}
+        alt="프로필 사진"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = defaultImage;
+        }}
+      />
+      <p>{role === '회원' ? id : `${id} (${role})`}</p>
+    </>
+  );
+
+  return (
     <div className="member-profile-item">
-      <button
-        className="member-profile"
-        type="button"
-        onClick={onToggle}
-        aria-expanded={isMenuOpen}
-        aria-label={`${id} 프로필 메뉴`}
-      >
-        <img src={profile_image ?? defaultImage} alt="프로필 사진"/>
-        <p>{role === '회원' ? id : `${id} (${role})`}</p>
-      </button>
-      {isMenuOpen && (
+      {interactive ? (
+        <button
+          className="member-profile"
+          type="button"
+          onClick={onToggle}
+          aria-expanded={isMenuOpen}
+          aria-label={`${id} 프로필 메뉴`}
+        >
+          {profileContent}
+        </button>
+      ) : (
+        <div className="member-profile member-profile-static">{profileContent}</div>
+      )}
+      {interactive && isMenuOpen && (
         <div className="member-action-menu">
           {actionItems.map((actionItem) => (
-            <button type="button" key={actionItem}>{actionItem}</button>
+            <button
+              type="button"
+              key={actionItem}
+              className={
+                dangerActionItems.includes(actionItem) ? 'member-action-menu__danger' : undefined
+              }
+              onClick={() => onAction?.(actionItem)}
+            >
+              {actionItem}
+            </button>
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }

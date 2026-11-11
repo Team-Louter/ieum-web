@@ -3,13 +3,25 @@
     width: 100%;
 }
 
+.password-field {
+    width: 100%;
+}
+
+.password-field-hint {
+    margin: 6px 0 0;
+    padding-left: 4px;
+    color: #777;
+    font-size: var(--font-size-small);
+    line-height: 1.4;
+}
+
 .input-group input {
     width: 100%;
     height: 60px;
     padding: 0 16px;
     border: 2px solid #dfdfdf;
     border-radius: 10px;
-    font-size: 25px;
+    font-size: var(--font-size-subtitle);
     font-weight: 500;
     background: #ffffff;
 }
@@ -27,7 +39,7 @@
     padding: 0 5px;
     background: #ffffff;
     color: #9f9f9f;
-    font-size: 25px;
+    font-size: var(--font-size-subtitle);
     font-weight: 500;
     pointer-events: none;
     transition: all 0.15s ease;
@@ -37,7 +49,7 @@
 .input-group input:not(:placeholder-shown) + label {
     top: 0;
     color: #42b66b;
-    font-size: 25px;
+    font-size: var(--font-size-subtitle);
 }
 
 .pw-wrap input {

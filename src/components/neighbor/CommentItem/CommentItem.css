@@ -17,9 +17,34 @@
 }
 
 .comment-profile-container > p {
-  font-size: 20px;
+  font-size: var(--font-size-body);
 }
 
 .comment > p {
-  font-size: 20px;
+  font-size: var(--font-size-body);
+}
+
+.comment__edit,
+.comment__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.comment__edit input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  font-size: var(--font-size-small);
+}
+
+.comment__edit button,
+.comment__actions button {
+  padding: 4px 10px;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: var(--font-size-small);
+  cursor: pointer;
 }

@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import './LoginPage.css';
+import Button from '../../components/common/Button/Button';
 
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import googleLogo from '../../assets/images/GoogleLogo.svg';
 import PasswordField from '../../components/auth/PasswordField';
 import IDsearch from '../../components/auth/IDsearch';
 
-function LoginPage({ onNavigate = () => {} }) {
+function LoginPage({ onNavigate = () => {}, onLogin }) {
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
     const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('아이디 또는 비밀번호가 맞지 않습니다.');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [findType, setFindType] = useState(null);
 
     function handleIdChange(e) {
@@ -22,15 +25,17 @@ function LoginPage({ onNavigate = () => {} }) {
         setShowError(false);
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-
-        /* 임시 Id, pw */
-        if (id === 'ieum' && pw === 'ieum') {
+        setIsSubmitting(true);
+        try {
+            await onLogin?.({ loginId: id, password: pw });
             setShowError(false);
-            onNavigate('/neighbor');
-        } else {
+        } catch (error) {
+            setErrorMessage(error?.message ?? '로그인에 실패했습니다.');
             setShowError(true);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -60,16 +65,17 @@ function LoginPage({ onNavigate = () => {} }) {
                 />
 
                 {showError && (
-                    <p className="error-msg">
-                        아이디 또는 비밀번호가 맞지 않습니다.
-                    </p>
+                        <p className="error-msg">{errorMessage}</p>
                 )}
 
-                <button type="submit" className="login">
+                <Button type="submit" className="login" loading={isSubmitting} loadingText="로그인 중…">
                     로그인
-                </button>
+                </Button>
 
-                <button type="button" className="google-login">
+                <button type="button" className="google-login" onClick={() => {
+                    setErrorMessage('현재 API 명세에는 Google 로그인 기능이 없어 사용할 수 없습니다.');
+                    setShowError(true);
+                }}>
                     <img
                         src={googleLogo}
                         alt="구글 로고"
@@ -93,7 +99,7 @@ function LoginPage({ onNavigate = () => {} }) {
                     className="find"
                     onClick={() => setFindType('password')}
                 >
-                    비밀번호 찾기
+                    비밀번호 재설정
                 </button>
             </div>
 
@@ -101,9 +107,17 @@ function LoginPage({ onNavigate = () => {} }) {
                 <button
                     type="button"
                     className="signup"
-                    onClick={() => onNavigate('/signup')}
+                    onClick={() => onNavigate('/signup/user')}
                 >
-                    회원가입하기
+                    사용자 계정 만들기
+                </button>
+
+                <button
+                    type="button"
+                    className="signup"
+                    onClick={() => onNavigate('/signup/guardian')}
+                >
+                    보호자 계정 만들기
                 </button>
             </div>
 

@@ -23,10 +23,116 @@
   padding-top: 100px;
 }
 
+.settings-page__combined-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
 .setting-page-section {
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+.settings-layout--dark .settings-layout__main {
+  background: #1b1d1c;
+  color: #f2f2f2;
+}
+
+.settings-layout--dark .setting-sidebar {
+  background: #242725;
+  border-color: #3a3f3c;
+}
+
+.settings-layout--dark .setting-sidebar__group h2,
+.settings-layout--dark .setting-sidebar__menu-button {
+  color: #f0f0f0;
+}
+
+.settings-layout--dark .setting-sidebar__menu-list,
+.settings-layout--dark .setting-sidebar__menu-button.is-active {
+  background: #2c302e;
+  border-color: #3a3f3c;
+}
+
+.settings-layout--dark .setting-sidebar__menu-button:hover {
+  background: #363b38;
+}
+
+.settings-layout--dark .setting-sidebar__menu-button.is-active {
+  color: #63d58b;
+}
+
+.settings-layout--dark .setting-sidebar__account-action {
+  border-color: #454a47;
+  background: #292d2b;
+}
+
+.settings-layout--dark .setting-item {
+  border-color: #3d423f;
+  background: #252927;
+}
+
+.settings-layout--dark .setting-item__header h2,
+.settings-layout--dark .setting-item__header p,
+.settings-layout--dark .setting-toggle-row h3,
+.settings-layout--dark .setting-guardian-list li,
+.settings-layout--dark .setting-medication-list li,
+.settings-layout--dark .setting-support-page__question {
+  color: #ededed;
+}
+
+.settings-layout--dark .setting-item__header > button,
+.settings-layout--dark .setting-toggle-row p,
+.settings-layout--dark .setting-guardian-list__empty,
+.settings-layout--dark .setting-medication-list__empty,
+.settings-layout--dark .setting-support-page__question p,
+.settings-layout--dark .setting-support-page__notice {
+  color: #b7bdb9;
+}
+
+.settings-layout--dark .setting-item__content,
+.settings-layout--dark .setting-toggle-row + .setting-toggle-row,
+.settings-layout--dark .setting-support-page__question {
+  border-color: #3d423f;
+}
+
+.settings-layout--dark .setting-general-page__local-note {
+  background: #303532;
+  color: #c0c7c2;
+}
+
+.settings-layout--dark .setting-guardian-list__avatar {
+  background: #3a3e3c;
+}
+
+.settings-layout--dark .setting-dialog {
+  border-color: #3d423f;
+  background: #252927;
+  color: #f1f1f1;
+}
+
+.settings-layout--dark .setting-dialog__header p,
+.settings-layout--dark .setting-dialog__note {
+  color: #c0c7c2;
+}
+
+.settings-layout--dark .setting-dialog__field,
+.settings-layout--dark .setting-dialog__button {
+  color: #ededed;
+}
+
+.settings-layout--dark .setting-dialog__field input,
+.settings-layout--dark .setting-dialog__button {
+  border-color: #454a47;
+  background: #303532;
+}
+
+.settings-layout--dark .setting-dialog__button--primary {
+  border-color: #42b66b;
+  background: #42b66b;
+  color: white;
 }
 
 @media (max-width: 1080px) {

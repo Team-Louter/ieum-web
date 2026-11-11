@@ -1,0 +1,123 @@
+import { communityPostApi, sharingApi } from '../api/client';
+
+// 동네 게시물과 나눔 게시물의 동작입니다.
+export default function usePostActions({ runAction, movePage }) {
+  async function updateSharing(original, values) {
+    const imageFile = values.media instanceof File ? values.media : null;
+    await runAction(async () => {
+      const request = {
+        name: values.title,
+        description: values.content,
+        region: values.region,
+        price: Number(values.price),
+        complete: Boolean(original.complete),
+      };
+      // 새 파일을 고르지 않으면 기존 이미지 주소를 그대로 유지합니다.
+      if (!imageFile && (original.imageUrl || original.image)) {
+        request.imageUrl = original.imageUrl ?? original.image;
+      }
+      return sharingApi.update(original.id, request, imageFile);
+    }, '나눔 게시물을 수정했습니다.');
+    movePage('/market/my');
+  }
+
+  async function createSharing(values) {
+    const result = await runAction(() => {
+      const imageFile = values.media instanceof File ? values.media : null;
+      const request = {
+        name: values.title,
+        description: values.content,
+        region: values.region,
+        price: Number(values.price),
+        complete: false,
+      };
+
+      if (!imageFile && values.imageUrl) request.imageUrl = values.imageUrl;
+      return sharingApi.create(request, imageFile);
+    }, '나눔 게시물을 등록했습니다.');
+
+    movePage('/market');
+    return result;
+  }
+
+  async function createNeighborPost(values) {
+    const imageFile = values.media instanceof File ? values.media : null;
+    const post = await runAction(async () => {
+      if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+        throw new Error('JPG 또는 PNG 사진만 올릴 수 있습니다.');
+      }
+      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+        throw new Error('사진은 5MB 이하로 올려주세요.');
+      }
+
+      return communityPostApi.create({ title: values.title, content: values.content }, imageFile);
+    }, '게시물을 등록했습니다.');
+    movePage('/neighbor');
+    return post;
+  }
+
+  function toggleNeighborLike(post, isLiked) {
+    return runAction(
+      () => (isLiked ? communityPostApi.like(post.id) : communityPostApi.unlike(post.id)),
+      isLiked ? '좋아요를 눌렀습니다.' : '좋아요를 취소했습니다.',
+    ).catch(() => {});
+  }
+
+  function addNeighborComment(post, content) {
+    return runAction(
+      () => communityPostApi.createComment(post.id, { content }),
+      '댓글을 등록했습니다.',
+    ).catch(() => {});
+  }
+
+  // 게시물 수정 (제목·내용). 내 게시물에서만 호출됩니다.
+  function updateNeighborPost(post, values) {
+    return runAction(
+      () => communityPostApi.update(post.id, { title: values.title, content: values.content }),
+      '게시물을 수정했습니다.',
+    );
+  }
+
+  // 댓글 수정·삭제는 댓글 작성자만 할 수 있습니다.
+  function updateNeighborComment(post, comment, content) {
+    return runAction(
+      () => communityPostApi.updateComment(post.id, comment.id, { content }),
+      '댓글을 수정했습니다.',
+    ).catch(() => {});
+  }
+
+  function deleteNeighborComment(post, comment) {
+    return runAction(
+      () => communityPostApi.removeComment(post.id, comment.id),
+      '댓글을 삭제했습니다.',
+    ).catch(() => {});
+  }
+
+  function deleteNeighborPost(postId) {
+    return runAction(() => communityPostApi.remove(postId), '게시물을 삭제했습니다.').catch(
+      () => {},
+    );
+  }
+
+  async function markSharingComplete(productId) {
+    await runAction(() => sharingApi.complete(productId), '나눔 완료로 표시했습니다.');
+  }
+
+  async function deleteSharing(productId) {
+    await runAction(() => sharingApi.remove(productId), '나눔 게시물을 삭제했습니다.');
+  }
+
+  return {
+    updateSharing,
+    createSharing,
+    createNeighborPost,
+    toggleNeighborLike,
+    addNeighborComment,
+    updateNeighborPost,
+    updateNeighborComment,
+    deleteNeighborComment,
+    deleteNeighborPost,
+    markSharingComplete,
+    deleteSharing,
+  };
+}

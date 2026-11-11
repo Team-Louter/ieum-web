@@ -2,3 +2,80 @@
   padding-top: 0;
   border-top: 0;
 }
+
+.setting-guardian-page__permission-card {
+  display: none;
+}
+
+.setting-dialog--guardian-manager {
+  width: min(560px, 100%);
+}
+
+.setting-guardian-manager__list {
+  max-height: min(280px, 35dvh);
+  overflow-y: auto;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.setting-guardian-manager__form {
+  gap: 12px;
+}
+
+.setting-guardian-manager__actions {
+  justify-content: flex-end;
+}
+
+.setting-guardian-manager__pending {
+  margin: 0 0 18px;
+}
+
+.setting-guardian-manager__pending h3 {
+  margin: 0 0 10px;
+  color: #252525;
+  font-size: var(--font-size-small);
+}
+
+.setting-guardian-manager__pending ul {
+  display: grid;
+  gap: 10px;
+  max-height: min(220px, 30dvh);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setting-guardian-manager__pending li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f7f7f7;
+}
+
+.setting-guardian-manager__pending li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.setting-guardian-manager__pending-actions {
+  display: flex;
+  flex: none;
+  gap: 8px;
+}
+
+.setting-guardian-manager__reject {
+  border-color: #e6c1bc;
+  color: #bd3c2b;
+}
+
+@media (max-width: 520px) {
+  .setting-guardian-manager__pending li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

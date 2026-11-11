@@ -1,89 +1,126 @@
 import { useState } from 'react';
+import { authApi } from '../../api/client';
+import { isPasswordValid } from '../../utils/validation';
+import Button from '../common/Button/Button';
 import './IDsearch.css';
 
-/* 이메일 형식 확인 */
 function isEmailFormatValid(emailValue) {
     const atPosition = emailValue.indexOf('@');
     const dotPosition = emailValue.lastIndexOf('.');
-
-    const hasTextBeforeAt = atPosition > 0;
-    const hasTextBetweenAtAndDot = dotPosition > atPosition + 1;
-    const hasTextAfterDot = dotPosition < emailValue.length - 1;
-
-    return hasTextBeforeAt && hasTextBetweenAtAndDot && hasTextAfterDot;
+    return atPosition > 0 && dotPosition > atPosition + 1 && dotPosition < emailValue.length - 1;
 }
 
 function IDsearch({ type, onClose }) {
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [done, setDone] = useState(false);
-    let title = '비밀번호 찾기';
-    let resultMessage = '이메일로 비밀번호 재설정 링크를 발송 했습니다.';
+    const [code, setCode] = useState('');
+    const [verificationToken, setVerificationToken] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [resultMessage, setResultMessage] = useState('');
+    const [phase, setPhase] = useState('email');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const title = type === 'id' ? '아이디 찾기' : '비밀번호 찾기';
 
-    if (type === 'id') {
-        title = '아이디 찾기';
-        resultMessage = '입력하신 이메일로 가입된 아이디를 전송했습니다.';
-    }
-
-    function handleEmailChange(event) {
-        setEmail(event.target.value);
-        setEmailError('');
-    }
-
-    function handleSubmit(e) {
-        e.preventDefault();
-
-        if (email === '') {
-            setEmailError('필수 입력정보 입니다');
-            return;
-        }
-
+    async function handleSendCode(event) {
+        event.preventDefault();
         if (!isEmailFormatValid(email)) {
-            setEmailError('올바르지 않은 형식입니다');
+            setErrorMessage('올바른 이메일 주소를 입력해 주세요.');
             return;
         }
-
-        setDone(true);
+        setIsSubmitting(true);
+        try {
+            await authApi.sendEmailCode(email, true);
+            setErrorMessage('');
+            setPhase('verify');
+        } catch (error) {
+            setErrorMessage(error?.message ?? '인증 메일을 보내지 못했습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
-    if (done) {
-        return (
-            <div className="modal-overlay">
-                <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
-                    <h2 id="find-modal-title">{title}</h2>
-                    <div className="modal-result">
-                        <p className="result-msg" role="status">{resultMessage}</p>
-                        <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
-                    </div>
-                </div>
-            </div>
-        );
+    async function handleVerify(event) {
+        event.preventDefault();
+        if (!code.trim()) {
+            setErrorMessage('인증 번호를 입력해 주세요.');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const verification = await authApi.verifyEmailCode(email, code.trim());
+            const token = verification?.verificationToken ?? '';
+            setVerificationToken(token);
+            setErrorMessage('');
+            if (type === 'id') {
+                setResultMessage(await authApi.findLoginId(email, token));
+                setPhase('done');
+            } else {
+                setPhase('reset');
+            }
+        } catch (error) {
+            setErrorMessage(error?.message ?? '인증에 실패했습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleReset(event) {
+        event.preventDefault();
+        if (!isPasswordValid(newPassword)) {
+            setErrorMessage('비밀번호는 8자 이상, 영문자·숫자·특수문자를 포함해야 합니다.');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            setResultMessage(await authApi.resetPassword(email, newPassword, verificationToken));
+            setErrorMessage('');
+            setPhase('done');
+        } catch (error) {
+            setErrorMessage(error?.message ?? '비밀번호를 변경하지 못했습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
         <div className="modal-overlay">
             <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="find-modal-title">
                 <h2 id="find-modal-title">{title}</h2>
-                <form onSubmit={handleSubmit} noValidate>
-                    <div className="modal-email-row">
-                        <input
-                            type="email"
-                            placeholder="이메일"
-                            aria-label="이메일"
-                            aria-describedby="find-email-message"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required
-                        />
-                        <button type="submit" className="modal-check-btn">인증하기</button>
+                {phase === 'done' ? (
+                    <div className="modal-result">
+                        <p className="result-msg" role="status">{resultMessage}</p>
+                        <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
                     </div>
-                    {emailError ? (
-                        <p className="modal-error-msg" id="find-email-message" role="alert">{emailError}</p>
-                    ) : (
-                        <p className="modal-desc" id="find-email-message">가입할 때 등록한 이메일 주소를 입력해 주세요.</p>
-                    )}
-                    <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
-                </form>
+                ) : (
+                    <form onSubmit={phase === 'email' ? handleSendCode : phase === 'verify' ? handleVerify : handleReset} noValidate>
+                        {phase === 'email' && (
+                            <div className="modal-email-row">
+                                <input type="email" placeholder="이메일" aria-label="이메일" value={email} onChange={(event) => setEmail(event.target.value)} required />
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="전송 중…">인증하기</Button>
+                            </div>
+                        )}
+                        {phase === 'verify' && (
+                            <div className="modal-email-row">
+                                <input type="text" inputMode="numeric" placeholder="인증 번호" aria-label="인증 번호" value={code} onChange={(event) => setCode(event.target.value)} required />
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="확인 중…">인증 확인</Button>
+                            </div>
+                        )}
+                        {phase === 'reset' && (
+                            <div className="modal-email-row">
+                                <input type="password" placeholder="새 비밀번호 (8자 이상)" aria-label="새 비밀번호" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required />
+                                <Button type="submit" className="modal-check-btn" loading={isSubmitting} loadingText="변경 중…">변경하기</Button>
+                            </div>
+                        )}
+                        {errorMessage ? (
+                            <p className="modal-error-msg" role="alert">{errorMessage}</p>
+                        ) : (
+                            <p className="modal-desc">
+                                {phase === 'email' ? '가입할 때 등록한 이메일 주소로 인증 번호를 보냅니다.' : phase === 'verify' ? '이메일로 받은 인증 번호를 입력해 주세요.' : '새 비밀번호를 입력해 주세요.'}
+                            </p>
+                        )}
+                        <button type="button" className="modal-login-btn" onClick={onClose}>로그인으로 돌아가기</button>
+                    </form>
+                )}
             </div>
         </div>
     );

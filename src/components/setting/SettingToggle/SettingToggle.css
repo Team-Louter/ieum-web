@@ -39,6 +39,11 @@
   background: #42b66b;
 }
 
+.setting-toggle.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .setting-toggle input:checked + span::after {
   transform: translateX(28px);
 }

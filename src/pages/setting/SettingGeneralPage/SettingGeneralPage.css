@@ -1,4 +1,5 @@
-.setting-general-page__notification-card .setting-item__content {
-  padding-top: 0;
-  border-top: 0;
+.setting-general-page__medication-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }

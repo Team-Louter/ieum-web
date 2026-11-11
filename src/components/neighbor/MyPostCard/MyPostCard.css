@@ -1,4 +1,5 @@
 .my-content {
+  position: relative;
   border-radius: 10px;
   display: flex;
   justify-content: flex-end;
@@ -7,20 +8,32 @@
   aspect-ratio: 270 / 373.5;
   height: auto;
   background-color: #d9d9d9;
-  transition: all 0.2s ease;
 }
 
-.my-content:hover {
-  background-color: #00000084;
+.my-content::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background-color: rgb(0 0 0 / 0%);
+  content: '';
+  pointer-events: none;
+  transition: background-color 0.2s ease;
+}
+
+.my-content:hover::after {
+  background-color: rgb(0 0 0 / 40%);
 }
 
 .my-content > button {
+  position: relative;
+  z-index: 1;
   display: none;
   cursor: pointer;
   width: 100px;
   height: 35px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: var(--font-size-body);
   border-radius: 10px;
   border: none;
   background: #c62424;
@@ -31,12 +44,69 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 35px;
-  font-weight: bold;
-  font-size: 20px;
+}
+
+.my-content > .my-content__edit {
+  margin-right: 8px;
+  background: #fff;
+  color: #42b66b;
+}
+
+.my-content-edit {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(0 0 0 / 40%);
+}
+
+.my-content-edit__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(480px, calc(100vw - 32px));
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #111;
+  cursor: default;
+}
+
+.my-content-edit__panel input,
+.my-content-edit__panel textarea {
+  padding: 10px 12px;
+  border: 1px solid #e3e3e3;
   border-radius: 10px;
-  border: none;
-  background: #c62424;
-  color: #ffc2c2;
+  font-family: inherit;
+  font-size: var(--font-size-body);
+}
+
+.my-content-edit__panel p {
+  color: #c93434;
+}
+
+.my-content-edit__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.my-content-edit__actions button {
+  width: auto;
+  height: auto;
+  padding: 10px 18px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.my-content-edit__actions button[type='submit'] {
+  border-color: #42b66b;
+  background: #42b66b;
+  color: #fff;
 }

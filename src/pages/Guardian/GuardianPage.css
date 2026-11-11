@@ -1,87 +1,184 @@
 #default-layout.guardian-layout main {
+  position: relative;
+  display: block;
   width: calc(100vw - var(--sidebar-collapsed-width));
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   margin-left: var(--sidebar-collapsed-width);
-  padding: 60px clamp(24px, 7vw, 112px);
-  align-items: stretch;
-  background-color: #f5f5f5;
-}
-
-.guardian-page {
-  width: min(100%, 1120px);
-  margin: 0 auto;
-  padding: clamp(32px, 5vw, 64px);
-  border-radius: 2px;
+  padding: 0;
+  overflow: hidden;
   background-color: #fff;
 }
 
-.guardian-page > h1 {
-  margin-bottom: 32px;
-  color: #222;
-  font-size: clamp(24px, 2.2vw, 32px);
-  font-weight: 700;
+.guardian-page {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding: clamp(20px, 5vh, 48px) 24px clamp(12px, 3vh, 28px);
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.guardian-page__content {
+  width: min(1004px, 100%);
+  height: 100%;
+  min-height: 0;
+  margin-inline: auto;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(12px, 2.4vh, 24px);
+  container-type: inline-size;
+}
+
+.guardian-page__content--elder-tabs {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+}
+
+.guardian-page__elder-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.guardian-page__elder-tab {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #f1f1f1;
+  color: #555;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-small);
+}
+
+.guardian-page__elder-tab--active {
+  background: #e7f7ed;
+  color: #2f9e58;
+}
+
+.guardian-page__elder-tab:focus-visible {
+  outline: 2px solid #2f9e58;
+  outline-offset: 2px;
 }
 
 .guardian-status-banner {
   display: grid;
-  gap: 10px;
-  padding: 23px 24px;
+  gap: clamp(5px, 1vh, 10px);
+  padding: clamp(12px, 2.4vh, 22px) 28px;
   border: 1px solid #dedede;
-  border-radius: 8px;
+  border-radius: 10px;
   text-align: center;
 }
 
 .guardian-status-banner p {
   color: #333;
-  font-size: 16px;
+  font-size: clamp(var(--font-size-small), 1.65vw, var(--font-size-subtitle));
+  line-height: 1.35;
 }
 
 .guardian-status-banner strong {
-  color: #222;
-  font-size: clamp(18px, 1.8vw, 22px);
+  color: #111;
+  font-size: clamp(var(--font-size-subtitle), 2.05vw, var(--font-size-display));
   font-weight: 700;
-}
-
-.guardian-status-banner--warning strong,
-.guardian-location-status--warning strong {
-  color: #d93333;
+  line-height: 1.35;
 }
 
 .guardian-page__summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 24px;
-  margin-top: 28px;
+  gap: 54px;
+  min-height: 0;
 }
 
 .guardian-info-card {
-  min-height: 128px;
-  padding: 18px 20px;
-  border: 1px solid #dedede;
-  border-radius: 8px;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: clamp(112px, 20vh, 150px);
+  padding: clamp(12px, 2vh, 20px) 22px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
   background-color: #fff;
 }
 
 .guardian-medication-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 11px;
+  overflow: hidden;
+  /* 복약 항목 한 줄 높이: 알약 세로 패딩 + 글자 줄 높이 */
+  --medication-gap: 11px;
+  --medication-row: calc(var(--font-size-small) * 1.25 + 10px);
+}
+
+.guardian-medication-list__items {
   display: grid;
-  align-content: center;
-  gap: 9px;
+  flex: 1 1 auto;
+  align-content: start;
+  gap: var(--medication-gap);
+  /* 항목 3개가 딱 맞는 높이, 더 늘어나면 스크롤 */
+  max-height: calc(var(--medication-row) * 3 + var(--medication-gap) * 2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+.guardian-medication-list__items:focus-visible {
+  outline: 2px solid #42b66b;
+  outline-offset: 2px;
+}
+
+.guardian-medication-list > .empty-state--compact {
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.guardian-medication-list__title {
+  margin: 0;
+  color: #111;
+  font-size: var(--font-size-small);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.guardian-medication-list__message {
+  margin: 0;
+  color: #777;
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+}
+
+.guardian-medication-list__message--error {
+  color: #c93434;
 }
 
 .guardian-medication-list__item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   min-width: 0;
 }
 
 .guardian-medication-list__time {
   flex: 0 0 auto;
-  padding: 4px 9px;
+  min-width: 108px;
+  padding: 5px 12px;
   border-radius: 999px;
-  color: #333;
-  font-size: 13px;
+  color: #111;
+  font-size: var(--font-size-small);
   font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .guardian-medication-list__time--complete {
@@ -90,19 +187,20 @@
 }
 
 .guardian-medication-list__time--missed {
-  background-color: #d93333;
+  background-color: #d72f2f;
   color: #fff;
 }
 
 .guardian-medication-list__time--upcoming {
-  background-color: #efefef;
+  background-color: #f1f3f1;
+  color: #444;
 }
 
 .guardian-medication-list__name {
   overflow: hidden;
-  color: #333;
-  font-size: 14px;
-  font-weight: 500;
+  color: #111;
+  font-size: var(--font-size-small);
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -112,60 +210,122 @@
 }
 
 .guardian-medication-list__name--missed {
-  color: #d93333;
+  color: #d72f2f;
 }
 
 .guardian-location-status {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 9px;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.guardian-location-status__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .guardian-location-status h2 {
-  color: #222;
-  font-size: 16px;
+  color: #111;
+  font-size: var(--font-size-small);
   font-weight: 700;
+}
+
+.guardian-location-status__refresh {
+  flex: 0 0 auto;
+  padding: 5px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-small);
+}
+
+.guardian-location-status__refresh:hover:not(:disabled) {
+  border-color: #42b66b;
+  background: #f1faf4;
+  color: #248e4b;
+}
+
+.guardian-location-status__refresh:disabled {
+  cursor: wait;
 }
 
 .guardian-location-status__address {
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #555;
-  font-size: 13px;
+  gap: 7px;
+  min-width: 0;
+  color: #333;
+  font-size: var(--font-size-small);
+  line-height: 1.35;
 }
 
 .guardian-location-status__address img {
-  width: 15px;
-  height: 15px;
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+}
+
+.guardian-location-status__address span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .guardian-location-status strong {
-  color: #222;
-  font-size: 16px;
+  color: #42b66b;
+  font-size: var(--font-size-body);
   font-weight: 700;
+  line-height: 1.3;
+}
+
+.guardian-location-status--warning strong {
+  color: #d72f2f;
+}
+
+.guardian-location-status--unknown strong {
+  color: #888;
+  font-weight: 600;
+}
+
+.guardian-location-status__error {
+  color: #d72f2f;
+  font-size: var(--font-size-small);
 }
 
 .guardian-page__map {
   position: relative;
-  height: clamp(260px, 32vw, 420px);
-  margin-top: 28px;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: #edf0ed;
 }
 
 .guardian-page__map-address {
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  bottom: 36px;
+  left: 18px;
   z-index: 2;
-  padding: 9px 12px;
-  border-radius: 6px;
-  background-color: #ffffffeb;
-  color: #333;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 36px);
+  color: #111;
+  font-size: var(--font-size-small);
+  line-height: 1.3;
+  text-shadow: 0 1px 2px #fff;
+}
+
+.guardian-page__map-address img {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
 }
 
 .guardian-visually-hidden {
@@ -179,20 +339,117 @@
   border: 0;
 }
 
-@media (max-width: 760px) {
-  #default-layout.guardian-layout main {
-    padding: 24px 16px;
+@media (max-width: 900px) {
+  .guardian-page__summary {
+    gap: 28px;
+  }
+}
+
+@media (max-width: 680px) {
+  .guardian-page {
+    padding: clamp(14px, 3vh, 24px) 16px clamp(10px, 2vh, 18px);
   }
 
-  .guardian-page {
-    padding: 28px 20px;
+  .guardian-page__content {
+    width: 100%;
+    gap: clamp(10px, 2vh, 16px);
   }
 
   .guardian-page__summary {
     grid-template-columns: 1fr;
+    gap: clamp(8px, 1.5vh, 12px);
+  }
+
+  .guardian-info-card {
+    min-height: 0;
+    padding: 10px 14px;
+  }
+
+  .guardian-status-banner {
+    gap: 6px;
+    padding: 12px 16px;
+  }
+
+  .guardian-status-banner p {
+    font-size: var(--font-size-small);
+  }
+
+  .guardian-status-banner strong {
+    font-size: var(--font-size-body);
+  }
+
+  .guardian-medication-list__time,
+  .guardian-medication-list__name {
+    font-size: var(--font-size-small);
+  }
+
+  .guardian-medication-list {
+    gap: 6px;
+    --medication-gap: 6px;
+    --medication-row: calc(var(--font-size-small) * 1.25 + 6px);
+  }
+
+  .guardian-medication-list__item {
+    gap: 10px;
+  }
+
+  .guardian-medication-list__time {
+    min-width: 92px;
+    padding: 3px 8px;
+  }
+
+  .guardian-location-status h2 {
+    font-size: var(--font-size-small);
+  }
+
+  .guardian-location-status__address {
+    font-size: var(--font-size-small);
+  }
+
+  .guardian-location-status strong {
+    font-size: var(--font-size-small);
   }
 
   .guardian-page__map {
-    height: 300px;
+    height: 100%;
+  }
+}
+
+@media (max-height: 680px) {
+  .guardian-page {
+    padding-top: 12px;
+    padding-bottom: 10px;
+  }
+
+  .guardian-page__content {
+    gap: 10px;
+  }
+
+  .guardian-status-banner {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .guardian-status-banner p {
+    font-size: var(--font-size-small);
+  }
+
+  .guardian-status-banner strong {
+    font-size: var(--font-size-body);
+  }
+
+  .guardian-info-card {
+    min-height: 0;
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .guardian-medication-list {
+    gap: 5px;
+  }
+
+  .guardian-medication-list__time,
+  .guardian-medication-list__name {
+    font-size: var(--font-size-small);
   }
 }
