@@ -12,6 +12,7 @@ function SettingGuardianPage({
   pendingConnections = [],
   role,
   onConnect,
+  onRequestSenior,
   onAccept,
   onReject,
   onDisconnect,
@@ -60,6 +61,34 @@ function SettingGuardianPage({
       setFormMessage('보호자를 연결했습니다.');
     } catch (error) {
       setFormMessage(error?.message ?? '보호자 계정을 연결하지 못했습니다.');
+    } finally {
+      submittingRef.current = false;
+      setIsBusy(false);
+    }
+  };
+
+  // 보호자 계정이 어르신 이메일로 연결을 요청합니다. (임시 화면)
+  const handleRequestSenior = async (event) => {
+    event.preventDefault();
+    if (submittingRef.current) return;
+    const email = accountIdentifier.trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setFormMessage('어르신 계정의 가입 이메일을 입력해 주세요.');
+      return;
+    }
+    if (typeof onRequestSenior !== 'function') {
+      setFormMessage('어르신 연결 요청 API를 사용할 수 없습니다.');
+      return;
+    }
+    submittingRef.current = true;
+    setIsBusy(true);
+    setFormMessage('');
+    try {
+      await onRequestSenior(email);
+      setAccountIdentifier('');
+      setFormMessage('어르신에게 연결 요청을 보냈습니다. 어르신이 수락하면 연결돼요.');
+    } catch (error) {
+      setFormMessage(error?.message ?? '연결 요청을 보내지 못했습니다.');
     } finally {
       submittingRef.current = false;
       setIsBusy(false);
@@ -253,20 +282,45 @@ function SettingGuardianPage({
               </div>
             </form>
           ) : (
-            <div className="setting-dialog__form setting-guardian-manager__form">
+            <form
+              className="setting-dialog__form setting-guardian-manager__form"
+              onSubmit={handleRequestSenior}
+            >
+              <label className="setting-dialog__field">
+                어르신 계정 이메일
+                <input
+                  type="email"
+                  value={accountIdentifier}
+                  onChange={(event) => setAccountIdentifier(event.target.value)}
+                  placeholder="어르신 가입 이메일"
+                  required
+                />
+              </label>
               <p className="setting-dialog__note">
-                어르신이 보낸 연결 요청을 여기서 수락하거나 거절할 수 있습니다.
+                어르신이 보낸 연결 요청은 위에서 수락하거나 거절할 수 있습니다.
               </p>
+              {formMessage && (
+                <p className="setting-dialog__note" role="status">
+                  {formMessage}
+                </p>
+              )}
               <div className="setting-dialog__actions setting-guardian-manager__actions">
                 <button
                   className="setting-dialog__button setting-dialog__button--primary"
+                  type="submit"
+                  disabled={isBusy || !accountIdentifier.trim()}
+                >
+                  {isBusy ? '요청 중…' : '어르신 연결 요청'}
+                </button>
+                <button
+                  className="setting-dialog__button"
                   type="button"
                   onClick={() => setIsManageDialogOpen(false)}
                 >
                   완료
                 </button>
               </div>
-            </div>
+            </form>
           )}
         </SettingDialog>
       )}

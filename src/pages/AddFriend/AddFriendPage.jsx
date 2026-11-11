@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { resolveApiAssetUrl } from '../../api/client';
+import Skeleton from '../../components/common/Skeleton/Skeleton';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
 import FriendRequestsModal from '../../components/friends/FriendRequestsModal/FriendRequestsModal';
@@ -52,7 +53,6 @@ function AddFriendPage({
   const [openFriendId, setOpenFriendId] = useState(null);
   const [requestedUserIds, setRequestedUserIds] = useState(() => new Set());
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
-  const hasAcceptedRequestRef = useRef(false);
   const normalizedSearchText = submittedText.trim();
   const isCurrentSearch =
     searchState.query === normalizedSearchText &&
@@ -177,7 +177,8 @@ function AddFriendPage({
   async function handleAcceptRequest(friendshipId) {
     try {
       await onAcceptFriendRequest?.(friendshipId);
-      hasAcceptedRequestRef.current = true;
+      setIsRequestsModalOpen(false);
+      onNavigate?.('/myProfile/friends');
     } catch {
       // App의 공통 API 오류 알림을 표시합니다.
     }
@@ -249,7 +250,15 @@ function AddFriendPage({
             </div>
           ))}
           {isSearching ? (
-            <p className="add-friend-empty" role="status">계정을 불러오는 중입니다.</p>
+            <>
+              <span className="add-friend-visually-hidden" role="status">계정을 불러오는 중입니다.</span>
+              {Array.from({ length: 8 }, (_, index) => (
+                <div className="add-friend-profile add-friend-profile--skeleton" key={index} aria-hidden="true">
+                  <Skeleton circle width="50px" height="50px" />
+                  <Skeleton text width="110px" height="18px" />
+                </div>
+              ))}
+            </>
           ) : searchState.error ? (
             <section className="add-friend-error-state" role="alert">
               <h2>
@@ -333,11 +342,6 @@ function AddFriendPage({
           apiError={apiError}
           onClose={() => {
             setIsRequestsModalOpen(false);
-            // 친구 신청을 수락한 뒤 창을 닫으면 바로 내 프로필의 친구 목록으로 이동합니다.
-            if (hasAcceptedRequestRef.current) {
-              hasAcceptedRequestRef.current = false;
-              onNavigate?.('/myProfile/friends');
-            }
           }}
         />
       )}

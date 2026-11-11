@@ -25,6 +25,7 @@ export default function MeetingManagementPage({
   currentUserId,
   onSubmit,
   onMemberAction,
+  onInviteCreate,
   isLoading = false,
   apiError = '',
 }) {
@@ -36,6 +37,8 @@ export default function MeetingManagementPage({
   ];
   const [meetingValues, setMeetingValues] = useState(() => getMeetingFormValues(meeting));
   const [submitError, setSubmitError] = useState('');
+  const [invite, setInvite] = useState(null);
+  const [inviteMessage, setInviteMessage] = useState('');
   const canManage =
     membership?.canManage ??
     meeting.canManage ??
@@ -43,6 +46,29 @@ export default function MeetingManagementPage({
       (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
         (currentLoginId && meeting.owner === currentLoginId),
     );
+
+  const isOwner = String(membership?.role ?? '').toUpperCase() === 'OWNER';
+
+  // 초대 링크 만들기 (임시 화면): 코드와 링크, 만료 시각을 보여주고 복사할 수 있게 합니다.
+  async function handleInviteCreate() {
+    setInviteMessage('');
+    try {
+      const created = await onInviteCreate?.();
+      setInvite(created ?? null);
+    } catch (error) {
+      setInviteMessage(error?.message ?? '초대 링크를 만들지 못했습니다.');
+    }
+  }
+
+  async function handleInviteCopy() {
+    const text = invite?.url ?? invite?.code ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      setInviteMessage('복사했습니다.');
+    } catch {
+      setInviteMessage('복사하지 못했습니다. 직접 선택해서 복사해 주세요.');
+    }
+  }
 
   useEffect(() => {
     setMeetingValues(getMeetingFormValues(meeting));
@@ -101,11 +127,32 @@ export default function MeetingManagementPage({
         </form>
 
         <div className="meeting-management-divider" />
+        {canManage && (
+          <section className="meeting-management-invite" aria-label="모임 초대">
+            <button type="button" className="meeting-management-invite__button" onClick={handleInviteCreate}>
+              초대 링크 만들기
+            </button>
+            {invite && (
+              <div className="meeting-management-invite__result">
+                <p>초대 코드: <strong>{invite.code}</strong></p>
+                {invite.url && <p className="meeting-management-invite__url">{invite.url}</p>}
+                {invite.expiresAt && (
+                  <p>유효 기간: {new Date(invite.expiresAt).toLocaleString('ko-KR')}까지 (7일)</p>
+                )}
+                <button type="button" className="meeting-management-invite__button" onClick={handleInviteCopy}>
+                  복사하기
+                </button>
+              </div>
+            )}
+            {inviteMessage && <p role="status">{inviteMessage}</p>}
+          </section>
+        )}
         <section className="meeting-management-members">
           <MeetingMyMemberList
             members={members}
             meetingId={meeting.id}
             canManage={Boolean(canManage)}
+            isOwner={isOwner}
             currentUserId={currentUserId}
             onMemberAction={onMemberAction}
             isLoading={isLoading}

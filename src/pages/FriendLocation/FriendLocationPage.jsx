@@ -3,7 +3,6 @@ import Layout from '../../components/common/Layout/Layout';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 import KakaoMap from '../../components/friendLocation/KakaoMap/KakaoMap';
 import NearbyFriendList from '../../components/friendLocation/NearbyFriendList/NearbyFriendList';
-import { dummyFriendLocations } from '../../constants/dummy/dummyFriendLocations';
 import { profileApi, resolveApiAssetUrl } from '../../api/client';
 import useCurrentLocation from '../../hooks/useCurrentLocation';
 import mapIcon from '../../assets/images/mapfriend.svg';
@@ -38,16 +37,14 @@ function FriendLocationPage() {
     };
   }, []);
 
-  const locations = useMemo(() => {
-    if (!coordinates) {
-      return dummyFriendLocations;
-    }
-
-    return [
-      { id: 'current-device', nickname: '내 위치', profileImage: myProfileImage, ...coordinates },
-      ...dummyFriendLocations,
-    ];
-  }, [coordinates, myProfileImage]);
+  // 친구 위치 API가 없어 지금은 내 위치만 표시합니다.
+  const locations = useMemo(
+    () =>
+      coordinates
+        ? [{ id: 'current-device', nickname: '내 위치', profileImage: myProfileImage, ...coordinates }]
+        : [],
+    [coordinates, myProfileImage],
+  );
   const center = coordinates || DEFAULT_CENTER;
   const addressText =
     address ||

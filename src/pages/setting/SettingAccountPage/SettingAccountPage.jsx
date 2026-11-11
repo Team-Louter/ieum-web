@@ -12,8 +12,7 @@ const accountItems = [
   {
     id: 'email',
     title: '이메일',
-    description: '계정에 표시할 이메일을 관리할 수 있습니다.',
-    actionLabel: '수정하기',
+    description: '가입할 때 사용한 이메일입니다.',
   },
   {
     id: 'password',
@@ -38,7 +37,6 @@ const accountItems = [
 function SettingAccountPage({
   currentLoginId = '',
   accountEmail = '',
-  onLocalAccountChange,
   onSendRecoveryCode,
   onVerifyRecoveryCode,
   onResetPassword,
@@ -49,11 +47,10 @@ function SettingAccountPage({
   const [newPassword, setNewPassword] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [verificationToken, setVerificationToken] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [messageIsError, setMessageIsError] = useState(false);
-  const [displayEmail, setDisplayEmail] = useState(accountEmail);
-  const [fieldValue, setFieldValue] = useState('');
   const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
 
   const closeDialog = () => {
@@ -75,32 +72,13 @@ function SettingAccountPage({
     setActiveDialog(itemId);
     setMessage('');
     setMessageIsError(false);
-    if (itemId === 'email') setFieldValue(displayEmail);
     if (itemId === 'password') {
       setEmail('');
       setCode('');
       setNewPassword('');
       setCodeSent(false);
       setVerified(false);
-    }
-  };
-
-  const saveLocalAccountField = async (event, field) => {
-    event.preventDefault();
-    const value = fieldValue.trim();
-    if (!value) {
-      setMessage('이메일을 입력해 주세요.');
-      setMessageIsError(true);
-      return;
-    }
-
-    try {
-      await onLocalAccountChange?.(field, value);
-      if (field === 'email') setDisplayEmail(value);
-      closeDialog();
-    } catch (error) {
-      setMessage(error?.message ?? '저장하지 못했습니다.');
-      setMessageIsError(true);
+      setVerificationToken('');
     }
   };
 
@@ -150,7 +128,10 @@ function SettingAccountPage({
     }
     if (
       await runPasswordStep(
-        () => onVerifyRecoveryCode(email.trim(), code.trim()),
+        async () => {
+          const verification = await onVerifyRecoveryCode(email.trim(), code.trim());
+          setVerificationToken(verification?.verificationToken ?? '');
+        },
         '이메일 인증이 완료되었습니다.',
       )
     ) {
@@ -171,7 +152,7 @@ function SettingAccountPage({
       return;
     }
     const succeeded = await runPasswordStep(
-      () => onResetPassword(email.trim(), newPassword),
+      () => onResetPassword(email.trim(), newPassword, verificationToken),
       '비밀번호가 변경되었습니다.',
     );
     if (succeeded) closeDialog();
@@ -187,49 +168,14 @@ function SettingAccountPage({
           description={
             item.id === 'loginId' && currentLoginId
               ? `가입 아이디: ${currentLoginId}`
-              : item.id === 'email' && displayEmail
-                ? `이메일: ${displayEmail}`
+              : item.id === 'email' && accountEmail
+                ? `이메일: ${accountEmail}`
                 : item.description
           }
           actionLabel={item.actionLabel}
           onAction={() => openDialog(item.id)}
         />
       ))}
-
-      {activeDialog === 'email' && (
-        <SettingDialog title="이메일" onClose={requestCloseDialog}>
-          <form
-            className="setting-dialog__form"
-            onSubmit={(event) => saveLocalAccountField(event, 'email')}
-          >
-            <label className="setting-dialog__field">
-              이메일
-              <input
-                type="email"
-                value={fieldValue}
-                onChange={(event) => setFieldValue(event.target.value)}
-                required
-              />
-            </label>
-            {message && (
-              <p
-                className={`setting-dialog__note${messageIsError ? ' setting-dialog__note--error' : ''}`}
-                role="status"
-              >
-                {message}
-              </p>
-            )}
-            <div className="setting-dialog__actions">
-              <button
-                className="setting-dialog__button setting-dialog__button--primary"
-                type="submit"
-              >
-                저장하기
-              </button>
-            </div>
-          </form>
-        </SettingDialog>
-      )}
 
       {activeDialog === 'password' && (
         <SettingDialog
@@ -248,6 +194,7 @@ function SettingAccountPage({
                   setCode('');
                   setCodeSent(false);
                   setVerified(false);
+                  setVerificationToken('');
                 }}
                 autoComplete="email"
                 required

@@ -103,12 +103,6 @@
   min-height: 500px;
 }
 
-.add-friend-list--loading {
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-}
-
 .add-friend-list--empty {
   align-items: center;
   justify-content: center;
@@ -176,6 +170,13 @@
 
 .add-friend-profile {
   width: 220px;
+}
+
+.add-friend-profile--skeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 66px;
 }
 
 .add-friend-profile .member-profile > img {
@@ -249,4 +250,13 @@
   .add-friend-requests-button {
     justify-self: end;
   }
+}
+
+.add-friend-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

@@ -21,6 +21,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
     const [address, setAddress] = useState('');
     const [emailSent, setEmailSent] = useState(false);
     const [emailVerified, setEmailVerified] = useState(false);
+    const [verificationToken, setVerificationToken] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [messageIsError, setMessageIsError] = useState(false);
@@ -49,7 +50,8 @@ function UserSignupPage({ onNavigate, onSignup }) {
             return;
         }
         try {
-            await authApi.verifyEmailCode(email, emailCode.trim());
+            const verification = await authApi.verifyEmailCode(email, emailCode.trim());
+            setVerificationToken(verification?.verificationToken ?? '');
             setEmailVerified(true);
             setMessage('이메일 인증이 완료되었습니다.');
             setMessageIsError(false);
@@ -94,7 +96,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
         }
         setIsSubmitting(true);
         try {
-            await onSignup?.({ loginId: loginId.trim(), nickname: loginId.trim(), email, password, address, role: 'ROLE_SENIOR' });
+            await onSignup?.({ loginId: loginId.trim(), nickname: loginId.trim(), email, password, address, role: 'ROLE_SENIOR', verificationToken });
         } catch (error) {
             setMessage(error?.message ?? '회원가입에 실패했습니다.');
             setMessageIsError(true);
@@ -118,7 +120,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
                     <PasswordField id="user-password-check" label="비밀번호 확인" value={passwordCheck} onChange={(event) => setPasswordCheck(event.target.value)} />
                 </div>
                 <div className="signup-field">
-                    <FieldWithButton id="user-email" label="이메일" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setEmailSent(false); setEmailVerified(false); }} buttonText={emailSent ? '재전송' : '인증하기'} onButtonClick={sendEmailCode} />
+                    <FieldWithButton id="user-email" label="이메일" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setEmailSent(false); setEmailVerified(false); setVerificationToken(''); }} buttonText={emailSent ? '재전송' : '인증하기'} onButtonClick={sendEmailCode} />
                 </div>
                 {emailSent && (
                     <div className="signup-field">

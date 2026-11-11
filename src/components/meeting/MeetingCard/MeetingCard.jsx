@@ -22,7 +22,6 @@ export default function MeetingCard({ meeting = {}, onClick, to }) {
         <p className="meeting-card-info-desc">{description}</p>
         <p className="meeting-card-info-meta">{meta}</p>
         {meeting.membershipStatus === 'PENDING' && <p role="status">가입 승인 대기 중</p>}
-        {meeting.membershipStatus === 'OWNER' && <p>내가 만든 모임</p>}
       </div>
     </>
   );

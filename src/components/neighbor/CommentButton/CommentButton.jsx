@@ -11,6 +11,9 @@ function CommentButton({
   onToggle,
   comments = [],
   onSubmitComment,
+  currentLoginId,
+  onUpdateComment,
+  onDeleteComment,
   isLoading = false,
   apiError = '',
 }) {
@@ -24,6 +27,9 @@ function CommentButton({
             profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
             profileId={comment.profileId ?? comment.author?.id ?? comment.nickname ?? ''}
             comment={comment.content ?? comment.text ?? ''}
+            isMine={Boolean(currentLoginId) && (comment.profileId ?? '') === currentLoginId && comment.id != null}
+            onUpdate={(content) => onUpdateComment?.(comment, content)}
+            onDelete={() => onDeleteComment?.(comment)}
           />
         ))
       ) : !isLoading && !apiError ? (
