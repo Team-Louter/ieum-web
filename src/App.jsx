@@ -323,7 +323,7 @@ function AppContent({ accessToken, setAccessToken }) {
           profileImage={sidebarProfile.loginId === user.loginId ? sidebarProfile.image : ''}
         />
       )}
-      {skeletonVariant ? <PageSkeleton variant={skeletonVariant} /> : <Page {...commonProps} />}
+      {skeletonVariant ? <PageSkeleton variant={skeletonVariant} role={user.role} /> : <Page {...commonProps} />}
       {feedback && (
         <FeedbackMessage
           message={error || feedback}

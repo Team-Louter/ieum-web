@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Skeleton from '../../components/common/Skeleton/Skeleton';
 import Layout from '../../components/common/Layout/Layout';
 import './InvitePage.css';
 
@@ -60,6 +61,14 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
             확인
           </button>
         </form>
+        {isBusy && !invite && (
+          <div className="invite-page__card" role="status" aria-busy="true" aria-label="초대 정보를 불러오는 중입니다.">
+            <Skeleton text width="50%" height={28} />
+            <Skeleton text width="90%" />
+            <Skeleton text width="40%" />
+            <Skeleton width={110} height={44} style={{ borderRadius: 10 }} />
+          </div>
+        )}
         {invite && (
           <div className="invite-page__card">
             <h2>{invite.name}</h2>

@@ -28,6 +28,7 @@ import MeetingMakeOption from '../../meeting/MeetingMake/MeetingMakeOption';
 import '../../../pages/Meeting/MeetingMyPage/MeetingMyPage.css';
 import '../../meeting/MeetingMy/MeetingMyAnnouncement.css';
 import '../../meeting/MeetingMy/MeetingMyMemberList.css';
+import NotificationPageSkeleton from './NotificationSkeleton';
 import PageTabNavigation from '../PageTabNavigation/PageTabNavigation';
 import Skeleton from '../Skeleton/Skeleton';
 import './PageSkeleton.css';
@@ -52,6 +53,7 @@ const skeletonVariants = {
   '/chatting': 'chat',
   '/settings': 'settings',
   '/guardian': 'guardian',
+  '/notifications': 'notifications',
 };
 
 const tabbedVariants = [
@@ -558,12 +560,22 @@ const layoutClasses = {
 };
 
 /** 페이지 데이터를 처음 불러오는 동안 실제 화면과 비슷한 모양의 회색 블록을 보여줍니다. */
-function PageSkeleton({ variant }) {
+function PageSkeleton({ variant, role }) {
   const hasTabs = tabbedVariants.includes(variant);
   const status = { role: 'status', 'aria-busy': true, 'aria-label': '불러오는 중' };
 
   if (variant === 'guardian') {
     return <GuardianSkeleton status={status} />;
+  }
+
+  if (variant === 'notifications') {
+    return (
+      <Layout className="notifications-layout">
+        <div role="status" aria-busy="true" aria-label="불러오는 중">
+          <NotificationPageSkeleton showMedication={role === 'ROLE_SENIOR'} />
+        </div>
+      </Layout>
+    );
   }
 
   if (variant === 'chat') {

@@ -1,6 +1,7 @@
 import Layout from '../../components/common/Layout/Layout';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MedicationCheckSection from '../../components/medication/MedicationCheckSection';
+import { NotificationListSkeleton } from '../../components/common/PageSkeleton/NotificationSkeleton';
 import useNotifications from '../../hooks/useNotifications';
 import './NotificationsPage.css';
 
@@ -95,7 +96,7 @@ function NotificationsPage({
             </button>
           </>
         ) : isLoading ? (
-          <p role="status">알림을 불러오는 중입니다.</p>
+          <NotificationListSkeleton />
         ) : !error ? (
           <EmptyState title="새 알림이 없어요" description="알림이 오면 이곳에서 확인할 수 있어요." />
         ) : null}
