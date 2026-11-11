@@ -17,7 +17,6 @@ export default function usePageApiData({
   const [requestState, setRequestState] = useState({ path: '', loading: false });
 
   const user = getCurrentUser();
-  const demoScope = user.loginId || (user.userId ? String(user.userId) : 'guest');
   const isPublicPage = publicRoutes.includes(path);
   const needsLogin = !isPublicPage && !accessToken;
 
@@ -51,7 +50,6 @@ export default function usePageApiData({
           role: user.role,
           loginId: user.loginId,
           userId: user.userId,
-          demoScope,
           onDefaultChatRoom,
         });
 
@@ -89,7 +87,6 @@ export default function usePageApiData({
     user.role,
     user.userId,
     user.loginId,
-    demoScope,
   ]);
 
   useEffect(() => {
@@ -102,7 +99,6 @@ export default function usePageApiData({
       try {
         const messageData = await loadChatMessages({
           roomId: activeChatRoomId,
-          demoScope,
           userId: user.userId,
         });
 
@@ -127,7 +123,7 @@ export default function usePageApiData({
     return () => {
       isActive = false;
     };
-  }, [path, activeChatRoomId, accessToken, reloadKey, user.userId, demoScope]);
+  }, [path, activeChatRoomId, accessToken, reloadKey, user.userId]);
 
   return { data, error, loading, initialLoading, user };
 }

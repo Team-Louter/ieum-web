@@ -1,16 +1,8 @@
 import { friendApi } from '../client';
-import { asArray, loadApiOrDemo } from './common';
+import { asArray } from './common';
 
-export async function loadAddFriendPage({ demoScope }) {
-  const friendsRequest = loadApiOrDemo(() => friendApi.list(), 'friends', [], demoScope);
-  const requestsRequest = loadApiOrDemo(
-    () => friendApi.received(),
-    'friendRequests',
-    [],
-    demoScope,
-  );
-
-  const [friends, requests] = await Promise.all([friendsRequest, requestsRequest]);
+export async function loadAddFriendPage() {
+  const [friends, requests] = await Promise.all([friendApi.list(), friendApi.received()]);
 
   return {
     friends: asArray(friends).map((friend) => ({

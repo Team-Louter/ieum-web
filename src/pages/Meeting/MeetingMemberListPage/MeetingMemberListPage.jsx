@@ -27,6 +27,7 @@ export default function MeetingMemberListPage({
           members={members}
           meetingId={meeting?.id}
           canManage={Boolean(membership?.canManage ?? meeting?.canManage)}
+          isOwner={String(membership?.role ?? '').toUpperCase() === 'OWNER'}
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
           isLoading={isLoading}

@@ -1,13 +1,12 @@
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import SettingMedicationList from '../../../components/setting/SettingMedicationList/SettingMedicationList';
 import SettingToggle from '../../../components/setting/SettingToggle/SettingToggle';
-import { dummyMedicationSchedule } from '../../../constants/dummy/dummyGuardianData';
 import './SettingNotificationPage.css';
 
 function SettingNotificationPage({
   settings = {},
   onToggle,
-  medicationSchedule = dummyMedicationSchedule,
+  medicationSchedule = [],
   onMedicationScheduleEdit,
 }) {
   return (
@@ -30,7 +29,7 @@ function SettingNotificationPage({
           actionLabel="수정하기"
           onAction={onMedicationScheduleEdit}
         >
-          <SettingMedicationList schedule={medicationSchedule ?? dummyMedicationSchedule} />
+          <SettingMedicationList schedule={medicationSchedule ?? []} />
         </SettingItem>
       )}
     </div>

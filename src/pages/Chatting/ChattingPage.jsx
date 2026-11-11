@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './ChattingPage.css';
 import searchIcon from '../../assets/images/search.svg';
 import profileImage from '../../assets/images/profile.png';
-import { dummyChatContacts, dummyChatThreads } from '../../constants/dummy/dummyChats';
 import { getValidAccessToken } from '../../api/client';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import Button from '../../components/common/Button/Button';
@@ -14,7 +13,7 @@ const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.s
 const EMPTY_CONTACTS = [];
 
 function ChattingPage({
-  contacts = dummyChatContacts,
+  contacts = EMPTY_CONTACTS,
   activeContactId,
   messages,
   messagesRoomId,
@@ -32,7 +31,6 @@ function ChattingPage({
   const [searchTerm, setSearchTerm] = useState('');
   const [localActiveContactId, setLocalActiveContactId] = useState(null);
   const [messageDraft, setMessageDraft] = useState('');
-  const [localThreads, setLocalThreads] = useState(dummyChatThreads);
   const [realtimeThreads, setRealtimeThreads] = useState({});
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
@@ -64,11 +62,11 @@ function ChattingPage({
         ? messages
         : [];
     [
-      ...(selectedRoomHistory ?? localThreads[selectedContactId] ?? []),
+      ...(selectedRoomHistory ?? []),
       ...(realtimeThreads[selectedContactId] ?? []),
     ].forEach((message) => merged.set(message.id, message));
     return [...merged.values()];
-  }, [messages, messagesRoomId, localThreads, realtimeThreads, selectedContactId]);
+  }, [messages, messagesRoomId, realtimeThreads, selectedContactId]);
 
   useEffect(() => {
     const messageList = messagesContainerRef.current;

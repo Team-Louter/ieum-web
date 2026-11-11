@@ -1,6 +1,7 @@
 // 화면에서 사용하는 설정 이름과 서버 API 필드 이름을 연결합니다.
 export const settingApiFields = {
   medicationAlert: 'medicationNotiEnabled',
+  guardianMedication: 'guardianMedication',
 };
 
 export const defaultProfile = {

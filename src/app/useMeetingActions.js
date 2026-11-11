@@ -1,4 +1,4 @@
-import { meetingApi } from '../api/client';
+import { inviteApi, meetingApi } from '../api/client';
 
 function getMeetingRequest(values) {
   return {
@@ -104,12 +104,37 @@ export default function useMeetingActions({ runAction, movePage }) {
         '관리자 권한을 해제했습니다.',
       );
     }
+    if (action === '모임장 넘기기') {
+      return runAction(
+        () => meetingApi.transferOwner(meetingId, userId),
+        '모임장을 넘겼습니다.',
+      );
+    }
     if (action === '추방하기') {
       return runAction(
         () => meetingApi.removeMember(meetingId, userId),
         '모임 회원을 내보냈습니다.',
       );
     }
+  }
+
+  // 모임장·관리자가 7일 동안 유효한 초대 코드를 만듭니다. (code, url, expiresAt)
+  function createInvite(meetingId) {
+    if (meetingId == null) throw new Error('초대할 모임을 찾을 수 없습니다.');
+    return runAction(() => meetingApi.createInvite(meetingId), '초대 링크를 만들었습니다.');
+  }
+
+  // 초대 코드로 모임 정보를 확인합니다.
+  function loadInvite(code) {
+    return inviteApi.get(code);
+  }
+
+  // 초대 코드로 가입합니다. 승인제 모임은 승인 대기(PENDING)가 됩니다.
+  function joinByInvite(code) {
+    return runAction(() => inviteApi.join(code), (membership) => {
+      const status = String(membership?.status ?? membership?.membershipStatus ?? '').toUpperCase();
+      return status === 'PENDING' ? '모임 가입 신청을 보냈습니다.' : '모임에 가입했습니다.';
+    });
   }
 
   async function createNotice(meetingId, values) {
@@ -152,6 +177,9 @@ export default function useMeetingActions({ runAction, movePage }) {
     joinMeeting,
     leaveMeeting,
     handleMemberAction,
+    createInvite,
+    loadInvite,
+    joinByInvite,
     createNotice,
     updateNotice,
     deleteNotice,

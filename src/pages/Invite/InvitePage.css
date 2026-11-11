@@ -1,0 +1,72 @@
+#default-layout.invite-layout main {
+  align-items: flex-start;
+  padding-top: 48px;
+}
+
+.invite-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(560px, calc(100vw - var(--sidebar-collapsed-width) - 48px));
+  margin: 0 auto;
+}
+
+.invite-page__form {
+  display: flex;
+  gap: 8px;
+}
+
+.invite-page__form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  font-size: var(--font-size-body);
+}
+
+.invite-page__form button,
+.invite-page__card button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #42b66b;
+  color: #fff;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.invite-page__form button:disabled,
+.invite-page__card button:disabled {
+  background-color: #eee;
+  color: #777;
+  cursor: default;
+}
+
+.invite-page__card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+}
+
+.invite-page__card button {
+  align-self: flex-start;
+}
+
+.invite-page__message--error {
+  color: #c93434;
+}
+
+@media (max-width: 768px) {
+  #default-layout.invite-layout main {
+    padding-top: 24px;
+  }
+
+  .invite-page {
+    width: calc(100% - 32px);
+  }
+}

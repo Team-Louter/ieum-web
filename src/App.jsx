@@ -5,7 +5,6 @@ import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkelet
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
-import { readDemoValue } from './api/demoStore';
 import usePageApiData from './hooks/usePageApiData';
 import useAccountActions from './app/useAccountActions';
 import useFriendActions from './app/useFriendActions';
@@ -97,8 +96,6 @@ function AppContent({ accessToken, setAccessToken }) {
     onDefaultChatRoom: selectDefaultChatRoom,
   });
 
-  const demoScope = user.loginId || (user.userId ? String(user.userId) : 'guest');
-
   useEffect(() => {
     if (!accessToken) return undefined;
 
@@ -146,7 +143,6 @@ function AppContent({ accessToken, setAccessToken }) {
 
   // 각 기능별 이벤트 처리는 별도 파일에 정리했습니다.
   const accountActions = useAccountActions({
-    demoScope,
     user,
     runAction,
     movePage,
@@ -157,14 +153,11 @@ function AppContent({ accessToken, setAccessToken }) {
   });
 
   const medicationActions = useMedicationActions({
-    demoScope,
     runAction,
     setCheckedMedicationIds,
   });
 
   const friendActions = useFriendActions({
-    demoScope,
-    user,
     runAction,
     movePage,
     setChatSelection,
@@ -172,18 +165,9 @@ function AppContent({ accessToken, setAccessToken }) {
 
   const meetingActions = useMeetingActions({ runAction, movePage });
 
-  const postActions = usePostActions({
-    demoScope,
-    user,
-    runAction,
-    movePage,
-    setFeedback,
-    setFeedbackIsError,
-    setReloadKey,
-  });
+  const postActions = usePostActions({ runAction, movePage });
 
   // 화면 컴포넌트에 전달할 데이터와 클릭 동작을 한곳에 모읍니다.
-  const savedAccount = readDemoValue('account', {}, demoScope);
   const submitHandlers = {
     '/neighbor/create': postActions.createNeighborPost,
     '/market/create': (values) =>
@@ -209,9 +193,9 @@ function AppContent({ accessToken, setAccessToken }) {
     onSignup: accountActions.signup,
     onLogout: accountActions.logout,
     onProfileUpdate: accountActions.updateProfile,
-    onLocalAccountChange: accountActions.saveLocalAccountField,
     onAccountDelete: accountActions.deleteAccount,
     onFamilyConnect: accountActions.connectGuardian,
+    onRequestSenior: accountActions.requestSenior,
     onFamilyAccept: accountActions.acceptFamilyConnection,
     onFamilyReject: accountActions.rejectFamilyConnection,
     onFamilyDisconnect: accountActions.disconnectFamily,
@@ -219,8 +203,7 @@ function AppContent({ accessToken, setAccessToken }) {
     onVerifyRecoveryCode: accountActions.verifyRecoveryCode,
     onResetPassword: accountActions.resetPassword,
     currentLoginId: user.loginId,
-    accountEmail: savedAccount.email || '',
-    signupEmail: savedAccount.registrationEmail || user.email || savedAccount.email || '',
+    accountEmail: user.email || '',
 
     profile: data.profile ?? defaultProfile,
     settings: data.settings ?? defaultSettings,
@@ -270,6 +253,9 @@ function AppContent({ accessToken, setAccessToken }) {
     onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),
     onMemberAction: (member, action) =>
       meetingActions.handleMemberAction(selectedId, member, action).catch(() => {}),
+    onInviteCreate: () => meetingActions.createInvite(selectedId),
+    onInviteLoad: meetingActions.loadInvite,
+    onInviteJoin: meetingActions.joinByInvite,
     onAnnouncementCreate: (meetingId) =>
       movePage('/meeting/announcement/make', { state: { meetingId } }),
     onAnnouncementUpdate: (noticeId, values) =>
@@ -281,6 +267,9 @@ function AppContent({ accessToken, setAccessToken }) {
       movePage(`/market/feedin/${product.id}`, { state: { post: product } }),
     onLike: postActions.toggleNeighborLike,
     onSubmitComment: postActions.addNeighborComment,
+    onUpdatePost: postActions.updateNeighborPost,
+    onUpdateComment: postActions.updateNeighborComment,
+    onDeleteComment: postActions.deleteNeighborComment,
     onDeletePost:
       routeKey.startsWith('/neighbor') || routeKey.startsWith('/myProfile')
         ? postActions.deleteNeighborPost

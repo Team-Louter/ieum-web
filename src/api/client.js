@@ -17,10 +17,15 @@ function serializeBody(body) {
   return isFormData(body) ? body : JSON.stringify(body);
 }
 
-function makeRequestWithFile(request, file) {
+// request(JSON) + 파일 한 장은 file, 여러 장(게시물·나눔은 최대 5장)은 images를 반복해 보냅니다.
+function makeRequestWithFile(request, files) {
   const formData = new FormData();
   formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
-  formData.append('file', file);
+  if (Array.isArray(files)) {
+    files.forEach((file) => formData.append('images', file));
+  } else {
+    formData.append('file', files);
+  }
   return formData;
 }
 
@@ -173,6 +178,9 @@ export async function apiRequest(path, options = {}) {
 
   let response = await fetch(`${API_BASE_URL}${path}`, { ...requestOptions, headers });
   if (response.status === 401 && auth && retryAuth) {
+    // 리프레시 토큰이 없으면 복구할 방법이 없으므로 남은 액세스 토큰을 지웁니다.
+    // 세션 이벤트로 앱이 로그인 화면으로 이동합니다.
+    if (!getRefreshToken()) clearTokens();
     const nextToken = await refreshAccessToken();
     if (nextToken) {
       headers.set('Authorization', `Bearer ${nextToken}`);
@@ -215,13 +223,15 @@ export const apiDelete = (path, options) => apiRequest(path, { ...options, metho
 export const authApi = {
   sendEmailCode: (email, recovery = false) =>
     apiPost(`/api/auth/email/${recovery ? 'recovery' : 'send'}`, { email }, { auth: false }),
+  // 응답의 verificationToken(5분 유효, 1회 사용)을 가입·비밀번호 재설정·아이디 찾기에 함께 보냅니다.
   verifyEmailCode: (email, code) =>
     apiPost('/api/auth/email/verify', { email, code }, { auth: false }),
   signup: (data) => apiPost('/api/auth/signup', data, { auth: false }),
   login: (loginId, password) => apiPost('/api/auth/login', { loginId, password }, { auth: false }),
-  findLoginId: (email) => apiPost('/api/auth/loginId/find', { email }, { auth: false }),
-  resetPassword: (email, newPassword) =>
-    apiPost('/api/auth/password/reset', { email, newPassword }, { auth: false }),
+  findLoginId: (email, verificationToken) =>
+    apiPost('/api/auth/loginId/find', { email, verificationToken }, { auth: false }),
+  resetPassword: (email, newPassword, verificationToken) =>
+    apiPost('/api/auth/password/reset', { email, newPassword, verificationToken }, { auth: false }),
 };
 
 export const profileApi = {
@@ -248,6 +258,8 @@ export const familyApi = {
 export const connectionApi = {
   list: () => apiGet('/api/connections'),
   pending: () => apiGet('/api/connections/pending'),
+  // 보호자 계정이 어르신 이메일로 연결을 요청합니다. (ROLE_GUARDIAN, seniorEmail)
+  requestSenior: (seniorEmail) => apiPost('/api/connections/request', { seniorEmail }),
   requestGuardian: (guardianEmail) => apiPost('/api/connections/request', { guardianEmail }),
   accept: (connectionId) =>
     apiPatch(`/api/connections/${encodeURIComponent(String(connectionId))}/accept`),
@@ -264,7 +276,18 @@ export const medicationApi = {
 
 export const guardianApi = { dashboard: () => apiGet('/api/dashboard') };
 export const notificationApi = {
-  list: () => apiGet('/api/notifications'),
+  // 첫 조회는 { limit: 50 }, 폴링은 { unreadOnly: true, limit: 50 },
+  // 이전 알림 더 보기는 마지막 notificationId를 beforeId로 넘깁니다.
+  list: ({ limit, unreadOnly, beforeId } = {}) => {
+    const query = new URLSearchParams();
+    if (limit != null) query.set('limit', String(limit));
+    if (unreadOnly) query.set('unreadOnly', 'true');
+    if (beforeId != null) query.set('beforeId', String(beforeId));
+    const queryString = query.toString();
+    return apiGet(`/api/notifications${queryString ? `?${queryString}` : ''}`);
+  },
+  markRead: (notificationId) =>
+    apiPatch(`/api/notifications/${encodeURIComponent(String(notificationId))}/read`),
   getSettings: () => apiGet('/api/settings/notifications'),
   updateSettings: (settings) => apiPatch('/api/settings/notifications', settings),
 };
@@ -289,7 +312,11 @@ export const meetingApi = {
   list: () => apiGet('/api/community/meetings'),
   mine: (includePending = false) =>
     apiGet(`/api/community/meetings/my${includePending ? '?includePending=true' : ''}`),
-  get: (id) => apiGet(`/api/community/meetings/${id}`),
+  // 비공개 모임은 가입 완료 회원이거나 유효한 초대 코드(inviteCode)가 있어야 볼 수 있습니다.
+  get: (id, inviteCode) =>
+    apiGet(
+      `/api/community/meetings/${id}${inviteCode ? `?inviteCode=${encodeURIComponent(inviteCode)}` : ''}`,
+    ),
   create: (meeting, imageFile) =>
     apiPost(
       '/api/community/meetings',
@@ -309,6 +336,10 @@ export const meetingApi = {
     apiPatch(`/api/community/meetings/${id}/members/${userId}/role`, { role }),
   removeMember: (id, userId) => apiDelete(`/api/community/meetings/${id}/members/${userId}`),
   leave: (id) => apiDelete(`/api/community/meetings/${id}/members/me`),
+  // 모임장·관리자가 7일 동안 유효한 초대 코드를 만듭니다. (code, url, expiresAt)
+  createInvite: (id) => apiPost(`/api/community/meetings/${id}/invites`),
+  // 현재 모임장만 쓸 수 있고, 대상은 가입 완료 회원이어야 합니다.
+  transferOwner: (id, userId) => apiPost(`/api/community/meetings/${id}/transfer-owner`, { userId }),
   notices: (id, page = 0, size = 20) =>
     apiGet(`/api/community/meetings/${id}/notices?page=${page}&size=${size}`),
   getNotice: (id, noticeId) => apiGet(`/api/community/meetings/${id}/notices/${noticeId}`),
@@ -321,18 +352,47 @@ export const meetingApi = {
   unlike: (id) => apiDelete(`/api/contents/MEETING/${id}/like`),
 };
 
+// 초대 코드로 모임 정보를 확인하고 가입합니다. (승인제 모임은 PENDING, 그 외는 JOINED)
+export const inviteApi = {
+  get: (code) => apiGet(`/api/community/invites/${encodeURIComponent(code)}`),
+  join: (code) => apiPost(`/api/community/invites/${encodeURIComponent(code)}/join`),
+};
+
+// 모임·게시물 등 종류별 좋아요를 한 곳에서 다룹니다. (/api/contents/{type}/{targetId}/like)
+export const contentLikeApi = {
+  get: (type, targetId) => apiGet(`/api/contents/${type}/${targetId}/like`),
+  like: (type, targetId) => apiPut(`/api/contents/${type}/${targetId}/like`),
+  unlike: (type, targetId) => apiDelete(`/api/contents/${type}/${targetId}/like`),
+};
+
 export const communityPostApi = {
-  list: ({ mine = false, page = 0, size = 20 } = {}) => {
-    if (mine) return apiGet('/api/community/posts?mine=true');
-    return apiGet(`/api/community/posts?page=${page}&size=${size}`);
+  list: ({ mine = false, authorId, page = 0, size = 20 } = {}) => {
+    const query = new URLSearchParams();
+    if (mine) query.set('mine', 'true');
+    else {
+      query.set('page', String(page));
+      query.set('size', String(size));
+    }
+    if (authorId != null) query.set('authorId', String(authorId));
+    return apiGet(`/api/community/posts?${query}`);
   },
   get: (id) => apiGet(`/api/community/posts/${id}`),
   create: (post, imageFile) =>
     apiPost('/api/community/posts', imageFile ? makeRequestWithFile(post, imageFile) : post),
+  update: (id, post, imageFiles) =>
+    apiPut(
+      `/api/community/posts/${id}`,
+      imageFiles?.length ? makeRequestWithFile(post, imageFiles) : post,
+    ),
   remove: (id) => apiDelete(`/api/community/posts/${id}`),
   like: (id) => apiPut(`/api/community/posts/${id}/like`),
   unlike: (id) => apiDelete(`/api/community/posts/${id}/like`),
   createComment: (id, comment) => apiPost(`/api/community/posts/${id}/comments`, comment),
+  // 댓글 수정·삭제는 댓글 작성자만 할 수 있습니다. (내용 1~2000자)
+  updateComment: (id, commentId, comment) =>
+    apiPatch(`/api/community/posts/${id}/comments/${commentId}`, comment),
+  removeComment: (id, commentId) =>
+    apiDelete(`/api/community/posts/${id}/comments/${commentId}`),
 };
 
 export const sharingApi = {
