@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import './ChattingPage.css';
 import searchIcon from '../../assets/images/search.svg';
 import profileImage from '../../assets/images/profile.png';
@@ -7,10 +7,17 @@ import { chatApi, getValidAccessToken } from '../../api/client';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import Button from '../../components/common/Button/Button';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
+import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
 
 const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
 
 const EMPTY_CONTACTS = [];
+const MESSAGE_LONG_PRESS_MS = 500;
+
+function cancelMessagePress(pressRef) {
+  clearTimeout(pressRef.current?.timer);
+  pressRef.current = null;
+}
 
 function ChattingPage({
   contacts = EMPTY_CONTACTS,
@@ -32,6 +39,12 @@ function ChattingPage({
   const [localActiveContactId, setLocalActiveContactId] = useState(null);
   const [messageDraft, setMessageDraft] = useState('');
   const [realtimeThreads, setRealtimeThreads] = useState({});
+  const [messageChanges, setMessageChanges] = useState({});
+  const [messageAction, setMessageAction] = useState(null);
+  const [messageActionError, setMessageActionError] = useState(null);
+  const [isManagingMessage, setIsManagingMessage] = useState(false);
+  const managingMessageRef = useRef(false);
+  const messagePressRef = useRef(null);
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -45,6 +58,7 @@ function ChattingPage({
   // 모바일에서는 대화 목록을 먼저 보여 주고, 대화를 누르면 채팅창으로 넘어갑니다.
   const [isRoomOpen, setIsRoomOpen] = useState(false);
   const messagesContainerRef = useRef(null);
+  const messageOptionsRef = useRef(null);
   const onChatReconnectedRef = useRef(onChatReconnected);
   useEffect(() => {
     onChatReconnectedRef.current = onChatReconnected;
@@ -54,6 +68,31 @@ function ChattingPage({
   );
   const selectedContactId = activeContactId ?? localActiveContactId ?? firstChatContact?.id ?? null;
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
+  const roomId = selectedContact?.roomId;
+  const activeMessageAction = messageAction?.roomId === roomId ? messageAction : null;
+  const isMessageMenuOpen = activeMessageAction?.mode === 'menu';
+  useEffect(() => () => cancelMessagePress(messagePressRef), [roomId]);
+
+  useEffect(() => {
+    if (!isMessageMenuOpen) return undefined;
+    const menu = messageOptionsRef.current;
+    menu?.scrollIntoView({ block: 'nearest' });
+    function closeOnOutsidePress(event) {
+      if (menu?.contains(event.target) || event.target.closest('.chat-message-pressable[aria-expanded="true"]')) return;
+      setMessageAction(null);
+    }
+    function closeOnEscape(event) {
+      if (event.key !== 'Escape') return;
+      messagesContainerRef.current?.querySelector('.chat-message-pressable[aria-expanded="true"]')?.focus();
+      setMessageAction(null);
+    }
+    document.addEventListener('pointerdown', closeOnOutsidePress);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePress);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isMessageMenuOpen, activeMessageAction?.messageId]);
   const isContactsEmpty = contactItems.length === 0 && !isLoading && !apiError;
   const visibleContacts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
@@ -73,9 +112,15 @@ function ChattingPage({
     [
       ...(selectedRoomHistory ?? []),
       ...(realtimeThreads[selectedContactId] ?? []),
-    ].forEach((message) => merged.set(message.id, message));
-    return [...merged.values()];
-  }, [messages, messagesRoomId, realtimeThreads, selectedContactId]);
+    ].forEach((message) => merged.set(String(message.id), message));
+    const changes = messageChanges[selectedContactId] ?? {};
+    return [...merged.values()].flatMap((message) => {
+      const change = changes[message.id];
+      if (change === null) return [];
+      return [change ? { ...message, ...change } : message];
+    });
+  }, [messages, messagesRoomId, realtimeThreads, selectedContactId, messageChanges]);
+  const lastVisibleMessageId = selectedMessages.at(-1)?.id;
 
   useEffect(() => {
     selectedRoomIdRef.current = selectedContact?.roomId ?? null;
@@ -115,7 +160,7 @@ function ChattingPage({
   useEffect(() => {
     const messageList = messagesContainerRef.current;
     if (messageList) messageList.scrollTop = messageList.scrollHeight;
-  }, [selectedContactId, selectedMessages]);
+  }, [selectedContactId, lastVisibleMessageId]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -182,6 +227,9 @@ function ChattingPage({
   }, [accessToken, currentUserId]);
 
   function selectContact(contactId) {
+    cancelMessagePress(messagePressRef);
+    setMessageAction(null);
+    setMessageActionError(null);
     const contact = contactItems.find((item) => item.id === contactId);
     setIsRoomOpen(true);
     if (contact?.roomId == null && contact?.partnerId != null && onStartChat) {
@@ -191,6 +239,73 @@ function ChattingPage({
 
     setLocalActiveContactId(contactId);
     onSelectContact?.(contact?.roomId ?? contactId);
+  }
+
+  function openMessageAction(message, mode) {
+    if (roomId == null || managingMessageRef.current) return;
+    setMessageActionError(null);
+    setMessageAction({
+      roomId,
+      messageId: message.id,
+      mode,
+      draft: message.content ?? message.text ?? '',
+    });
+  }
+
+  function startMessagePress(event, message) {
+    if (!event.isPrimary || event.button !== 0 || event.target.closest('button, textarea')) return;
+    cancelMessagePress(messagePressRef);
+    const { clientX, clientY, pointerId } = event;
+    const timer = setTimeout(() => {
+      messagePressRef.current = null;
+      openMessageAction(message, 'menu');
+    }, MESSAGE_LONG_PRESS_MS);
+    messagePressRef.current = { timer, clientX, clientY, pointerId };
+  }
+
+  function moveMessagePress(event) {
+    const press = messagePressRef.current;
+    if (press?.pointerId !== event.pointerId) return;
+    if (Math.hypot(event.clientX - press.clientX, event.clientY - press.clientY) > 8) {
+      cancelMessagePress(messagePressRef);
+    }
+  }
+
+  async function applyMessageAction(action) {
+    if (!action || managingMessageRef.current) return;
+    const deleting = action.mode === 'delete';
+    const content = action.draft.trim();
+    if (!deleting && (!content || action.draft.length > 2000)) return;
+    managingMessageRef.current = true;
+    setIsManagingMessage(true);
+    setMessageActionError(null);
+    if (deleting) setMessageAction(null);
+
+    try {
+      let change = null;
+      if (deleting) {
+        await chatApi.deleteMessage(action.roomId, action.messageId);
+      } else {
+        const saved = await chatApi.updateMessage(action.roomId, action.messageId, content);
+        change = { content: saved?.content ?? content, edited: true };
+      }
+      setMessageChanges((changes) => ({
+        ...changes,
+        [action.roomId]: { ...changes[action.roomId], [action.messageId]: change },
+      }));
+      setMessageAction((current) => current === action ? null : current);
+    } catch (error) {
+      const fallback = deleting ? '메시지를 삭제하지 못했습니다.' : '메시지를 수정하지 못했습니다.';
+      const message = error.status === 403
+        ? '이 메시지를 수정하거나 삭제할 권한이 없습니다.'
+        : error.status === 404 || error.status === 405
+          ? `${fallback} 메시지가 없거나 서버에서 이 기능을 사용할 수 없습니다.`
+          : fallback;
+      setMessageActionError({ roomId: action.roomId, message });
+    } finally {
+      managingMessageRef.current = false;
+      setIsManagingMessage(false);
+    }
   }
 
   async function submitMessage(event) {
@@ -327,14 +442,98 @@ function ChattingPage({
               )}
             </div>
 
-            <div className="chat-messages" aria-live="polite" ref={messagesContainerRef}>
+            <div
+              className="chat-messages"
+              aria-live="polite"
+              ref={messagesContainerRef}
+              onScroll={() => cancelMessagePress(messagePressRef)}
+            >
               {selectedMessages.length > 0 ? (
                 selectedMessages.map((message) => {
                   const isMine = message.sender === 'me' || message.isMine;
+                  const canManage = isMine && roomId != null && /^\d+$/.test(String(message.id));
+                  const action = canManage && activeMessageAction?.messageId === message.id
+                    ? activeMessageAction
+                    : null;
+                  const canPress = canManage && action?.mode !== 'edit';
+                  const isMenuOpen = action?.mode === 'menu';
                   return (
-                    <div className={`message ${isMine ? 'sent' : 'received'}`} key={message.id}>
-                      {message.content ?? message.text}
-                    </div>
+                    <Fragment key={message.id}>
+                      <div
+                        className={`message ${isMine ? 'sent' : 'received'}${canPress ? ' chat-message-pressable' : ''}${isMenuOpen ? ' message--options-open' : ''}`}
+                        role={canPress ? 'button' : undefined}
+                        tabIndex={canPress ? 0 : undefined}
+                        aria-expanded={canPress ? isMenuOpen : undefined}
+                        aria-controls={isMenuOpen ? 'chat-message-options' : undefined}
+                        onKeyDown={canPress ? (event) => {
+                          if (event.key !== 'Enter' && event.key !== ' ') return;
+                          event.preventDefault();
+                          if (event.repeat) return;
+                          if (isMenuOpen) setMessageAction(null);
+                          else openMessageAction(message, 'menu');
+                        } : undefined}
+                        onPointerDown={canPress ? (event) => startMessagePress(event, message) : undefined}
+                        onPointerMove={canPress ? moveMessagePress : undefined}
+                        onPointerUp={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
+                        onPointerLeave={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
+                        onPointerCancel={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
+                        onContextMenu={canPress ? (event) => event.preventDefault() : undefined}
+                      >
+                        {action?.mode === 'edit' ? (
+                          <form className="chat-message-edit" onSubmit={(event) => {
+                            event.preventDefault();
+                            void applyMessageAction(action);
+                          }}>
+                            <textarea
+                              aria-label="메시지 수정"
+                              autoFocus
+                              rows={3}
+                              maxLength={2000}
+                              value={action.draft}
+                              disabled={isManagingMessage}
+                              onChange={(event) => setMessageAction({ ...action, draft: event.target.value })}
+                              onKeyDown={(event) => {
+                                if (event.key === 'Escape' && !isManagingMessage) setMessageAction(null);
+                              }}
+                            />
+                            <div className="chat-message-actions">
+                              <Button disabled={isManagingMessage} onClick={() => setMessageAction(null)}>취소</Button>
+                              <Button
+                                type="submit"
+                                className="chat-message-save"
+                                loading={isManagingMessage}
+                                loadingText="저장 중…"
+                                disabled={!action.draft.trim() || action.draft.trim() === (message.content ?? message.text)}
+                              >
+                                저장
+                              </Button>
+                            </div>
+                          </form>
+                        ) : (
+                          <>
+                            <span className="chat-message-content">{message.content ?? message.text}</span>
+                            {message.edited && <small className="chat-message-edited">수정됨</small>}
+                          </>
+                        )}
+                      </div>
+                      {isMenuOpen && (
+                        <div
+                          className="chat-message-options"
+                          id="chat-message-options"
+                          ref={messageOptionsRef}
+                          role="group"
+                          aria-label="메시지 옵션"
+                        >
+                          <Button onClick={() => openMessageAction(message, 'edit')}>수정</Button>
+                          <Button
+                            className="chat-message-options__delete"
+                            onClick={() => openMessageAction(message, 'delete')}
+                          >
+                            삭제
+                          </Button>
+                        </div>
+                      )}
+                    </Fragment>
                   );
                 })
               ) : isLoading && !apiError ? (
@@ -359,6 +558,16 @@ function ChattingPage({
               <p className="chat-send-error" role="alert">
                 {sendError}
               </p>
+            )}
+            {messageActionError && messageActionError.roomId === roomId && (
+              <p className="chat-send-error" role="alert">{messageActionError.message}</p>
+            )}
+            {activeMessageAction?.mode === 'delete' && (
+              <ConfirmationModal
+                message="이 메시지를 삭제할까요? 삭제한 메시지는 복구할 수 없습니다."
+                onCancel={() => setMessageAction(null)}
+                onConfirm={() => void applyMessageAction(activeMessageAction)}
+              />
             )}
 
             <form className="chat-composer" onSubmit={submitMessage}>
