@@ -53,9 +53,9 @@ function KakaoMap({
               level,
             });
 
-            locations.forEach(({ nickname, latitude, longitude, profileImage }) => {
+            locations.forEach(({ nickname, latitude, longitude, profileImage, isProfileLoading }) => {
               new kakao.maps.CustomOverlay({
-                content: createNearbyFriendPingElement(nickname, profileImage),
+                content: createNearbyFriendPingElement(nickname, profileImage, isProfileLoading),
                 map,
                 position: new kakao.maps.LatLng(latitude, longitude),
                 yAnchor: 1,
@@ -106,7 +106,7 @@ function KakaoMap({
   if (!kakaoMapAppKey || hasMapLoadFailed) {
     return (
       <div className="kakao-map kakao-map--fallback" aria-label={`${ariaLabel} 미리보기`}>
-        {locations.map(({ id, nickname, latitude, longitude, profileImage }) => (
+        {locations.map(({ id, nickname, latitude, longitude, profileImage, isProfileLoading }) => (
           <div
             className="kakao-map__fallback-ping"
             key={id}
@@ -115,7 +115,7 @@ function KakaoMap({
               top: `${56 - (latitude - 35.84) * 1350}%`,
             }}
           >
-            <NearbyFriendPing nickname={nickname} profileImage={profileImage} />
+            <NearbyFriendPing nickname={nickname} profileImage={profileImage} isProfileLoading={isProfileLoading} />
           </div>
         ))}
         <p>카카오맵 JavaScript 키를 설정하면 실제 지도가 표시됩니다.</p>

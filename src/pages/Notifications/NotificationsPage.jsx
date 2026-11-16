@@ -2,7 +2,9 @@ import { useState } from 'react';
 import Layout from '../../components/common/Layout/Layout';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { NotificationBodySkeleton } from '../../components/common/PageSkeleton/NotificationSkeleton';
+import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
 import useNotifications from '../../hooks/useNotifications';
+import { formatKoreanDateTime, parseServerDate } from '../../utils/dateTime';
 import './NotificationsPage.css';
 
 const NOTIFICATION_PREVIEW_COUNT = 3;
@@ -24,33 +26,19 @@ function getNotificationView(notification) {
   return { title, text, isRead, fallback, hasExtra: Object.keys(extra).length > 0, extra };
 }
 
-/** takeTime("HH:mm:ss")이 지금보다 이전이면 복용할 시간이 지난 것으로 봅니다. */
-function isPastTime(takeTime = '') {
-  const [hour = '0', minute = '0'] = String(takeTime).split(':');
-  const scheduledAt = new Date();
-  scheduledAt.setHours(Number(hour), Number(minute), 0, 0);
-  return scheduledAt.getTime() <= Date.now();
+/** 복약 예정 시각(ms)입니다. 서버가 준 scheduledAt을 우선 쓰고, 없으면 오늘의 takeTime으로 계산합니다. */
+function getScheduledTime(item) {
+  const scheduled = parseServerDate(item.scheduledAt);
+  if (scheduled) return scheduled.getTime();
+  const [hour = '0', minute = '0'] = String(item.takeTime ?? '').split(':');
+  const fallback = new Date();
+  fallback.setHours(Number(hour), Number(minute), 0, 0);
+  return fallback.getTime();
 }
 
 /** 복용 시각까지 남은 분입니다. 이미 지났으면 0 이하입니다. */
-function getMinutesUntil(takeTime = '') {
-  const [hour = '0', minute = '0'] = String(takeTime).split(':');
-  const scheduledAt = new Date();
-  scheduledAt.setHours(Number(hour), Number(minute), 0, 0);
-  return Math.round((scheduledAt.getTime() - Date.now()) / 60000);
-}
-
-function formatTime(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? String(value)
-    : date.toLocaleString('ko-KR', {
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-      });
+function getMinutesUntil(item) {
+  return Math.round((getScheduledTime(item) - Date.now()) / 60000);
 }
 
 /** 알림 목록을 보여주고 읽음 처리, 이전 알림 더 보기를 제공하는 임시 화면입니다. */
@@ -61,7 +49,17 @@ function NotificationsPage({
   isLoading: isPageLoading = false,
   apiError = '',
 }) {
-  const { notifications, error, isReady: isNotificationsReady, markRead, loadOlder } = useNotifications();
+  const {
+    notifications,
+    error,
+    isReady: isNotificationsReady,
+    markRead,
+    markAllRead,
+    remove,
+    removeAll,
+    loadOlder,
+  } = useNotifications();
+  const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false);
   const [showAllMedication, setShowAllMedication] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
 
@@ -69,10 +67,12 @@ function NotificationsPage({
     role === 'ROLE_SENIOR' && Array.isArray(medicationSchedule) ? medicationSchedule : []
   ).map((item) => {
     const isTaken = Boolean(item.taken);
-    const statusType = isTaken ? 'taken' : isPastTime(item.takeTime) ? 'due' : 'upcoming';
+    // 자정이 지나 전날 회차가 확인 대상이면 '어제' 기준으로 안내합니다.
+    const isPrevious = Boolean(item.isPreviousDose);
+    const statusType = isTaken ? 'taken' : isPrevious || getMinutesUntil(item) <= 0 ? 'due' : 'upcoming';
     const status = {
-      taken: '복용을 완료했어요',
-      due: '약 먹을 시간이에요',
+      taken: isPrevious ? '어제 복용을 확인했어요' : '복용을 완료했어요',
+      due: isPrevious ? '어제 약을 아직 확인하지 않았어요' : '약 먹을 시간이에요',
       upcoming: '아직 먹을 시간이 아니에요',
     }[statusType];
 
@@ -81,10 +81,12 @@ function NotificationsPage({
       title: item.label,
       time: item.time,
       takeTime: item.takeTime ?? '',
+      checkDate: item.checkDate ?? '',
+      isPrevious,
       status,
       statusType,
       isTaken,
-      isSoon: !isTaken && getMinutesUntil(item.takeTime) <= MEDICATION_SOON_MINUTES,
+      isSoon: !isTaken && (isPrevious || getMinutesUntil(item) <= MEDICATION_SOON_MINUTES),
     };
   });
   const hasItems = medicationItems.length > 0 || notifications.length > 0;
@@ -101,10 +103,35 @@ function NotificationsPage({
     }
   }
 
-  async function handleMedicationCheck(medicationId) {
+  async function handleDelete(notificationId) {
+    try {
+      await remove(notificationId);
+    } catch {
+      // 목록의 오류 문구로 안내합니다.
+    }
+  }
+
+  async function handleReadAll() {
+    try {
+      await markAllRead();
+    } catch {
+      // 목록의 오류 문구로 안내합니다.
+    }
+  }
+
+  async function handleDeleteAll() {
+    setIsDeleteAllOpen(false);
+    try {
+      await removeAll();
+    } catch {
+      // 목록의 오류 문구로 안내합니다.
+    }
+  }
+
+  async function handleMedicationCheck(medicationId, checkDate) {
     if (medicationId == null) return;
     try {
-      await onMedicationCheck?.(medicationId);
+      await onMedicationCheck?.(medicationId, checkDate);
     } catch {
       // App의 공통 API 오류 알림이 표시됩니다.
     }
@@ -128,12 +155,13 @@ function NotificationsPage({
         title: view.title,
         text: view.text,
         fallback: view.fallback,
-        timeText: formatTime(notification.createdAt),
-        sortTime: new Date(notification.createdAt).getTime() || 0,
+        timeText: formatKoreanDateTime(notification.createdAt),
+        sortTime: parseServerDate(notification.createdAt)?.getTime() || 0,
         isRead: view.isRead,
         actionLabel: view.isRead ? '읽음' : '읽음 처리',
         actionDisabled: view.isRead,
         onAction: () => handleRead(notification.notificationId),
+        onDelete: () => handleDelete(notification.notificationId),
       };
     }).sort((a, b) => b.sortTime - a.sortTime),
   );
@@ -156,9 +184,14 @@ function NotificationsPage({
               {entry.fallback && <p className="notifications-page__raw">{entry.fallback}</p>}
               <span>{entry.timeText}</span>
             </div>
-            <button type="button" onClick={entry.onAction} disabled={entry.actionDisabled}>
-              {entry.actionLabel}
-            </button>
+            <div className="notifications-page__item-actions">
+              <button type="button" onClick={entry.onAction} disabled={entry.actionDisabled}>
+                {entry.actionLabel}
+              </button>
+              <button type="button" onClick={entry.onDelete}>
+                삭제
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -194,7 +227,7 @@ function NotificationsPage({
                 )}
                 {visibleMedication.length > 0 && (
                 <ul className="notifications-page__medication">
-                  {visibleMedication.map(({ id, title, time, status, statusType, isTaken }) => (
+                  {visibleMedication.map(({ id, title, time, status, statusType, isTaken, isPrevious, checkDate }) => (
                     <li
                       key={id}
                       className={`notifications-page__medication-row${isTaken ? ' is-taken' : ''}`}
@@ -208,10 +241,10 @@ function NotificationsPage({
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleMedicationCheck(id)}
+                        onClick={() => handleMedicationCheck(id, checkDate)}
                         disabled={id == null || isTaken}
                       >
-                        {isTaken ? '복용 완료' : '먹었어요 체크'}
+                        {isTaken ? (isPrevious ? '어제 복용 확인' : '복용 완료') : isPrevious ? '어제 먹었어요 체크' : '먹었어요 체크'}
                       </button>
                     </li>
                   ))}
@@ -237,6 +270,23 @@ function NotificationsPage({
                       ? `안 읽음 ${allNotificationEntries.filter((entry) => !entry.isRead).length}`
                       : '모두 읽음'}
                   </span>
+                </div>
+                <div className="notifications-page__group-actions">
+                  <button
+                    type="button"
+                    className="notifications-page__more"
+                    onClick={handleReadAll}
+                    disabled={allNotificationEntries.every((entry) => entry.isRead)}
+                  >
+                    모두 읽음
+                  </button>
+                  <button
+                    type="button"
+                    className="notifications-page__more"
+                    onClick={() => setIsDeleteAllOpen(true)}
+                  >
+                    모두 삭제
+                  </button>
                 </div>
                 {renderEntries(visibleNotifications)}
                 {hiddenNotificationCount > 0 && (
@@ -269,6 +319,14 @@ function NotificationsPage({
           <EmptyState title="새 알림이 없어요" description="알림이 오면 이곳에서 확인할 수 있어요." />
         ) : null}
       </section>
+      {isDeleteAllOpen && (
+        <ConfirmationModal
+          message="알림을 모두 삭제할까요? 아직 불러오지 않은 알림도 함께 삭제돼요."
+          confirmLabel="모두 삭제"
+          onCancel={() => setIsDeleteAllOpen(false)}
+          onConfirm={handleDeleteAll}
+        />
+      )}
     </Layout>
   );
 }
