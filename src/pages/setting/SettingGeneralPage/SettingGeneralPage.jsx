@@ -16,7 +16,6 @@ function SettingGeneralPage({
   onMedicationCreate,
   onMedicationDelete,
   onMedicationCheck,
-  checkedMedicationIds = [],
   isLoading = false,
   apiError = '',
 }) {
@@ -57,15 +56,7 @@ function SettingGeneralPage({
         : await locationApi.getSharing();
       if (typeof saved?.enabled !== 'boolean') throw new Error();
       setLocationSharing(saved.enabled);
-      if (!checked && saved.enabled === false) {
-        try {
-          await locationApi.stopSharing();
-        } catch (error) {
-          if (error.status !== 404) {
-            setLocationMessage('위치 공유는 꺼졌지만 이전 위치를 삭제하지 못했습니다.');
-          }
-        }
-      }
+      // 공유를 끄면 서버가 저장된 위치도 함께 삭제하므로 따로 지우지 않습니다.
       if (saved.enabled !== checked) setLocationMessage('위치 공유 설정이 변경되지 않았습니다.');
     } catch {
       setLocationMessage('위치 공유 설정을 저장하거나 확인하지 못했습니다.');
@@ -158,7 +149,6 @@ function SettingGeneralPage({
           <SettingMedicationList
             schedule={medicationSchedule}
             onCheck={handleMedicationCheck}
-            checkedIds={checkedMedicationIds}
             isLoading={isLoading}
             apiError={apiError}
           />

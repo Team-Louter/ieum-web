@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './ChattingPage.css';
 import searchIcon from '../../assets/images/search.svg';
 import profileImage from '../../assets/images/profile.png';
-import { getValidAccessToken } from '../../api/client';
+import { chatApi, getValidAccessToken } from '../../api/client';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import Button from '../../components/common/Button/Button';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
@@ -35,6 +35,12 @@ function ChattingPage({
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
   const [isSending, setIsSending] = useState(false);
+  // 서버가 알려준 안 읽은 수는 읽음 처리한 방부터 0으로 보고, 실시간으로 받은 메시지는 따로 셉니다.
+  const [readRoomIds, setReadRoomIds] = useState(() => new Set());
+  const [realtimeUnread, setRealtimeUnread] = useState({});
+  const lastReadSentRef = useRef({});
+  const selectedRoomIdRef = useRef(null);
+  const isRoomVisibleRef = useRef(true);
   const sendingRef = useRef(false);
   // 모바일에서는 대화 목록을 먼저 보여 주고, 대화를 누르면 채팅창으로 넘어갑니다.
   const [isRoomOpen, setIsRoomOpen] = useState(false);
@@ -55,6 +61,9 @@ function ChattingPage({
       (contact.name ?? '').toLocaleLowerCase().includes(normalizedSearch),
     );
   }, [contactItems, searchTerm]);
+  const getUnreadCount = (contact) =>
+    (readRoomIds.has(contact.roomId) ? 0 : (contact.unreadCount ?? 0)) +
+    (realtimeUnread[contact.roomId] ?? 0);
   const selectedMessages = useMemo(() => {
     const merged = new Map();
     const selectedRoomHistory =
@@ -67,6 +76,41 @@ function ChattingPage({
     ].forEach((message) => merged.set(message.id, message));
     return [...merged.values()];
   }, [messages, messagesRoomId, realtimeThreads, selectedContactId]);
+
+  useEffect(() => {
+    selectedRoomIdRef.current = selectedContact?.roomId ?? null;
+    // 모바일에서 목록 화면이 보이는 동안에는 대화를 읽은 것으로 보지 않습니다.
+    isRoomVisibleRef.current = isRoomOpen || window.matchMedia('(min-width: 769px)').matches;
+  }, [selectedContact, isRoomOpen]);
+
+  // 대화창에서 확인한 마지막 메시지까지 서버에 읽음으로 알립니다.
+  useEffect(() => {
+    const roomId = selectedContact?.roomId;
+    if (roomId == null || !isRoomVisibleRef.current) return;
+
+    const lastMessage = [...selectedMessages]
+      .reverse()
+      .find((message) => Number.isFinite(Number(message.id)));
+    if (!lastMessage) return;
+
+    const lastMessageId = Number(lastMessage.id);
+    if ((lastReadSentRef.current[roomId] ?? 0) >= lastMessageId) return;
+    const hasUnread = getUnreadCount(selectedContact) > 0;
+    if (!hasUnread && lastMessage.sender === 'me') return;
+
+    lastReadSentRef.current[roomId] = lastMessageId;
+    chatApi
+      .markRead(roomId, lastMessageId)
+      .then(() => {
+        setReadRoomIds((ids) => new Set(ids).add(roomId));
+        setRealtimeUnread((counts) => (counts[roomId] ? { ...counts, [roomId]: 0 } : counts));
+      })
+      .catch(() => {
+        // 실패하면 다음 메시지를 확인할 때 다시 시도합니다.
+        delete lastReadSentRef.current[roomId];
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMessages, selectedContact, isRoomOpen]);
 
   useEffect(() => {
     const messageList = messagesContainerRef.current;
@@ -112,6 +156,11 @@ function ChattingPage({
               if (roomMessages.some((item) => item.id === normalized.id)) return threads;
               return { ...threads, [roomId]: [...roomMessages, normalized] };
             });
+            // 보고 있지 않은 방에서 상대가 보낸 메시지는 안 읽은 수에 더합니다.
+            const isViewing = selectedRoomIdRef.current === roomId && isRoomVisibleRef.current;
+            if (normalized.sender === 'them' && !isViewing) {
+              setRealtimeUnread((counts) => ({ ...counts, [roomId]: (counts[roomId] ?? 0) + 1 }));
+            }
           } catch {
             setSocketStatus('실시간 메시지를 읽지 못했습니다.');
           }
@@ -221,6 +270,14 @@ function ChattingPage({
               >
                 <img src={contact.profileImage || profileImage} alt="" />
                 <span>{contact.name}</span>
+                {getUnreadCount(contact) > 0 && (
+                  <strong
+                    className="user-list-item__badge"
+                    aria-label={`안 읽은 메시지 ${getUnreadCount(contact)}개`}
+                  >
+                    {getUnreadCount(contact) > 99 ? '99+' : getUnreadCount(contact)}
+                  </strong>
+                )}
               </button>
             ))
           ) : isLoading && !apiError ? (

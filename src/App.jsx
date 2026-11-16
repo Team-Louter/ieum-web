@@ -6,7 +6,6 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
 import usePageApiData from './hooks/usePageApiData';
-import useCheckedMedicationIds from './hooks/useCheckedMedicationIds';
 import useAccountActions from './app/useAccountActions';
 import useFriendActions from './app/useFriendActions';
 import useMedicationActions from './app/useMedicationActions';
@@ -108,7 +107,6 @@ function AppContent({ accessToken, setAccessToken }) {
     reloadKey,
     onDefaultChatRoom: selectDefaultChatRoom,
   });
-  const [checkedMedicationIds, setCheckedMedicationIds] = useCheckedMedicationIds(user.loginId);
 
   useEffect(() => {
     if (!accessToken) return undefined;
@@ -168,7 +166,6 @@ function AppContent({ accessToken, setAccessToken }) {
 
   const medicationActions = useMedicationActions({
     runAction,
-    setCheckedMedicationIds,
   });
 
   const friendActions = useFriendActions({
@@ -248,7 +245,6 @@ function AppContent({ accessToken, setAccessToken }) {
     onMedicationCreate: medicationActions.createMedication,
     onMedicationDelete: medicationActions.deleteMedication,
     onMedicationCheck: medicationActions.checkMedication,
-    checkedMedicationIds,
     role: user.role,
 
     onAddFriend: friendActions.sendFriendRequest,

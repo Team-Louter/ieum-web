@@ -235,6 +235,9 @@ export const authApi = {
   verifyEmailCode: (email, code) =>
     apiPost('/api/auth/email/verify', { email, code }, { auth: false }),
   signup: (data) => apiPost('/api/auth/signup', data, { auth: false }),
+  // 로그인 없이 호출하며, 응답으로 사용 가능 여부를 알려줍니다.
+  checkLoginId: (loginId) =>
+    apiGet(`/api/auth/loginId/check?loginId=${encodeURIComponent(loginId)}`, { auth: false }),
   login: (loginId, password) => apiPost('/api/auth/login', { loginId, password }, { auth: false }),
   findLoginId: (email, verificationToken) =>
     apiPost('/api/auth/loginId/find', { email, verificationToken }, { auth: false }),
@@ -429,4 +432,7 @@ export const chatApi = {
     return apiGet(`/api/chat/rooms/${roomId}/messages?${query}`);
   },
   sendMessage: (roomId, content) => apiPost(`/api/chat/rooms/${roomId}/messages`, { content }),
+  // 확인한 마지막 메시지까지 읽음으로 저장합니다.
+  markRead: (roomId, lastReadMessageId) =>
+    apiPut(`/api/chat/rooms/${roomId}/read`, { lastReadMessageId }),
 };

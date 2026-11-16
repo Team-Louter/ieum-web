@@ -58,7 +58,6 @@ function NotificationsPage({
   role,
   medicationSchedule = [],
   onMedicationCheck,
-  checkedMedicationIds = [],
   isLoading: isPageLoading = false,
   apiError = '',
 }) {
@@ -69,9 +68,7 @@ function NotificationsPage({
   const medicationItems = (
     role === 'ROLE_SENIOR' && Array.isArray(medicationSchedule) ? medicationSchedule : []
   ).map((item) => {
-    const isTaken =
-      Boolean(item.taken) ||
-      checkedMedicationIds.some((checkedId) => String(checkedId) === String(item.id));
+    const isTaken = Boolean(item.taken);
     const statusType = isTaken ? 'taken' : isPastTime(item.takeTime) ? 'due' : 'upcoming';
     const status = {
       taken: '복용을 완료했어요',
