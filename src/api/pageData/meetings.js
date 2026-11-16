@@ -36,7 +36,7 @@ export async function loadMeetingDetailPage({ selectedId }) {
 
   const members = asArray(remoteMembers).map(toMeetingMember);
   const notices = asArray(Array.isArray(noticePage) ? noticePage : noticePage?.notices)
-    .map(toMeetingNotice)
+    .map((notice) => toMeetingNotice(notice, members))
     .sort((first, second) => {
       const firstTime = new Date(first.createdAt ?? 0).getTime();
       const secondTime = new Date(second.createdAt ?? 0).getTime();

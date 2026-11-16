@@ -43,7 +43,7 @@ function AppContent({ accessToken, setAccessToken }) {
   const [feedback, setFeedbackState] = useState('');
   const [feedbackVersion, setFeedbackVersion] = useState(0);
   const [feedbackIsError, setFeedbackIsError] = useState(false);
-  const [sidebarProfile, setSidebarProfile] = useState({ loginId: '', image: '' });
+  const [sidebarProfile, setSidebarProfile] = useState({ loginId: '', image: '', nickname: '' });
 
   const setFeedback = useCallback((message) => {
     setFeedbackState(message);
@@ -116,6 +116,7 @@ function AppContent({ accessToken, setAccessToken }) {
       if (isActive) {
         setSidebarProfile({
           loginId: user.loginId,
+          nickname: profile?.nickname ?? '',
           image: resolveApiAssetUrl(profile?.profileImageUrl ?? ''),
         });
       }
@@ -331,6 +332,7 @@ function AppContent({ accessToken, setAccessToken }) {
         <Sidebar
           role={user.role}
           profileImage={sidebarProfile.loginId === user.loginId ? sidebarProfile.image : ''}
+          nickname={sidebarProfile.loginId === user.loginId ? sidebarProfile.nickname : ''}
         />
       )}
       {skeletonVariant ? <PageSkeleton variant={skeletonVariant} role={user.role} /> : <Page {...commonProps} />}

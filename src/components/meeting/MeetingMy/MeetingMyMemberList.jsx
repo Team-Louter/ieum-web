@@ -71,7 +71,7 @@ export default function MeetingMyMemberList({
       </div>
       {transferTarget && (
         <ConfirmationModal
-          message={`${transferTarget.loginId ?? transferTarget.nickname ?? '이 회원'}님에게 모임장을 넘길까요? 나는 일반 회원이 돼요.`}
+          message={`${transferTarget.nickname ?? '이 회원'}님에게 모임장을 넘길까요? 나는 일반 회원이 돼요.`}
           confirmLabel="넘기기"
           danger={false}
           onCancel={() => setTransferTarget(null)}
@@ -136,7 +136,7 @@ function MeetingMemberItem({
 
   return (
     <MeetingMyMemberProfile
-      id={member.loginId ?? member.nickname ?? member.name ?? member.id ?? ''}
+      id={member.nickname ?? member.name ?? ''}
       role={isManager ? '관리자' : '회원'}
       profile_image={member.profileImage ?? member.profile_image ?? member.profileImageUrl}
       isMenuOpen={isMenuOpen}

@@ -36,7 +36,7 @@ function MarketFeedInPage({ selectedPost, onChat, currentUserId, currentLoginId 
         price={post.price}
         content={post.description ?? ''}
         userImg={post.seller?.profileImage ?? profileImage}
-        sellerLoginId={sellerLoginId || '판매자 정보 없음'}
+        sellerNickname={post.seller?.nickname || '판매자 정보 없음'}
         address={post.address ?? post.location ?? ''}
         complete={post.complete}
         showChat={!isOwnPost}

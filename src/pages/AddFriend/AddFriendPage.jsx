@@ -231,7 +231,7 @@ function AddFriendPage({
           {visibleFriends.map((friend) => (
             <div className="add-friend-profile" key={friend.id ?? friend.userId ?? friend.loginId}>
               <MeetingMyMemberProfile
-                id={friend.loginId ?? friend.name ?? friend.nickname ?? friend.id ?? ''}
+                id={friend.nickname ?? friend.name ?? ''}
                 role="회원"
                 profile_image={resolveApiAssetUrl(
                   friend.profileImageUrl ?? friend.profileImage ?? friend.profile_image,
