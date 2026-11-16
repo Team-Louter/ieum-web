@@ -41,6 +41,10 @@
     color 0.15s ease;
 }
 
+.sidebar__menu-item {
+  overflow: visible;
+}
+
 .sidebar__profile:hover,
 .sidebar__menu-item:hover {
   background-color: #f4f4f4;
@@ -65,6 +69,30 @@
   flex-shrink: 0;
   width: 40px;
   height: 40px;
+}
+
+.sidebar__icon-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.sidebar__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: 11px;
+  background: #e53535;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .sidebar__profile .sidebar__icon {

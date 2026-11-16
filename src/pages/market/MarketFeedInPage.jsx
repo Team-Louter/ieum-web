@@ -20,7 +20,6 @@ function MarketFeedInPage({ selectedPost, onChat, currentUserId, currentLoginId 
     post.sellerId != null
       ? String(post.sellerId) === String(currentUserId)
       : Boolean(postOwnerLoginId && currentLoginId && postOwnerLoginId === currentLoginId);
-  const sellerLoginId = isOwnPost && currentLoginId ? currentLoginId : postOwnerLoginId;
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: true },
     { label: '내 게시물', href: '/market/my', isActive: false },

@@ -154,16 +154,6 @@ export function getSkeletonVariant(routeKey) {
   return skeletonVariants[routeKey] ?? null;
 }
 
-function TextLines({ lines = 2 }) {
-  return (
-    <>
-      {Array.from({ length: lines }, (_, index) => (
-        <Skeleton key={index} text width={index === lines - 1 ? '60%' : '100%'} />
-      ))}
-    </>
-  );
-}
-
 /** 모임 카드 한 장의 로딩 모습입니다. 실제 MeetingCard의 클래스를 그대로 씁니다. */
 function MeetingCardSkeleton() {
   return (

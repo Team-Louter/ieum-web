@@ -23,6 +23,7 @@ function ChattingPage({
   accessToken,
   currentUserId,
   onChatReconnected,
+  onUnreadChange,
   onNavigate,
   isLoading = false,
   apiError = '',
@@ -46,9 +47,13 @@ function ChattingPage({
   const [isRoomOpen, setIsRoomOpen] = useState(false);
   const messagesContainerRef = useRef(null);
   const onChatReconnectedRef = useRef(onChatReconnected);
+  const onUnreadChangeRef = useRef(onUnreadChange);
   useEffect(() => {
     onChatReconnectedRef.current = onChatReconnected;
   }, [onChatReconnected]);
+  useEffect(() => {
+    onUnreadChangeRef.current = onUnreadChange;
+  }, [onUnreadChange]);
   const firstChatContact = contactItems.find(
     (contact) => contact.roomId != null || contact.partnerId == null,
   );
@@ -104,6 +109,7 @@ function ChattingPage({
       .then(() => {
         setReadRoomIds((ids) => new Set(ids).add(roomId));
         setRealtimeUnread((counts) => (counts[roomId] ? { ...counts, [roomId]: 0 } : counts));
+        onUnreadChangeRef.current?.();
       })
       .catch(() => {
         // 실패하면 다음 메시지를 확인할 때 다시 시도합니다.
@@ -161,6 +167,7 @@ function ChattingPage({
             if (normalized.sender === 'them' && !isViewing) {
               setRealtimeUnread((counts) => ({ ...counts, [roomId]: (counts[roomId] ?? 0) + 1 }));
             }
+            if (normalized.sender === 'them') onUnreadChangeRef.current?.();
           } catch {
             setSocketStatus('실시간 메시지를 읽지 못했습니다.');
           }

@@ -3,7 +3,6 @@ import Layout from '../../components/common/Layout/Layout';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { NotificationBodySkeleton } from '../../components/common/PageSkeleton/NotificationSkeleton';
 import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
-import useNotifications from '../../hooks/useNotifications';
 import { formatKoreanDateTime, parseServerDate } from '../../utils/dateTime';
 import './NotificationsPage.css';
 
@@ -44,6 +43,7 @@ function getMinutesUntil(item) {
 /** 알림 목록을 보여주고 읽음 처리, 이전 알림 더 보기를 제공하는 임시 화면입니다. */
 function NotificationsPage({
   role,
+  notificationState,
   medicationSchedule = [],
   onMedicationCheck,
   isLoading: isPageLoading = false,
@@ -58,7 +58,7 @@ function NotificationsPage({
     remove,
     removeAll,
     loadOlder,
-  } = useNotifications();
+  } = notificationState;
   const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false);
   const [showAllMedication, setShowAllMedication] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
