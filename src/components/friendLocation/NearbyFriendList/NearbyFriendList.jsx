@@ -28,6 +28,13 @@ function NearbyFriendList({ friends = [], status = 'ready' }) {
               compact
               title={status === 'loading' ? '친구 위치를 불러오는 중입니다.' :
                 status === 'error' ? '친구 위치를 불러오지 못했습니다.' : '공유된 친구 위치가 없어요'}
+              description={
+                status === 'error'
+                  ? '잠시 후 다시 시도해 주세요.'
+                  : status === 'loading'
+                    ? ''
+                    : '위치 공유를 켠 친구가 최근 15분 안에 위치를 보내면 여기에 나타나요.'
+              }
             />
           </li>
         )}
