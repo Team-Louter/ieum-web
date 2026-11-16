@@ -16,7 +16,6 @@ function SettingGeneralPage({
   onMedicationCreate,
   onMedicationDelete,
   onMedicationCheck,
-  checkedMedicationIds = [],
   isLoading = false,
   apiError = '',
 }) {
@@ -158,7 +157,6 @@ function SettingGeneralPage({
           <SettingMedicationList
             schedule={medicationSchedule}
             onCheck={handleMedicationCheck}
-            checkedIds={checkedMedicationIds}
             isLoading={isLoading}
             apiError={apiError}
           />

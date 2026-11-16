@@ -23,7 +23,6 @@ function SettingsPage({
   onMedicationCreate,
   onMedicationDelete,
   onMedicationCheck,
-  checkedMedicationIds = [],
   settings: settingsFromProps,
   onSettingChange,
   onFamilyConnect,
@@ -79,7 +78,6 @@ function SettingsPage({
             onMedicationCreate={onMedicationCreate}
             onMedicationDelete={onMedicationDelete}
             onMedicationCheck={onMedicationCheck}
-            checkedMedicationIds={checkedMedicationIds}
           />
         )}
         <SettingGuardianPage

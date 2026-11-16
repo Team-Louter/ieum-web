@@ -327,3 +327,19 @@
     margin: 0 16px 8px;
   }
 }
+
+.user-list-item__badge {
+  flex: none;
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 7px;
+  border-radius: 11px;
+  box-sizing: border-box;
+  background-color: #c62424;
+  color: #fff;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}

@@ -41,16 +41,25 @@ export default function usePostActions({ runAction, movePage }) {
   }
 
   async function createNeighborPost(values) {
-    const imageFile = values.media instanceof File ? values.media : null;
+    // 사진은 최대 5장까지 한 번에 올립니다.
+    const imageFiles = (Array.isArray(values.media) ? values.media : [values.media]).filter(
+      (file) => file instanceof File,
+    );
     const post = await runAction(async () => {
-      if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+      if (imageFiles.length > 5) {
+        throw new Error('사진은 최대 5장까지 올릴 수 있습니다.');
+      }
+      if (imageFiles.some((file) => !['image/jpeg', 'image/png'].includes(file.type))) {
         throw new Error('JPG 또는 PNG 사진만 올릴 수 있습니다.');
       }
-      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+      if (imageFiles.some((file) => file.size > 5 * 1024 * 1024)) {
         throw new Error('사진은 5MB 이하로 올려주세요.');
       }
 
-      return communityPostApi.create({ title: values.title, content: values.content }, imageFile);
+      return communityPostApi.create(
+        { title: values.title, content: values.content },
+        imageFiles.length > 0 ? imageFiles : null,
+      );
     }, '게시물을 등록했습니다.');
     movePage('/neighbor');
     return post;

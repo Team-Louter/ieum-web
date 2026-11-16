@@ -30,6 +30,13 @@ export function toCommunityPost(post = {}) {
       profileImage: resolveApiAssetUrl(author.profileImageUrl ?? author.profileImage ?? ''),
     },
     image: resolveApiAssetUrl(post.imageUrl ?? post.image ?? ''),
+    // 사진이 여러 장이면 imageUrls에 모두 들어 있고, 한 장이면 imageUrl만 있을 수 있습니다.
+    images: (Array.isArray(post.imageUrls) && post.imageUrls.length > 0
+      ? post.imageUrls
+      : [post.imageUrl ?? post.image]
+    )
+      .filter(Boolean)
+      .map(resolveApiAssetUrl),
     likeCount: Number(post.likeCount ?? 0),
     isLiked: post.likedByMe ?? post.isLiked ?? false,
     comments: Array.isArray(post.comments)

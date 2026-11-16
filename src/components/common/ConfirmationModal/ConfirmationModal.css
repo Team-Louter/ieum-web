@@ -1,89 +1,17 @@
-.confirmation-modal {
-  position: fixed;
+/* 확인 창은 다른 다이얼로그 위에서도 보여야 하므로 한 단계 위에 둡니다. */
+.confirmation-dialog-backdrop {
   z-index: 12000;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-  background-color: #00000066;
 }
 
-.confirmation-modal__panel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 36px;
-  width: min(839px, 100%);
-  min-height: 250px;
-  padding: 32px;
-  border: 2px solid #dfdfdf;
-  border-radius: 10px;
-  background-color: #fff;
+.confirmation-dialog {
+  width: min(420px, 100%);
 }
 
-.confirmation-modal__panel > button {
-  width: 30px;
-  height: 30px;
-  background: transparent;
-  border: none;
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  cursor: pointer;
+.confirmation-dialog .setting-dialog__header h2 {
+  font-size: var(--font-size-body);
+  line-height: 1.5;
 }
 
-.confirmation-modal__panel > button > img {
-  width: 30px;
-  height: 30px;
-}
-
-.confirmation-modal__panel > p {
-  font-size: var(--font-size-display);
-  text-align: center;
-}
-
-.confirmation-modal__button-group {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-}
-
-.confirmation-modal__button-group > button {
-  width: min(288px, 45%);
-  height: 60px;
-  border: none;
-  border-radius: 10px;
-  font-size: var(--font-size-subtitle);
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.confirmation-modal__button-group > button:first-child {
-  background: #dfdfdf;
-  color: #000;
-}
-
-.confirmation-modal__button-group > button:last-child {
-  background: #c62424;
-  color: #ffc2c2;
-}
-
-.confirmation-modal__button-group > button.confirmation-modal__confirm--primary {
-  background: #42b66b;
-  color: #fff;
-}
-
-@media (max-width: 600px) {
-  .confirmation-modal__panel > p {
-    font-size: var(--font-size-subtitle);
-  }
-
-  .confirmation-modal__button-group > button {
-    height: 48px;
-    font-size: var(--font-size-small);
-  }
+.confirmation-dialog__actions {
+  justify-content: flex-end;
 }

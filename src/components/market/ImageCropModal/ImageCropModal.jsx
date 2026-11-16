@@ -20,9 +20,16 @@ function getFrameSize() {
 }
 
 /** 사진을 정사각형(게시물 사진 비율)으로 잘라 새 파일로 돌려주는 창입니다. */
-function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
-  const [size] = useState(getFrameSize);
-  const stageSize = size + PAD * 2;
+function ImageCropModal({ src, fileName = 'image', aspect = 1, onConfirm, onCancel }) {
+  // 자르는 틀의 가로·세로입니다. aspect는 가로÷세로 비율이고, 1이면 정사각형입니다.
+  const [frame] = useState(() => {
+    const base = getFrameSize();
+    return aspect >= 1 ? { w: base, h: base / aspect } : { w: base * aspect, h: base };
+  });
+  const frameW = frame.w;
+  const frameH = frame.h;
+  const stageW = frameW + PAD * 2;
+  const stageH = frameH + PAD * 2;
   const [natural, setNatural] = useState(null);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -31,11 +38,11 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
   const dragRef = useRef(null);
 
   // 틀을 꽉 채우는 배율(cover)과 사진 전체가 보이는 배율(contain)입니다.
-  const coverScale = natural ? Math.max(size / natural.width, size / natural.height) : 1;
-  const containScale = natural ? Math.min(size / natural.width, size / natural.height) : 1;
+  const coverScale = natural ? Math.max(frameW / natural.width, frameH / natural.height) : 1;
+  const containScale = natural ? Math.min(frameW / natural.width, frameH / natural.height) : 1;
   const minScale = containScale;
   const maxScale = Math.max(coverScale * MAX_ZOOM, containScale);
-  const cropSourceSize = natural ? size / scale : 0;
+  const cropSourceSize = natural ? Math.max(frameW, frameH) / scale : 0;
   const isLowResolution = natural && cropSourceSize < LOW_RESOLUTION_SIZE;
 
   useEffect(() => {
@@ -50,21 +57,29 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
   /** 사진이 틀 밖으로 빠지지 않게 하고, 틀보다 작아지면 가운데에 둡니다. */
   function clampOffset(nextOffset, nextScale, dims = natural) {
     if (!dims) return nextOffset;
-    const axis = (value, length) => {
+    const axis = (value, length, frameLength) => {
       const scaled = length * nextScale;
-      return scaled <= size ? PAD + (size - scaled) / 2 : clamp(value, PAD + size - scaled, PAD);
+      return scaled <= frameLength
+        ? PAD + (frameLength - scaled) / 2
+        : clamp(value, PAD + frameLength - scaled, PAD);
     };
-    return { x: axis(nextOffset.x, dims.width), y: axis(nextOffset.y, dims.height) };
+    return {
+      x: axis(nextOffset.x, dims.width, frameW),
+      y: axis(nextOffset.y, dims.height, frameH),
+    };
   }
 
   /** 사진을 틀에 꽉 차게 가운데로 맞춥니다. */
   function fitToFrame(dims = natural) {
     if (!dims) return;
-    const nextScale = Math.max(size / dims.width, size / dims.height);
+    const nextScale = Math.max(frameW / dims.width, frameH / dims.height);
     setScale(nextScale);
     setOffset(
       clampOffset(
-        { x: PAD + (size - dims.width * nextScale) / 2, y: PAD + (size - dims.height * nextScale) / 2 },
+        {
+          x: PAD + (frameW - dims.width * nextScale) / 2,
+          y: PAD + (frameH - dims.height * nextScale) / 2,
+        },
         nextScale,
         dims,
       ),
@@ -81,10 +96,15 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
     if (!natural) return;
     const safeScale = clamp(nextScale, minScale, maxScale);
     // 틀 가운데에 보이던 지점을 그대로 유지한 채 확대·축소합니다.
-    const centerX = (stageSize / 2 - offset.x) / scale;
-    const centerY = (stageSize / 2 - offset.y) / scale;
+    const centerX = (stageW / 2 - offset.x) / scale;
+    const centerY = (stageH / 2 - offset.y) / scale;
     setScale(safeScale);
-    setOffset(clampOffset({ x: stageSize / 2 - centerX * safeScale, y: stageSize / 2 - centerY * safeScale }, safeScale));
+    setOffset(
+      clampOffset(
+        { x: stageW / 2 - centerX * safeScale, y: stageH / 2 - centerY * safeScale },
+        safeScale,
+      ),
+    );
   }
 
   function handlePointerDown(event) {
@@ -132,13 +152,13 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
     if (!natural || !image || isSaving) return;
 
     setIsSaving(true);
-    const ratio = OUTPUT_SIZE / size;
+    const ratio = OUTPUT_SIZE / Math.max(frameW, frameH);
     const canvas = document.createElement('canvas');
-    canvas.width = OUTPUT_SIZE;
-    canvas.height = OUTPUT_SIZE;
+    canvas.width = Math.round(frameW * ratio);
+    canvas.height = Math.round(frameH * ratio);
     const context = canvas.getContext('2d');
     context.fillStyle = '#fff';
-    context.fillRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
+    context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(
       image,
       (offset.x - PAD) * ratio,
@@ -177,11 +197,11 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
         </button>
         <h2 id="image-crop-title">사진 자르기</h2>
         <p className="image-crop-modal__hint">
-          밝게 보이는 정사각형 안이 게시물에 올라가요. 사진을 끌어서 옮기고, 휠이나 슬라이더로 크기를 조절하세요.
+          밝게 보이는 네모 안이 그대로 올라가요. 사진을 끌어서 옮기고, 휠이나 슬라이더로 크기를 조절하세요.
         </p>
         <div
           className="image-crop-modal__viewport"
-          style={{ width: stageSize, height: stageSize }}
+          style={{ width: stageW, height: stageH }}
           tabIndex={0}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -212,13 +232,13 @@ function ImageCropModal({ src, fileName = 'image', onConfirm, onCancel }) {
             className="image-crop-modal__dim"
             aria-hidden="true"
             style={{
-              clipPath: `polygon(evenodd, 0 0, ${stageSize}px 0, ${stageSize}px ${stageSize}px, 0 ${stageSize}px, 0 0, ${PAD}px ${PAD}px, ${PAD}px ${PAD + size}px, ${PAD + size}px ${PAD + size}px, ${PAD + size}px ${PAD}px, ${PAD}px ${PAD}px)`,
+              clipPath: `polygon(evenodd, 0 0, ${stageW}px 0, ${stageW}px ${stageH}px, 0 ${stageH}px, 0 0, ${PAD}px ${PAD}px, ${PAD}px ${PAD + frameH}px, ${PAD + frameW}px ${PAD + frameH}px, ${PAD + frameW}px ${PAD}px, ${PAD}px ${PAD}px)`,
             }}
           />
           <span
             className="image-crop-modal__frame"
             aria-hidden="true"
-            style={{ top: PAD, left: PAD, width: size, height: size }}
+            style={{ top: PAD, left: PAD, width: frameW, height: frameH }}
           />
         </div>
         <div className="image-crop-modal__zoom">

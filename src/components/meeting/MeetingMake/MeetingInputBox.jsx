@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import './MeetingInputBox.css';
 import { getCurrentRegionName } from '../../../utils/kakaoRegion';
 import upload from '../../../assets/images/meeting-upload.png';
+import useImageCrop from '../../../hooks/useImageCrop';
 
 export default function MeetingInputBox({ values = {}, onChange }) {
   const [preview, setPreview] = useState({ file: null, url: '' });
   const [isLocating, setIsLocating] = useState(false);
   const [regionError, setRegionError] = useState('');
+  const { cropImage, cropModal } = useImageCrop({ aspect: 1 });
 
   /** 현재 위치를 지역 이름으로 바꿔 입력칸에 채웁니다. */
   async function handleCurrentRegion() {
@@ -24,8 +26,13 @@ export default function MeetingInputBox({ values = {}, onChange }) {
   useEffect(() => () => {
     if (preview.url) URL.revokeObjectURL(preview.url);
   }, [preview.url]);
-  function changeImage(event) {
-    const file = event.target.files?.[0] ?? null;
+  async function changeImage(event) {
+    const selected = event.target.files?.[0] ?? null;
+    event.target.value = '';
+    if (!selected) return;
+    // 모임 사진은 정사각형으로 잘라 올립니다. 자르기를 취소하면 기존 사진을 그대로 둡니다.
+    const file = await cropImage(selected);
+    if (!file) return;
     setPreview({ file, url: file ? URL.createObjectURL(file) : '' });
     onChange?.('image', file);
   }
@@ -95,6 +102,7 @@ export default function MeetingInputBox({ values = {}, onChange }) {
           required
         />
       </div>
+      {cropModal}
     </div>
   );
 }

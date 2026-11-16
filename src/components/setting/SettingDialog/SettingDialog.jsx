@@ -1,10 +1,18 @@
 import { useEffect } from 'react';
 import './SettingDialog.css';
 
-function SettingDialog({ title, description, onClose, children, className = '' }) {
+function SettingDialog({
+  title,
+  description,
+  onClose,
+  children,
+  className = '',
+  backdropClassName = '',
+}) {
   useEffect(() => {
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') onClose?.();
+      // 사진 자르기 창이 열려 있으면 그 창만 닫히도록 합니다.
+      if (event.key === 'Escape' && !document.querySelector('.image-crop-modal')) onClose?.();
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
@@ -12,7 +20,7 @@ function SettingDialog({ title, description, onClose, children, className = '' }
 
   return (
     <div
-      className="setting-dialog-backdrop"
+      className={`setting-dialog-backdrop${backdropClassName ? ` ${backdropClassName}` : ''}`}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose?.();
       }}

@@ -5,7 +5,6 @@ function SettingMedicationList({
   schedule = [],
   onDelete,
   onCheck,
-  checkedIds = [],
   isLoading = false,
   apiError = '',
 }) {
@@ -27,7 +26,7 @@ function SettingMedicationList({
   return (
     <ul className="setting-medication-list">
       {scheduleItems.map(({ id, time, label, medicationName, taken }) => {
-        const isTaken = Boolean(taken) || checkedIds.some((checkedId) => String(checkedId) === String(id));
+        const isTaken = Boolean(taken);
 
         return (
         <li key={id ?? `${time}-${label}`}>

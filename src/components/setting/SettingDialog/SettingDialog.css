@@ -17,7 +17,6 @@
   border-radius: 14px;
   background: #fff;
   color: #292929;
-  box-shadow: 0 18px 60px rgb(0 0 0 / 18%);
 }
 
 .setting-dialog--document {
@@ -116,6 +115,12 @@
 .setting-dialog__button--primary {
   border-color: #42b66b;
   background: #42b66b;
+  color: #fff;
+}
+
+.setting-dialog__button--danger {
+  border-color: #c62424;
+  background: #c62424;
   color: #fff;
 }
 
