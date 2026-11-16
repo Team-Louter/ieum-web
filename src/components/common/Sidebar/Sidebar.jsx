@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css';
-import { getCurrentUser } from '../../../api/client';
 import profileImg from '../../../assets/images/profile.png';
 import neighborIcon from '../../../assets/images/neighbor.svg';
 import marketIcon from '../../../assets/images/market.svg';
@@ -39,13 +38,12 @@ function getActiveMenuId(currentPath) {
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
-function Sidebar({ role, profileImage }) {
+function Sidebar({ role, profileImage, nickname = '' }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const location = useLocation();
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
-  const loginId = getCurrentUser().loginId;
-  const profileLabel = loginId || '내 프로필';
+  const profileLabel = nickname || '내 프로필';
   const activeMenuId = getActiveMenuId(currentPath);
   const isExpanded = isHovered || hasKeyboardFocus;
   const isMyProfileActive = currentPath === '/myProfile' || currentPath.startsWith('/myProfile/');
@@ -77,7 +75,7 @@ function Sidebar({ role, profileImage }) {
         className={`sidebar__profile${isMyProfileActive ? ' is-active' : ''}`}
         to="/myProfile"
         aria-current={isMyProfileActive ? 'page' : undefined}
-        aria-label={loginId ? `내 프로필: ${loginId}` : '내 프로필'}
+        aria-label={nickname ? `내 프로필: ${nickname}` : '내 프로필'}
         title={profileLabel}
       >
         <img

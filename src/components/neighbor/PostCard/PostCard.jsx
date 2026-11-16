@@ -37,7 +37,7 @@ function PostCard({
               event.currentTarget.src = profileImg;
             }}
           />
-          <p>{author.id ?? author.nickname ?? ''}</p>
+          <p>{author.nickname ?? ''}</p>
         </div>
         <Link
           to={

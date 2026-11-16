@@ -22,7 +22,7 @@ export async function loadGuardianPage() {
   ).map((elder, index) => ({
     id: String(elder.loginId ?? elder.userId ?? elder.id ?? `elder-${index + 1}`),
     loginId: elder.loginId ?? '',
-    elderName: elder.loginId || elder.nickname || '어르신',
+    elderName: elder.nickname || '어르신',
     homeAddress: elder.homeAddress ?? elder.address ?? '',
     homeCoordinates: elder.homeCoordinates ?? null,
     homeRadiusMeters: elder.homeRadiusMeters,
@@ -80,12 +80,12 @@ export async function loadSettingsPage({ role }) {
     guardians: getItems(family).map((person) => ({
       ...person,
       id: person.loginId ?? person.userId ?? person.connectionId,
-      name: person.nickname ?? person.loginId,
+      name: person.nickname ?? '',
     })),
     pendingConnections: pendingConnections.map((person) => ({
       ...person,
       id: person.connectionId,
-      name: person.seniorLoginId ?? person.elderLoginId ?? person.loginId ?? person.nickname ?? '어르신 계정',
+      name: person.seniorNickname ?? person.elderNickname ?? person.nickname ?? '어르신 계정',
     })),
     medicationSchedule: asArray(medications).map((medication) => ({
       id: medication.medicationId,

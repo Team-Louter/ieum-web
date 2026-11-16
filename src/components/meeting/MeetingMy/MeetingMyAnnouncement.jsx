@@ -111,7 +111,7 @@ export default function MeetingMyAnnouncement({
                   event.currentTarget.src = profileImage;
                 }}
               />
-              <p>{author.id ?? author.nickname ?? ''}</p>
+              <p>{author.nickname ?? ''}</p>
             </div>
             <p className="announcement-card-title">{latestNotice.title}</p>
             <p className="announcement-card-info">{latestNotice.content ?? ''}</p>

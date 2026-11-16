@@ -15,6 +15,7 @@ function isEmailFormatValid(value) {
 
 function GuardianSignupPage({ onNavigate, onSignup }) {
     const [loginId, setLoginId] = useState('');
+    const [nickname, setNickname] = useState('');
     // 중복확인을 통과한 아이디입니다. 아이디를 바꾸면 다시 확인해야 합니다.
     const [checkedLoginId, setCheckedLoginId] = useState('');
     const [password, setPassword] = useState('');
@@ -89,8 +90,8 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        if (!loginId.trim() || !address.trim()) {
-            setMessage('아이디와 주소를 입력해 주세요.');
+        if (!loginId.trim() || !nickname.trim() || !address.trim()) {
+            setMessage('아이디, 닉네임, 주소를 입력해 주세요.');
             setMessageIsError(true);
             return;
         }
@@ -117,7 +118,7 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
         setIsSubmitting(true);
         try {
             const response = await onSignup?.({
-                loginId: loginId.trim(), nickname: loginId.trim(), email, password, address,
+                loginId: loginId.trim(), nickname: nickname.trim(), email, password, address,
                 role: 'ROLE_GUARDIAN', verificationToken,
             });
             if (response) {
@@ -139,6 +140,9 @@ function GuardianSignupPage({ onNavigate, onSignup }) {
             <form className="signup-form" onSubmit={handleSubmit} noValidate>
                 <div className="signup-field">
                     <FieldWithButton id="guardian-id" label="아이디" value={loginId} onChange={(event) => { setLoginId(event.target.value); setCheckedLoginId(''); }} buttonText={checkedLoginId && checkedLoginId === loginId.trim() ? '확인완료' : '중복확인'} onButtonClick={checkLoginId} />
+                </div>
+                <div className="signup-field">
+                    <FieldWithButton id="guardian-nickname" label="닉네임" value={nickname} onChange={(event) => setNickname(event.target.value)} />
                 </div>
                 <div className="signup-field">
                     <PasswordField id="guardian-password" label="비밀번호" hint="8자 이상, 영문자·숫자·특수문자를 사용해 주세요." value={password} onChange={(event) => setPassword(event.target.value)} />

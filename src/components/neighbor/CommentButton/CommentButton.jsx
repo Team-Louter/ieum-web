@@ -25,7 +25,7 @@ function CommentButton({
           <CommentItem
             key={comment.id ?? index}
             profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
-            profileId={comment.profileId ?? comment.author?.id ?? comment.nickname ?? ''}
+            profileId={comment.nickname ?? comment.author?.nickname ?? ''}
             comment={comment.content ?? comment.text ?? ''}
             isMine={Boolean(currentLoginId) && (comment.profileId ?? '') === currentLoginId && comment.id != null}
             onUpdate={(content) => onUpdateComment?.(comment, content)}

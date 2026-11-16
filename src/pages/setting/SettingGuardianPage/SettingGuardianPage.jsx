@@ -150,7 +150,6 @@ function SettingGuardianPage({
       >
         <SettingGuardianList
           guardians={sourceGuardians}
-          displayLoginId={isGuardian}
           emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
           isLoading={isLoading}
           apiError={apiError}
@@ -206,7 +205,6 @@ function SettingGuardianPage({
           <div className="setting-guardian-manager__list">
             <SettingGuardianList
               guardians={sourceGuardians}
-              displayLoginId={isGuardian}
               isEditing
               isBusy={isBusy}
               onRemove={handleDisconnect}
@@ -221,7 +219,7 @@ function SettingGuardianPage({
               <ul>
                 {sourcePendingConnections.map((connection, index) => (
                   <li key={connection.connectionId ?? connection.id ?? index}>
-                    <span>{connection.seniorLoginId ?? connection.elderLoginId ?? connection.loginId ?? connection.nickname ?? connection.name ?? connection.seniorEmail ?? '어르신 계정'}</span>
+                    <span>{connection.name ?? connection.nickname ?? '어르신 계정'}</span>
                     <div className="setting-guardian-manager__pending-actions">
                       <button
                         type="button"
