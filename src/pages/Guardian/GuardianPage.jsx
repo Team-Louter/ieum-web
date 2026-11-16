@@ -66,7 +66,7 @@ function GuardianPage({
   const guardianData = {
     ...guardianSource,
     elderName:
-      guardianSource.elderName?.trim() || guardianSource.loginId?.trim() || '어르신',
+      guardianSource.elderName?.trim() || '어르신',
     homeAddress: guardianSource.homeAddress?.trim() || '',
     homeCoordinates: guardianSource.homeCoordinates ?? null,
     homeRadiusMeters: guardianSource.homeRadiusMeters ?? 100,
@@ -162,7 +162,7 @@ function GuardianPage({
                     aria-pressed={isSelected}
                     onClick={() => setSelectedElderId(elderId)}
                   >
-                    {elder.loginId || elder.elderName || '어르신'}
+                    {elder.elderName || '어르신'}
                   </button>
                 );
               })}

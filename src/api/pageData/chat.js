@@ -41,9 +41,9 @@ export async function loadChatPage({ userId, onDefaultChatRoom }) {
         id: Number(room.id),
         roomId: Number(room.id),
         partnerId: Number(room.partnerId),
+        unreadCount: Math.max(Number(room.unreadCount) || 0, 0),
         loginId,
         name:
-          loginId ||
           room.partnerNickname ||
           friend?.nickname ||
           room.name ||
@@ -64,8 +64,9 @@ export async function loadChatPage({ userId, onDefaultChatRoom }) {
         id: `friend-${userId}`,
         roomId: null,
         partnerId: userId,
+        unreadCount: 0,
         loginId,
-        name: loginId || friend.nickname || `사용자 ${userId}`,
+        name: friend.nickname || `사용자 ${userId}`,
         profileImage: resolveApiAssetUrl(friend.profileImageUrl ?? ''),
       };
     });

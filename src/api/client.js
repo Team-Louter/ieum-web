@@ -220,6 +220,14 @@ export const apiPut = (path, body, options) =>
   });
 export const apiDelete = (path, options) => apiRequest(path, { ...options, method: 'DELETE' });
 
+export const locationApi = {
+  listFriends: (options) => apiGet('/api/friends/locations', options),
+  getSharing: (options) => apiGet('/api/settings/location-sharing', options),
+  setSharing: (enabled) => apiPatch('/api/settings/location-sharing', { enabled }),
+  report: (coordinates, options) => apiPost('/api/location', coordinates, options),
+  stopSharing: () => apiDelete('/api/location'),
+};
+
 export const authApi = {
   sendEmailCode: (email, recovery = false) =>
     apiPost(`/api/auth/email/${recovery ? 'recovery' : 'send'}`, { email }, { auth: false }),
@@ -227,6 +235,9 @@ export const authApi = {
   verifyEmailCode: (email, code) =>
     apiPost('/api/auth/email/verify', { email, code }, { auth: false }),
   signup: (data) => apiPost('/api/auth/signup', data, { auth: false }),
+  // 로그인 없이 호출하며, 응답으로 사용 가능 여부를 알려줍니다.
+  checkLoginId: (loginId) =>
+    apiGet(`/api/auth/loginId/check?loginId=${encodeURIComponent(loginId)}`, { auth: false }),
   login: (loginId, password) => apiPost('/api/auth/login', { loginId, password }, { auth: false }),
   findLoginId: (email, verificationToken) =>
     apiPost('/api/auth/loginId/find', { email, verificationToken }, { auth: false }),
@@ -421,4 +432,7 @@ export const chatApi = {
     return apiGet(`/api/chat/rooms/${roomId}/messages?${query}`);
   },
   sendMessage: (roomId, content) => apiPost(`/api/chat/rooms/${roomId}/messages`, { content }),
+  // 확인한 마지막 메시지까지 읽음으로 저장합니다.
+  markRead: (roomId, lastReadMessageId) =>
+    apiPut(`/api/chat/rooms/${roomId}/read`, { lastReadMessageId }),
 };

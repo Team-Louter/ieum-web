@@ -28,6 +28,7 @@ export default function useNotifications({ enabled = true } = {}) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(!enabled);
   const hasLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -48,7 +49,10 @@ export default function useNotifications({ enabled = true } = {}) {
       } catch (loadError) {
         if (isActive) setError(loadError?.message ?? '알림을 불러오지 못했습니다.');
       } finally {
-        if (isActive && isFirst) setIsLoading(false);
+        if (isActive && isFirst) {
+          setIsLoading(false);
+          setIsReady(true);
+        }
       }
     }
 
@@ -81,5 +85,5 @@ export default function useNotifications({ enabled = true } = {}) {
     ]);
   }, [notifications]);
 
-  return { notifications, error, isLoading, markRead, loadOlder };
+  return { notifications, error, isLoading, isReady, markRead, loadOlder };
 }

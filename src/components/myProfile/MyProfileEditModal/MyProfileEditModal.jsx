@@ -2,10 +2,13 @@ import './MyProfileEditModal.css';
 import { useEffect, useRef, useState } from 'react';
 import profileImg from '../../../assets/images/profile.png';
 import SettingDialog from '../../setting/SettingDialog/SettingDialog';
+import useImageCrop from '../../../hooks/useImageCrop';
 
 function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = '' }) {
   const previewUrlRef = useRef('');
   const [previewImage, setPreviewImage] = useState('');
+  const [croppedImage, setCroppedImage] = useState(null);
+  const { cropImage, cropModal } = useImageCrop({ aspect: 1 });
 
   useEffect(
     () => () => {
@@ -14,29 +17,35 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
     [],
   );
 
-  function handleProfileImageChange(event) {
+  /** 고른 사진을 동그란 프로필에 맞게 자른 뒤 미리보기에 적용합니다. */
+  async function handleProfileImageChange(event) {
     const selectedImage = event.target.files?.[0];
+    event.target.value = '';
     if (!selectedImage) return;
 
+    const cropped = await cropImage(selectedImage);
+    if (!cropped) return;
+
     if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    previewUrlRef.current = URL.createObjectURL(selectedImage);
+    previewUrlRef.current = URL.createObjectURL(cropped);
     setPreviewImage(previewUrlRef.current);
+    setCroppedImage(cropped);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const selectedProfileImage = formData.get('profileImage');
     onConfirm?.({
       nickname: formData.get('nickname'),
       introduction: formData.get('introduction'),
-      profileImage: selectedProfileImage?.size ? selectedProfileImage : undefined,
+      profileImage: croppedImage ?? undefined,
       profileImageUrl:
         profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
     });
   }
 
   return (
+    <>
     <SettingDialog
       title="프로필 수정"
       onClose={onCancel}
@@ -67,7 +76,6 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
               accept="image/*"
               hidden
               id="profile-image-input"
-              name="profileImage"
               onChange={handleProfileImageChange}
             />
           </div>
@@ -109,6 +117,8 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
         </div>
       </form>
     </SettingDialog>
+    {cropModal}
+    </>
   );
 }
 

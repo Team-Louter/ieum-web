@@ -98,3 +98,50 @@
 .content-info-p p:nth-child(1) {
   font-weight: bold;
 }
+
+.content-media {
+  position: relative;
+  width: min(29.03vw, 418px);
+  max-width: 100%;
+}
+
+.content-media > .content-video {
+  display: block;
+  width: 100%;
+}
+
+.content-media__nav {
+  position: absolute;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.55);
+  font-size: 24px;
+  line-height: 36px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.content-media__nav--prev {
+  left: 10px;
+}
+
+.content-media__nav--next {
+  right: 10px;
+}
+
+.content-media__count {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.55);
+  font-size: var(--font-size-small);
+}

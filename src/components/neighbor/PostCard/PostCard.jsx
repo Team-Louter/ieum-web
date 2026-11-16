@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './PostCard.css';
 import LikeButton from '../LikeButton/LikeButton';
 import CommentButton from '../CommentButton/CommentButton';
@@ -19,7 +20,10 @@ function PostCard({
   apiError = '',
 }) {
   const author = post.author ?? {};
-  const image = contentImg ?? post.image;
+  const images = contentImg ? [contentImg] : post.images?.length ? post.images : post.image ? [post.image] : [];
+  const [imageIndex, setImageIndex] = useState(0);
+  const currentIndex = Math.min(imageIndex, Math.max(images.length - 1, 0));
+  const image = images[currentIndex];
 
   return (
     <div className="content-container">
@@ -33,14 +37,44 @@ function PostCard({
               event.currentTarget.src = profileImg;
             }}
           />
-          <p>{author.id ?? author.nickname ?? ''}</p>
+          <p>{author.nickname ?? ''}</p>
         </div>
-        <Link to={post.profileHref ?? '/profile'}>
+        <Link
+          to={
+            post.profileHref ??
+            (author.userId != null ? `/profile?userId=${author.userId}` : '/profile')
+          }
+        >
           <p>프로필 보기</p>
         </Link>
       </div>
       {image ? (
-        <img src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
+        <div className="content-media">
+          <img src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="content-media__nav content-media__nav--prev"
+                onClick={() => setImageIndex((index) => (index - 1 + images.length) % images.length)}
+                aria-label="이전 사진"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                className="content-media__nav content-media__nav--next"
+                onClick={() => setImageIndex((index) => (index + 1) % images.length)}
+                aria-label="다음 사진"
+              >
+                ›
+              </button>
+              <p className="content-media__count" aria-live="polite">
+                {currentIndex + 1} / {images.length}
+              </p>
+            </>
+          )}
+        </div>
       ) : (
         <div className="content-video content-placeholder" aria-label="게시물 미리보기" />
       )}

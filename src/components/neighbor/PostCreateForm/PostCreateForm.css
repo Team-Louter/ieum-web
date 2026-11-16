@@ -131,3 +131,66 @@
 .neighbor-post-create-form__submit:hover {
   background: #329153;
 }
+
+.neighbor-post-create-form__thumbnails {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.neighbor-post-create-form__thumbnails > li {
+  position: relative;
+  width: 64px;
+  height: 80px;
+}
+
+.neighbor-post-create-form__thumbnail,
+.neighbor-post-create-form__thumbnail-add {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid #dfdfdf;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.neighbor-post-create-form__thumbnails > li.is-active .neighbor-post-create-form__thumbnail {
+  border-color: #42b66b;
+}
+
+.neighbor-post-create-form__thumbnail > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.neighbor-post-create-form__thumbnail-add {
+  color: #6f6f6f;
+  font-size: var(--font-size-small);
+}
+
+.neighbor-post-create-form__thumbnail-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.7);
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.neighbor-post-create-form__submit-error {
+  margin: 0;
+  color: #c62424;
+  font-size: var(--font-size-small);
+}

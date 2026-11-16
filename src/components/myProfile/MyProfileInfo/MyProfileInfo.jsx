@@ -9,9 +9,8 @@ function MyProfileInfo({ profile = {} }) {
     friendCount = 0,
     profileImage = profileImg,
   } = profile;
-  const loginId = profile.loginId ?? profile.id ?? '';
-  const displayName = profile.nickname?.trim() || loginId || '아이디';
-  const formatCount = (count) => String(Number(count) || 0).padStart(2, '0');
+  const displayName = profile.nickname?.trim() || '닉네임 없음';
+  const formatCount = (count) => String(Number(count) || 0);
 
   return (
     <div className="my-profile-info">

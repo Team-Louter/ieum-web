@@ -20,14 +20,13 @@
   flex-direction: column;
 }
 
+/* 게시물 목록·상세에서 사진은 정사각형(1:1)으로 보이므로 입력 박스도 정사각형입니다. */
 .market-post-create-form__media-label {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 420px;
-  max-height: 520px;
-  aspect-ratio: 0.82;
+  aspect-ratio: 1 / 1;
   padding: 20px;
   overflow: hidden;
   border: 2px solid #dfdfdf;
@@ -38,11 +37,6 @@
   transition:
     border-color 0.18s ease,
     background-color 0.18s ease;
-}
-
-.market-post-create-form__media-label:hover {
-  border-color: #42b66b;
-  background: #f3faf5;
 }
 
 .market-post-create-form__media-label:focus-visible,
@@ -197,12 +191,6 @@
   .market-post-create-form__content {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
-  }
-
-  .market-post-create-form__media-label {
-    min-height: 240px;
-    max-height: 320px;
-    aspect-ratio: 1.4;
   }
 
   .market-post-create-form__text-fields {

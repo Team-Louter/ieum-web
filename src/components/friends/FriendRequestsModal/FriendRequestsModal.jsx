@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import profilePlaceholder from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import Skeleton from '../../common/Skeleton/Skeleton';
 import './FriendRequestsModal.css';
 
 function FriendRequestsModal({
@@ -66,12 +67,8 @@ function FriendRequestsModal({
             {requests.map((request) => {
               const friendshipId = request.friendshipId ?? request.id;
               const requesterId = request.fromUserId ?? request.userId;
-              const requesterLoginId = request.fromUserLoginId ?? request.loginId ?? '';
               const requesterNickname = request.fromUserNickname ?? request.nickname ?? '';
-              const requesterName =
-                requesterLoginId ||
-                requesterNickname ||
-                `사용자 ${requesterId ?? ''}`;
+              const requesterName = requesterNickname || `사용자 ${requesterId ?? ''}`;
               const isProcessing = String(processingId) === String(friendshipId);
 
               return (
@@ -86,11 +83,6 @@ function FriendRequestsModal({
                   />
                   <div className="friend-requests-modal__person">
                     <strong>{requesterName}</strong>
-                    {requesterLoginId && requesterNickname && requesterLoginId !== requesterNickname ? (
-                      <span>{requesterNickname}</span>
-                    ) : !requesterLoginId && requesterId != null ? (
-                      <span>사용자 ID {requesterId}</span>
-                    ) : null}
                   </div>
                   <div className="friend-requests-modal__actions">
                     <button
@@ -113,6 +105,27 @@ function FriendRequestsModal({
                 </li>
               );
             })}
+          </ul>
+        ) : isLoading && !apiError ? (
+          <ul
+            className="friend-requests-modal__list"
+            role="status"
+            aria-busy="true"
+            aria-label="친구 신청을 불러오는 중입니다."
+          >
+            {Array.from({ length: 2 }, (_, index) => (
+              <li className="friend-requests-modal__item" key={index} aria-hidden="true">
+                <Skeleton circle width={48} height={48} style={{ flex: '0 0 48px' }} />
+                <div className="friend-requests-modal__person">
+                  <Skeleton text width="45%" height={22} />
+                  <Skeleton text width="30%" height={16} />
+                </div>
+                <div className="friend-requests-modal__actions">
+                  <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+                  <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+                </div>
+              </li>
+            ))}
           </ul>
         ) : !isLoading && !apiError ? (
           <EmptyState

@@ -26,10 +26,17 @@ export function toCommunityPost(post = {}) {
       id: author.id ?? loginId ?? (userId == null ? '' : String(userId)),
       userId,
       loginId,
-      nickname: author.nickname ?? loginId,
+      nickname: author.nickname ?? '',
       profileImage: resolveApiAssetUrl(author.profileImageUrl ?? author.profileImage ?? ''),
     },
     image: resolveApiAssetUrl(post.imageUrl ?? post.image ?? ''),
+    // 사진이 여러 장이면 imageUrls에 모두 들어 있고, 한 장이면 imageUrl만 있을 수 있습니다.
+    images: (Array.isArray(post.imageUrls) && post.imageUrls.length > 0
+      ? post.imageUrls
+      : [post.imageUrl ?? post.image]
+    )
+      .filter(Boolean)
+      .map(resolveApiAssetUrl),
     likeCount: Number(post.likeCount ?? 0),
     isLiked: post.likedByMe ?? post.isLiked ?? false,
     comments: Array.isArray(post.comments)
@@ -40,6 +47,7 @@ export function toCommunityPost(post = {}) {
             comment.author?.loginId ??
             comment.authorLoginId ??
             (comment.authorId == null ? '' : String(comment.authorId)),
+          nickname: comment.author?.nickname ?? comment.nickname ?? '',
           profileImage: resolveApiAssetUrl(
             comment.profileImageUrl ?? comment.author?.profileImageUrl ?? comment.profileImage ?? '',
           ),
@@ -53,18 +61,19 @@ export function toMeetingMember(member = {}) {
     ...member,
     id: member.userId ?? member.id,
     loginId: member.loginId ?? '',
-    nickname: member.nickname ?? member.loginId ?? '',
+    nickname: member.nickname ?? '',
     profileImage: resolveApiAssetUrl(member.profileImageUrl ?? ''),
   };
 }
 
-export function toMeetingNotice(notice = {}) {
+export function toMeetingNotice(notice = {}, members = []) {
+  const authorMember = members.find((member) => String(member.id) === String(notice.authorId));
   return {
     ...notice,
     id: notice.id,
     author: {
-      id: notice.authorLoginId ?? '',
-      nickname: notice.authorLoginId ?? '',
+      id: notice.authorId ?? '',
+      nickname: authorMember?.nickname || '관리자',
     },
     title: notice.title ?? '',
     content: notice.content ?? '',
@@ -93,7 +102,7 @@ export function toSharingCard(sharing = {}) {
     price: sharing.price == null ? '나눔' : `${Number(sharing.price).toLocaleString('ko-KR')}원`,
     image: resolveApiAssetUrl(sharing.imageUrl ?? sharing.image ?? ''),
     seller: {
-      id: sellerLoginId || '판매자 정보 없음',
+      id: sellerNickname || '판매자 정보 없음',
       loginId: sellerLoginId,
       nickname: sellerNickname,
       profileImage: sellerProfileImage || profileFallback,

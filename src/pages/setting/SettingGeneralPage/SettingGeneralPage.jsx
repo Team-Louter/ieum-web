@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { locationApi } from '../../../api/client';
 import Button from '../../../components/common/Button/Button';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
@@ -8,13 +9,13 @@ import './SettingGeneralPage.css';
 
 function SettingGeneralPage({
   settings,
+  role,
   onToggle,
   medicationSchedule = [],
   onMedicationScheduleEdit,
   onMedicationCreate,
   onMedicationDelete,
   onMedicationCheck,
-  checkedMedicationIds = [],
   isLoading = false,
   apiError = '',
 }) {
@@ -23,6 +24,47 @@ function SettingGeneralPage({
   const [takeTime, setTakeTime] = useState('08:00');
   const [busy, setBusy] = useState(false);
   const [formMessage, setFormMessage] = useState('');
+  const [locationSharing, setLocationSharing] = useState(null);
+  const [locationMessage, setLocationMessage] = useState('');
+  const [savingLocation, setSavingLocation] = useState(false);
+  const savingLocationRef = useRef(false);
+
+  useEffect(() => {
+    if (role !== 'ROLE_SENIOR') return undefined;
+    const controller = new AbortController();
+    const { signal } = controller;
+    locationApi.getSharing({ signal }).then((sharing) => {
+      if (signal.aborted) return;
+      if (typeof sharing?.enabled !== 'boolean') throw new Error();
+      setLocationSharing(sharing.enabled);
+    }).catch(() => {
+      if (!signal.aborted) setLocationMessage('위치 공유 설정을 불러오지 못했습니다.');
+    });
+    return () => controller.abort();
+  }, [role]);
+
+  async function changeLocationSharing(event) {
+    if (locationSharing === null || savingLocationRef.current) return;
+    const { checked } = event.target;
+    savingLocationRef.current = true;
+    setSavingLocation(true);
+    setLocationMessage('');
+    try {
+      const response = await locationApi.setSharing(checked);
+      const saved = typeof response?.enabled === 'boolean'
+        ? response
+        : await locationApi.getSharing();
+      if (typeof saved?.enabled !== 'boolean') throw new Error();
+      setLocationSharing(saved.enabled);
+      // 공유를 끄면 서버가 저장된 위치도 함께 삭제하므로 따로 지우지 않습니다.
+      if (saved.enabled !== checked) setLocationMessage('위치 공유 설정이 변경되지 않았습니다.');
+    } catch {
+      setLocationMessage('위치 공유 설정을 저장하거나 확인하지 못했습니다.');
+    } finally {
+      savingLocationRef.current = false;
+      setSavingLocation(false);
+    }
+  }
 
   const openMedicationDialog = () => {
     onMedicationScheduleEdit?.();
@@ -70,6 +112,22 @@ function SettingGeneralPage({
 
   return (
     <div className="setting-page-section">
+      {role === 'ROLE_SENIOR' && (
+        <SettingItem
+          title="위치 공유"
+          description="켜면 친구 지도 화면을 열 때 내 위치를 공유합니다."
+          trailing={(
+            <SettingToggle
+              checked={locationSharing === true}
+              disabled={locationSharing === null || savingLocation}
+              onChange={changeLocationSharing}
+              label="위치 공유"
+            />
+          )}
+        >
+          {locationMessage && <p role="status">{locationMessage}</p>}
+        </SettingItem>
+      )}
       <SettingItem
         title="복약 알림"
         description="설정한 시간에 복약 알림을 받습니다."
@@ -91,7 +149,6 @@ function SettingGeneralPage({
           <SettingMedicationList
             schedule={medicationSchedule}
             onCheck={handleMedicationCheck}
-            checkedIds={checkedMedicationIds}
             isLoading={isLoading}
             apiError={apiError}
           />

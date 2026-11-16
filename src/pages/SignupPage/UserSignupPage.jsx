@@ -15,6 +15,9 @@ function isEmailFormatValid(value) {
 
 function UserSignupPage({ onNavigate, onSignup }) {
     const [loginId, setLoginId] = useState('');
+    const [nickname, setNickname] = useState('');
+    // 중복확인을 통과한 아이디입니다. 아이디를 바꾸면 다시 확인해야 합니다.
+    const [checkedLoginId, setCheckedLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
     const [email, setEmail] = useState('');
@@ -73,10 +76,38 @@ function UserSignupPage({ onNavigate, onSignup }) {
         }).open();
     }
 
+    async function checkLoginId() {
+        const value = loginId.trim();
+        if (!value) {
+            setMessage('아이디를 입력해 주세요.');
+            setMessageIsError(true);
+            return;
+        }
+        try {
+            const result = await authApi.checkLoginId(value);
+            // 응답이 true/false 또는 { available } 형태 모두 처리합니다.
+            const available = typeof result === 'boolean'
+                ? result
+                : result?.available ?? result?.isAvailable ?? (result?.duplicated === undefined ? false : !result.duplicated);
+            setCheckedLoginId(available ? value : '');
+            setMessage(available ? '사용할 수 있는 아이디입니다.' : '이미 사용 중인 아이디입니다.');
+            setMessageIsError(!available);
+        } catch (error) {
+            setCheckedLoginId('');
+            setMessage(error?.message ?? '아이디 중복확인에 실패했습니다.');
+            setMessageIsError(true);
+        }
+    }
+
     async function handleSubmit(event) {
         event.preventDefault();
-        if (!loginId.trim() || !address.trim()) {
-            setMessage('아이디와 주소를 입력해 주세요.');
+        if (!loginId.trim() || !nickname.trim() || !address.trim()) {
+            setMessage('아이디, 닉네임, 주소를 입력해 주세요.');
+            setMessageIsError(true);
+            return;
+        }
+        if (checkedLoginId !== loginId.trim()) {
+            setMessage('아이디 중복확인을 해 주세요.');
             setMessageIsError(true);
             return;
         }
@@ -97,7 +128,7 @@ function UserSignupPage({ onNavigate, onSignup }) {
         }
         setIsSubmitting(true);
         try {
-            await onSignup?.({ loginId: loginId.trim(), nickname: loginId.trim(), email, password, address, role: 'ROLE_SENIOR', verificationToken });
+            await onSignup?.({ loginId: loginId.trim(), nickname: nickname.trim(), email, password, address, role: 'ROLE_SENIOR', verificationToken });
         } catch (error) {
             setMessage(error?.message ?? '회원가입에 실패했습니다.');
             setMessageIsError(true);
@@ -112,7 +143,10 @@ function UserSignupPage({ onNavigate, onSignup }) {
             <h1>사용자 계정 만들기</h1>
             <form className="signup-form" onSubmit={handleSubmit} noValidate>
                 <div className="signup-field">
-                    <FieldWithButton id="user-id" label="아이디" value={loginId} onChange={(event) => setLoginId(event.target.value)} buttonText="중복확인" onButtonClick={() => { setMessage('아이디 중복확인 API가 없어 회원가입 시 서버에서 확인합니다.'); setMessageIsError(false); }} />
+                    <FieldWithButton id="user-id" label="아이디" value={loginId} onChange={(event) => { setLoginId(event.target.value); setCheckedLoginId(''); }} buttonText={checkedLoginId && checkedLoginId === loginId.trim() ? '확인완료' : '중복확인'} onButtonClick={checkLoginId} />
+                </div>
+                <div className="signup-field">
+                    <FieldWithButton id="user-nickname" label="닉네임" value={nickname} onChange={(event) => setNickname(event.target.value)} />
                 </div>
                 <div className="signup-field">
                     <PasswordField id="user-password" label="비밀번호" hint="8자 이상, 영문자·숫자·특수문자를 사용해 주세요." value={password} onChange={(event) => setPassword(event.target.value)} />

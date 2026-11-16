@@ -6,14 +6,159 @@
 .notifications-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
   width: min(700px, calc(100vw - var(--sidebar-collapsed-width) - 48px));
   margin: 0 auto;
 }
 
+.notifications-page__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.notifications-page__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notifications-page__group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.notifications-page__group h2 {
+  color: #222;
+  font-size: var(--font-size-body);
+  font-weight: 700;
+}
+
+.notifications-page__group-header span {
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+/* 오늘 복약: 알림 카드가 아니라 자리가 고정된 체크리스트 */
+.notifications-page__group-empty {
+  padding: 22px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #777;
+  text-align: center;
+}
+
+.notifications-page__medication {
+  overflow: hidden;
+  list-style: none;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.notifications-page__medication-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 22px;
+}
+
+.notifications-page__medication-row + .notifications-page__medication-row {
+  border-top: 1px solid #eee;
+}
+
+.notifications-page__medication-time {
+  flex: 0 0 auto;
+  min-width: 96px;
+  font-size: var(--font-size-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.notifications-page__medication-info {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.notifications-page__medication-info strong {
+  overflow: hidden;
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notifications-page__medication-status {
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+.notifications-page__medication-status.is-due {
+  color: #c93434;
+  font-weight: 600;
+}
+
+.notifications-page__medication-status.is-taken {
+  color: #248e4b;
+}
+
+.notifications-page__medication-row button {
+  flex: 0 0 auto;
+  min-width: 116px;
+  padding: 10px 14px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.notifications-page__medication-row button:hover:not(:disabled) {
+  background-color: #e8f8ee;
+  color: #248e4b;
+}
+
+.notifications-page__medication-row.is-taken .notifications-page__medication-time,
+.notifications-page__medication-row.is-taken .notifications-page__medication-info strong {
+  color: #999;
+}
+
+.notifications-page__medication-row.is-taken button {
+  border-color: #e8f8ee;
+  background-color: #e8f8ee;
+  color: #248e4b;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  .notifications-page__medication-row {
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .notifications-page__medication-time {
+    min-width: 72px;
+  }
+
+  .notifications-page__medication-row button {
+    min-width: 0;
+    padding: 8px 10px;
+  }
+}
+
 .notifications-page__list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   list-style: none;
 }
 
@@ -21,22 +166,57 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 18px;
-  border: 1px solid #42b66b;
+  padding: 18px 22px;
+  border: 1px solid #e3e3e3;
   border-radius: 12px;
   background-color: #fff;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+.notifications-page__item:hover {
+  border-color: #cfcfcf;
+  background-color: #f7f7f7;
+}
+
+/* 안 읽은 알림: 진한 제목 */
+.notifications-page__item:not(.is-read) strong {
+  color: #111;
+}
+
+/* 읽은 알림: 회색 배경과 옅은 글자 */
 .notifications-page__item.is-read {
-  border-color: #e3e3e3;
-  color: #777;
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+.notifications-page__item.is-read:hover {
+  background-color: #efefef;
+}
+
+.notifications-page__item.is-read strong {
+  color: #888;
+  font-weight: 500;
+}
+
+.notifications-page__item.is-read .notifications-page__body strong {
+  font-size: var(--font-size-body);
+  font-weight: 700;
+}
+
+.notifications-page__body p {
+  color: #555;
+  line-height: 1.45;
+}
+
+.notifications-page__body span {
+  color: #aaa;
 }
 
 .notifications-page__body {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -61,13 +241,26 @@
   cursor: pointer;
 }
 
+.notifications-page__item button,
+.notifications-page__more {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.notifications-page__item button:hover:not(:disabled),
+.notifications-page__more:hover {
+  background-color: #e8f8ee;
+  color: #248e4b;
+}
+
 .notifications-page__item button:disabled {
   color: #777;
   cursor: default;
 }
 
 .notifications-page__more {
-  align-self: center;
+  align-self: stretch;
+  padding: 12px 14px;
+  color: #555;
 }
 
 .notifications-page__error {

@@ -28,6 +28,7 @@ import MeetingMakeOption from '../../meeting/MeetingMake/MeetingMakeOption';
 import '../../../pages/Meeting/MeetingMyPage/MeetingMyPage.css';
 import '../../meeting/MeetingMy/MeetingMyAnnouncement.css';
 import '../../meeting/MeetingMy/MeetingMyMemberList.css';
+import NotificationPageSkeleton from './NotificationSkeleton';
 import PageTabNavigation from '../PageTabNavigation/PageTabNavigation';
 import Skeleton from '../Skeleton/Skeleton';
 import './PageSkeleton.css';
@@ -52,6 +53,7 @@ const skeletonVariants = {
   '/chatting': 'chat',
   '/settings': 'settings',
   '/guardian': 'guardian',
+  '/notifications': 'notifications',
 };
 
 const tabbedVariants = [
@@ -413,11 +415,12 @@ function renderVariant(variant) {
               </span>
             </button>
           </div>
-          <div className="page-skeleton__people">
-            {Array.from({ length: 9 }, (_, index) => (
-              <div className="page-skeleton__person" key={index}>
-                <Skeleton circle width={50} height={50} />
-                <Skeleton text width={90} />
+          {/* 페이지 안의 검색 로딩 스켈레톤과 같은 클래스·개수를 써서 중간에 모양이 바뀌지 않게 합니다. */}
+          <div className="add-friend-list add-friend-list--loading">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div className="add-friend-profile add-friend-profile--skeleton" key={index}>
+                <Skeleton circle width="50px" height="50px" />
+                <Skeleton text width="110px" height="18px" />
               </div>
             ))}
           </div>
@@ -558,12 +561,20 @@ const layoutClasses = {
 };
 
 /** 페이지 데이터를 처음 불러오는 동안 실제 화면과 비슷한 모양의 회색 블록을 보여줍니다. */
-function PageSkeleton({ variant }) {
+function PageSkeleton({ variant, role }) {
   const hasTabs = tabbedVariants.includes(variant);
   const status = { role: 'status', 'aria-busy': true, 'aria-label': '불러오는 중' };
 
   if (variant === 'guardian') {
     return <GuardianSkeleton status={status} />;
+  }
+
+  if (variant === 'notifications') {
+    return (
+      <Layout className="notifications-layout">
+        <NotificationPageSkeleton showMedication={role === 'ROLE_SENIOR'} status={status} />
+      </Layout>
+    );
   }
 
   if (variant === 'chat') {
@@ -601,7 +612,10 @@ function PageSkeleton({ variant }) {
           items={getFixedTabs(window.location.pathname.replace(/\/$/, '') || '/')}
         />
       )}
-      <div className={`page-skeleton page-skeleton--${variant}`} {...status}>
+      <div
+        className={`page-skeleton page-skeleton--${variant}${variant === 'addFriend' ? ' add-friend-page' : ''}`}
+        {...status}
+      >
         {renderVariant(variant)}
       </div>
     </Layout>
