@@ -18,14 +18,27 @@ function toProfile(profile, friendCount, loginId, postCount = 0) {
 export async function loadUserProfilePage({ selectedId }) {
   if (!selectedId) throw new Error('프로필을 볼 사용자를 확인할 수 없습니다.');
 
-  const [profile, postsResponse] = await Promise.all([
+  // 모임·친구 목록은 비공개이거나 실패해도 프로필 자체는 보이도록 빈 목록으로 대신합니다.
+  const [profile, postsResponse, meetingsResponse, friendsResponse] = await Promise.all([
     profileApi.getByUserId(selectedId),
     communityPostApi.list({ authorId: selectedId }),
+    profileApi.meetings(selectedId).catch(() => []),
+    profileApi.friends(selectedId).catch(() => null),
   ]);
   const posts = asArray(
     Array.isArray(postsResponse) ? postsResponse : (postsResponse?.posts ?? postsResponse?.content),
   ).map(toCommunityPost);
-  const friendCount = Number(profile.friendCount ?? profile.friendsCount ?? 0);
+  const friends = asArray(friendsResponse).map((friend) => ({
+    ...friend,
+    id: friend.userId,
+    name: friend.nickname,
+  }));
+  const meetings = asArray(
+    Array.isArray(meetingsResponse) ? meetingsResponse : (meetingsResponse?.meetings ?? meetingsResponse?.content),
+  ).map(toMeetingCard);
+  const friendCount = Number(
+    profile.friendCount ?? profile.friendsCount ?? (friendsResponse ? friends.length : 0),
+  );
 
   return {
     profile: {
@@ -33,6 +46,8 @@ export async function loadUserProfilePage({ selectedId }) {
       userId: profile.userId ?? selectedId,
     },
     posts,
+    friends,
+    meetings,
   };
 }
 
