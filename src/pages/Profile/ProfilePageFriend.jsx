@@ -13,20 +13,29 @@ function ProfilePageFriend({
   friends = [],
   isLoading = false,
   apiError = '',
+  onAddFriend,
+  onStartChat,
+  currentUserId = null,
 }) {
+  const query = profile.userId != null ? `?userId=${profile.userId}` : '';
   const friendItems = Array.isArray(friends) ? friends : [];
   const isEmpty = friendItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
-    { label: '게시물', href: '/profile', isActive: false },
-    { label: '모임', href: '/profile/meetings', isActive: false },
-    { label: '친구', href: '/profile/friends', isActive: true },
+    { label: '게시물', href: `/profile${query}`, isActive: false },
+    { label: '모임', href: `/profile/meetings${query}`, isActive: false },
+    { label: '친구', href: `/profile/friends${query}`, isActive: true },
   ];
 
   return (
     <Layout className="profile-layout">
       <div id="profile-box" className={isEmpty ? 'profile-box--empty' : undefined}>
         <ProfileInfo profile={profile} />
-        <ProfileActionButtons />
+        <ProfileActionButtons
+          userId={profile.userId}
+          currentUserId={currentUserId}
+          onAddFriend={onAddFriend}
+          onStartChat={onStartChat}
+        />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <ul
           className={`public-profile-friend-list${isEmpty ? ' public-profile-friend-list--empty' : ''}`}

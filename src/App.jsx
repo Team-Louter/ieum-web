@@ -6,6 +6,7 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
 import usePageApiData from './hooks/usePageApiData';
+import useCheckedMedicationIds from './hooks/useCheckedMedicationIds';
 import useAccountActions from './app/useAccountActions';
 import useFriendActions from './app/useFriendActions';
 import useMedicationActions from './app/useMedicationActions';
@@ -26,13 +27,19 @@ function AppContent({ accessToken, setAccessToken }) {
   const location = useLocation();
   const currentPath = location.pathname.replace(/\/$/, '') || '/login';
   const routeKey = getRouteKey(currentPath);
+  // 다른 사용자 프로필은 /profile?userId=번호 형태로 열립니다.
+  const profileUserId = currentPath.startsWith('/profile')
+    ? Number(new URLSearchParams(location.search).get('userId')) || null
+    : null;
   const selectedId =
-    getRouteId(currentPath) ?? location.state?.sharingId ?? location.state?.meetingId ?? null;
+    getRouteId(currentPath) ??
+    location.state?.sharingId ??
+    location.state?.meetingId ??
+    profileUserId;
   const Page = pageRoutes[routeKey];
 
   // 앱 전체에서 여러 화면이 함께 사용하는 상태입니다.
   const [reloadKey, setReloadKey] = useState(0);
-  const [checkedMedicationIds, setCheckedMedicationIds] = useState([]);
   const [chatSelection, setChatSelection] = useState({ path: '', roomId: null });
   const [feedback, setFeedbackState] = useState('');
   const [feedbackVersion, setFeedbackVersion] = useState(0);
@@ -87,14 +94,21 @@ function AppContent({ accessToken, setAccessToken }) {
   );
 
   // 현재 화면에 필요한 API 데이터를 불러옵니다.
+  // 프로필의 게시물·모임·친구 탭은 같은 데이터를 쓰므로, 탭을 바꿔도 다시 불러오지 않습니다.
+  const dataPath = routeKey.startsWith('/myProfile')
+    ? '/myProfile'
+    : routeKey.startsWith('/profile')
+      ? '/profile'
+      : routeKey;
   const { data, error, loading, initialLoading, user } = usePageApiData({
-    path: routeKey,
+    path: dataPath,
     selectedId,
     activeChatRoomId,
     accessToken,
     reloadKey,
     onDefaultChatRoom: selectDefaultChatRoom,
   });
+  const [checkedMedicationIds, setCheckedMedicationIds] = useCheckedMedicationIds(user.loginId);
 
   useEffect(() => {
     if (!accessToken) return undefined;

@@ -415,11 +415,12 @@ function renderVariant(variant) {
               </span>
             </button>
           </div>
-          <div className="page-skeleton__people">
-            {Array.from({ length: 9 }, (_, index) => (
-              <div className="page-skeleton__person" key={index}>
-                <Skeleton circle width={50} height={50} />
-                <Skeleton text width={90} />
+          {/* 페이지 안의 검색 로딩 스켈레톤과 같은 클래스·개수를 써서 중간에 모양이 바뀌지 않게 합니다. */}
+          <div className="add-friend-list add-friend-list--loading">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div className="add-friend-profile add-friend-profile--skeleton" key={index}>
+                <Skeleton circle width="50px" height="50px" />
+                <Skeleton text width="110px" height="18px" />
               </div>
             ))}
           </div>
@@ -571,9 +572,7 @@ function PageSkeleton({ variant, role }) {
   if (variant === 'notifications') {
     return (
       <Layout className="notifications-layout">
-        <div role="status" aria-busy="true" aria-label="불러오는 중">
-          <NotificationPageSkeleton showMedication={role === 'ROLE_SENIOR'} />
-        </div>
+        <NotificationPageSkeleton showMedication={role === 'ROLE_SENIOR'} status={status} />
       </Layout>
     );
   }
@@ -613,7 +612,10 @@ function PageSkeleton({ variant, role }) {
           items={getFixedTabs(window.location.pathname.replace(/\/$/, '') || '/')}
         />
       )}
-      <div className={`page-skeleton page-skeleton--${variant}`} {...status}>
+      <div
+        className={`page-skeleton page-skeleton--${variant}${variant === 'addFriend' ? ' add-friend-page' : ''}`}
+        {...status}
+      >
         {renderVariant(variant)}
       </div>
     </Layout>

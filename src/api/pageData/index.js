@@ -6,7 +6,7 @@ import { loadAddFriendPage } from './friends';
 import { loadGuardianPage, loadMedicationPage, loadSettingsPage } from './guardian';
 import { loadMarketDetailPage, loadMarketListPage } from './market';
 import { loadMeetingDetailPage, loadMeetingListPage } from './meetings';
-import { loadMyProfilePage } from './profile';
+import { loadMyProfilePage, loadUserProfilePage } from './profile';
 
 // 화면 경로에 맞는 데이터 함수를 찾아 실행합니다.
 export default async function loadPageData({
@@ -39,8 +39,12 @@ export default async function loadPageData({
     };
   }
 
+  if (path.startsWith('/profile')) {
+    return loadUserProfilePage({ selectedId });
+  }
+
   if (path.startsWith('/myProfile')) {
-    return loadMyProfilePage({ path, loginId, userId });
+    return loadMyProfilePage({ loginId, userId });
   }
 
   if (path === '/meeting' || path === '/meeting/my') {

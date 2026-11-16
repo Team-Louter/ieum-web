@@ -182,7 +182,7 @@
 
 .announcement-dialog__edit textarea {
   min-height: 120px;
-  resize: vertical;
+  resize: none;
 }
 
 .announcement-dialog__item-actions {

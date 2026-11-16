@@ -300,6 +300,14 @@ export const friendApi = {
   remove: (friendshipId) => apiDelete(`/api/friends/${friendshipId}`),
 };
 
+export const locationApi = {
+  report: (latitude, longitude) => apiPost('/api/location', { latitude, longitude }),
+  stop: () => apiDelete('/api/location'),
+  friends: () => apiGet('/api/friends/locations'),
+  getSharing: () => apiGet('/api/settings/location-sharing'),
+  setSharing: (enabled) => apiPatch('/api/settings/location-sharing', { enabled }),
+};
+
 export const userApi = {
   search: (loginId, page = 0, size = 20) => {
     const params = new URLSearchParams({ loginId, page: String(page), size: String(size) });

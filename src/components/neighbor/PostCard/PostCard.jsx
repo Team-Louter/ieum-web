@@ -35,7 +35,12 @@ function PostCard({
           />
           <p>{author.id ?? author.nickname ?? ''}</p>
         </div>
-        <Link to={post.profileHref ?? '/profile'}>
+        <Link
+          to={
+            post.profileHref ??
+            (author.userId != null ? `/profile?userId=${author.userId}` : '/profile')
+          }
+        >
           <p>프로필 보기</p>
         </Link>
       </div>
