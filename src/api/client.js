@@ -220,6 +220,14 @@ export const apiPut = (path, body, options) =>
   });
 export const apiDelete = (path, options) => apiRequest(path, { ...options, method: 'DELETE' });
 
+export const locationApi = {
+  listFriends: (options) => apiGet('/api/friends/locations', options),
+  getSharing: (options) => apiGet('/api/settings/location-sharing', options),
+  setSharing: (enabled) => apiPatch('/api/settings/location-sharing', { enabled }),
+  report: (coordinates, options) => apiPost('/api/location', coordinates, options),
+  stopSharing: () => apiDelete('/api/location'),
+};
+
 export const authApi = {
   sendEmailCode: (email, recovery = false) =>
     apiPost(`/api/auth/email/${recovery ? 'recovery' : 'send'}`, { email }, { auth: false }),
@@ -298,14 +306,6 @@ export const friendApi = {
   request: (targetId) => apiPost(`/api/friends/requests/${encodeURIComponent(targetId)}`),
   accept: (friendshipId) => apiPost(`/api/friends/requests/${friendshipId}/accept`),
   remove: (friendshipId) => apiDelete(`/api/friends/${friendshipId}`),
-};
-
-export const locationApi = {
-  report: (latitude, longitude) => apiPost('/api/location', { latitude, longitude }),
-  stop: () => apiDelete('/api/location'),
-  friends: () => apiGet('/api/friends/locations'),
-  getSharing: () => apiGet('/api/settings/location-sharing'),
-  setSharing: (enabled) => apiPatch('/api/settings/location-sharing', { enabled }),
 };
 
 export const userApi = {
