@@ -11,6 +11,7 @@ import chattingIcon from '../../../assets/images/chatting.svg';
 import guardianIcon from '../../../assets/images/guardian.svg';
 import notificationIcon from '../../../assets/images/notification.svg';
 import settingIcon from '../../../assets/images/setting.svg';
+import Skeleton from '../Skeleton/Skeleton';
 
 const sidebarMenuItems = [
   { id: 'neighbor', href: '/neighbor', icon: neighborIcon, label: '이웃마당' },
@@ -38,7 +39,10 @@ function getActiveMenuId(currentPath) {
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
-function Sidebar({ role, profileImage, nickname = '' }) {
+function Sidebar({ role, profileImage, nickname = '', isProfileLoading = false }) {
+  // 프로필 사진 주소를 받은 뒤에도 사진이 실제로 내려받아질 때까지 회색 원을 보여줍니다.
+  const [loadedImage, setLoadedImage] = useState('');
+  const showProfileSkeleton = isProfileLoading || Boolean(profileImage && loadedImage !== profileImage);
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const location = useLocation();
@@ -78,13 +82,17 @@ function Sidebar({ role, profileImage, nickname = '' }) {
         aria-label={nickname ? `내 프로필: ${nickname}` : '내 프로필'}
         title={profileLabel}
       >
+        {showProfileSkeleton && <Skeleton circle width={40} height={40} className="sidebar__icon" />}
         <img
           className="sidebar__icon"
           src={profileImage || profileImg}
           alt=""
+          style={showProfileSkeleton ? { display: 'none' } : undefined}
+          onLoad={() => setLoadedImage(profileImage)}
           onError={(event) => {
             event.currentTarget.onerror = null;
             event.currentTarget.src = profileImg;
+            setLoadedImage(profileImage);
           }}
         />
         <span className="sidebar__label">{profileLabel}</span>

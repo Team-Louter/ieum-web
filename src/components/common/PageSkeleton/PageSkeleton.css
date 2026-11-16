@@ -141,7 +141,8 @@
   pointer-events: none;
 }
 
-.page-skeleton--profile {
+.page-skeleton--profile,
+.page-skeleton--userProfile {
   align-items: center;
 }
 

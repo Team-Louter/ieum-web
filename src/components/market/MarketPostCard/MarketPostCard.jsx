@@ -18,7 +18,7 @@ function MarketPostCard({ post = {}, postImg, postTitle, postPrice, postAddress,
       }}
     >
       <div className="market-post-card__image">
-        <img src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
+        <img loading="lazy" decoding="async" src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
         <MarketPostStatus complete={post.complete} />
       </div>
       <div className="market-post-card__info">
