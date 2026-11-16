@@ -23,7 +23,7 @@ function MarketMyPostCard({
   return (
     <article className="market-my-post-card">
       <div className="market-my-post-card__image">
-        <img src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
+        <img loading="lazy" decoding="async" src={image} alt={title ? `${title} 사진` : '게시물 사진'} />
         <MarketPostStatus complete={isComplete} />
       </div>
       <div className="market-my-post-card__info">

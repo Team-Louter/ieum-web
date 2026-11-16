@@ -29,7 +29,7 @@ function PostCard({
     <div className="content-container">
       <div className="content-profile-container">
         <div>
-          <img
+          <img loading="lazy" decoding="async"
             src={author.profileImage || author.profile_image || author.profileImageUrl || profileImg}
             alt="프로필 사진"
             onError={(event) => {
@@ -50,7 +50,7 @@ function PostCard({
       </div>
       {image ? (
         <div className="content-media">
-          <img src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
+          <img loading="lazy" decoding="async" src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
           {images.length > 1 && (
             <>
               <button

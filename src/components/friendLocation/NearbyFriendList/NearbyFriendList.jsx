@@ -13,7 +13,7 @@ function NearbyFriendList({ friends = [], status = 'ready' }) {
         {friendItems.length > 0 ? (
           friendItems.map(({ id, nickname, profileImage: friendImage, updatedAt }) => (
             <li key={id}>
-              <img src={friendImage || profileImage} alt="" />
+              <img loading="lazy" decoding="async" src={friendImage || profileImage} alt="" />
               <div>
                 <span>{nickname}</span>
                 {updatedAt && Number.isFinite(Date.parse(updatedAt)) && (

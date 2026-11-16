@@ -122,6 +122,7 @@ function AppContent({ accessToken, setAccessToken }) {
       }
     }).catch(() => {
       // 프로필을 불러오지 못하면 기본 사진을 보여줍니다.
+      if (isActive) setSidebarProfile({ loginId: user.loginId, nickname: '', image: '' });
     });
 
     return () => { isActive = false; };
@@ -333,6 +334,7 @@ function AppContent({ accessToken, setAccessToken }) {
           role={user.role}
           profileImage={sidebarProfile.loginId === user.loginId ? sidebarProfile.image : ''}
           nickname={sidebarProfile.loginId === user.loginId ? sidebarProfile.nickname : ''}
+          isProfileLoading={sidebarProfile.loginId !== user.loginId}
         />
       )}
       {skeletonVariant ? <PageSkeleton variant={skeletonVariant} role={user.role} /> : <Page {...commonProps} />}

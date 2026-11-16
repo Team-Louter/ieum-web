@@ -8,7 +8,7 @@ export default function MeetingCard({ meeting = {}, onClick, to }) {
 
   const cardContent = (
     <>
-      <img
+      <img loading="lazy" decoding="async"
         className="meeting-card-img"
         src={image || mulchongsae}
         alt={`${title || '모임'} 대표 이미지`}
