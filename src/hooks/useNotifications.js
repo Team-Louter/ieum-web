@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { notificationApi } from '../api/client';
 
 const PAGE_LIMIT = 50;
-const POLL_INTERVAL_MS = 45_000;
+const POLL_INTERVAL_MS = 10_000;
 const EMPTY_NOTIFICATIONS = [];
 
 function getItems(response) {
@@ -23,7 +23,8 @@ function mergeNotifications(current, incoming) {
 
 /**
  * 알림 목록을 불러옵니다.
- * 첫 조회는 limit=50, 이후 폴링은 unreadOnly=true&limit=50, 더 보기는 마지막 ID를 beforeId로 보냅니다.
+ * 탭이 보이는 동안 10초마다 limit=50으로 다시 조회하고, notificationId로 중복 표시를 막습니다.
+ * 더 보기는 마지막 ID를 beforeId로 보냅니다.
  */
 export default function useNotifications({ enabled = true, sessionKey = '' } = {}) {
   const [savedNotifications, setSavedNotifications] = useState([]);
@@ -52,9 +53,7 @@ export default function useNotifications({ enabled = true, sessionKey = '' } = {
       const isFirst = !hasLoadedRef.current;
       if (isFirst) setIsLoading(true);
       try {
-        const response = await notificationApi.list(
-          isFirst ? { limit: PAGE_LIMIT } : { unreadOnly: true, limit: PAGE_LIMIT },
-        );
+        const response = await notificationApi.list({ limit: PAGE_LIMIT });
         if (!isActive) return;
         hasLoadedRef.current = true;
         setSavedNotifications((current) =>
@@ -73,12 +72,18 @@ export default function useNotifications({ enabled = true, sessionKey = '' } = {
     }
 
     load();
-    const timerId = window.setInterval(load, POLL_INTERVAL_MS);
-    window.addEventListener('focus', load);
+    // 탭이 가려져 있을 때는 조회하지 않고, 다시 보이는 순간 한 번 바로 조회합니다.
+    const timerId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') load();
+    }, POLL_INTERVAL_MS);
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') load();
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       isActive = false;
       window.clearInterval(timerId);
-      window.removeEventListener('focus', load);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [enabled, sessionKey]);
 
@@ -89,6 +94,23 @@ export default function useNotifications({ enabled = true, sessionKey = '' } = {
         String(item.notificationId) === String(notificationId) ? { ...item, read: true } : item,
       ),
     );
+  }, []);
+
+  const markAllRead = useCallback(async () => {
+    await notificationApi.markAllRead();
+    setSavedNotifications((current) => current.map((item) => ({ ...item, read: true })));
+  }, []);
+
+  const remove = useCallback(async (notificationId) => {
+    await notificationApi.remove(notificationId);
+    setSavedNotifications((current) =>
+      current.filter((item) => String(item.notificationId) !== String(notificationId)),
+    );
+  }, []);
+
+  const removeAll = useCallback(async () => {
+    await notificationApi.removeAll();
+    setSavedNotifications([]);
   }, []);
 
   const loadOlder = useCallback(async () => {
@@ -109,6 +131,9 @@ export default function useNotifications({ enabled = true, sessionKey = '' } = {
     isLoading,
     isReady,
     markRead,
+    markAllRead,
+    remove,
+    removeAll,
     loadOlder,
   };
 }

@@ -25,7 +25,7 @@ function SettingMedicationList({
 
   return (
     <ul className="setting-medication-list">
-      {scheduleItems.map(({ id, time, label, medicationName, taken }) => {
+      {scheduleItems.map(({ id, time, label, medicationName, taken, checkDate, isPreviousDose }) => {
         const isTaken = Boolean(taken);
 
         return (
@@ -36,10 +36,10 @@ function SettingMedicationList({
             <button
               type="button"
               className={`setting-medication-list__check${isTaken ? ' is-taken' : ''}`}
-              onClick={() => onCheck(id)}
+              onClick={() => onCheck(id, checkDate)}
               disabled={id == null || isTaken}
             >
-              {isTaken ? '복용 완료' : '복용 확인'}
+              {isTaken ? (isPreviousDose ? '어제 복용 확인' : '복용 완료') : isPreviousDose ? '어제 복용 체크' : '복용 확인'}
             </button>
           )}
           {onDelete && (

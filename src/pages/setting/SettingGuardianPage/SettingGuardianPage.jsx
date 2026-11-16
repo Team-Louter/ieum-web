@@ -165,7 +165,7 @@ function SettingGuardianPage({
           title="활동 현황 확인 설정"
           description={
             canEditPermissions
-              ? '어르신이 12시간 동안 앱을 사용하지 않거나 활동이 없을 때 보호자에게 알림을 보냅니다.'
+              ? '어르신이 24시간 동안 앱을 사용하지 않거나 활동이 없을 때 보호자에게 알림을 보냅니다.'
               : '어르신 계정에서 변경할 수 있는 설정입니다.'
           }
           checked={settings.guardianActivity ?? false}
@@ -176,7 +176,7 @@ function SettingGuardianPage({
           title="복약 미이행 알림 수신 여부"
           description={
             canEditPermissions
-              ? '어르신이 복약 알림을 확인하지 않고 30분이 지났을 때 보호자에게 알림을 보냅니다.'
+              ? '어르신이 복용 확인 없이 1시간이 지났을 때 보호자에게 알림을 보냅니다.'
               : '어르신 계정에서 변경할 수 있는 설정입니다.'
           }
           checked={settings.guardianMedication ?? false}

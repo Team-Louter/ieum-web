@@ -14,7 +14,7 @@ export default function MeetingMyMemberProfile({
 }) {
   const profileContent = (
     <>
-      <img
+      <img loading="lazy" decoding="async"
         src={profile_image || defaultImage}
         alt="프로필 사진"
         onError={(event) => {

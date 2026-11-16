@@ -73,7 +73,7 @@ function FriendRequestsModal({
 
               return (
                 <li className="friend-requests-modal__item" key={friendshipId}>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={request.profileImage ?? profilePlaceholder}
                     alt=""
                     onError={(event) => {

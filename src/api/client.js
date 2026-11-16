@@ -248,6 +248,8 @@ export const authApi = {
 export const profileApi = {
   get: () => apiGet('/api/profile'),
   getByUserId: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}`),
+  meetings: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}/meetings`),
+  friends: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}/friends`),
   update: (profile, profileImage) => {
     if (!profileImage) return apiPatch('/api/profile', profile);
 
@@ -276,13 +278,28 @@ export const connectionApi = {
     apiPatch(`/api/connections/${encodeURIComponent(String(connectionId))}/accept`),
   remove: (connectionId) =>
     apiDelete(`/api/connections/${encodeURIComponent(String(connectionId))}`),
+  // 내가 보낸 요청 조회·취소입니다. 백엔드 반영 전이라 아직 화면에는 연결하지 않았습니다.
+  outgoing: () => apiGet('/api/connections/outgoing'),
+  cancelOutgoing: (connectionId) =>
+    apiDelete(`/api/connections/outgoing/${encodeURIComponent(String(connectionId))}`),
 };
 
 export const medicationApi = {
   list: () => apiGet('/api/medications'),
   create: (medication) => apiPost('/api/medications', medication),
   remove: (medicationId) => apiDelete(`/api/medications/${medicationId}`),
-  check: (medicationId) => apiPost(`/api/medications/${medicationId}/check`),
+  // 자정 이후 전날 회차를 확인할 때는 목록의 checkDate를 doseDate로 보냅니다.
+  check: (medicationId, doseDate) =>
+    apiPost(
+      `/api/medications/${medicationId}/check${doseDate ? `?doseDate=${encodeURIComponent(doseDate)}` : ''}`,
+    ),
+  // 일정 수정입니다. 백엔드 반영 전이라 아직 화면에는 연결하지 않았습니다.
+  update: (medicationId, medication) => apiPut(`/api/medications/${medicationId}`, medication),
+};
+
+export const supportApi = {
+  list: () => apiGet('/api/support/inquiries'),
+  submit: (inquiry) => apiPost('/api/support/inquiries', inquiry),
 };
 
 export const guardianApi = { dashboard: () => apiGet('/api/dashboard') };
@@ -299,6 +316,10 @@ export const notificationApi = {
   },
   markRead: (notificationId) =>
     apiPatch(`/api/notifications/${encodeURIComponent(String(notificationId))}/read`),
+  markAllRead: () => apiPatch('/api/notifications/read-all'),
+  remove: (notificationId) =>
+    apiDelete(`/api/notifications/${encodeURIComponent(String(notificationId))}`),
+  removeAll: () => apiDelete('/api/notifications'),
   getSettings: () => apiGet('/api/settings/notifications'),
   updateSettings: (settings) => apiPatch('/api/settings/notifications', settings),
 };

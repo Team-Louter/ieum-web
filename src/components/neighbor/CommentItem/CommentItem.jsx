@@ -20,7 +20,7 @@ function CommentItem({ profileImg, profileId, comment, isMine = false, onUpdate,
   return (
     <div className="comment">
       <div className="comment-profile-container">
-        <img src={profileImg} alt="프로필 사진" />
+        <img loading="lazy" decoding="async" src={profileImg} alt="프로필 사진" />
         <p>{profileId}</p>
       </div>
       {isEditing ? (

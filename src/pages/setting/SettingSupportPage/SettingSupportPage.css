@@ -291,3 +291,65 @@
     grid-column: 1;
   }
 }
+
+.setting-dialog--support-inquiry select,
+.setting-dialog--support-inquiry textarea {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  font-weight: 400;
+}
+
+.setting-dialog--support-inquiry select {
+  min-height: 46px;
+}
+
+.setting-dialog--support-inquiry textarea {
+  resize: none;
+}
+
+.setting-dialog--support-inquiry select:focus,
+.setting-dialog--support-inquiry textarea:focus {
+  border-color: #42b66b;
+  outline: 2px solid rgb(66 182 107 / 18%);
+}
+
+.setting-support-page__inquiries {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.setting-support-page__inquiries li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e5e5e5;
+  color: #333;
+}
+
+.setting-support-page__inquiries li > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.setting-support-page__inquiries span {
+  color: #248e4b;
+  font-size: var(--font-size-small);
+}
+
+.setting-support-page__inquiries p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.setting-support-page__inquiries small {
+  color: #777;
+}

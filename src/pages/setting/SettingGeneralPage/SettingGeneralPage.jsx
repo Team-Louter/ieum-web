@@ -92,10 +92,10 @@ function SettingGeneralPage({
     }
   };
 
-  const handleMedicationCheck = async (medicationId) => {
+  const handleMedicationCheck = async (medicationId, checkDate) => {
     if (medicationId == null || typeof onMedicationCheck !== 'function') return;
     try {
-      await onMedicationCheck(medicationId);
+      await onMedicationCheck(medicationId, checkDate);
     } catch {
       // The app-level API notice exposes the server error.
     }

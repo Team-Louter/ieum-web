@@ -1,5 +1,13 @@
+import { useCallback, useEffect, useState } from 'react';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
+import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
+import EmptyState from '../../../components/common/EmptyState/EmptyState';
+import { profileApi, supportApi } from '../../../api/client';
+import { formatKoreanDateTime } from '../../../utils/dateTime';
 import './SettingSupportPage.css';
+
+const INQUIRY_CATEGORIES = ['계정', '복약', '보호자 연결', '친구·모임', '오류 신고', '기타'];
+const statusLabels = { RECEIVED: '접수 완료' };
 
 const questions = [
   {
@@ -24,7 +32,81 @@ const questions = [
   },
 ];
 
-function SettingSupportPage() {
+function SettingSupportPage({ accountEmail = '' }) {
+  const [inquiries, setInquiries] = useState([]);
+  const [listState, setListState] = useState('loading');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [defaultEmail, setDefaultEmail] = useState(accountEmail);
+  const [category, setCategory] = useState(INQUIRY_CATEGORIES[0]);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [replyEmail, setReplyEmail] = useState('');
+  const [formMessage, setFormMessage] = useState('');
+  const [notice, setNotice] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const loadInquiries = useCallback(async () => {
+    try {
+      const response = await supportApi.list();
+      setInquiries(Array.isArray(response) ? response : []);
+      setListState('ready');
+    } catch {
+      setListState('error');
+    }
+  }, []);
+
+  useEffect(() => {
+    loadInquiries();
+  }, [loadInquiries]);
+
+  // 답장 받을 이메일은 내 프로필의 이메일을 기본값으로 씁니다.
+  useEffect(() => {
+    if (accountEmail) return undefined;
+    let isActive = true;
+    profileApi
+      .get()
+      .then((profile) => {
+        if (isActive && profile?.email) setDefaultEmail(profile.email);
+      })
+      .catch(() => {});
+    return () => {
+      isActive = false;
+    };
+  }, [accountEmail]);
+
+  function openDialog() {
+    setReplyEmail(defaultEmail);
+    setFormMessage('');
+    setIsDialogOpen(true);
+  }
+
+  async function submitInquiry(event) {
+    event.preventDefault();
+    if (!subject.trim() || !message.trim() || !replyEmail.trim()) {
+      setFormMessage('제목, 내용, 답장 받을 이메일을 모두 입력해 주세요.');
+      return;
+    }
+
+    setBusy(true);
+    try {
+      await supportApi.submit({
+        category,
+        subject: subject.trim(),
+        message: message.trim(),
+        replyEmail: replyEmail.trim(),
+      });
+      setIsDialogOpen(false);
+      setSubject('');
+      setMessage('');
+      setNotice('문의가 접수되었습니다. 입력한 이메일로 답장드릴게요.');
+      await loadInquiries();
+    } catch (error) {
+      setFormMessage(error?.message ?? '문의를 접수하지 못했습니다.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="setting-page-section setting-support-page">
       <SettingItem
@@ -41,6 +123,112 @@ function SettingSupportPage() {
           ))}
         </div>
       </SettingItem>
+
+      <SettingItem
+        title="문의하기"
+        description="궁금한 점이나 불편한 점을 남겨 주세요."
+        actionLabel="문의 작성"
+        onAction={openDialog}
+        className="setting-support-page__card"
+      >
+        {notice && <p role="status">{notice}</p>}
+      </SettingItem>
+
+      <SettingItem
+        title="내 문의 내역"
+        description="접수한 문의를 확인할 수 있습니다."
+        className="setting-support-page__card"
+      >
+        {listState === 'error' ? (
+          <p role="alert">문의 내역을 불러오지 못했습니다.</p>
+        ) : listState === 'ready' && inquiries.length === 0 ? (
+          <EmptyState
+            compact
+            title="접수한 문의가 없어요"
+            description="문의를 남기면 이곳에서 접수 내역을 확인할 수 있어요."
+          />
+        ) : (
+          <ul className="setting-support-page__inquiries">
+            {inquiries.map((inquiry) => (
+              <li key={inquiry.id}>
+                <div>
+                  <strong>{inquiry.subject}</strong>
+                  <span>{statusLabels[inquiry.status] ?? inquiry.status}</span>
+                </div>
+                <p>{inquiry.message}</p>
+                <small>
+                  {inquiry.category} · {formatKoreanDateTime(inquiry.createdAt)}
+                </small>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SettingItem>
+
+      {isDialogOpen && (
+        <SettingDialog
+          title="문의 작성"
+          description="접수되면 입력한 이메일로 답장드립니다."
+          className="setting-dialog--support-inquiry"
+          onClose={() => setIsDialogOpen(false)}
+        >
+          <form className="setting-dialog__form" onSubmit={submitInquiry}>
+            <label className="setting-dialog__field">
+              문의 종류
+              <select value={category} onChange={(event) => setCategory(event.target.value)}>
+                {INQUIRY_CATEGORIES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="setting-dialog__field">
+              제목
+              <input
+                value={subject}
+                maxLength={150}
+                onChange={(event) => setSubject(event.target.value)}
+              />
+            </label>
+            <label className="setting-dialog__field">
+              내용
+              <textarea
+                value={message}
+                rows={6}
+                maxLength={5000}
+                onChange={(event) => setMessage(event.target.value)}
+              />
+            </label>
+            <label className="setting-dialog__field">
+              답장 받을 이메일
+              <input
+                type="email"
+                value={replyEmail}
+                maxLength={254}
+                onChange={(event) => setReplyEmail(event.target.value)}
+              />
+            </label>
+            {formMessage && <p role="alert">{formMessage}</p>}
+            <div className="setting-dialog__actions">
+              <button
+                type="submit"
+                className="setting-dialog__button setting-dialog__button--primary"
+                disabled={busy}
+              >
+                {busy ? '접수 중' : '문의 접수'}
+              </button>
+              <button
+                type="button"
+                className="setting-dialog__button"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                취소
+              </button>
+            </div>
+          </form>
+        </SettingDialog>
+      )}
     </div>
   );
 }

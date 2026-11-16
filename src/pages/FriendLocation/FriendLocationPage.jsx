@@ -17,6 +17,7 @@ const MY_LOCATION_REFRESH_MS = 5 * 60 * 1000;
 function FriendLocationPage({ role, currentUserId }) {
   const [isMapReady, setIsMapReady] = useState(false);
   const [myProfileImage, setMyProfileImage] = useState('');
+  const [isMyProfileLoaded, setIsMyProfileLoaded] = useState(false);
   const [friends, setFriends] = useState([]);
   const [friendsStatus, setFriendsStatus] = useState('loading');
   const [sharingError, setSharingError] = useState('');
@@ -32,7 +33,10 @@ function FriendLocationPage({ role, currentUserId }) {
       .then((profile) => {
         if (isMounted) setMyProfileImage(resolveApiAssetUrl(profile?.profileImageUrl ?? ''));
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setIsMyProfileLoaded(true);
+      });
     return () => {
       isMounted = false;
     };
@@ -106,9 +110,18 @@ function FriendLocationPage({ role, currentUserId }) {
   const locations = useMemo(
     () =>
       coordinates
-        ? [{ id: 'current-device', nickname: '내 위치', profileImage: myProfileImage, ...coordinates }, ...friends]
+        ? [
+            {
+              id: 'current-device',
+              nickname: '내 위치',
+              profileImage: myProfileImage,
+              isProfileLoading: !isMyProfileLoaded,
+              ...coordinates,
+            },
+            ...friends,
+          ]
         : friends,
-    [coordinates, friends, myProfileImage],
+    [coordinates, friends, myProfileImage, isMyProfileLoaded],
   );
   const center = coordinates ?? friends[0] ?? DEFAULT_CENTER;
   const addressText =

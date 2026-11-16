@@ -47,7 +47,7 @@ function SettingGuardianList({
                 : (guardian.id ?? guardian.loginId ?? index)
             }
           >
-            <img className="setting-guardian-list__avatar" src={guardianImage} alt="" />
+            <img loading="lazy" decoding="async" className="setting-guardian-list__avatar" src={guardianImage} alt="" />
             <span>{guardianName}</span>
             {isEditing && onRemove && (
               <button

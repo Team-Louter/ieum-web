@@ -23,6 +23,8 @@ import {
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
+const GUARDIAN_REFRESH_MS = 30 * 1000;
+
 function AppContent({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -122,6 +124,16 @@ function AppContent({ accessToken, setAccessToken }) {
     isChatPage: routeKey === '/chatting',
   });
 
+  // 보호자 대시보드를 열어 둔 동안 주기적으로 다시 불러와, 어르신이 다른 기기에서 체크한 복약도 반영합니다.
+  useEffect(() => {
+    if (!accessToken || routeKey !== '/guardian') return undefined;
+
+    const timerId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') setReloadKey((value) => value + 1);
+    }, GUARDIAN_REFRESH_MS);
+    return () => window.clearInterval(timerId);
+  }, [accessToken, routeKey]);
+
   useEffect(() => {
     if (!accessToken) return undefined;
 
@@ -136,6 +148,7 @@ function AppContent({ accessToken, setAccessToken }) {
       }
     }).catch(() => {
       // 프로필을 불러오지 못하면 기본 사진을 보여줍니다.
+      if (isActive) setSidebarProfile({ loginId: user.loginId, nickname: '', image: '' });
     });
 
     return () => { isActive = false; };
@@ -354,6 +367,7 @@ function AppContent({ accessToken, setAccessToken }) {
           nickname={sidebarProfile.loginId === user.loginId ? sidebarProfile.nickname : ''}
           unreadChatCount={unreadChatCount}
           unreadNotificationCount={unreadNotificationCount}
+          isProfileLoading={sidebarProfile.loginId !== user.loginId}
         />
       )}
       {skeletonVariant ? <PageSkeleton variant={skeletonVariant} role={user.role} /> : <Page {...commonProps} />}

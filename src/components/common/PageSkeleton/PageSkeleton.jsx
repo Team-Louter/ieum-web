@@ -4,6 +4,9 @@ import '../../../pages/setting/SettingsPage/SettingsPage.css';
 import '../../../pages/AddFriend/AddFriendPage.css';
 import '../../myProfile/MyProfileEditButtons/MyProfileEditButtons.css';
 import '../../myProfile/MyProfileInfo/MyProfileInfo.css';
+import '../../profile/ProfileInfo/ProfileInfo.css';
+import '../../profile/ProfileActionButtons/ProfileActionButtons.css';
+import '../../../pages/Profile/ProfilePageContent.css';
 import '../../../pages/MyProfile/MyProfilePageContent.css';
 import backIcon from '../../../assets/images/arrow.svg';
 import Layout from '../Layout/Layout';
@@ -46,6 +49,9 @@ const skeletonVariants = {
   '/meeting/my/detail': 'meetingDetail',
   '/meeting/my/member-list': 'members',
   '/meeting/management': 'form',
+  '/profile': 'userProfile',
+  '/profile/meetings': 'userProfile',
+  '/profile/friends': 'userProfile',
   '/myProfile': 'profile',
   '/myProfile/meetings': 'profile',
   '/myProfile/friends': 'profile',
@@ -91,6 +97,15 @@ function getProfileTabs(pathname) {
     { label: '내 게시물', href: '/myProfile', isActive: pathname === '/myProfile' },
     { label: '내 모임', href: '/myProfile/meetings', isActive: pathname === '/myProfile/meetings' },
     { label: '내 친구', href: '/myProfile/friends', isActive: pathname === '/myProfile/friends' },
+  ];
+}
+
+/** 다른 사용자 프로필 탭은 주소 뒤의 ?userId=번호를 그대로 이어 붙입니다. */
+function getUserProfileTabs(pathname, search = '') {
+  return [
+    { label: '게시물', href: `/profile${search}`, isActive: pathname === '/profile' },
+    { label: '모임', href: `/profile/meetings${search}`, isActive: pathname === '/profile/meetings' },
+    { label: '친구', href: `/profile/friends${search}`, isActive: pathname === '/profile/friends' },
   ];
 }
 
@@ -455,6 +470,36 @@ function renderVariant(variant) {
           </section>
         </div>
       );
+    case 'userProfile':
+      // 다른 사용자 프로필: 실제와 같은 #profile-box(폭 916) 안에 정보 136, 버튼 60, 탭 40, 내용
+      return (
+        <div id="profile-box">
+          <div className="profile-info">
+            <Skeleton circle width={136} height={136} />
+            <div className="profile-info__text">
+              <Skeleton text width={160} height={38} />
+              <Skeleton text width={120} height={24} />
+              <Skeleton text width={160} height={22} />
+            </div>
+          </div>
+          <div className="profile-action-buttons">
+            <button type="button" disabled>
+              친구 추가하기
+            </button>
+            <button type="button" disabled>
+              채팅하기
+            </button>
+          </div>
+          <PageTabNavigation
+            ariaLabel="프로필 콘텐츠 메뉴"
+            items={getUserProfileTabs(
+              window.location.pathname.replace(/\/$/, ''),
+              window.location.search,
+            )}
+          />
+          {renderProfileContent(window.location.pathname.replace(/\/$/, ''))}
+        </div>
+      );
     case 'profile':
       // 내 프로필: 실제와 같은 #profile-box(폭 916, 간격 46) 안에 정보 136, 버튼 54, 탭 40, 내용 카드
       return (
@@ -547,6 +592,7 @@ function renderVariant(variant) {
 // 화면마다 실제 페이지가 쓰는 바깥 틀(Layout 클래스)을 그대로 따라 위치와 여백을 맞춥니다.
 const layoutClasses = {
   profile: 'profile-layout',
+  userProfile: 'profile-layout',
   addFriend: 'add-friend-layout',
 };
 
