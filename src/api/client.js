@@ -248,6 +248,8 @@ export const authApi = {
 export const profileApi = {
   get: () => apiGet('/api/profile'),
   getByUserId: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}`),
+  meetings: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}/meetings`),
+  friends: (userId) => apiGet(`/api/profile/${encodeURIComponent(String(userId))}/friends`),
   update: (profile, profileImage) => {
     if (!profileImage) return apiPatch('/api/profile', profile);
 
