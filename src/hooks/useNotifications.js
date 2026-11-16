@@ -3,6 +3,7 @@ import { notificationApi } from '../api/client';
 
 const PAGE_LIMIT = 50;
 const POLL_INTERVAL_MS = 45_000;
+const EMPTY_NOTIFICATIONS = [];
 
 function getItems(response) {
   if (Array.isArray(response)) return response;
@@ -24,15 +25,27 @@ function mergeNotifications(current, incoming) {
  * 알림 목록을 불러옵니다.
  * 첫 조회는 limit=50, 이후 폴링은 unreadOnly=true&limit=50, 더 보기는 마지막 ID를 beforeId로 보냅니다.
  */
-export default function useNotifications({ enabled = true } = {}) {
-  const [notifications, setNotifications] = useState([]);
+export default function useNotifications({ enabled = true, sessionKey = '' } = {}) {
+  const [savedNotifications, setSavedNotifications] = useState([]);
+  const [loadedSessionKey, setLoadedSessionKey] = useState(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(!enabled);
   const hasLoadedRef = useRef(false);
+  const lastSessionKeyRef = useRef(sessionKey);
+  const notifications = enabled && loadedSessionKey === sessionKey
+    ? savedNotifications
+    : EMPTY_NOTIFICATIONS;
 
   useEffect(() => {
-    if (!enabled) return undefined;
+    if (lastSessionKeyRef.current !== sessionKey) {
+      hasLoadedRef.current = false;
+      lastSessionKeyRef.current = sessionKey;
+    }
+    if (!enabled) {
+      hasLoadedRef.current = false;
+      return undefined;
+    }
     let isActive = true;
 
     async function load() {
@@ -44,7 +57,10 @@ export default function useNotifications({ enabled = true } = {}) {
         );
         if (!isActive) return;
         hasLoadedRef.current = true;
-        setNotifications((current) => mergeNotifications(current, getItems(response)));
+        setSavedNotifications((current) =>
+          isFirst ? getItems(response) : mergeNotifications(current, getItems(response)),
+        );
+        setLoadedSessionKey(sessionKey);
         setError('');
       } catch (loadError) {
         if (isActive) setError(loadError?.message ?? '알림을 불러오지 못했습니다.');
@@ -58,15 +74,17 @@ export default function useNotifications({ enabled = true } = {}) {
 
     load();
     const timerId = window.setInterval(load, POLL_INTERVAL_MS);
+    window.addEventListener('focus', load);
     return () => {
       isActive = false;
       window.clearInterval(timerId);
+      window.removeEventListener('focus', load);
     };
-  }, [enabled]);
+  }, [enabled, sessionKey]);
 
   const markRead = useCallback(async (notificationId) => {
     await notificationApi.markRead(notificationId);
-    setNotifications((current) =>
+    setSavedNotifications((current) =>
       current.map((item) =>
         String(item.notificationId) === String(notificationId) ? { ...item, read: true } : item,
       ),
@@ -77,7 +95,7 @@ export default function useNotifications({ enabled = true } = {}) {
     const lastId = notifications[notifications.length - 1]?.notificationId;
     if (lastId == null) return;
     const response = await notificationApi.list({ limit: PAGE_LIMIT, beforeId: lastId });
-    setNotifications((current) => [
+    setSavedNotifications((current) => [
       ...current,
       ...mergeNotifications(current, getItems(response)).filter(
         (item) => !current.some((c) => String(c.notificationId) === String(item.notificationId)),
@@ -85,5 +103,12 @@ export default function useNotifications({ enabled = true } = {}) {
     ]);
   }, [notifications]);
 
-  return { notifications, error, isLoading, isReady, markRead, loadOlder };
+  return {
+    notifications,
+    error,
+    isLoading,
+    isReady,
+    markRead,
+    loadOlder,
+  };
 }

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Layout from '../../components/common/Layout/Layout';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { NotificationBodySkeleton } from '../../components/common/PageSkeleton/NotificationSkeleton';
-import useNotifications from '../../hooks/useNotifications';
 import './NotificationsPage.css';
 
 const NOTIFICATION_PREVIEW_COUNT = 3;
@@ -56,12 +55,13 @@ function formatTime(value) {
 /** 알림 목록을 보여주고 읽음 처리, 이전 알림 더 보기를 제공하는 임시 화면입니다. */
 function NotificationsPage({
   role,
+  notificationState,
   medicationSchedule = [],
   onMedicationCheck,
   isLoading: isPageLoading = false,
   apiError = '',
 }) {
-  const { notifications, error, isReady: isNotificationsReady, markRead, loadOlder } = useNotifications();
+  const { notifications, error, isReady: isNotificationsReady, markRead, loadOlder } = notificationState;
   const [showAllMedication, setShowAllMedication] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
 

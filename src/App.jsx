@@ -5,6 +5,8 @@ import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkelet
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
 import useAuthSession from './hooks/useAuthSession';
+import useChatUnreadCount from './hooks/useChatUnreadCount';
+import useNotifications from './hooks/useNotifications';
 import usePageApiData from './hooks/usePageApiData';
 import useAccountActions from './app/useAccountActions';
 import useFriendActions from './app/useFriendActions';
@@ -106,6 +108,18 @@ function AppContent({ accessToken, setAccessToken }) {
     accessToken,
     reloadKey,
     onDefaultChatRoom: selectDefaultChatRoom,
+  });
+  const notificationState = useNotifications({
+    enabled: Boolean(accessToken),
+    sessionKey: accessToken,
+  });
+  const unreadNotificationCount = notificationState.notifications.filter(
+    (notification) => !(notification.read ?? notification.isRead),
+  ).length;
+  const { unreadCount: unreadChatCount, refreshUnreadCount } = useChatUnreadCount({
+    accessToken,
+    currentUserId: user.userId,
+    isChatPage: routeKey === '/chatting',
   });
 
   useEffect(() => {
@@ -241,6 +255,7 @@ function AppContent({ accessToken, setAccessToken }) {
     activeContactId: activeChatRoomId ?? data.activeContactId,
     messagesRoomId: data.activeContactId,
     messages: data.messages ?? [],
+    notificationState,
 
     onSettingChange: accountActions.changeSetting,
     onMedicationCreate: medicationActions.createMedication,
@@ -256,7 +271,11 @@ function AppContent({ accessToken, setAccessToken }) {
     onStartChat: friendActions.startChat,
     onSendMessage: friendActions.sendChatMessage,
     onSelectContact: selectChatRoom,
-    onChatReconnected: () => setReloadKey((value) => value + 1),
+    onChatReconnected: () => {
+      setReloadKey((value) => value + 1);
+      void refreshUnreadCount();
+    },
+    onUnreadChange: refreshUnreadCount,
 
     onMeetingSelect: (meeting) => movePage(`/meeting/detail/${meeting.id}`),
     onJoin: (meetingId) => meetingActions.joinMeeting(meetingId).catch(() => {}),
@@ -333,6 +352,8 @@ function AppContent({ accessToken, setAccessToken }) {
           role={user.role}
           profileImage={sidebarProfile.loginId === user.loginId ? sidebarProfile.image : ''}
           nickname={sidebarProfile.loginId === user.loginId ? sidebarProfile.nickname : ''}
+          unreadChatCount={unreadChatCount}
+          unreadNotificationCount={unreadNotificationCount}
         />
       )}
       {skeletonVariant ? <PageSkeleton variant={skeletonVariant} role={user.role} /> : <Page {...commonProps} />}

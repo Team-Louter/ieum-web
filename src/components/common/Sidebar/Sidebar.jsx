@@ -38,7 +38,7 @@ function getActiveMenuId(currentPath) {
 }
 
 /** 마우스 오버 또는 키보드 포커스 시 확장되는 공통 사이드바를 표시합니다. */
-function Sidebar({ role, profileImage, nickname = '' }) {
+function Sidebar({ role, profileImage, nickname = '', unreadChatCount = 0, unreadNotificationCount = 0 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const location = useLocation();
@@ -94,6 +94,15 @@ function Sidebar({ role, profileImage, nickname = '' }) {
         {visibleMenuItems.map((menuItem) => {
           const { href, icon, label } = menuItem;
           const isActive = activeMenuId === menuItem.id;
+          let unreadCount = 0;
+          let unreadLabel = '';
+          if (menuItem.id === 'chat') {
+            unreadCount = unreadChatCount;
+            unreadLabel = '안 읽은 메시지';
+          } else if (menuItem.id === 'notifications') {
+            unreadCount = unreadNotificationCount;
+            unreadLabel = '안 읽은 알림';
+          }
 
           return (
             <Link
@@ -101,10 +110,17 @@ function Sidebar({ role, profileImage, nickname = '' }) {
               to={href}
               key={label}
               aria-current={isActive ? 'page' : undefined}
-              aria-label={label}
+              aria-label={unreadCount > 0 ? `${label}, ${unreadLabel} ${unreadCount}개` : label}
               title={label}
             >
-              <img className="sidebar__icon" src={icon} alt="" />
+              <span className="sidebar__icon-wrap">
+                <img className="sidebar__icon" src={icon} alt="" />
+                {unreadCount > 0 && (
+                  <span className="sidebar__badge" aria-hidden="true">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </span>
               <span className="sidebar__label">{label}</span>
             </Link>
           );
