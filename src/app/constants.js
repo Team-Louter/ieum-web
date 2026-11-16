@@ -2,6 +2,7 @@
 export const settingApiFields = {
   medicationAlert: 'medicationNotiEnabled',
   guardianMedication: 'guardianMedication',
+  guardianActivity: 'inactivityAlertEnabled',
 };
 
 export const defaultProfile = {

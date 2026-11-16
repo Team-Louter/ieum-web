@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { notificationApi } from '../api/client';
 
 const PAGE_LIMIT = 50;
-const POLL_INTERVAL_MS = 45_000;
+const POLL_INTERVAL_MS = 10_000;
 
 function getItems(response) {
   if (Array.isArray(response)) return response;
@@ -22,7 +22,8 @@ function mergeNotifications(current, incoming) {
 
 /**
  * 알림 목록을 불러옵니다.
- * 첫 조회는 limit=50, 이후 폴링은 unreadOnly=true&limit=50, 더 보기는 마지막 ID를 beforeId로 보냅니다.
+ * 탭이 보이는 동안 10초마다 limit=50으로 다시 조회하고, notificationId로 중복 표시를 막습니다.
+ * 더 보기는 마지막 ID를 beforeId로 보냅니다.
  */
 export default function useNotifications({ enabled = true } = {}) {
   const [notifications, setNotifications] = useState([]);
@@ -39,9 +40,7 @@ export default function useNotifications({ enabled = true } = {}) {
       const isFirst = !hasLoadedRef.current;
       if (isFirst) setIsLoading(true);
       try {
-        const response = await notificationApi.list(
-          isFirst ? { limit: PAGE_LIMIT } : { unreadOnly: true, limit: PAGE_LIMIT },
-        );
+        const response = await notificationApi.list({ limit: PAGE_LIMIT });
         if (!isActive) return;
         hasLoadedRef.current = true;
         setNotifications((current) => mergeNotifications(current, getItems(response)));
@@ -57,10 +56,18 @@ export default function useNotifications({ enabled = true } = {}) {
     }
 
     load();
-    const timerId = window.setInterval(load, POLL_INTERVAL_MS);
+    // 탭이 가려져 있을 때는 조회하지 않고, 다시 보이는 순간 한 번 바로 조회합니다.
+    const timerId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') load();
+    }, POLL_INTERVAL_MS);
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') load();
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       isActive = false;
       window.clearInterval(timerId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [enabled]);
 
@@ -71,6 +78,23 @@ export default function useNotifications({ enabled = true } = {}) {
         String(item.notificationId) === String(notificationId) ? { ...item, read: true } : item,
       ),
     );
+  }, []);
+
+  const markAllRead = useCallback(async () => {
+    await notificationApi.markAllRead();
+    setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+  }, []);
+
+  const remove = useCallback(async (notificationId) => {
+    await notificationApi.remove(notificationId);
+    setNotifications((current) =>
+      current.filter((item) => String(item.notificationId) !== String(notificationId)),
+    );
+  }, []);
+
+  const removeAll = useCallback(async () => {
+    await notificationApi.removeAll();
+    setNotifications([]);
   }, []);
 
   const loadOlder = useCallback(async () => {
@@ -85,5 +109,5 @@ export default function useNotifications({ enabled = true } = {}) {
     ]);
   }, [notifications]);
 
-  return { notifications, error, isLoading, isReady, markRead, loadOlder };
+  return { notifications, error, isLoading, isReady, markRead, markAllRead, remove, removeAll, loadOlder };
 }

@@ -23,6 +23,11 @@
   border-radius: 50%;
 }
 
+.nearby-friend-ping__skeleton {
+  width: 50px;
+  height: 50px;
+}
+
 .nearby-friend-ping__triangle {
   position: absolute;
   bottom: -10px;

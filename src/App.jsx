@@ -21,6 +21,8 @@ import {
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
+const GUARDIAN_REFRESH_MS = 30 * 1000;
+
 function AppContent({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -107,6 +109,16 @@ function AppContent({ accessToken, setAccessToken }) {
     reloadKey,
     onDefaultChatRoom: selectDefaultChatRoom,
   });
+
+  // 보호자 대시보드를 열어 둔 동안 주기적으로 다시 불러와, 어르신이 다른 기기에서 체크한 복약도 반영합니다.
+  useEffect(() => {
+    if (!accessToken || routeKey !== '/guardian') return undefined;
+
+    const timerId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') setReloadKey((value) => value + 1);
+    }, GUARDIAN_REFRESH_MS);
+    return () => window.clearInterval(timerId);
+  }, [accessToken, routeKey]);
 
   useEffect(() => {
     if (!accessToken) return undefined;
