@@ -13,20 +13,29 @@ function ProfilePageContent({
   onDeletePost,
   isLoading = false,
   apiError = '',
+  onAddFriend,
+  onStartChat,
+  currentUserId = null,
 }) {
+  const query = profile.userId != null ? `?userId=${profile.userId}` : '';
   const postItems = Array.isArray(posts) ? posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
-    { label: '게시물', href: '/profile', isActive: true },
-    { label: '모임', href: '/profile/meetings', isActive: false },
-    { label: '친구', href: '/profile/friends', isActive: false },
+    { label: '게시물', href: `/profile${query}`, isActive: true },
+    { label: '모임', href: `/profile/meetings${query}`, isActive: false },
+    { label: '친구', href: `/profile/friends${query}`, isActive: false },
   ];
 
   return (
     <Layout className="profile-layout">
       <div id="profile-box" className={isEmpty ? 'profile-box--empty' : undefined}>
         <ProfileInfo profile={profile} />
-        <ProfileActionButtons />
+        <ProfileActionButtons
+          userId={profile.userId}
+          currentUserId={currentUserId}
+          onAddFriend={onAddFriend}
+          onStartChat={onStartChat}
+        />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <div id="content-container">
           {postItems.length > 0 ? (

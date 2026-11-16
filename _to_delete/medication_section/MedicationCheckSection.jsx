@@ -1,4 +1,5 @@
 import EmptyState from '../common/EmptyState/EmptyState';
+import { MedicationListSkeleton } from '../common/PageSkeleton/NotificationSkeleton';
 import './MedicationCheckSection.css';
 
 /** takeTime("HH:mm:ss")이 지금보다 이전이면 복용할 시간이 지난 것으로 봅니다. */
@@ -78,9 +79,7 @@ function MedicationCheckSection({
             {apiError}
           </p>
         ) : isLoading ? (
-          <p className="medication-check-page__message" role="status">
-            복약 알림을 불러오는 중입니다.
-          </p>
+          <MedicationListSkeleton />
         ) : (
           <EmptyState
             title="오늘 먹을 약이 없어요"

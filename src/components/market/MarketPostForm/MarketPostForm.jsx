@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import './MarketPostForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
 import Button from '../../common/Button/Button';
+import ImageCropModal from '../ImageCropModal/ImageCropModal';
+import { autoCropIfFits } from '../ImageCropModal/autoCrop';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
 function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit = false, onSubmit }) {
@@ -13,6 +15,7 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
   const [region, setRegion] = useState(initialValues.region ?? '');
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+  const [cropTarget, setCropTarget] = useState(null);
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef('');
 
@@ -23,7 +26,27 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
     [],
   );
 
-  function handleFileChange(event) {
+  /** 고른(또는 자른) 파일을 미리보기와 제출용으로 적용합니다. */
+  function applyFile(nextFile) {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    const nextPreviewUrl = URL.createObjectURL(nextFile);
+    previewUrlRef.current = nextPreviewUrl;
+    setSelectedFile(nextFile);
+    setPreviewUrl(nextPreviewUrl);
+    setErrors((currentErrors) => ({ ...currentErrors, media: '' }));
+  }
+
+  function closeCropModal() {
+    if (cropTarget) URL.revokeObjectURL(cropTarget.url);
+    setCropTarget(null);
+  }
+
+  function handleCropConfirm(croppedFile) {
+    closeCropModal();
+    applyFile(croppedFile);
+  }
+
+  async function handleFileChange(event) {
     const [nextFile] = event.target.files;
     if (!nextFile) return;
     if (!nextFile.type.startsWith('image/') && !nextFile.type.startsWith('video/')) {
@@ -35,12 +58,19 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
       event.target.value = '';
       return;
     }
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    const nextPreviewUrl = URL.createObjectURL(nextFile);
-    previewUrlRef.current = nextPreviewUrl;
-    setSelectedFile(nextFile);
-    setPreviewUrl(nextPreviewUrl);
-    setErrors((currentErrors) => ({ ...currentErrors, media: '' }));
+    // 사진은 게시물에 보이는 정사각형으로 자를 수 있게 자르기 창을 먼저 엽니다. 동영상은 그대로 씁니다.
+    if (nextFile.type.startsWith('image/')) {
+      // 비율과 크기가 이미 알맞은 사진은 자르기 창 없이 가운데를 자동으로 자릅니다.
+      const autoCropped = await autoCropIfFits(nextFile);
+      if (autoCropped) {
+        applyFile(autoCropped);
+        return;
+      }
+      if (cropTarget) URL.revokeObjectURL(cropTarget.url);
+      setCropTarget({ file: nextFile, url: URL.createObjectURL(nextFile) });
+    } else {
+      applyFile(nextFile);
+    }
   }
 
   function handleFileSelectClick() {
@@ -210,6 +240,14 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
         <p className="market-post-create-form__submit-error" role="alert">
           {submitError}
         </p>
+      )}
+      {cropTarget && (
+        <ImageCropModal
+          src={cropTarget.url}
+          fileName={cropTarget.file.name}
+          onConfirm={handleCropConfirm}
+          onCancel={closeCropModal}
+        />
       )}
     </form>
   );

@@ -51,11 +51,18 @@
 
 .page-skeleton--members,
 .page-skeleton--addFriend {
-  width: min(700px, 100%);
+  gap: 0;
 }
 
-.page-skeleton--addFriend {
-  gap: 0;
+/* 실제 친구 추가 화면(.add-friend-page)과 같은 폭. .page-skeleton의 width: 100%보다 우선하도록 선택자를 겹칩니다. */
+.page-skeleton.add-friend-page {
+  width: min(48.61vw, 700px);
+}
+
+@media (max-width: 760px) {
+  .page-skeleton.add-friend-page {
+    width: min(100%, 700px);
+  }
 }
 
 .page-skeleton__people {

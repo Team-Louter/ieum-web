@@ -14,7 +14,29 @@ function toProfile(profile, friendCount, loginId, postCount = 0) {
   };
 }
 
-export async function loadMyProfilePage({ path, loginId, userId }) {
+// 다른 사용자의 프로필과 그 사용자가 쓴 게시물을 불러옵니다.
+export async function loadUserProfilePage({ selectedId }) {
+  if (!selectedId) throw new Error('프로필을 볼 사용자를 확인할 수 없습니다.');
+
+  const [profile, postsResponse] = await Promise.all([
+    profileApi.getByUserId(selectedId),
+    communityPostApi.list({ authorId: selectedId }),
+  ]);
+  const posts = asArray(
+    Array.isArray(postsResponse) ? postsResponse : (postsResponse?.posts ?? postsResponse?.content),
+  ).map(toCommunityPost);
+  const friendCount = Number(profile.friendCount ?? profile.friendsCount ?? 0);
+
+  return {
+    profile: {
+      ...toProfile(profile, friendCount, profile.loginId, Number(postsResponse?.totalCount ?? posts.length)),
+      userId: profile.userId ?? selectedId,
+    },
+    posts,
+  };
+}
+
+export async function loadMyProfilePage({ loginId, userId }) {
   const [profile, friends, postsResponse] = await Promise.all([
     profileApi.get(),
     friendApi.list(),
@@ -39,12 +61,11 @@ export async function loadMyProfilePage({ path, loginId, userId }) {
     posts: ownPosts,
   };
 
-  if (path === '/myProfile/meetings') {
-    const response = await meetingApi.mine();
-    result.meetings = asArray(
-      Array.isArray(response) ? response : (response?.meetings ?? response?.content),
-    ).map(toMeetingCard);
-  }
+  // 탭을 바꿀 때 다시 불러오지 않도록 모임도 함께 가져옵니다.
+  const response = await meetingApi.mine();
+  result.meetings = asArray(
+    Array.isArray(response) ? response : (response?.meetings ?? response?.content),
+  ).map(toMeetingCard);
 
   return result;
 }

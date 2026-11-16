@@ -30,12 +30,14 @@
 #feed-info > img {
   width: min(27.78vw, 400px);
   height: 400px;
+  object-fit: cover;
 }
 
 #feed-info > div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: min(27.78vw, 400px);
 }
 
 #feed-info > div > div {

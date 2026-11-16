@@ -86,7 +86,7 @@
 
 .profile-edit-modal-dialog #my-introduce-textarea {
   min-height: 160px;
-  resize: vertical;
+  resize: none;
 }
 
 .profile-edit-modal-dialog #nickname-input:focus,

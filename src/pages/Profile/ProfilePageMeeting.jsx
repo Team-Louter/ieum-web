@@ -13,20 +13,29 @@ function ProfilePageMeeting({
   onMeetingSelect,
   isLoading = false,
   apiError = '',
+  onAddFriend,
+  onStartChat,
+  currentUserId = null,
 }) {
+  const query = profile.userId != null ? `?userId=${profile.userId}` : '';
   const meetingItems = Array.isArray(meetings) ? meetings : [];
   const isEmpty = meetingItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
-    { label: '게시물', href: '/profile', isActive: false },
-    { label: '모임', href: '/profile/meetings', isActive: true },
-    { label: '친구', href: '/profile/friends', isActive: false },
+    { label: '게시물', href: `/profile${query}`, isActive: false },
+    { label: '모임', href: `/profile/meetings${query}`, isActive: true },
+    { label: '친구', href: `/profile/friends${query}`, isActive: false },
   ];
 
   return (
     <Layout className="profile-layout">
       <div id="profile-box" className={isEmpty ? 'profile-box--empty' : undefined}>
         <ProfileInfo profile={profile} />
-        <ProfileActionButtons />
+        <ProfileActionButtons
+          userId={profile.userId}
+          currentUserId={currentUserId}
+          onAddFriend={onAddFriend}
+          onStartChat={onStartChat}
+        />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
         <div className={`public-profile-meeting-list${isEmpty ? ' public-profile-meeting-list--empty' : ''}`}>
           {meetingItems.length > 0 ? (

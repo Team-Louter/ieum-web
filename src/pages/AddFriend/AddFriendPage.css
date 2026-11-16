@@ -172,11 +172,14 @@
   width: 220px;
 }
 
+/* 실제 프로필 버튼(.member-profile)과 같은 크기: 여백 16px 20px, 사진 50px, 사진과 이름 간격 10px */
 .add-friend-profile--skeleton {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 66px;
+  gap: 10px;
+  box-sizing: border-box;
+  height: 82px;
+  padding: 16px 20px;
 }
 
 .add-friend-profile .member-profile > img {

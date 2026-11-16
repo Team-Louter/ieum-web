@@ -190,6 +190,22 @@ video {
     padding: 10px;
   }
 
+  /* 장터 상세: 사진 아래에 글 정보를 세로로 쌓습니다. */
+  #feed-info {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  #feed-info > img {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  #feed-info > div {
+    width: 100%;
+    gap: 20px;
+  }
+
   .content-video,
   .meeting-input-subcontainer,
   .meeting-input-name,

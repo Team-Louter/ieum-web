@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import profilePlaceholder from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import Skeleton from '../../common/Skeleton/Skeleton';
 import './FriendRequestsModal.css';
 
 function FriendRequestsModal({
@@ -113,6 +114,27 @@ function FriendRequestsModal({
                 </li>
               );
             })}
+          </ul>
+        ) : isLoading && !apiError ? (
+          <ul
+            className="friend-requests-modal__list"
+            role="status"
+            aria-busy="true"
+            aria-label="친구 신청을 불러오는 중입니다."
+          >
+            {Array.from({ length: 2 }, (_, index) => (
+              <li className="friend-requests-modal__item" key={index} aria-hidden="true">
+                <Skeleton circle width={48} height={48} style={{ flex: '0 0 48px' }} />
+                <div className="friend-requests-modal__person">
+                  <Skeleton text width="45%" height={22} />
+                  <Skeleton text width="30%" height={16} />
+                </div>
+                <div className="friend-requests-modal__actions">
+                  <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+                  <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+                </div>
+              </li>
+            ))}
           </ul>
         ) : !isLoading && !apiError ? (
           <EmptyState

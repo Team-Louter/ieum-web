@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './PageTabNavigation.css';
 
 /** 여러 페이지에서 사용하는 공통 탭 메뉴를 표시합니다. */
@@ -13,9 +14,9 @@ function PageTabNavigation({ ariaLabel, isFixed = false, items }) {
         {items.map(({ href, isActive, label, onClick }) => (
           <li key={label} className={`page-tab-navigation__item${isActive ? ' is-active' : ''}`}>
             {href ? (
-              <a href={href} aria-current={isActive ? 'page' : undefined}>
+              <Link to={href} aria-current={isActive ? 'page' : undefined}>
                 {label}
-              </a>
+              </Link>
             ) : (
               <button type="button" onClick={onClick} aria-pressed={isActive}>
                 {label}

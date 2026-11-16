@@ -68,6 +68,11 @@
   white-space: nowrap;
 }
 
+.friend-location-page__address-loading {
+  grid-column: 1;
+  padding: 3px 0;
+}
+
 .friend-location-page__address button {
   grid-column: 2;
   grid-row: 1 / span 2;
