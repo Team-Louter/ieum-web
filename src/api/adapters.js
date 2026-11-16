@@ -1,5 +1,6 @@
 import profileFallback from '../assets/images/profile.png';
 import { resolveApiAssetUrl } from './client';
+import { getKoreanToday } from '../utils/dateTime';
 
 export function toMeetingCard(meeting = {}) {
   return {
@@ -116,6 +117,23 @@ export function formatMedicationTime(value = '') {
   const period = hour < 12 ? '오전' : '오후';
   const displayHour = hour % 12 || 12;
   return `${period} ${displayHour}:${rawMinute.padStart(2, '0')}`;
+}
+
+/** 복약 목록 항목입니다. 자정 이후 전날 회차가 체크 대상이면 previousDoseTaken으로 완료 여부를 판단합니다. */
+export function toMedicationItem(medication = {}) {
+  const checkDate = medication.checkDate ?? '';
+  const isPreviousDose = Boolean(checkDate) && checkDate < getKoreanToday();
+
+  return {
+    id: medication.medicationId,
+    time: formatMedicationTime(medication.takeTime),
+    takeTime: medication.takeTime,
+    scheduledAt: medication.scheduledAt ?? '',
+    label: medication.name,
+    checkDate,
+    isPreviousDose,
+    taken: isPreviousDose ? Boolean(medication.previousDoseTaken) : Boolean(medication.taken),
+  };
 }
 
 export function toGuardianMedication(medication = {}) {

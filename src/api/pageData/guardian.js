@@ -1,5 +1,5 @@
 import { connectionApi, guardianApi, medicationApi, notificationApi } from '../client';
-import { elapsedLoginText, formatMedicationTime, toGuardianMedication } from '../adapters';
+import { elapsedLoginText, toGuardianMedication, toMedicationItem } from '../adapters';
 import { asArray } from './common';
 
 function getItems(response) {
@@ -71,6 +71,7 @@ export async function loadSettingsPage({ role }) {
   return {
     settings: {
       medicationAlert: Boolean(notificationSettings?.medicationNotiEnabled),
+      guardianActivity: Boolean(notificationSettings?.inactivityAlertEnabled),
       darkMode: false,
       interactionAlert: false,
       mentionAlert: false,
@@ -87,12 +88,7 @@ export async function loadSettingsPage({ role }) {
       id: person.connectionId,
       name: person.seniorNickname ?? person.elderNickname ?? person.nickname ?? '어르신 계정',
     })),
-    medicationSchedule: asArray(medications).map((medication) => ({
-      id: medication.medicationId,
-      time: formatMedicationTime(medication.takeTime),
-      label: medication.name,
-      taken: Boolean(medication.taken),
-    })),
+    medicationSchedule: asArray(medications).map(toMedicationItem),
   };
 }
 
@@ -101,12 +97,6 @@ export async function loadMedicationPage() {
   const medications = asArray(await medicationApi.list());
 
   return {
-    medicationSchedule: medications.map((medication) => ({
-      id: medication.medicationId,
-      time: formatMedicationTime(medication.takeTime),
-      takeTime: medication.takeTime,
-      label: medication.name,
-      taken: Boolean(medication.taken),
-    })),
+    medicationSchedule: medications.map(toMedicationItem),
   };
 }

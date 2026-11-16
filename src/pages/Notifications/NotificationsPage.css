@@ -276,3 +276,20 @@
     width: calc(100% - 32px);
   }
 }
+
+.notifications-page__group-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.notifications-page__item-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.notifications-page__more:disabled {
+  color: #aaa;
+  cursor: default;
+}
