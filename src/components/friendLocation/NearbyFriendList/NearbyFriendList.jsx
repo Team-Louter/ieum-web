@@ -11,15 +11,10 @@ function NearbyFriendList({ friends = [], status = 'ready' }) {
       <h2>위치를 공유한 친구</h2>
       <ul>
         {friendItems.length > 0 ? (
-          friendItems.map(({ id, nickname, profileImage: friendImage, updatedAt }) => (
+          friendItems.map(({ id, nickname, profileImage: friendImage }) => (
             <li key={id}>
               <img loading="lazy" decoding="async" src={friendImage || profileImage} alt="" />
-              <div>
-                <span>{nickname}</span>
-                {updatedAt && Number.isFinite(Date.parse(updatedAt)) && (
-                  <div><small>마지막 공유 {new Date(updatedAt).toLocaleString('ko-KR')}</small></div>
-                )}
-              </div>
+              <span>{nickname}</span>
             </li>
           ))
         ) : (

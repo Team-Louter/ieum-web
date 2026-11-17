@@ -2,14 +2,15 @@ import { useCallback, useEffect, useState } from 'react';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import EmptyState from '../../../components/common/EmptyState/EmptyState';
-import { profileApi, supportApi } from '../../../api/client';
+import { announcementApi, profileApi, supportApi } from '../../../api/client';
 import { formatKoreanDateTime } from '../../../utils/dateTime';
 import './SettingSupportPage.css';
 
 const INQUIRY_CATEGORIES = ['계정', '복약', '보호자 연결', '친구·모임', '오류 신고', '기타'];
-const statusLabels = { RECEIVED: '접수 완료' };
+const statusLabels = { RECEIVED: '접수 완료', ANSWERED: '답변 완료' };
 
-const questions = [
+// 서버에서 FAQ를 불러오지 못했을 때만 보여 주는 기본 질문입니다.
+const defaultQuestions = [
   {
     question: '비밀번호를 잊어버렸어요.',
     answer:
@@ -44,6 +45,30 @@ function SettingSupportPage({ accountEmail = '' }) {
   const [formMessage, setFormMessage] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const [questions, setQuestions] = useState(defaultQuestions);
+  const [features, setFeatures] = useState([]);
+
+  // FAQ와 새로운 기능 소식은 관리자가 등록한 내용을 보여 줍니다.
+  useEffect(() => {
+    let isActive = true;
+    supportApi
+      .faqs()
+      .then((response) => {
+        const list = Array.isArray(response) ? response : response?.items;
+        if (isActive && Array.isArray(list) && list.length > 0) setQuestions(list);
+      })
+      .catch(() => {});
+    announcementApi
+      .features()
+      .then((response) => {
+        const list = Array.isArray(response) ? response : response?.items;
+        if (isActive && Array.isArray(list)) setFeatures(list);
+      })
+      .catch(() => {});
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const loadInquiries = useCallback(async () => {
     try {
@@ -115,14 +140,32 @@ function SettingSupportPage({ accountEmail = '' }) {
         className="setting-support-page__card"
       >
         <div className="setting-support-page__questions">
-          {questions.map(({ question, answer }) => (
-            <details key={question} className="setting-support-page__question">
+          {questions.map(({ id, question, answer }) => (
+            <details key={id ?? question} className="setting-support-page__question">
               <summary>{question}</summary>
               <p>{answer}</p>
             </details>
           ))}
         </div>
       </SettingItem>
+
+      {features.length > 0 && (
+        <SettingItem
+          title="새로운 기능"
+          description="이음에 새로 생긴 기능을 소개합니다."
+          className="setting-support-page__card"
+        >
+          <ul className="setting-support-page__features">
+            {features.map((feature) => (
+              <li key={feature.id}>
+                <strong>{feature.title}</strong>
+                <p>{feature.content}</p>
+                <small>{formatKoreanDateTime(feature.publishedAt ?? feature.createdAt)}</small>
+              </li>
+            ))}
+          </ul>
+        </SettingItem>
+      )}
 
       <SettingItem
         title="문의하기"
@@ -156,6 +199,13 @@ function SettingSupportPage({ accountEmail = '' }) {
                   <span>{statusLabels[inquiry.status] ?? inquiry.status}</span>
                 </div>
                 <p>{inquiry.message}</p>
+                {inquiry.reply && (
+                  <div className="setting-support-page__reply">
+                    <strong>답변</strong>
+                    <p>{inquiry.reply}</p>
+                    {inquiry.repliedAt && <small>{formatKoreanDateTime(inquiry.repliedAt)}</small>}
+                  </div>
+                )}
                 <small>
                   {inquiry.category} · {formatKoreanDateTime(inquiry.createdAt)}
                 </small>

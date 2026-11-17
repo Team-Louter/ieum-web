@@ -353,3 +353,60 @@
 .setting-support-page__inquiries small {
   color: #777;
 }
+
+.setting-support-page__features {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.setting-support-page__features li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e5e5e5;
+  color: #333;
+}
+
+.setting-support-page__features li:first-child {
+  padding-top: 4px;
+}
+
+.setting-support-page__features li:last-child {
+  padding-bottom: 4px;
+  border-bottom: 0;
+}
+
+.setting-support-page__features strong {
+  font-size: var(--font-size-small);
+  font-weight: 700;
+}
+
+.setting-support-page__features p {
+  color: #666;
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.setting-support-page__features small {
+  color: #777;
+}
+
+.setting-support-page__reply {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #eef9f1;
+}
+
+.setting-support-page__reply strong {
+  color: #248e4b;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+}

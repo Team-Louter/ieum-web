@@ -300,6 +300,106 @@ export const medicationApi = {
 export const supportApi = {
   list: () => apiGet('/api/support/inquiries'),
   submit: (inquiry) => apiPost('/api/support/inquiries', inquiry),
+  faqs: () => apiGet('/api/support/faqs'),
+};
+
+// 공개된 새로운 기능 소식입니다. (최신순)
+export const announcementApi = {
+  features: () => apiGet('/api/announcements/features'),
+};
+
+// 관리자 API는 일반 로그인 토큰과 따로, 탭을 닫으면 사라지는 sessionStorage에 관리자 토큰을 둡니다.
+const ADMIN_TOKEN_KEY = 'ieum.adminToken';
+export const ADMIN_SESSION_EVENT = 'ieum:admin-session-change';
+
+export const adminSession = {
+  get() {
+    try {
+      return window.sessionStorage.getItem(ADMIN_TOKEN_KEY);
+    } catch {
+      return null;
+    }
+  },
+  set(token) {
+    try {
+      window.sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+    } catch {
+      // 저장소를 쓸 수 없으면 새로고침 시 다시 로그인합니다.
+    }
+    window.dispatchEvent(new Event(ADMIN_SESSION_EVENT));
+  },
+  clear() {
+    try {
+      window.sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    } catch {
+      // 무시합니다.
+    }
+    window.dispatchEvent(new Event(ADMIN_SESSION_EVENT));
+  },
+};
+
+async function adminRequest(path, { method = 'GET', body, auth = true } = {}) {
+  const headers = new Headers();
+  if (body !== undefined) headers.set('Content-Type', 'application/json');
+  const token = auth ? adminSession.get() : null;
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method,
+    headers,
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  });
+  const payload = await parseResponse(response);
+
+  // 관리자 요청이 401이면 토큰이 만료된 것이므로 지우고 비밀번호 화면으로 돌아갑니다.
+  if (response.status === 401 && auth) adminSession.clear();
+  if (!response.ok) {
+    const message =
+      typeof payload === 'string' && payload
+        ? payload
+        : (payload?.message ?? `요청에 실패했습니다. (${response.status})`);
+    throw new ApiError(message, response.status, payload);
+  }
+  return payload;
+}
+
+export const adminApi = {
+  login: (password) => adminRequest('/api/admin/login', { method: 'POST', body: { password }, auth: false }),
+  logout: () => adminRequest('/api/admin/session', { method: 'DELETE' }),
+
+  inquiries: ({ status, page = 0, size = 20 } = {}) => {
+    const query = new URLSearchParams({ page: String(page), size: String(size) });
+    if (status) query.set('status', status);
+    return adminRequest(`/api/admin/inquiries?${query}`);
+  },
+  inquiry: (id) => adminRequest(`/api/admin/inquiries/${encodeURIComponent(String(id))}`),
+  reply: (id, reply) =>
+    adminRequest(`/api/admin/inquiries/${encodeURIComponent(String(id))}/reply`, {
+      method: 'PUT',
+      body: { reply },
+    }),
+
+  faqs: () => adminRequest('/api/admin/faqs'),
+  createFaq: (faq) => adminRequest('/api/admin/faqs', { method: 'POST', body: faq }),
+  updateFaq: (id, faq) =>
+    adminRequest(`/api/admin/faqs/${encodeURIComponent(String(id))}`, { method: 'PUT', body: faq }),
+  deleteFaq: (id) =>
+    adminRequest(`/api/admin/faqs/${encodeURIComponent(String(id))}`, { method: 'DELETE' }),
+
+  features: () => adminRequest('/api/admin/features'),
+  createFeature: (feature) => adminRequest('/api/admin/features', { method: 'POST', body: feature }),
+  updateFeature: (id, feature) =>
+    adminRequest(`/api/admin/features/${encodeURIComponent(String(id))}`, {
+      method: 'PUT',
+      body: feature,
+    }),
+  setFeatureVisibility: (id, visible) =>
+    adminRequest(`/api/admin/features/${encodeURIComponent(String(id))}/visibility`, {
+      method: 'PATCH',
+      body: { visible },
+    }),
+  deleteFeature: (id) =>
+    adminRequest(`/api/admin/features/${encodeURIComponent(String(id))}`, { method: 'DELETE' }),
 };
 
 export const guardianApi = { dashboard: () => apiGet('/api/dashboard') };
