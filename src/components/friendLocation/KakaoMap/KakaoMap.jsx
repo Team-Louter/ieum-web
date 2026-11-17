@@ -6,7 +6,8 @@ import './KakaoMap.css';
 const KAKAO_MAP_SCRIPT_ID = 'kakao-map-sdk';
 const DEFAULT_CENTER = { latitude: 35.8534, longitude: 128.4722 };
 // 마커 중심이 화면에서 이 거리(px) 안에 있으면 겹친 것으로 보고 하나로 묶습니다.
-const GROUP_DISTANCE_PX = 50;
+// 핀 크기(약 68×75px)보다 살짝 크게 잡아, 조금만 겹쳐도 묶입니다.
+const GROUP_DISTANCE_PX = 72;
 
 /** 화면 위 거리가 가까운 위치끼리 묶습니다. 지도를 확대하면 거리가 벌어져 자연스럽게 나뉩니다. */
 function groupLocations(map, locations) {

@@ -79,3 +79,11 @@
     flex-direction: column;
   }
 }
+
+/* 닉네임이 길면 한 줄로 줄이고 ...으로 표시합니다. */
+.setting-guardian-manager__pending li > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

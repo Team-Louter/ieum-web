@@ -22,7 +22,7 @@ export default function MeetingMyMemberProfile({
           event.currentTarget.src = defaultImage;
         }}
       />
-      <p>{role === '회원' ? id : `${id} (${role})`}</p>
+      <p title={role === '회원' ? id : `${id} (${role})`}>{role === '회원' ? id : `${id} (${role})`}</p>
     </>
   );
 

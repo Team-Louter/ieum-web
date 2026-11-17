@@ -48,3 +48,19 @@
   font-size: var(--font-size-small);
   cursor: pointer;
 }
+
+/* 닉네임이 길면 한 줄로 줄이고 ...으로 표시합니다. */
+.comment-profile-container {
+  min-width: 0;
+}
+
+.comment-profile-container > img {
+  flex: none;
+}
+
+.comment-profile-container > p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
