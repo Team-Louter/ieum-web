@@ -453,6 +453,10 @@ export const chatApi = {
     return apiGet(`/api/chat/rooms/${roomId}/messages?${query}`);
   },
   sendMessage: (roomId, content) => apiPost(`/api/chat/rooms/${roomId}/messages`, { content }),
+  updateMessage: (roomId, messageId, content) =>
+    apiPatch(`/api/chat/rooms/${roomId}/messages/${messageId}`, { content }),
+  deleteMessage: (roomId, messageId) =>
+    apiDelete(`/api/chat/rooms/${roomId}/messages/${messageId}`),
   // 확인한 마지막 메시지까지 읽음으로 저장합니다.
   markRead: (roomId, lastReadMessageId) =>
     apiPut(`/api/chat/rooms/${roomId}/read`, { lastReadMessageId }),
