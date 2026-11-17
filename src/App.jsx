@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkeleton/PageSkeleton';
@@ -20,6 +20,9 @@ import {
 } from './app/constants';
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
+
+// 관리자 페이지는 서비스 화면과 분리되어 주소로만 들어가며, 필요할 때만 불러옵니다.
+const AdminPage = lazy(() => import('./pages/Admin/AdminPage'));
 
 const GUARDIAN_REFRESH_MS = 30 * 1000;
 
@@ -392,6 +395,13 @@ function SessionApp() {
   const location = useLocation();
   const session = useAuthSession();
   const path = location.pathname.replace(/\/$/, '') || '/login';
+  if (path === '/admin') {
+    return (
+      <Suspense fallback={null}>
+        <AdminPage />
+      </Suspense>
+    );
+  }
   if (!publicRoutes.includes(path)) {
     if (session.checking) return <PageSkeleton variant={getSkeletonVariant(getRouteKey(path)) ?? 'settings'} />;
     if (session.error)
