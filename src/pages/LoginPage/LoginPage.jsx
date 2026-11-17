@@ -11,6 +11,7 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
     const [id, setId] = useState('');
     const [pw, setPw] = useState('');
     const [showError, setShowError] = useState(false);
+    const [isCapsLockOn, setIsCapsLockOn] = useState(false);
     const [errorMessage, setErrorMessage] = useState('아이디 또는 비밀번호가 맞지 않습니다.');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [findType, setFindType] = useState(null);
@@ -23,6 +24,10 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
     function handlePwChange(e) {
         setPw(e.target.value);
         setShowError(false);
+    }
+
+    function checkCapsLock(e) {
+        setIsCapsLockOn(e.getModifierState('CapsLock'));
     }
 
     async function handleSubmit(e) {
@@ -62,10 +67,15 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
                     label="비밀번호"
                     value={pw}
                     onChange={handlePwChange}
+                    onKeyDown={checkCapsLock}
+                    onKeyUp={checkCapsLock}
+                    onBlur={() => setIsCapsLockOn(false)}
                 />
 
-                {showError && (
-                        <p className="error-msg">{errorMessage}</p>
+                {(isCapsLockOn || showError) && (
+                    <p className="error-msg" role="alert">
+                        {isCapsLockOn ? 'Caps Lock이 켜져 있습니다.' : errorMessage}
+                    </p>
                 )}
 
                 <Button type="submit" className="login" loading={isSubmitting} loadingText="로그인 중…">

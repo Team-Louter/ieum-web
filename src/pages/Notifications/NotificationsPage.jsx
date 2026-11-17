@@ -10,11 +10,16 @@ const NOTIFICATION_PREVIEW_COUNT = 3;
 // 복용 시각까지 이 시간(분) 안으로 남았으면 곧 먹을 약으로 보고 먼저 보여 줍니다.
 const MEDICATION_SOON_MINUTES = 60;
 
-const knownFields = ['notificationId', 'title', 'message', 'content', 'body', 'type', 'createdAt', 'read', 'isRead'];
+const knownFields = ['notificationId', 'title', 'message', 'content', 'body', 'type', 'createdAt', 'read', 'isRead', 'relatedId'];
+
+// 제목이 없는 알림은 종류에 맞는 문구로 보여 줍니다.
+const NOTIFICATION_TYPE_TITLES = {
+  INQUIRY_ANSWERED: '문의에 답변이 등록되었어요',
+};
 
 /** 알림 객체의 필드명을 확신할 수 없어서 여러 후보를 차례로 읽습니다. (임시 화면) */
 function getNotificationView(notification) {
-  const title = notification.title ?? notification.type ?? '';
+  const title = notification.title ?? NOTIFICATION_TYPE_TITLES[notification.type] ?? notification.type ?? '';
   const text = notification.message ?? notification.content ?? notification.body ?? '';
   const isRead = Boolean(notification.read ?? notification.isRead);
   const extra = Object.fromEntries(

@@ -29,8 +29,11 @@
   gap: 10px;
 }
 .nearby-friend-list li > img {
+  flex: none;
   width: 38px;
   height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .nearby-friend-list li > span {
   font-size: var(--font-size-body);
@@ -48,4 +51,16 @@
   .nearby-friend-list {
     width: 190px;
   }
+}
+
+/* 닉네임이 길면 한 줄로 줄이고 ...으로 표시합니다. */
+.nearby-friend-list li > img {
+  flex: none;
+}
+
+.nearby-friend-list li > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
