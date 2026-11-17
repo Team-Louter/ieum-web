@@ -86,7 +86,7 @@
 .nearby-friend-ping__tooltip--list {
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 8px;
   width: max-content;
   min-width: 100px;
   max-width: 180px;
@@ -114,4 +114,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 묶음 마커에 올렸을 때 보이는 친구 한 명 */
+.nearby-friend-ping__member {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.nearby-friend-ping__member > img {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nearby-friend-ping__member > p {
+  min-width: 0;
 }

@@ -130,7 +130,11 @@ function KakaoMap({
                   first.nickname,
                   first.profileImage,
                   first.isProfileLoading,
-                  members.map((member) => member.nickname),
+                  members.map(({ nickname, profileImage, isProfileLoading }) => ({
+                    nickname,
+                    profileImage,
+                    isProfileLoading,
+                  })),
                 );
                 const overlay = new kakao.maps.CustomOverlay({
                   content,
