@@ -2,7 +2,7 @@ import { useState } from 'react';
 import eyeIcon from '../../assets/images/Eye.svg';
 import eyeOffIcon from '../../assets/images/EyeOff.svg';
 
-function PasswordField({ id, label, value, onChange, hint }) {
+function PasswordField({ id, label, value, onChange, onKeyDown, onKeyUp, onBlur, hint }) {
     const [show, setShow] = useState(false);
 
     let inputType = 'password';
@@ -25,6 +25,9 @@ function PasswordField({ id, label, value, onChange, hint }) {
                     type={inputType}
                     value={value}
                     onChange={onChange}
+                    onKeyDown={onKeyDown}
+                    onKeyUp={onKeyUp}
+                    onBlur={onBlur}
                     placeholder=" "
                     required
                 />
