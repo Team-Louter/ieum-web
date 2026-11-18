@@ -9,6 +9,8 @@ import './CardMoreMenu.css';
 function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+  const busyRef = useRef(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -56,12 +58,26 @@ function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
               <button
                 type="button"
                 role="menuitem"
-                disabled={item.disabled}
+                disabled={item.disabled || isBusy}
                 className={item.danger ? 'card-more-menu__item--danger' : undefined}
-                onClick={(event) => {
+                onClick={async (event) => {
                   event.stopPropagation();
+                  if (busyRef.current) return;
                   setIsOpen(false);
-                  item.onClick?.(event);
+                  // 서버 요청(Promise)을 하는 항목은 끝날 때까지 다시 실행되지 않게 막습니다.
+                  const result = item.onClick?.(event);
+                  if (result && typeof result.then === 'function') {
+                    busyRef.current = true;
+                    setIsBusy(true);
+                    try {
+                      await result;
+                    } catch {
+                      // 오류 안내는 호출한 쪽에서 합니다.
+                    } finally {
+                      busyRef.current = false;
+                      setIsBusy(false);
+                    }
+                  }
                 }}
               >
                 {item.label}

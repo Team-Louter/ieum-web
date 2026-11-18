@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import './CommentModal.css';
 import closeImg from '../../../assets/images/close.svg';
 import Button from '../../common/Button/Button';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 /** 댓글 목록과 댓글 입력 영역을 표시하는 모달입니다. */
 function CommentModal({ children, onClose, onSubmit }) {
   const [comment, setComment] = useState('');
+  // 모달이 열려 있는 동안 뒤 화면이 스크롤되지 않게 합니다.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     /** Escape 키 입력 시 댓글 모달을 닫습니다. */
     function handleKeyDown(event) {
@@ -18,17 +29,24 @@ function CommentModal({ children, onClose, onSubmit }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  function handleSubmit(event) {
+  const [handleSubmit, isSubmitting] = useSubmitOnce(submitComment);
+
+  async function submitComment(event) {
     event.preventDefault();
     const trimmedComment = comment.trim();
     if (!trimmedComment) return;
-    onSubmit?.(trimmedComment);
     setComment('');
+    await onSubmit?.(trimmedComment);
   }
 
-  return (
-    <section className="comment-modal" aria-label="댓글">
-      <div className="comment-modal__panel">
+  return createPortal(
+    <div
+      className="comment-modal"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose?.();
+      }}
+    >
+      <section className="comment-modal__panel" role="dialog" aria-modal="true" aria-label="댓글">
         <button
           type="button"
           onClick={onClose}
@@ -46,12 +64,13 @@ function CommentModal({ children, onClose, onSubmit }) {
             placeholder="댓글 입력하기"
             className="comment-modal__input"
           />
-          <Button type="submit" className="comment-modal__submit">
+          <Button type="submit" className="comment-modal__submit" loading={isSubmitting} loadingText="댓글 올리는 중">
             올리기
           </Button>
         </form>
-      </div>
-    </section>
+      </section>
+    </div>,
+    document.body,
   );
 }
 

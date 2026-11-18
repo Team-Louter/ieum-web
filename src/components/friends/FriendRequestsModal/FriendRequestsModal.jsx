@@ -4,6 +4,7 @@ import profilePlaceholder from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
 import Skeleton from '../../common/Skeleton/Skeleton';
 import './FriendRequestsModal.css';
+import Button from '../../common/Button/Button';
 
 function FriendRequestsModal({
   requests = [],
@@ -88,22 +89,22 @@ function FriendRequestsModal({
                     <strong>{requesterName}</strong>
                   </div>
                   <div className="friend-requests-modal__actions">
-                    <button
+                    <Button
                       type="button"
                       className="friend-requests-modal__reject"
                       onClick={() => handleRequestAction(onReject, friendshipId)}
                       disabled={processingId != null}
                     >
-                      {isProcessing ? '처리 중' : '거절'}
-                    </button>
-                    <button
+                      거절
+                    </Button>
+                    <Button
                       type="button"
                       className="friend-requests-modal__accept"
                       onClick={() => handleRequestAction(onAccept, friendshipId)}
                       disabled={processingId != null}
                     >
-                      {isProcessing ? '처리 중' : '수락'}
-                    </button>
+                      수락
+                    </Button>
                   </div>
                 </li>
               );

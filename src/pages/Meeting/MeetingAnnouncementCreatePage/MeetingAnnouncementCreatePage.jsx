@@ -3,6 +3,7 @@ import './MeetingAnnouncementCreatePage.css';
 import Button from '../../../components/common/Button/Button';
 import Layout from '../../../components/common/Layout/Layout';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSubmit }) {
   const [values, setValues] = useState(() => ({
@@ -17,7 +18,9 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
 
-  async function handleSubmit(event) {
+  const [handleSubmit, isSubmitting] = useSubmitOnce(submitForm);
+
+  async function submitForm(event) {
     event.preventDefault();
     setSubmitError('');
     try {
@@ -52,7 +55,7 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
             setValues((currentValues) => ({ ...currentValues, content: event.target.value }))
           }
         />
-        <Button className="announcement-make-submit" type="submit">
+        <Button className="announcement-make-submit" type="submit" loading={isSubmitting} loadingText="공지사항 올리는 중">
           공지사항 올리기
         </Button>
         {submitError && <p role="alert">{submitError}</p>}

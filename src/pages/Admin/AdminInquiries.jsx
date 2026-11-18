@@ -3,6 +3,7 @@ import AdminListSkeleton from './AdminSkeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { adminApi } from '../../api/client';
 import { INQUIRY_STATUS, formatAdminDate, toList } from './adminFormat';
+import Button from '../../components/common/Button/Button';
 
 const FILTERS = [
   { key: '', label: '전체' },
@@ -236,15 +237,13 @@ function AdminInquiries() {
                 </p>
               )}
               <div className="admin-actions">
-                <button type="submit" className="admin-button admin-button--primary" disabled={busy}>
-                  {busy
-                    ? '저장 중'
-                    : emailFailed
+                <Button type="submit" className="admin-button admin-button--primary" disabled={busy} loading={busy}>
+                  {emailFailed
                       ? '메일 다시 보내기'
                       : isAnswered
                         ? '답변 다시 보내기'
                         : '답변 등록'}
-                </button>
+                </Button>
               </div>
             </form>
           </>

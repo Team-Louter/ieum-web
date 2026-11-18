@@ -3,6 +3,7 @@ import { resolveApiAssetUrl } from '../../api/client';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 import Layout from '../../components/common/Layout/Layout';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
+import useProfileImages from '../../hooks/useProfileImages';
 import FriendRequestList from '../../components/friends/FriendRequestList/FriendRequestList';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
@@ -68,7 +69,7 @@ function AddFriendPage({
       isActive: tab === 'requests',
     },
   ];
-  const friendItems = Array.isArray(friends) ? friends : [];
+  const friendItems = useProfileImages(Array.isArray(friends) ? friends : []);
   const normalizedSearchText = submittedText.trim();
   const isCurrentSearch =
     searchState.query === normalizedSearchText &&

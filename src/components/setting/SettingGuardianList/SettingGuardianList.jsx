@@ -1,9 +1,11 @@
 import './SettingGuardianList.css';
 import profileImg from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import useProfileImages from '../../../hooks/useProfileImages';
+import Button from '../../common/Button/Button';
 
 function SettingGuardianList({
-  guardians = [],
+  guardians: guardianItems = [],
   isEditing = false,
   isBusy = false,
   onRemove,
@@ -11,6 +13,8 @@ function SettingGuardianList({
   isLoading = false,
   apiError = '',
 }) {
+  const guardians = useProfileImages(guardianItems);
+
   if (!guardians.length) {
     if (isLoading || apiError) return null;
 
@@ -50,14 +54,14 @@ function SettingGuardianList({
             <img loading="lazy" decoding="async" className="setting-guardian-list__avatar" src={guardianImage} alt="" />
             <span>{guardianName}</span>
             {isEditing && onRemove && (
-              <button
+              <Button
                 type="button"
                 className="setting-guardian-list__remove"
                 onClick={() => onRemove(guardian)}
                 disabled={!(targetLoginId || guardian?.connectionId) || isBusy}
               >
-                {isBusy ? '처리 중…' : '삭제'}
-              </button>
+                삭제
+              </Button>
             )}
           </li>
         );

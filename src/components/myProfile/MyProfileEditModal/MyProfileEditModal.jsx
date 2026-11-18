@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import profileImg from '../../../assets/images/profile.png';
 import SettingDialog from '../../setting/SettingDialog/SettingDialog';
 import useImageCrop from '../../../hooks/useImageCrop';
+import Button from '../../common/Button/Button';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = '' }) {
   const previewUrlRef = useRef('');
@@ -44,10 +46,12 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
     setResetImage(true);
   }
 
-  function handleSubmit(event) {
+  const [handleSubmit, isSaving] = useSubmitOnce(submitProfile);
+
+  async function submitProfile(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    onConfirm?.({
+    await onConfirm?.({
       nickname: formData.get('nickname'),
       introduction: formData.get('introduction'),
       profileImage: croppedImage ?? undefined,
@@ -83,9 +87,6 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
                 event.currentTarget.src = profileImg;
               }}
             />
-            <label htmlFor="profile-image-input">
-              <div id="profile-image-input-label">프로필 사진 수정하기</div>
-            </label>
             <input
               type="file"
               accept="image/*"
@@ -93,11 +94,16 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
               id="profile-image-input"
               onChange={handleProfileImageChange}
             />
-            {!resetImage && (previewImage || profile.profileImage || profile.profile_image || profile.profileImageUrl) && (
-              <button type="button" id="profile-image-reset-button" onClick={handleResetImage}>
-                기본 이미지로 변경
-              </button>
-            )}
+            <div className="profile-edit-modal__image-buttons">
+              <label htmlFor="profile-image-input">
+                <div id="profile-image-input-label">사진 수정</div>
+              </label>
+              {!resetImage && (previewImage || profile.profileImage || profile.profile_image || profile.profileImageUrl) && (
+                <button type="button" id="profile-image-reset-button" onClick={handleResetImage}>
+                  기본 이미지
+                </button>
+              )}
+            </div>
           </div>
           <div>
             <div id="id-input-container">
@@ -128,12 +134,14 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
           <button className="setting-dialog__button" type="button" onClick={onCancel}>
             취소하기
           </button>
-          <button
+          <Button
             className="setting-dialog__button setting-dialog__button--primary"
             type="submit"
+            loading={isSaving}
+            loadingText="저장 중"
           >
             수정하기
-          </button>
+          </Button>
         </div>
       </form>
     </SettingDialog>

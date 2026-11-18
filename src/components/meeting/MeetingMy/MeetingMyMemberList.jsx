@@ -5,10 +5,11 @@ import { getMemberRole } from '../../../utils/meetingRoles';
 import Skeleton from '../../common/Skeleton/Skeleton';
 import EmptyState from '../../common/EmptyState/EmptyState';
 import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
+import useProfileImages from '../../../hooks/useProfileImages';
 import './MeetingMyMemberList.css';
 
 export default function MeetingMyMemberList({
-  members = [],
+  members: memberItems = [],
   maxVisible,
   onMemberAction,
   canManage = false,
@@ -22,6 +23,8 @@ export default function MeetingMyMemberList({
   isLoading = false,
   apiError = '',
 }) {
+  // 회원 목록 응답에는 프로필 사진이 없어서 사용자별로 받아 와 채웁니다.
+  const members = useProfileImages(memberItems);
   const [openMemberIndex, setOpenMemberIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [transferTarget, setTransferTarget] = useState(null);

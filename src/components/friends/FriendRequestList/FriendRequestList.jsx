@@ -4,6 +4,7 @@ import { formatKoreanDateTime } from '../../../utils/dateTime';
 import EmptyState from '../../common/EmptyState/EmptyState';
 import Skeleton from '../../common/Skeleton/Skeleton';
 import '../FriendRequestsModal/FriendRequestsModal.css';
+import Button from '../../common/Button/Button';
 
 /** 받은 친구 신청을 목록으로 보여 주고 수락·거절을 처리합니다. (친구 요청 탭에서 사용) */
 function FriendRequestList({ requests = [], onAccept, onReject, isLoading = false, apiError = '' }) {
@@ -50,22 +51,22 @@ function FriendRequestList({ requests = [], onAccept, onReject, isLoading = fals
                 </span>
               </div>
               <div className="friend-requests-modal__actions">
-                <button
+                <Button
                   type="button"
                   className="friend-requests-modal__reject"
                   onClick={() => handleRequestAction(onReject, friendshipId)}
                   disabled={processingId != null}
                 >
-                  {isProcessing ? '처리 중' : '거절'}
-                </button>
-                <button
+                  거절
+                </Button>
+                <Button
                   type="button"
                   className="friend-requests-modal__accept"
                   onClick={() => handleRequestAction(onAccept, friendshipId)}
                   disabled={processingId != null}
                 >
-                  {isProcessing ? '처리 중' : '수락'}
-                </button>
+                  수락
+                </Button>
               </div>
             </li>
           );

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 import Layout from '../../components/common/Layout/Layout';
 import './InvitePage.css';
+import Button from '../../components/common/Button/Button';
 
 /** 초대 코드로 모임 정보를 확인하고 가입하는 임시 화면입니다. (/invite?code=코드) */
 function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
@@ -79,9 +80,9 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
             placeholder="초대 코드"
             aria-label="초대 코드"
           />
-          <button type="submit" disabled={isBusy || !code.trim()}>
+          <Button type="submit" disabled={isBusy || !code.trim()} loading={isBusy}>
             확인
-          </button>
+          </Button>
         </form>
         {isBusy && !invite && (
           <div className="invite-page__card" role="status" aria-busy="true" aria-label="초대 정보를 불러오는 중입니다.">
@@ -109,9 +110,9 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
                 </button>
               </>
             ) : (
-              <button type="button" onClick={handleJoin} disabled={isBusy}>
+              <Button type="button" onClick={handleJoin} disabled={isBusy} loading={isBusy}>
                 {invite.approvalRequired ? '가입 신청하기' : '가입하기'}
-              </button>
+              </Button>
             )}
           </div>
         )}

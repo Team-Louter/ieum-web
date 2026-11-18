@@ -4,6 +4,7 @@ import uploadIcon from '../../../assets/images/upload.svg';
 import Button from '../../common/Button/Button';
 import ImageCropModal from '../ImageCropModal/ImageCropModal';
 import { autoCropIfFits } from '../ImageCropModal/autoCrop';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 /** 게시물 미디어와 내용을 입력받는 폼입니다. */
 function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit = false, onSubmit }) {
@@ -80,7 +81,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
   }
 
   /** 필수 입력값을 확인하고 유효하지 않은 항목에 오류 문구를 표시합니다. */
-  async function handleSubmit(event) {
+  const [handleSubmit, isSubmitting] = useSubmitOnce(submitForm);
+
+  async function submitForm(event) {
     event.preventDefault();
 
     const nextErrors = {
@@ -233,7 +236,7 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
           </div>
         </div>
       </div>
-      <Button type="submit" className="market-post-create-form__submit">
+      <Button type="submit" className="market-post-create-form__submit" loading={isSubmitting} loadingText="올리는 중">
         {isEdit ? '게시물 수정하기' : '게시물 만들기'}
       </Button>
       {submitError && (

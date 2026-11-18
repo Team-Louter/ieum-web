@@ -4,9 +4,12 @@ import '../../common/ActionModal/ActionModal.css';
 import './MeetingJoinRequestsModal.css';
 import profileFallback from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import useProfileImages from '../../../hooks/useProfileImages';
+import Button from '../../common/Button/Button';
 
 /** 모임 가입을 요청한 사람을 보여 주고 승인·거부를 고르는 모달입니다. */
-export default function MeetingJoinRequestsModal({ requests = [], onApprove, onReject, onClose }) {
+export default function MeetingJoinRequestsModal({ requests: requestItems = [], onApprove, onReject, onClose }) {
+  const requests = useProfileImages(requestItems);
   const [busyId, setBusyId] = useState(null);
 
   useEffect(() => {
@@ -66,22 +69,22 @@ export default function MeetingJoinRequestsModal({ requests = [], onApprove, onR
                   {request.loginId && <span>@{request.loginId}</span>}
                 </div>
                 <div className="join-requests-modal__actions">
-                  <button
+                  <Button
                     type="button"
                     className="join-requests-modal__approve"
                     disabled={busyId === request.id}
                     onClick={() => run(request, onApprove)}
                   >
                     승인
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     className="join-requests-modal__reject"
                     disabled={busyId === request.id}
                     onClick={() => run(request, onReject)}
                   >
                     거부
-                  </button>
+                  </Button>
                 </div>
               </li>
             ))}
