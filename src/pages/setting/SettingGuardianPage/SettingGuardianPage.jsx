@@ -150,7 +150,7 @@ function SettingGuardianPage({
       >
         <SettingGuardianList
           guardians={sourceGuardians}
-          emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
+          emptyMessage={isGuardian ? '어르신과 연결하면 복약 상태와 위치를 확인할 수 있어요.' : '보호자와 연결하면 복약 상태와 위치를 공유할 수 있어요.'}
           isLoading={isLoading}
           apiError={apiError}
         />
@@ -208,7 +208,7 @@ function SettingGuardianPage({
               isEditing
               isBusy={isBusy}
               onRemove={handleDisconnect}
-              emptyMessage={isGuardian ? '연결된 어르신이 없습니다.' : '연결된 보호자가 없습니다.'}
+              emptyMessage={isGuardian ? '어르신과 연결하면 복약 상태와 위치를 확인할 수 있어요.' : '보호자와 연결하면 복약 상태와 위치를 공유할 수 있어요.'}
               isLoading={isLoading}
               apiError={apiError}
             />

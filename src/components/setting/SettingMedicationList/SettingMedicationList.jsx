@@ -17,7 +17,7 @@ function SettingMedicationList({
       <EmptyState
         compact
         className="setting-medication-list__empty"
-        title="등록된 복약 정보가 없어요"
+        title="복약 정보를 등록해보세요"
         description="복약 정보를 추가하면 이곳에서 확인할 수 있어요."
       />
     );

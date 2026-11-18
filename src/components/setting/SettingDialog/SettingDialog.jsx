@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 import './SettingDialog.css';
 
@@ -18,9 +19,12 @@ function SettingDialog({
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [onClose]);
 
-  return (
+  // 다이얼로그를 body에 직접 띄우므로, 다크 모드는 설정 화면에서 읽어 와 클래스로 전달합니다.
+  const isDark = Boolean(document.querySelector('.settings-layout--dark'));
+
+  return createPortal(
     <div
-      className={`setting-dialog-backdrop${backdropClassName ? ` ${backdropClassName}` : ''}`}
+      className={`setting-dialog-backdrop${isDark ? ' setting-dialog-backdrop--dark' : ''}${backdropClassName ? ` ${backdropClassName}` : ''}`}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose?.();
       }}
@@ -42,12 +46,15 @@ function SettingDialog({
             onClick={onClose}
             aria-label="닫기"
           >
-            ×
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <path d="M5 5l14 14M19 5L5 19" />
+            </svg>
           </button>
         </header>
         <div className="setting-dialog__content">{children}</div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

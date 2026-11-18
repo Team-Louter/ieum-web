@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
+import { useEffect, useState } from 'react';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
+import Skeleton from '../../../components/common/Skeleton/Skeleton';
+import { announcementApi } from '../../../api/client';
+import { formatKoreanDateTime } from '../../../utils/dateTime';
 import './SettingFeaturePage.css';
 
 const features = [
@@ -30,25 +32,67 @@ const features = [
 ];
 
 function SettingFeaturePage() {
-  const [selectedFeature, setSelectedFeature] = useState(null);
+  // 관리자가 올린 소식을 먼저 보여 주고, 불러오지 못하거나 비어 있으면 기본 소개를 보여 줍니다.
+  const [items, setItems] = useState(null);
+
+  useEffect(() => {
+    let isActive = true;
+    announcementApi
+      .features()
+      .then((response) => {
+        const list = Array.isArray(response) ? response : response?.items;
+        if (isActive) setItems(Array.isArray(list) && list.length > 0 ? list : []);
+      })
+      .catch(() => {
+        if (isActive) setItems([]);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const entries =
+    items && items.length > 0
+      ? items.map((feature) => ({
+          key: feature.id ?? feature.title,
+          title: feature.title,
+          body: feature.content,
+          date: formatKoreanDateTime(feature.publishedAt ?? feature.createdAt),
+        }))
+      : features.map((feature) => ({
+          key: feature.title,
+          title: feature.title,
+          body: `${feature.description}\n\n${feature.detail}`,
+          date: '',
+        }));
 
   return (
     <div className="setting-page-section">
-      {features.map((feature) => (
-        <SettingItem
-          key={feature.title}
-          title={feature.title}
-          description={feature.description}
-          actionLabel="자세히 보기"
-          onAction={() => setSelectedFeature(feature)}
-          className="setting-feature-page__item"
-        />
-      ))}
-      {selectedFeature && (
-        <SettingDialog title={selectedFeature.title} onClose={() => setSelectedFeature(null)}>
-          <p className="setting-dialog__note">{selectedFeature.detail}</p>
-        </SettingDialog>
-      )}
+      <SettingItem
+        title="새로운 기능"
+        description="이음에 새로 생긴 기능을 소개합니다. 제목을 누르면 자세한 내용이 열려요."
+        className="setting-feature-page__item"
+      >
+        {items === null ? (
+          <div className="setting-feature-page__list" role="status" aria-busy="true" aria-label="새로운 기능을 불러오는 중입니다.">
+            {[0, 1, 2].map((row) => (
+              <div className="setting-feature-page__entry" key={row}>
+                <Skeleton text width="35%" height="18px" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="setting-feature-page__list">
+            {entries.map((entry) => (
+              <details className="setting-feature-page__entry" key={entry.key}>
+                <summary>{entry.title}</summary>
+                <p>{entry.body}</p>
+                {entry.date && <small>{entry.date}</small>}
+              </details>
+            ))}
+          </div>
+        )}
+      </SettingItem>
     </div>
   );
 }
