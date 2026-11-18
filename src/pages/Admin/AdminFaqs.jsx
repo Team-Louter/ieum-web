@@ -5,6 +5,7 @@ import ActionModal from '../../components/common/ActionModal/ActionModal';
 import AdminModal from './AdminModal';
 import { adminApi } from '../../api/client';
 import { toList } from './adminFormat';
+import Button from '../../components/common/Button/Button';
 
 const emptyForm = { question: '', answer: '' };
 
@@ -104,9 +105,9 @@ function AdminFaqs() {
       </label>
       {errorMessage && <p className="admin-error" role="alert">{errorMessage}</p>}
       <div className="admin-actions">
-        <button type="submit" className="admin-button admin-button--primary" disabled={busy}>
-          {busy ? '저장 중' : '저장'}
-        </button>
+        <Button type="submit" className="admin-button admin-button--primary" disabled={busy} loading={busy}>
+          저장
+        </Button>
         <button type="button" className="admin-button" onClick={close}>
           취소
         </button>

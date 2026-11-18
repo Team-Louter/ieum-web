@@ -8,16 +8,11 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import Button from '../../components/common/Button/Button';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
+import CardMoreMenu from '../../components/common/CardMoreMenu/CardMoreMenu';
 
 const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || 'wss://api.ieum.louter.site/ws/chat';
 
 const EMPTY_CONTACTS = [];
-const MESSAGE_LONG_PRESS_MS = 500;
-
-function cancelMessagePress(pressRef) {
-  clearTimeout(pressRef.current?.timer);
-  pressRef.current = null;
-}
 
 function ChattingPage({
   contacts = EMPTY_CONTACTS,
@@ -45,7 +40,6 @@ function ChattingPage({
   const [messageActionError, setMessageActionError] = useState(null);
   const [isManagingMessage, setIsManagingMessage] = useState(false);
   const managingMessageRef = useRef(false);
-  const messagePressRef = useRef(null);
   const [socketStatus, setSocketStatus] = useState('연결 중');
   const [sendError, setSendError] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -59,7 +53,6 @@ function ChattingPage({
   // 모바일에서는 대화 목록을 먼저 보여 주고, 대화를 누르면 채팅창으로 넘어갑니다.
   const [isRoomOpen, setIsRoomOpen] = useState(false);
   const messagesContainerRef = useRef(null);
-  const messageOptionsRef = useRef(null);
   const onChatReconnectedRef = useRef(onChatReconnected);
   const onUnreadChangeRef = useRef(onUnreadChange);
   useEffect(() => {
@@ -75,29 +68,6 @@ function ChattingPage({
   const selectedContact = contactItems.find((contact) => contact.id === selectedContactId);
   const roomId = selectedContact?.roomId;
   const activeMessageAction = messageAction?.roomId === roomId ? messageAction : null;
-  const isMessageMenuOpen = activeMessageAction?.mode === 'menu';
-  useEffect(() => () => cancelMessagePress(messagePressRef), [roomId]);
-
-  useEffect(() => {
-    if (!isMessageMenuOpen) return undefined;
-    const menu = messageOptionsRef.current;
-    menu?.scrollIntoView({ block: 'nearest' });
-    function closeOnOutsidePress(event) {
-      if (menu?.contains(event.target) || event.target.closest('.chat-message-pressable[aria-expanded="true"]')) return;
-      setMessageAction(null);
-    }
-    function closeOnEscape(event) {
-      if (event.key !== 'Escape') return;
-      messagesContainerRef.current?.querySelector('.chat-message-pressable[aria-expanded="true"]')?.focus();
-      setMessageAction(null);
-    }
-    document.addEventListener('pointerdown', closeOnOutsidePress);
-    document.addEventListener('keydown', closeOnEscape);
-    return () => {
-      document.removeEventListener('pointerdown', closeOnOutsidePress);
-      document.removeEventListener('keydown', closeOnEscape);
-    };
-  }, [isMessageMenuOpen, activeMessageAction?.messageId]);
   const isContactsEmpty = contactItems.length === 0 && !isLoading && !apiError;
   const visibleContacts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
@@ -234,7 +204,6 @@ function ChattingPage({
   }, [accessToken, currentUserId]);
 
   function selectContact(contactId) {
-    cancelMessagePress(messagePressRef);
     setMessageAction(null);
     setMessageActionError(null);
     const contact = contactItems.find((item) => item.id === contactId);
@@ -257,25 +226,6 @@ function ChattingPage({
       mode,
       draft: message.content ?? message.text ?? '',
     });
-  }
-
-  function startMessagePress(event, message) {
-    if (!event.isPrimary || event.button !== 0 || event.target.closest('button, textarea')) return;
-    cancelMessagePress(messagePressRef);
-    const { clientX, clientY, pointerId } = event;
-    const timer = setTimeout(() => {
-      messagePressRef.current = null;
-      openMessageAction(message, 'menu');
-    }, MESSAGE_LONG_PRESS_MS);
-    messagePressRef.current = { timer, clientX, clientY, pointerId };
-  }
-
-  function moveMessagePress(event) {
-    const press = messagePressRef.current;
-    if (press?.pointerId !== event.pointerId) return;
-    if (Math.hypot(event.clientX - press.clientX, event.clientY - press.clientY) > 8) {
-      cancelMessagePress(messagePressRef);
-    }
   }
 
   async function applyMessageAction(action) {
@@ -453,7 +403,6 @@ function ChattingPage({
               className="chat-messages"
               aria-live="polite"
               ref={messagesContainerRef}
-              onScroll={() => cancelMessagePress(messagePressRef)}
             >
               {selectedMessages.length > 0 ? (
                 selectedMessages.map((message) => {
@@ -462,29 +411,10 @@ function ChattingPage({
                   const action = canManage && activeMessageAction?.messageId === message.id
                     ? activeMessageAction
                     : null;
-                  const canPress = canManage && action?.mode !== 'edit';
-                  const isMenuOpen = action?.mode === 'menu';
-                  return (
-                    <Fragment key={message.id}>
+                  const isEditing = action?.mode === 'edit';
+                  const bubble = (
                       <div
-                        className={`message ${isMine ? 'sent' : 'received'}${canPress ? ' chat-message-pressable' : ''}${isMenuOpen ? ' message--options-open' : ''}`}
-                        role={canPress ? 'button' : undefined}
-                        tabIndex={canPress ? 0 : undefined}
-                        aria-expanded={canPress ? isMenuOpen : undefined}
-                        aria-controls={isMenuOpen ? 'chat-message-options' : undefined}
-                        onKeyDown={canPress ? (event) => {
-                          if (event.key !== 'Enter' && event.key !== ' ') return;
-                          event.preventDefault();
-                          if (event.repeat) return;
-                          if (isMenuOpen) setMessageAction(null);
-                          else openMessageAction(message, 'menu');
-                        } : undefined}
-                        onPointerDown={canPress ? (event) => startMessagePress(event, message) : undefined}
-                        onPointerMove={canPress ? moveMessagePress : undefined}
-                        onPointerUp={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
-                        onPointerLeave={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
-                        onPointerCancel={canPress ? () => cancelMessagePress(messagePressRef) : undefined}
-                        onContextMenu={canPress ? (event) => event.preventDefault() : undefined}
+                        className={`message ${isMine ? 'sent' : 'received'}`}
                       >
                         {action?.mode === 'edit' ? (
                           <form className="chat-message-edit" onSubmit={(event) => {
@@ -523,22 +453,25 @@ function ChattingPage({
                           </>
                         )}
                       </div>
-                      {isMenuOpen && (
-                        <div
-                          className="chat-message-options"
-                          id="chat-message-options"
-                          ref={messageOptionsRef}
-                          role="group"
-                          aria-label="메시지 옵션"
-                        >
-                          <Button onClick={() => openMessageAction(message, 'edit')}>수정</Button>
-                          <Button
-                            className="chat-message-options__delete"
-                            onClick={() => openMessageAction(message, 'delete')}
-                          >
-                            삭제
-                          </Button>
+                  );
+                  return (
+                    <Fragment key={message.id}>
+                      {canManage ? (
+                        <div className="chat-message-row">
+                          {!isEditing && (
+                            <CardMoreMenu
+                              inline
+                              label="메시지 더보기"
+                              items={[
+                                { label: '수정하기', onClick: () => openMessageAction(message, 'edit') },
+                                { label: '삭제하기', onClick: () => openMessageAction(message, 'delete'), danger: true },
+                              ]}
+                            />
+                          )}
+                          {bubble}
                         </div>
+                      ) : (
+                        bubble
                       )}
                     </Fragment>
                   );

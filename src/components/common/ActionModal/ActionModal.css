@@ -112,3 +112,19 @@
 .action-modal__button--danger:focus-visible {
   outline-color: rgb(198 36 36 / 30%);
 }
+
+.action-modal__button--primary {
+  position: relative;
+}
+
+.action-modal__busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-modal__button:disabled {
+  cursor: wait;
+}

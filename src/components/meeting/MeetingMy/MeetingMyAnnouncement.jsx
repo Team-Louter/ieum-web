@@ -5,6 +5,7 @@ import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
 import Skeleton from '../../common/Skeleton/Skeleton';
 import EmptyState from '../../common/EmptyState/EmptyState';
+import useProfileImages from '../../../hooks/useProfileImages';
 import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 
 export default function MeetingMyAnnouncement({
@@ -31,7 +32,9 @@ export default function MeetingMyAnnouncement({
       ? [announcement]
       : [];
   const latestNotice = noticeList[0] ?? announcement;
-  const author = latestNotice.author ?? {};
+  const [author] = useProfileImages([
+    { ...(latestNotice.author ?? {}), userId: latestNotice.author?.userId ?? latestNotice.author?.id },
+  ]);
 
   function handleCreate() {
     if (onCreate) onCreate(meetingId);

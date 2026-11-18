@@ -8,6 +8,7 @@ import Button from '../../../components/common/Button/Button';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import './MeetingManagementPage.css';
 import Layout from '../../../components/common/Layout/Layout';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 function getMeetingFormValues(meeting = {}) {
   return {
@@ -69,7 +70,9 @@ export default function MeetingManagementPage({
     setMeetingValues((currentValues) => ({ ...currentValues, [name]: value }));
   }
 
-  async function handleSubmit(event) {
+  const [handleSubmit, isSubmitting] = useSubmitOnce(submitForm);
+
+  async function submitForm(event) {
     event.preventDefault();
     setSubmitError('');
 
@@ -102,7 +105,7 @@ export default function MeetingManagementPage({
               desc="비공개 모임은 목록에 공개되지 않습니다."
             />
           </div>
-          <Button className="meeting-management-save" type="submit" disabled={!canManage}>
+          <Button className="meeting-management-save" type="submit" disabled={!canManage} loading={isSubmitting} loadingText="저장 중">
             변경 사항 저장
           </Button>
           {!canManage && (

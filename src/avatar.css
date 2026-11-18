@@ -1,0 +1,25 @@
+/*
+ * 프로필 사진은 어디서나 원형으로 보입니다.
+ * 사진이 정사각형이 아니어도 가운데를 기준으로 잘라 채웁니다. 새 프로필 사진 자리를 만들면 이 목록에 더해 주세요.
+ */
+.content-profile-container img,
+.comment-profile-container img,
+.my-profile-info > img,
+.profile-info > img,
+.sidebar__profile .sidebar__icon,
+.join-requests-modal__avatar,
+.friend-requests-modal__item img,
+.Announcement-profile img,
+.member-profile > img,
+.nearby-friend-list li > img,
+.nearby-friend-ping__circle > img,
+.nearby-friend-ping__member > img,
+#user-info > img,
+.setting-guardian-list__avatar,
+.user-list-item img,
+.chat-room-header img,
+.profile-edit-modal-dialog #profile-image-input-container > img {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+}

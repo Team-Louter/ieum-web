@@ -3,6 +3,7 @@ import './PostCreateForm.css';
 import uploadIcon from '../../../assets/images/upload.svg';
 import Button from '../../common/Button/Button';
 import useImageCrop from '../../../hooks/useImageCrop';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 const MAX_IMAGES = 5;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
@@ -93,7 +94,9 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
   }
 
   /** 필수 입력값을 확인하고 유효하지 않은 항목에 오류 문구를 표시합니다. */
-  async function handleSubmit(event) {
+  const [handleSubmit, isSubmitting] = useSubmitOnce(submitForm);
+
+  async function submitForm(event) {
     event.preventDefault();
 
     const nextErrors = {
@@ -232,7 +235,7 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
           </div>
         </div>
       </div>
-      <Button type="submit" className="neighbor-post-create-form__submit">
+      <Button type="submit" className="neighbor-post-create-form__submit" loading={isSubmitting} loadingText="게시물 올리는 중">
         게시물 만들기
       </Button>
       {submitError && (

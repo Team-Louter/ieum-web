@@ -9,6 +9,7 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import profileImage from '../../assets/images/profile.png';
 import ConfirmationModal from '../../components/common/ConfirmationModal/ConfirmationModal';
 import MeetingMyMemberProfile from '../../components/meeting/MeetingMy/MeetingMyMemberProfile';
+import useProfileImages from '../../hooks/useProfileImages';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageFriend({
@@ -22,7 +23,7 @@ function MyProfilePageFriend({
 }) {
   const [openFriendId, setOpenFriendId] = useState(null);
   const [friendToRemove, setFriendToRemove] = useState(null);
-  const friendItems = Array.isArray(friends) ? friends : [];
+  const friendItems = useProfileImages(Array.isArray(friends) ? friends : []);
   const isEmpty = friendItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
     { label: '내 게시물', href: '/myProfile', isActive: false },

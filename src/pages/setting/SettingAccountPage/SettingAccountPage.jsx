@@ -202,14 +202,14 @@ function SettingAccountPage({
               />
             </label>
             <div className="setting-dialog__actions">
-              <button
+              <Button
                 className="setting-dialog__button"
                 type="button"
                 onClick={handleSendCode}
                 disabled={busy}
               >
                 {codeSent ? '인증 코드 다시 받기' : '인증 코드 받기'}
-              </button>
+              </Button>
             </div>
             {codeSent && (
               <>
@@ -223,14 +223,14 @@ function SettingAccountPage({
                   />
                 </label>
                 <div className="setting-dialog__actions">
-                  <button
+                  <Button
                     className="setting-dialog__button"
                     type="button"
                     onClick={handleVerifyCode}
                     disabled={busy || verified}
                   >
                     {verified ? '인증 완료' : '이메일 인증'}
-                  </button>
+                  </Button>
                 </div>
               </>
             )}
