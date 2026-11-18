@@ -39,7 +39,7 @@ function MarketMyPostPage({
           ))
         ) : isEmpty ? (
           <EmptyState
-            title="등록한 게시물이 없어요"
+            title="첫 상품을 등록해보세요"
             description="내가 올린 상품을 등록하면 이곳에서 관리할 수 있어요."
             actionLabel="게시물 만들기"
             onAction={() => onNavigate?.('/market/create')}

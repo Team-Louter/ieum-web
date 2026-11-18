@@ -62,7 +62,7 @@ function MarketFeedPage({
           ))
         ) : isEmpty ? (
           <EmptyState
-            title="등록된 게시물이 없어요"
+            title="첫 게시물을 등록해보세요"
             description="필요한 물건을 나누거나 새로운 상품을 소개해 보세요."
             actionLabel="게시물 만들기"
             onAction={() => onNavigate?.('/market/create')}
