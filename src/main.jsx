@@ -4,6 +4,7 @@ import './index.css';
 import App from './App.jsx';
 import './components/auth/AuthField.css';
 import './responsive.css';
+import './avatar.css';
 import './hover.css';
 
 // localhost can still be controlled by a worker from a previously run project.
