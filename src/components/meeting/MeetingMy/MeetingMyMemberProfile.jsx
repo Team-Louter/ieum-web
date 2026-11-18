@@ -4,6 +4,7 @@ import defaultImage from '../../../assets/images/profile.png';
 export default function MeetingMyMemberProfile({
   profile_image,
   id,
+  subtitle,
   role,
   isMenuOpen,
   onToggle,
@@ -22,7 +23,18 @@ export default function MeetingMyMemberProfile({
           event.currentTarget.src = defaultImage;
         }}
       />
-      <p title={role === '회원' ? id : `${id} (${role})`}>{role === '회원' ? id : `${id} (${role})`}</p>
+      <div className="member-profile__text">
+        <div className="member-profile__name-row">
+          <p title={id}>{id}</p>
+          {/* 모임장·관리자 태그는 이름 오른쪽에 둡니다. 이름이 길면 이름만 ...으로 줄고 태그는 그대로 보입니다. */}
+          {(role === '모임장' || role === '관리자') && (
+            <span className={`member-profile__tag member-profile__tag--${role === '모임장' ? 'owner' : 'manager'}`}>
+              {role}
+            </span>
+          )}
+        </div>
+        {subtitle && <small title={subtitle}>{subtitle}</small>}
+      </div>
     </>
   );
 

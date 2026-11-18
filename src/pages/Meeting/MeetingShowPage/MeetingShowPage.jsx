@@ -34,8 +34,8 @@ export default function MeetingShowPage({
           ))
         ) : isEmpty ? (
           <EmptyState
-            title="아직 모임이 없어요"
-            description="새로운 모임을 만들거나 잠시 후 다시 확인해 주세요."
+            title="첫 모임을 만들어보세요"
+            description="직접 모임을 만들어 이웃을 초대해 보세요."
             actionLabel="모임 만들기"
             onAction={() => onNavigate?.('/meeting/make')}
           />

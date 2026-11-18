@@ -29,7 +29,7 @@
 }
 
 .member-profile-static {
-  cursor: default;
+  cursor: pointer;
 }
 
 .member-profile > img {
@@ -38,12 +38,58 @@
   margin-right: 10px;
 }
 
-/* 닉네임이 길면 한 줄로 줄이고 ...으로 표시합니다. */
-.member-profile > p {
+/* 닉네임 아래에 보조 글자(아이디)를 쌓습니다. */
+.member-profile__text {
+  display: flex;
   min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+}
+
+.member-profile__name-row {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 닉네임이 길면 한 줄로 줄이고 ...으로 표시합니다. */
+.member-profile__name-row > p,
+.member-profile__text > small {
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.member-profile__text > small {
+  color: #777;
+  font-size: var(--font-size-small);
+}
+
+.member-profile__tag {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.member-profile__tag--owner {
+  background: #42b66b;
+  color: #fff;
+}
+
+.member-profile__tag--manager {
+  background: #eaf7ef;
+  color: #319b57;
 }
 
 .member-action-menu {
@@ -67,14 +113,10 @@
   border: 0;
   border-radius: 10px;
   background: transparent;
-  color: #e22a2a;
+  color: #222222;
   font-size: var(--font-size-small);
   text-align: left;
   cursor: pointer;
-}
-
-.member-action-menu button:first-child {
-  color: #222222;
 }
 
 .member-action-menu button:hover,
@@ -83,7 +125,6 @@
   outline: none;
 }
 
-.member-action-menu button.member-action-menu__danger,
-.member-action-menu button.member-action-menu__danger:first-child {
+.member-action-menu button.member-action-menu__danger {
   color: #e22a2a;
 }

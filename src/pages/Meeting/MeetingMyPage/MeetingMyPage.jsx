@@ -2,11 +2,11 @@ import { useRef, useState } from 'react';
 import Layout from '../../../components/common/Layout/Layout';
 import MeetingMyAnnouncement from '../../../components/meeting/MeetingMy/MeetingMyAnnouncement';
 import mulchongsae from '../../../assets/images/meeting-cover.jpg';
-import dotSetting from '../../../assets/dot_setting.svg';
 import './MeetingMyPage.css';
 import MeetingKebabMenu from '../../../components/meeting/MeetingKebabMenu/MeetingKebabMenu';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
+import { splitMembers } from '../../../utils/meetingRequests';
 import Button from '../../../components/common/Button/Button';
 
 const ACTIVE_MEMBERSHIP_STATUSES = ['ACTIVE', 'APPROVED', 'JOINED', 'MEMBER'];
@@ -60,6 +60,7 @@ export default function MeetingMyPage({
   onJoin,
   onLeave,
   onDelete,
+  onInviteCreate,
   onMemberAction,
   onAnnouncementCreate,
   onAnnouncementUpdate,
@@ -68,6 +69,7 @@ export default function MeetingMyPage({
   isLoading = false,
   apiError = '',
 }) {
+  const { pendingRequests, joinedMembers } = splitMembers(members);
   const [isJoining, setIsJoining] = useState(false);
   const joinStarted = useRef(false);
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
@@ -204,12 +206,16 @@ export default function MeetingMyPage({
               </span>
             )}
             <MeetingKebabMenu
-              image={dotSetting}
               meeting={meeting}
               canManage={Boolean(canManage)}
+              canDelete={Boolean(isOwner)}
               canLeave={Boolean(canLeave)}
               onLeave={onLeave}
               onDelete={onDelete}
+              onInviteCreate={onInviteCreate}
+              pendingRequests={pendingRequests}
+              showJoinRequests={Boolean(meeting.approvalRequired) || pendingRequests.length > 0}
+              onMemberAction={onMemberAction}
             />
           </div>
         </div>
@@ -228,10 +234,13 @@ export default function MeetingMyPage({
         />
         <div className="contents-horizen"></div>
         <MeetingMyMemberList
-          members={members}
+          members={joinedMembers}
           maxVisible={6}
           meetingId={meeting.id}
           canManage={Boolean(canManage)}
+          isOwner={Boolean(isOwner)}
+          ownerId={meeting.ownerId}
+          ownerLoginId={meeting.owner}
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
           isLoading={isLoading}

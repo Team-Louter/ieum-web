@@ -1,0 +1,88 @@
+.join-requests-modal {
+  max-height: min(560px, calc(100vh - 40px));
+}
+
+.join-requests-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.join-requests-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.join-requests-modal__avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.join-requests-modal__name {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.join-requests-modal__name strong {
+  font-size: var(--font-size-body);
+  overflow-wrap: anywhere;
+}
+
+.join-requests-modal__name span {
+  color: #777;
+  font-size: var(--font-size-small);
+  overflow-wrap: anywhere;
+}
+
+.join-requests-modal__actions {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+.join-requests-modal__actions button {
+  min-width: 56px;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 10px;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.join-requests-modal__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.join-requests-modal__approve {
+  background: #42b66b;
+  color: #fff;
+}
+
+.join-requests-modal__approve:not(:disabled):hover {
+  background: #319b57;
+}
+
+.join-requests-modal__reject {
+  background: #f0f0f0;
+  color: #222;
+}
+
+.join-requests-modal__reject:not(:disabled):hover {
+  background: #e6e6e6;
+}

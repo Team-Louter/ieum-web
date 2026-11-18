@@ -70,3 +70,14 @@
     width: calc(100% - 32px);
   }
 }
+
+.invite-page__pending {
+  align-self: flex-start;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #eaf7ef;
+  color: #319b57;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}

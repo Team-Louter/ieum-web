@@ -1,3 +1,4 @@
+import { splitMembers } from '../../../utils/meetingRequests';
 import './MeetingMemberListPage.css';
 import MemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
 import Layout from '../../../components/common/Layout/Layout';
@@ -15,7 +16,7 @@ export default function MeetingMemberListPage({
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
-    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') },
+    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') || currentPath.startsWith('/meeting/management') },
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
 
@@ -24,10 +25,15 @@ export default function MeetingMemberListPage({
       <PageTabNavigation ariaLabel="모임 메뉴" isFixed items={menuItems} />
       <div>
         <MemberList
-          members={members}
+          members={splitMembers(members).joinedMembers}
+          ownerId={meeting?.ownerId}
+          ownerLoginId={meeting?.owner}
           meetingId={meeting?.id}
           canManage={Boolean(membership?.canManage ?? meeting?.canManage)}
-          isOwner={String(membership?.role ?? '').toUpperCase() === 'OWNER'}
+          isOwner={
+            ['OWNER', 'ROLE_OWNER'].includes(String(membership?.role ?? meeting?.role ?? '').toUpperCase()) ||
+            (currentUserId != null && String(meeting?.ownerId) === String(currentUserId))
+          }
           currentUserId={currentUserId}
           onMemberAction={onMemberAction}
           isLoading={isLoading}
