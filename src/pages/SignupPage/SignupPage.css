@@ -45,7 +45,7 @@
 /* 입력칸 + 오른쪽 버튼 한 줄 */
 .signup-page .input-button-row {
     display: flex;
-    gap: 25px;
+    gap: clamp(8px, 3vw, 25px);
     width: 100%;
     align-items: center;
 }
@@ -57,7 +57,7 @@
 
 /* 중복확인, 인증하기, 주소검색처럼 오른쪽에 붙는 버튼 */
 .signup-page .small-button {
-    width: 125px;
+    width: clamp(84px, 22vw, 125px);
     height: 60px;
     border: none;
     border-radius: 10px;
@@ -66,6 +66,7 @@
     font-size: var(--font-size-body);
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
     flex-shrink: 0;
     transition: background-color 0.2s ease;
 }
@@ -130,4 +131,21 @@
     padding-left: 4px;
     width: 100%;
     text-align: left;
+}
+
+.signup-page .small-button:disabled {
+    opacity: 0.65;
+}
+
+.signup-address-dialog {
+    gap: 12px;
+}
+
+.signup-address-dialog h2 {
+    margin-bottom: 0;
+}
+
+.signup-address-embed {
+    width: 100%;
+    height: min(460px, 55dvh);
 }

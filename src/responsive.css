@@ -173,8 +173,7 @@ video {
   .login-page .links,
   .login-page .signup-group,
   .signup-page .signup-form,
-  .neighbor-post-create-form__submit,
-  .modal-box {
+  .neighbor-post-create-form__submit {
     width: calc(100% - 32px);
     max-width: 100%;
   }
@@ -219,12 +218,7 @@ video {
   .neighbor-post-create-form__text-fields > div,
   .neighbor-post-create-form__text-fields > div > input,
   .neighbor-post-create-form__text-fields > div > textarea,
-  .profile-action-buttons > button,
-  .modal-box form,
-  .modal-result,
-  .modal-email-row,
-  .modal-email-row input,
-  .modal-login-btn {
+  .profile-action-buttons > button {
     width: 100%;
     max-width: 100%;
   }
