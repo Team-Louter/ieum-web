@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './CardMoreMenu.css';
 
 /**
@@ -11,6 +11,33 @@ function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
   const containerRef = useRef(null);
   const busyRef = useRef(false);
   const [isBusy, setIsBusy] = useState(false);
+  const listRef = useRef(null);
+  const [opensUp, setOpensUp] = useState(false);
+
+  // 아래 공간이 모자라면(스크롤 영역·화면 아래를 넘으면) 위로 펼쳐서 스크롤이 생기지 않게 합니다.
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setOpensUp(false);
+      return;
+    }
+    const list = listRef.current;
+    const container = containerRef.current;
+    if (!list || !container) return;
+
+    const listRect = list.getBoundingClientRect();
+    const triggerRect = container.getBoundingClientRect();
+    let limit = window.innerHeight;
+    for (let el = container.parentElement; el && el !== document.body; el = el.parentElement) {
+      const overflowY = getComputedStyle(el).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll') {
+        limit = Math.min(limit, el.getBoundingClientRect().bottom);
+        break;
+      }
+    }
+    const overflowsBelow = listRect.bottom > limit;
+    const fitsAbove = triggerRect.top - 6 - listRect.height >= 0;
+    setOpensUp(overflowsBelow && fitsAbove);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -33,7 +60,10 @@ function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
   if (items.length === 0) return null;
 
   return (
-    <div className={`card-more-menu${inline ? ' card-more-menu--inline' : ''}`} ref={containerRef}>
+    <div
+      className={`card-more-menu${inline ? ' card-more-menu--inline' : ''}${isOpen ? ' card-more-menu--open' : ''}`}
+      ref={containerRef}
+    >
       <button
         type="button"
         className="card-more-menu__trigger"
@@ -52,7 +82,11 @@ function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
         </svg>
       </button>
       {isOpen && (
-        <ul className="card-more-menu__list" role="menu">
+        <ul
+          className={`card-more-menu__list${opensUp ? ' card-more-menu__list--up' : ''}`}
+          role="menu"
+          ref={listRef}
+        >
           {items.map((item) => (
             <li key={item.label} role="none">
               <button
