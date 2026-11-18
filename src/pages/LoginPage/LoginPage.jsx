@@ -3,7 +3,6 @@ import './LoginPage.css';
 import Button from '../../components/common/Button/Button';
 
 import ieumLogo from '../../assets/images/IeumLogo.svg';
-import googleLogo from '../../assets/images/GoogleLogo.svg';
 import PasswordField from '../../components/auth/PasswordField';
 import IDsearch from '../../components/auth/IDsearch';
 
@@ -82,17 +81,6 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
                     로그인
                 </Button>
 
-                <button type="button" className="google-login" onClick={() => {
-                    setErrorMessage('현재 API 명세에는 Google 로그인 기능이 없어 사용할 수 없습니다.');
-                    setShowError(true);
-                }}>
-                    <img
-                        src={googleLogo}
-                        alt="구글 로고"
-                        className="google-logo"
-                    />
-                    <span>Google 로그인</span>
-                </button>
             </form>
 
             <div className="links">

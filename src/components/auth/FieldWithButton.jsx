@@ -1,3 +1,5 @@
+import Button from '../common/Button/Button';
+
 function FieldWithButton({
     id,
     label,
@@ -7,6 +9,10 @@ function FieldWithButton({
     onButtonClick,
     type = 'text',
     readOnly = false,
+    describedBy,
+    buttonLoading = false,
+    buttonLoadingText,
+    buttonDisabled = false,
 }) {
     return (
         <div className="input-button-row">
@@ -17,15 +23,22 @@ function FieldWithButton({
                     value={value}
                     onChange={onChange}
                     readOnly={readOnly}
+                    aria-describedby={describedBy}
                     placeholder=" "
                     required
                 />
                 <label htmlFor={id}>{label}</label>
             </div>
             {buttonText && (
-                <button type="button" className="small-button" onClick={onButtonClick}>
+                <Button
+                    className="small-button"
+                    onClick={onButtonClick}
+                    loading={buttonLoading}
+                    loadingText={buttonLoadingText}
+                    disabled={buttonDisabled}
+                >
                     {buttonText}
-                </button>
+                </Button>
             )}
         </div>
     );
