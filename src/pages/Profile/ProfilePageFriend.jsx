@@ -1,3 +1,4 @@
+import { ProfileContentSkeleton } from '../../components/common/PageSkeleton/PageSkeleton';
 import './ProfilePageFriend.css';
 import ProfileInfo from '../../components/profile/ProfileInfo/ProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
@@ -37,29 +38,33 @@ function ProfilePageFriend({
           onStartChat={onStartChat}
         />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
-        <ul
-          className={`public-profile-friend-list${isEmpty ? ' public-profile-friend-list--empty' : ''}`}
-        >
-          {friendItems.length > 0 ? (
-            friendItems.map((friend, index) => (
-              <li key={friend.id ?? index}>
-                <MeetingMyMemberProfile
-                  profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
-                  id={friend.nickname ?? friend.name ?? ''}
-                  role="회원"
-                  interactive={false}
+        {isLoading && friendItems.length === 0 ? (
+          <ProfileContentSkeleton />
+        ) : (
+          <ul
+            className={`public-profile-friend-list${isEmpty ? ' public-profile-friend-list--empty' : ''}`}
+          >
+            {friendItems.length > 0 ? (
+              friendItems.map((friend, index) => (
+                <li key={friend.id ?? index}>
+                  <MeetingMyMemberProfile
+                    profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
+                    id={friend.nickname ?? friend.name ?? ''}
+                    role="회원"
+                    interactive={false}
+                  />
+                </li>
+              ))
+            ) : isEmpty ? (
+              <li className="public-profile-friend-list__empty">
+                <EmptyState
+                  title="공개된 친구가 여기에 표시돼요"
+                  description="아직 공개된 친구가 없습니다."
                 />
               </li>
-            ))
-          ) : isEmpty ? (
-            <li className="public-profile-friend-list__empty">
-              <EmptyState
-                title="친구 목록이 비어 있어요"
-                description="아직 공개된 친구가 없습니다."
-              />
-            </li>
-          ) : null}
-        </ul>
+            ) : null}
+          </ul>
+        )}
       </div>
     </Layout>
   );

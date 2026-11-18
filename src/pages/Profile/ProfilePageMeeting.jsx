@@ -1,3 +1,4 @@
+import { ProfileContentSkeleton } from '../../components/common/PageSkeleton/PageSkeleton';
 import './ProfilePageMeeting.css';
 import ProfileInfo from '../../components/profile/ProfileInfo/ProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
@@ -49,9 +50,11 @@ function ProfilePageMeeting({
             ))
           ) : isEmpty ? (
             <EmptyState
-              title="참여 중인 모임이 없어요"
+              title="공개된 모임이 여기에 표시돼요"
               description="아직 공개된 모임이 없습니다."
             />
+          ) : isLoading ? (
+            <ProfileContentSkeleton />
           ) : null}
         </div>
       </div>

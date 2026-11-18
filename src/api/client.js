@@ -497,14 +497,27 @@ export const contentLikeApi = {
   unlike: (type, targetId) => apiDelete(`/api/contents/${type}/${targetId}/like`),
 };
 
+// 사진을 먼저 올리고 받은 주소를 게시물에 연결할 때 씁니다. (POST /api/uploads/images)
+export const uploadApi = {
+  async image(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiPost('/api/uploads/images', formData);
+    const url =
+      typeof response === 'string'
+        ? response
+        : (response?.url ?? response?.imageUrl ?? response?.imageUrls?.[0] ?? response?.urls?.[0]);
+    if (!url) throw new Error('사진 업로드 결과를 확인할 수 없습니다.');
+    return url;
+  },
+};
+
 export const communityPostApi = {
   list: ({ mine = false, authorId, page = 0, size = 20 } = {}) => {
     const query = new URLSearchParams();
     if (mine) query.set('mine', 'true');
-    else {
-      query.set('page', String(page));
-      query.set('size', String(size));
-    }
+    query.set('page', String(page));
+    query.set('size', String(size));
     if (authorId != null) query.set('authorId', String(authorId));
     return apiGet(`/api/community/posts?${query}`);
   },

@@ -4,10 +4,13 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import PostCard from '../../components/neighbor/PostCard/PostCard';
+import LoadMoreTrigger from '../../components/common/LoadMoreTrigger/LoadMoreTrigger';
+import useMorePosts from '../../hooks/useMorePosts';
 
 /** 이웃마당 게시물 목록과 댓글 모달 상태를 관리합니다. */
 function NeighborFeedPage({
   posts = [],
+  postsHasNext = false,
   onLike,
   onSubmitComment,
   onUpdateComment,
@@ -18,7 +21,8 @@ function NeighborFeedPage({
   apiError = '',
 }) {
   const [activeCommentId, setActiveCommentId] = useState(null);
-  const postItems = Array.isArray(posts) ? posts : [];
+  const more = useMorePosts({ posts, hasNext: postsHasNext });
+  const postItems = Array.isArray(more.posts) ? more.posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
@@ -62,12 +66,13 @@ function NeighborFeedPage({
           })
         ) : isEmpty ? (
           <EmptyState
-            title="아직 게시물이 없어요"
-            description="이웃들과 소식을 나눌 첫 게시물을 작성해 보세요."
+            title="첫 게시물을 작성해보세요"
+            description="이웃들과 소식을 나눠 보세요."
             actionLabel="게시물 만들기"
             onAction={() => onNavigate?.('/neighbor/create')}
           />
         ) : null}
+        <LoadMoreTrigger hasNext={more.hasNext} isLoading={more.isLoadingMore} onLoad={more.loadMore} />
       </div>
     </Layout>
   );

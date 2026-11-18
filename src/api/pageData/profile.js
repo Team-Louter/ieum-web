@@ -46,6 +46,7 @@ export async function loadUserProfilePage({ selectedId }) {
       userId: profile.userId ?? selectedId,
     },
     posts,
+    postsHasNext: Boolean(postsResponse?.hasNext),
     friends,
     meetings,
   };
@@ -74,6 +75,7 @@ export async function loadMyProfilePage({ loginId, userId }) {
     },
     friends: friendItems,
     posts: ownPosts,
+    postsHasNext: Boolean(postsResponse?.hasNext),
   };
 
   // 탭을 바꿀 때 다시 불러오지 않도록 모임도 함께 가져옵니다.

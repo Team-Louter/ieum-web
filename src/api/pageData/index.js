@@ -36,6 +36,7 @@ export default async function loadPageData({
     const posts = asArray(apiPosts).map(toCommunityPost);
     return {
       posts,
+      postsHasNext: Boolean(response?.hasNext),
     };
   }
 
@@ -70,7 +71,7 @@ export default async function loadPageData({
     return loadMarketDetailPage({ selectedId });
   }
 
-  if (path === '/addfriend') return loadAddFriendPage();
+  if (path === '/addfriend' || path.startsWith('/addfriend/')) return loadAddFriendPage();
 
   if (path === '/chatting') return loadChatPage({ userId, onDefaultChatRoom });
 

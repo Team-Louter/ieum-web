@@ -1,7 +1,9 @@
-import { communityPostApi, sharingApi } from '../api/client';
+import { communityPostApi, sharingApi, uploadApi } from '../api/client';
 
 // 동네 게시물과 나눔 게시물의 동작입니다.
-export default function usePostActions({ runAction, movePage }) {
+export default function usePostActions({ runAction, movePage, patchPost }) {
+  const applyResult = patchPost ? { applyResult: patchPost } : undefined;
+
   async function updateSharing(original, values) {
     const imageFile = values.media instanceof File ? values.media : null;
     await runAction(async () => {
@@ -69,6 +71,7 @@ export default function usePostActions({ runAction, movePage }) {
     return runAction(
       () => (isLiked ? communityPostApi.like(post.id) : communityPostApi.unlike(post.id)),
       isLiked ? '좋아요를 눌렀습니다.' : '좋아요를 취소했습니다.',
+      applyResult,
     ).catch(() => {});
   }
 
@@ -76,14 +79,26 @@ export default function usePostActions({ runAction, movePage }) {
     return runAction(
       () => communityPostApi.createComment(post.id, { content }),
       '댓글을 등록했습니다.',
+      applyResult,
     ).catch(() => {});
   }
 
   // 게시물 수정 (제목·내용). 내 게시물에서만 호출됩니다.
+  // 사진을 고칠 때는 새 파일을 먼저 올려 주소를 받은 뒤, 남길 사진 주소와 함께 imageUrls로 보냅니다.
+  // (파일을 직접 보내면 기존 사진 전체가 교체되므로 쓰지 않습니다. imageUrls를 생략하면 기존 사진이 유지됩니다.)
   function updateNeighborPost(post, values) {
     return runAction(
-      () => communityPostApi.update(post.id, { title: values.title, content: values.content }),
+      async () => {
+        const request = { title: values.title, content: values.content };
+        if (Array.isArray(values.keptImageUrls)) {
+          const uploaded = [];
+          for (const file of values.newImages ?? []) uploaded.push(await uploadApi.image(file));
+          request.imageUrls = [...values.keptImageUrls, ...uploaded];
+        }
+        return communityPostApi.update(post.id, request);
+      },
       '게시물을 수정했습니다.',
+      applyResult,
     );
   }
 
@@ -92,6 +107,7 @@ export default function usePostActions({ runAction, movePage }) {
     return runAction(
       () => communityPostApi.updateComment(post.id, comment.id, { content }),
       '댓글을 수정했습니다.',
+      applyResult,
     ).catch(() => {});
   }
 
@@ -99,6 +115,7 @@ export default function usePostActions({ runAction, movePage }) {
     return runAction(
       () => communityPostApi.removeComment(post.id, comment.id),
       '댓글을 삭제했습니다.',
+      applyResult,
     ).catch(() => {});
   }
 
