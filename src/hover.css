@@ -1,0 +1,109 @@
+/*
+ * 버튼 호버 모음. 컴포넌트마다 흩어져 있던 호버가 빠진 버튼들을 한곳에서 맡습니다.
+ * 기본 규칙보다 구체적인 선택자(:hover 포함)라 파일을 불러오는 순서와 상관없이 적용되고,
+ * 터치 화면에서 눌린 뒤에도 호버가 남지 않도록 마우스가 있는 화면에서만 동작합니다.
+ * 새 버튼을 만들면 기본 규칙 옆에 :hover를 직접 넣거나 이 파일에 추가해 주세요.
+ */
+@media (hover: hover) {
+  /* 색이 채워진 버튼: 살짝 어둡게 */
+  .common-button:not(:disabled):hover,
+  .profile-action-buttons > button:nth-child(1):hover,
+  .my-profile-edit-buttons > button:hover,
+  .meeting-input-region-button:hover,
+  .chat-composer button:not(:disabled):hover,
+  .invite-page__form button:not(:disabled):hover,
+  .invite-page__card button:not(:disabled):hover,
+  .meeting-make-button:not(:disabled):hover,
+  .meeting-management-save:not(:disabled):hover,
+  .image-crop-modal__actions > button:not(:disabled):hover,
+  .announcement-dialog__item-actions button:hover,
+  .guardian-page__elder-tab:not(.is-active):hover,
+  .mobile-back-button:hover {
+    filter: brightness(0.92);
+  }
+
+  /* 사진 위에 올라간 반투명 검정 버튼: 더 진하게 */
+  .content-media__nav:hover,
+  .market-post-create-form__change-button:hover,
+  .neighbor-post-create-form__change-button:hover,
+  .neighbor-post-create-form__thumbnail-remove:hover {
+    background-color: rgb(0 0 0 / 78%);
+  }
+
+  /* 흰색·투명 버튼: 연한 회색 배경 */
+  .app-api-notice button:hover,
+  .page-tab-navigation__item:not(.is-active) > a:hover,
+  .page-tab-navigation__item:not(.is-active) > button:hover,
+  .image-crop-modal__close:hover,
+  #back-btn:hover,
+  .neighbor-post-create-form__thumbnail:hover,
+  .neighbor-post-create-form__thumbnail-add:hover,
+  .Announcement-more:hover,
+  .member-pagination-button:not(.is-active):hover,
+  .member-more:hover,
+  .comment__edit button:hover,
+  .comment__actions button:hover,
+  .comment-modal__close:hover,
+  .add-friend-pagination button:not(.is-current):not(:disabled):hover,
+  .market-feed-pagination button:not(.is-current):not(:disabled):hover,
+  .profile-edit-modal-dialog #profile-image-input-label:hover,
+  .select-button:hover,
+  .select-list-card:hover,
+  .setting-support-page__question:hover,
+  .setting-feature-page__entry:hover {
+    background-color: #f2f2f2;
+  }
+
+  /* 초록 테두리 버튼: 연한 초록 배경 */
+  .profile-action-buttons > button:nth-child(2):hover {
+    background-color: #eaf7ef;
+  }
+
+  /* 빨간 테두리 버튼: 연한 빨강 배경 */
+  .setting-guardian-list__remove:hover,
+  .setting-medication-list__delete:hover {
+    background-color: #fdf1f0;
+  }
+
+  /* 아이콘만 있는 버튼(좋아요·댓글): 살짝 흐리게 */
+  .content-info-icon-container > button:hover {
+    opacity: 0.7;
+  }
+}
+
+/*
+ * 사진 올리는 칸: 마우스를 올리면 초록 테두리가 나타나고 사진 위가 살짝 어두워집니다.
+ * 사진이 없을 때도 같은 어둡기라 어느 상태에서나 눌러서 바꿀 수 있다는 걸 알 수 있습니다.
+ */
+.meeting-input-picture,
+.neighbor-post-create-form__media-label,
+.market-post-create-form__media-label {
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.meeting-input-picture::after,
+.neighbor-post-create-form__media-label::after,
+.market-post-create-form__media-label::after {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0%);
+  content: '';
+  pointer-events: none;
+  transition: background-color 0.2s ease;
+}
+
+@media (hover: hover) {
+  .meeting-input-picture:hover,
+  .neighbor-post-create-form__media-label:hover,
+  .market-post-create-form__media-label:hover {
+    border-color: #42b66b;
+    background-color: #fff;
+  }
+
+  .meeting-input-picture:hover::after,
+  .neighbor-post-create-form__media-label:hover::after,
+  .market-post-create-form__media-label:hover::after {
+    background-color: rgb(0 0 0 / 12%);
+  }
+}

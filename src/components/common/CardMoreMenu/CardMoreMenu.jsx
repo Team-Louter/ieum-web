@@ -1,0 +1,77 @@
+import { useEffect, useRef, useState } from 'react';
+import './CardMoreMenu.css';
+
+/**
+ * 카드 모서리의 … 버튼을 누르면 작업 목록이 뜨는 더보기 메뉴입니다.
+ * items: [{ label, onClick, danger, disabled }]
+ * inline: 사진 위가 아니라 흰 배경 안에 놓을 때 사용합니다(회색 버튼, 위치 고정 없음).
+ */
+function CardMoreMenu({ items = [], label = '더보기', inline = false }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    function handlePointerDown(event) {
+      if (!containerRef.current?.contains(event.target)) setIsOpen(false);
+    }
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') setIsOpen(false);
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className={`card-more-menu${inline ? ' card-more-menu--inline' : ''}`} ref={containerRef}>
+      <button
+        type="button"
+        className="card-more-menu__trigger"
+        aria-label={label}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        onClick={(event) => {
+          event.stopPropagation();
+          setIsOpen((open) => !open);
+        }}
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <circle cx="5" cy="12" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="19" cy="12" r="2" />
+        </svg>
+      </button>
+      {isOpen && (
+        <ul className="card-more-menu__list" role="menu">
+          {items.map((item) => (
+            <li key={item.label} role="none">
+              <button
+                type="button"
+                role="menuitem"
+                disabled={item.disabled}
+                className={item.danger ? 'card-more-menu__item--danger' : undefined}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsOpen(false);
+                  item.onClick?.(event);
+                }}
+              >
+                {item.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default CardMoreMenu;

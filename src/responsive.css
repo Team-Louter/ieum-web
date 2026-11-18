@@ -316,22 +316,6 @@ video {
     aspect-ratio: 1;
   }
 
-  /* 터치 화면에는 hover가 없어서 수정/삭제 버튼을 사진 아래에 항상 보여줍니다. */
-  .market-my-post-card__button-container {
-    position: static;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    background: none;
-  }
-
-  .market-my-post-card__button-container > button {
-    height: 34px;
-    font-size: var(--font-size-small);
-    white-space: nowrap;
-  }
 }
 
 @media (max-width: 768px) {

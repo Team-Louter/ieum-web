@@ -50,7 +50,9 @@
 }
 
 .page-skeleton--members,
-.page-skeleton--addFriend {
+.page-skeleton--addFriend,
+.page-skeleton--friendList,
+.page-skeleton--friendRequests {
   gap: 0;
 }
 
@@ -168,4 +170,11 @@
 
 .page-skeleton .like-button > span {
   visibility: hidden;
+}
+
+/* 닉네임 + 아이디 두 줄 (실제 프로필 이름 블록과 같은 간격) */
+.profile-skeleton__name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
