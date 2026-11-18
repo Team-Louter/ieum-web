@@ -159,6 +159,7 @@
   padding: 20px 30px;
   box-sizing: border-box;
 
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -401,6 +402,7 @@
 
   .chat-messages {
     padding: 14px 16px;
+    overflow-x: hidden;
     overflow-y: auto;
   }
 
