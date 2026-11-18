@@ -251,8 +251,8 @@
 }
 
 .chat-message-row .card-more-menu__list {
-  right: auto;
-  left: 0;
+  right: 0;
+  left: auto;
 }
 
 .chat-message-actions .chat-message-save {
