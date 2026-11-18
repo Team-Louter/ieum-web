@@ -3,17 +3,21 @@ import Layout from '../../components/common/Layout/Layout';
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
+import LoadMoreTrigger from '../../components/common/LoadMoreTrigger/LoadMoreTrigger';
+import useMorePosts from '../../hooks/useMorePosts';
 
 /** 사용자가 작성한 게시물 목록을 표시합니다. */
 function NeighborMyPostsPage({
   posts = [],
+  postsHasNext = false,
   onDeletePost,
   onUpdatePost,
   onNavigate,
   isLoading = false,
   apiError = '',
 }) {
-  const postItems = Array.isArray(posts) ? posts : [];
+  const more = useMorePosts({ posts, hasNext: postsHasNext, query: { mine: true } });
+  const postItems = Array.isArray(more.posts) ? more.posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/neighbor';
   const menuItems = [
@@ -41,12 +45,13 @@ function NeighborMyPostsPage({
           ))
         ) : isEmpty ? (
           <EmptyState
-            title="작성한 게시물이 없어요"
+            title="첫 게시물을 작성해보세요"
             description="새 게시물을 작성하면 이곳에서 확인할 수 있어요."
             actionLabel="게시물 만들기"
             onAction={() => onNavigate?.('/neighbor/create')}
           />
         ) : null}
+        <LoadMoreTrigger hasNext={more.hasNext} isLoading={more.isLoadingMore} onLoad={more.loadMore} />
       </div>
     </Layout>
   );

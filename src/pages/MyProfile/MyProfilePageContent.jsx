@@ -1,3 +1,4 @@
+import { ProfileContentSkeleton } from '../../components/common/PageSkeleton/PageSkeleton';
 import './MyProfilePageContent.css';
 import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
@@ -5,11 +6,14 @@ import MyProfileEditButtons from '../../components/myProfile/MyProfileEditButton
 import PageTabNavigation from '../../components/common/PageTabNavigation/PageTabNavigation';
 import MyPostCard from '../../components/neighbor/MyPostCard/MyPostCard';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import LoadMoreTrigger from '../../components/common/LoadMoreTrigger/LoadMoreTrigger';
+import useMorePosts from '../../hooks/useMorePosts';
 
 /** 사용자 프로필 화면을 표시합니다. */
 function MyProfilePageContent({
   profile = {},
   posts = [],
+  postsHasNext = false,
   onDeletePost,
   onUpdatePost,
   onProfileUpdate,
@@ -17,7 +21,8 @@ function MyProfilePageContent({
   isLoading = false,
   apiError = '',
 }) {
-  const postItems = Array.isArray(posts) ? posts : [];
+  const more = useMorePosts({ posts, hasNext: postsHasNext, query: { mine: true } });
+  const postItems = Array.isArray(more.posts) ? more.posts : [];
   const isEmpty = postItems.length === 0 && !isLoading && !apiError;
   const menuItems = [
     { label: '내 게시물', href: '/myProfile', isActive: true },
@@ -43,12 +48,15 @@ function MyProfilePageContent({
             ))
           ) : isEmpty ? (
             <EmptyState
-              title="작성한 게시물이 없어요"
+              title="첫 게시물을 작성해보세요"
               description="새 게시물을 작성하면 내 프로필에 표시돼요."
               actionLabel="게시물 만들기"
               onAction={() => onNavigate?.('/neighbor/create')}
             />
+          ) : isLoading ? (
+            <ProfileContentSkeleton />
           ) : null}
+          <LoadMoreTrigger hasNext={more.hasNext} isLoading={more.isLoadingMore} onLoad={more.loadMore} />
         </div>
       </div>
     </Layout>

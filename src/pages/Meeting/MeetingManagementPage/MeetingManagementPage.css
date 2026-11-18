@@ -71,41 +71,8 @@
     padding: 0 16px;
   }
 
-  .meeting-management-form,
-  .meeting-management-invite {
+  .meeting-management-form {
     padding: 0 16px;
   }
-}
 
-.meeting-management-invite {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-.meeting-management-invite__button {
-  align-self: flex-start;
-  padding: 10px 18px;
-  border: 1px solid #42b66b;
-  border-radius: 10px;
-  background-color: #fff;
-  color: #42b66b;
-  font-size: var(--font-size-small);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.meeting-management-invite__result {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  border: 1px solid #e3e3e3;
-  border-radius: 12px;
-  font-size: var(--font-size-small);
-}
-
-.meeting-management-invite__url {
-  word-break: break-all;
 }

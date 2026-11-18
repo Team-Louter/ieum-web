@@ -1,3 +1,4 @@
+import Skeleton from '../common/Skeleton/Skeleton';
 import EmptyState from '../common/EmptyState/EmptyState';
 
 /** 오늘의 복약 예정 및 완료 상태를 목록으로 표시합니다. */
@@ -35,9 +36,14 @@ function GuardianMedicationList({ medications, isLoading = false, apiError = '' 
           ))}
         </div>
       ) : isLoading ? (
-        <p className="guardian-medication-list__message" role="status">
-          복약 알림을 불러오는 중입니다.
-        </p>
+        <div className="guardian-medication-list__items" role="status" aria-busy="true" aria-label="복약 알림을 불러오는 중입니다.">
+          {[0, 1, 2].map((row) => (
+            <div key={row} className="guardian-medication-list__item">
+              <Skeleton text width="56px" height="18px" />
+              <Skeleton text width="55%" height="18px" />
+            </div>
+          ))}
+        </div>
       ) : apiError ? (
         <p
           className="guardian-medication-list__message guardian-medication-list__message--error"
@@ -48,7 +54,7 @@ function GuardianMedicationList({ medications, isLoading = false, apiError = '' 
       ) : (
         <EmptyState
           compact
-          title="오늘 복약 일정이 없어요"
+          title="복약 일정을 등록해보세요"
           description="복약 일정이 등록되면 이곳에서 확인할 수 있어요."
         />
       )}

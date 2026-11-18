@@ -1,3 +1,45 @@
 .setting-feature-page__item .setting-item__header h2 {
   color: #161616;
 }
+
+.setting-feature-page__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-feature-page__entry {
+  margin: 0 -12px;
+  border-bottom: 1px solid #e5e5e5;
+  color: #333;
+}
+
+.setting-feature-page__entry:last-child {
+  border-bottom: 0;
+}
+
+.setting-feature-page__entry summary {
+  padding: 15px 12px;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.setting-feature-page__entry small {
+  display: block;
+  margin: 8px 12px 0;
+  padding-bottom: 15px;
+  color: #777;
+}
+
+.setting-feature-page__entry p {
+  margin: -5px 12px 0;
+  color: #666;
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.setting-feature-page__entry p:last-child {
+  padding-bottom: 15px;
+}

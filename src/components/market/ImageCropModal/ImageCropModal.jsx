@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import './ImageCropModal.css';
 import closeIcon from '../../../assets/images/close.svg';
@@ -178,7 +179,7 @@ function ImageCropModal({ src, fileName = 'image', aspect = 1, onConfirm, onCanc
     );
   }
 
-  return (
+  return createPortal(
     <div
       className="image-crop-modal"
       role="presentation"
@@ -286,7 +287,8 @@ function ImageCropModal({ src, fileName = 'image', aspect = 1, onConfirm, onCanc
           </button>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

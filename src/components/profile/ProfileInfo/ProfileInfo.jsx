@@ -23,7 +23,10 @@ function ProfileInfo({ profile = {} }) {
         }}
       />
       <div className="profile-info__text">
-        <p>{nickname || id}</p>
+        <p>
+          <span>{nickname || id}</span>
+          {nickname && id && <small>@{id}</small>}
+        </p>
         <p>{introduction}</p>
         <div className="profile-info__stats">
           <p>게시물 {postCount}</p>

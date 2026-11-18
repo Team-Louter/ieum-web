@@ -1,3 +1,4 @@
+import { ProfileContentSkeleton } from '../../components/common/PageSkeleton/PageSkeleton';
 import { useState } from 'react';
 import './MyProfilePageFriend.css';
 import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInfo';
@@ -50,43 +51,48 @@ function MyProfilePageFriend({
         <MyProfileInfo profile={profile} />
         <MyProfileEditButtons profile={profile} onProfileUpdate={onProfileUpdate} />
         <PageTabNavigation ariaLabel="프로필 콘텐츠 메뉴" items={menuItems} />
-        <ul className={`my-profile-friend-list${isEmpty ? ' my-profile-friend-list--empty' : ''}`}>
-          {friendItems.length > 0 ? (
-            friendItems.map((friend, index) => (
-              <li key={friend.friendshipId ?? friend.id ?? index}>
-                <MeetingMyMemberProfile
-                  profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
-                  id={friend.nickname ?? friend.name ?? ''}
-                  role="회원"
-                  isMenuOpen={openFriendId === (friend.friendshipId ?? friend.id ?? index)}
-                  onToggle={() =>
-                    setOpenFriendId((openId) =>
-                      openId === (friend.friendshipId ?? friend.id ?? index)
-                        ? null
-                        : (friend.friendshipId ?? friend.id ?? index),
-                    )
-                  }
-                  actionItems={friend.friendshipId == null ? [] : ['친구 삭제']}
-                  dangerActionItems={['친구 삭제']}
-                  onAction={() => requestRemoveFriend(friend)}
-                  interactive={friend.friendshipId != null}
+        {isLoading && friendItems.length === 0 ? (
+          <ProfileContentSkeleton />
+        ) : (
+          <ul className={`my-profile-friend-list${isEmpty ? ' my-profile-friend-list--empty' : ''}`}>
+            {friendItems.length > 0 ? (
+              friendItems.map((friend, index) => (
+                <li key={friend.friendshipId ?? friend.id ?? index}>
+                  <MeetingMyMemberProfile
+                    profile_image={friend.profileImage ?? friend.profile_image ?? profileImage}
+                    id={friend.nickname ?? friend.name ?? ''}
+                    role="회원"
+                    isMenuOpen={openFriendId === (friend.friendshipId ?? friend.id ?? index)}
+                    onToggle={() =>
+                      setOpenFriendId((openId) =>
+                        openId === (friend.friendshipId ?? friend.id ?? index)
+                          ? null
+                          : (friend.friendshipId ?? friend.id ?? index),
+                      )
+                    }
+                    actionItems={friend.friendshipId == null ? [] : ['친구 삭제']}
+                    dangerActionItems={['친구 삭제']}
+                    onAction={() => requestRemoveFriend(friend)}
+                    interactive={friend.friendshipId != null}
+                  />
+                </li>
+              ))
+            ) : isEmpty ? (
+              <li className="my-profile-friend-list__empty">
+                <EmptyState
+                  title="친구를 추가해보세요"
+                  description="친구가 되면 채팅을 할 수 있고 위치도 볼 수 있어요."
+                  actionLabel="친구 찾아보기"
+                  onAction={() => onNavigate?.('/addfriend')}
                 />
               </li>
-            ))
-          ) : isEmpty ? (
-            <li className="my-profile-friend-list__empty">
-              <EmptyState
-                title="아직 친구가 없어요"
-                description="친구를 추가하면 이곳에서 확인할 수 있어요."
-                actionLabel="친구 찾아보기"
-                onAction={() => onNavigate?.('/addfriend')}
-              />
-            </li>
-          ) : null}
-        </ul>
+            ) : null}
+          </ul>
+        )}
       </div>
       {friendToRemove && (
         <ConfirmationModal
+          title="친구 삭제"
           message={`${friendToRemove.nickname ?? friendToRemove.name ?? '이 친구'}님을 친구 목록에서 삭제하시겠습니까?`}
           confirmLabel="삭제하기"
           onCancel={() => setFriendToRemove(null)}

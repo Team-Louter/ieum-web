@@ -53,11 +53,12 @@
 
 .meeting-my-card .meeting-card-info {
   justify-content: center;
-  gap: 6px;
+  gap: 14px;
 }
 
 .meeting-my-card .meeting-card-info > p {
   margin: 0;
+  line-height: 1.4;
 }
 
 .meeting-my-role {

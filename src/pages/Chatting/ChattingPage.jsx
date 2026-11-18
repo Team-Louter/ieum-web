@@ -405,10 +405,10 @@ function ChattingPage({
           ) : !apiError ? (
             <EmptyState
               compact
-              title={searchTerm.trim() ? '검색 결과가 없어요' : '대화할 친구가 없어요'}
+              title={searchTerm.trim() ? '다른 이름으로 검색해보세요' : '친구를 추가하고 대화해보세요'}
               description={
                 searchTerm.trim()
-                  ? '다른 이름으로 다시 검색해 보세요.'
+                  ? '입력한 이름과 맞는 친구를 찾지 못했어요.'
                   : '친구를 추가하면 이곳에서 대화를 시작할 수 있어요.'
               }
               actionLabel={!searchTerm.trim() ? '친구 추가하기' : undefined}
@@ -549,7 +549,7 @@ function ChattingPage({
               ) : !apiError ? (
                 <EmptyState
                   compact
-                  title="아직 대화가 없어요"
+                  title="첫 메시지를 보내보세요"
                   description="메시지를 보내 대화를 시작해 보세요."
                 />
               ) : null}
@@ -564,6 +564,7 @@ function ChattingPage({
             )}
             {activeMessageAction?.mode === 'delete' && (
               <ConfirmationModal
+                title="메시지 삭제"
                 message="이 메시지를 삭제할까요? 삭제한 메시지는 복구할 수 없습니다."
                 onCancel={() => setMessageAction(null)}
                 onConfirm={() => void applyMessageAction(activeMessageAction)}
@@ -591,7 +592,7 @@ function ChattingPage({
           <div className="chat-room-empty">
             {isContactsEmpty ? (
               <EmptyState
-                title="대화할 친구가 없어요"
+                title="친구를 추가하고 대화해보세요"
                 description="친구를 추가하면 이곳에서 대화를 시작할 수 있어요."
                 actionLabel="친구 추가하기"
                 onAction={() => onNavigate?.('/addfriend')}

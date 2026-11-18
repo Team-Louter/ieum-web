@@ -107,30 +107,36 @@
   background: #3a3e3c;
 }
 
-.settings-layout--dark .setting-dialog {
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog {
   border-color: #3d423f;
   background: #252927;
   color: #f1f1f1;
 }
 
-.settings-layout--dark .setting-dialog__header p,
-.settings-layout--dark .setting-dialog__note {
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__header p,
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__note {
   color: #c0c7c2;
 }
 
-.settings-layout--dark .setting-dialog__field,
-.settings-layout--dark .setting-dialog__button {
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__field,
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__button {
   color: #ededed;
 }
 
-.settings-layout--dark .setting-dialog__field input,
-.settings-layout--dark .setting-dialog__button {
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__field input {
   border-color: #454a47;
   background: #303532;
 }
 
-.settings-layout--dark .setting-dialog__button--primary {
-  border-color: #42b66b;
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__button {
+  background: #303532;
+}
+
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__close {
+  color: #ededed;
+}
+
+:is(.settings-layout--dark, .setting-dialog-backdrop--dark) .setting-dialog__button--primary {
   background: #42b66b;
   color: white;
 }

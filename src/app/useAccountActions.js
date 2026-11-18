@@ -9,6 +9,7 @@ import {
   userApi,
 } from '../api/client';
 import { settingApiFields } from './constants';
+import { takePostLoginPath } from '../utils/postLoginRedirect';
 
 // 로그인, 가입, 프로필, 계정 설정처럼 계정과 관련된 동작을 모아둡니다.
 export default function useAccountActions({
@@ -27,7 +28,7 @@ export default function useAccountActions({
     setFeedback('로그인했습니다.');
     setFeedbackIsError(false);
     setReloadKey((value) => value + 1);
-    movePage('/neighbor');
+    movePage(takePostLoginPath() ?? '/neighbor');
   }
 
   async function signup({ loginId, nickname, email, password, address, role, verificationToken }) {
@@ -40,7 +41,7 @@ export default function useAccountActions({
 
     setFeedback('회원가입이 완료되었습니다. 어르신 계정에서 보호자를 연결할 수 있습니다.');
     setFeedbackIsError(false);
-    movePage('/neighbor');
+    movePage(takePostLoginPath() ?? '/neighbor');
   }
 
   // 어르신 계정은 POST /api/connect 로 보호자 이메일만 보내 보호자를 바로 연결합니다.
@@ -88,6 +89,8 @@ export default function useAccountActions({
         {
           nickname: updatedProfile.nickname ?? updatedProfile.id ?? user.loginId,
           bio: updatedProfile.bio ?? updatedProfile.introduction ?? '',
+          // 기본 사진으로 되돌릴 때는 사진 주소를 비워서 보냅니다. (서버 지원 여부 확인 필요)
+          ...(updatedProfile.resetProfileImage && !profileImage ? { profileImageUrl: '' } : {}),
         },
         profileImage,
       );

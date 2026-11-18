@@ -8,6 +8,8 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
   const previewUrlRef = useRef('');
   const [previewImage, setPreviewImage] = useState('');
   const [croppedImage, setCroppedImage] = useState(null);
+  // 기본 프로필 사진으로 되돌리기로 선택했는지 여부입니다.
+  const [resetImage, setResetImage] = useState(false);
   const { cropImage, cropModal } = useImageCrop({ aspect: 1 });
 
   useEffect(
@@ -30,6 +32,16 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
     previewUrlRef.current = URL.createObjectURL(cropped);
     setPreviewImage(previewUrlRef.current);
     setCroppedImage(cropped);
+    setResetImage(false);
+  }
+
+  /** 지금 사진 대신 기본 프로필 사진을 쓰도록 고릅니다. 저장해야 실제로 바뀝니다. */
+  function handleResetImage() {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = '';
+    setPreviewImage('');
+    setCroppedImage(null);
+    setResetImage(true);
   }
 
   function handleSubmit(event) {
@@ -39,6 +51,7 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
       nickname: formData.get('nickname'),
       introduction: formData.get('introduction'),
       profileImage: croppedImage ?? undefined,
+      resetProfileImage: resetImage && !croppedImage,
       profileImageUrl:
         profile.profileImageUrl ?? profile.profileImage ?? profile.profile_image ?? '',
     });
@@ -56,11 +69,13 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
           <div id="profile-image-input-container">
             <img
               src={
-                previewImage ||
-                profile.profileImage ||
-                profile.profile_image ||
-                profile.profileImageUrl ||
-                profileImg
+                resetImage
+                  ? profileImg
+                  : previewImage ||
+                    profile.profileImage ||
+                    profile.profile_image ||
+                    profile.profileImageUrl ||
+                    profileImg
               }
               alt="프로필 사진"
               onError={(event) => {
@@ -78,6 +93,11 @@ function MyProfileEditModal({ profile = {}, onCancel, onConfirm, errorMessage = 
               id="profile-image-input"
               onChange={handleProfileImageChange}
             />
+            {!resetImage && (previewImage || profile.profileImage || profile.profile_image || profile.profileImageUrl) && (
+              <button type="button" id="profile-image-reset-button" onClick={handleResetImage}>
+                기본 이미지로 변경
+              </button>
+            )}
           </div>
           <div>
             <div id="id-input-container">

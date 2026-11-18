@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { formatRelativeTime } from '../../../utils/dateTime';
 import './PostCard.css';
 import LikeButton from '../LikeButton/LikeButton';
 import CommentButton from '../CommentButton/CommentButton';
@@ -24,6 +25,14 @@ function PostCard({
   const [imageIndex, setImageIndex] = useState(0);
   const currentIndex = Math.min(imageIndex, Math.max(images.length - 1, 0));
   const image = images[currentIndex];
+
+  // 다음 사진을 미리 받아 두어 넘길 때 늦게 뜨지 않게 합니다.
+  useEffect(() => {
+    const next = images[currentIndex + 1];
+    if (!next) return;
+    const preload = new Image();
+    preload.src = next;
+  }, [images, currentIndex]);
 
   return (
     <div className="content-container">
@@ -53,22 +62,26 @@ function PostCard({
           <img loading="lazy" decoding="async" src={image} className="content-video" alt={post.title ?? '게시물 이미지'} />
           {images.length > 1 && (
             <>
-              <button
-                type="button"
-                className="content-media__nav content-media__nav--prev"
-                onClick={() => setImageIndex((index) => (index - 1 + images.length) % images.length)}
-                aria-label="이전 사진"
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                className="content-media__nav content-media__nav--next"
-                onClick={() => setImageIndex((index) => (index + 1) % images.length)}
-                aria-label="다음 사진"
-              >
-                ›
-              </button>
+              {currentIndex > 0 && (
+                <button
+                  type="button"
+                  className="content-media__nav content-media__nav--prev"
+                  onClick={() => setImageIndex(currentIndex - 1)}
+                  aria-label="이전 사진"
+                >
+                  ‹
+                </button>
+              )}
+              {currentIndex < images.length - 1 && (
+                <button
+                  type="button"
+                  className="content-media__nav content-media__nav--next"
+                  onClick={() => setImageIndex(currentIndex + 1)}
+                  aria-label="다음 사진"
+                >
+                  ›
+                </button>
+              )}
               <p className="content-media__count" aria-live="polite">
                 {currentIndex + 1} / {images.length}
               </p>
@@ -99,6 +112,9 @@ function PostCard({
       <div className="content-info-p">
         <p>{post.title ?? ''}</p>
         <p>{post.content ?? ''}</p>
+        {post.createdAt && (
+          <p className="content-info-p__time">{formatRelativeTime(post.createdAt)}</p>
+        )}
       </div>
     </div>
   );

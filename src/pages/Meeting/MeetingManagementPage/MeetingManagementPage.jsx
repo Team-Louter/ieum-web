@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import MeetingInputBox from '../../../components/meeting/MeetingMake/MeetingInputBox';
 import MeetingMakeOption from '../../../components/meeting/MeetingMake/MeetingMakeOption';
 import MeetingMyMemberList from '../../../components/meeting/MeetingMy/MeetingMyMemberList';
+import { splitMembers } from '../../../utils/meetingRequests';
+import { getMemberRole } from '../../../utils/meetingRoles';
 import Button from '../../../components/common/Button/Button';
 import PageTabNavigation from '../../../components/common/PageTabNavigation/PageTabNavigation';
 import './MeetingManagementPage.css';
@@ -26,20 +28,17 @@ export default function MeetingManagementPage({
   currentUserId,
   onSubmit,
   onMemberAction,
-  onInviteCreate,
   isLoading = false,
   apiError = '',
 }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
-    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') },
+    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') || currentPath.startsWith('/meeting/management') },
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
   const [meetingValues, setMeetingValues] = useState(() => getMeetingFormValues(meeting));
   const [submitError, setSubmitError] = useState('');
-  const [invite, setInvite] = useState(null);
-  const [inviteMessage, setInviteMessage] = useState('');
   const canManage =
     membership?.canManage ??
     meeting.canManage ??
@@ -48,28 +47,19 @@ export default function MeetingManagementPage({
         (currentLoginId && meeting.owner === currentLoginId),
     );
 
-  const isOwner = String(membership?.role ?? '').toUpperCase() === 'OWNER';
+  // 모임장 여부: 서버가 알려 준 등급, 모임장 번호, 모임장 아이디 중 하나라도 맞으면 모임장입니다.
+  const isOwner =
+    ['OWNER', 'ROLE_OWNER'].includes(String(membership?.role ?? meeting.role ?? '').toUpperCase()) ||
+    (currentUserId != null && String(meeting.ownerId) === String(currentUserId)) ||
+    Boolean(currentLoginId && meeting.owner === currentLoginId);
 
-  // 초대 링크 만들기 (임시 화면): 코드와 링크, 만료 시각을 보여주고 복사할 수 있게 합니다.
-  async function handleInviteCreate() {
-    setInviteMessage('');
-    try {
-      const created = await onInviteCreate?.();
-      setInvite(created ?? null);
-    } catch (error) {
-      setInviteMessage(error?.message ?? '초대 링크를 만들지 못했습니다.');
-    }
-  }
-
-  async function handleInviteCopy() {
-    const text = invite?.url ?? invite?.code ?? '';
-    try {
-      await navigator.clipboard.writeText(text);
-      setInviteMessage('복사했습니다.');
-    } catch {
-      setInviteMessage('복사하지 못했습니다. 직접 선택해서 복사해 주세요.');
-    }
-  }
+  // 승인을 기다리는 사람은 내 모임의 더보기에서 보고, 회원 목록에는 가입을 마친 사람만 보여줍니다.
+  const { joinedMembers } = splitMembers(members);
+  // 관리하기 화면에는 모임장과 관리자만 보여줍니다. 일반 회원은 '내 모임'의 회원 더보기에서 봅니다.
+  const staffMembers = joinedMembers.filter(
+    (member) =>
+      getMemberRole(member, { ownerId: meeting.ownerId, ownerLoginId: meeting.owner }) !== 'MEMBER',
+  );
 
   useEffect(() => {
     setMeetingValues(getMeetingFormValues(meeting));
@@ -128,32 +118,15 @@ export default function MeetingManagementPage({
         </form>
 
         <div className="meeting-management-divider" />
-        {canManage && (
-          <section className="meeting-management-invite" aria-label="모임 초대">
-            <button type="button" className="meeting-management-invite__button" onClick={handleInviteCreate}>
-              초대 링크 만들기
-            </button>
-            {invite && (
-              <div className="meeting-management-invite__result">
-                <p>초대 코드: <strong>{invite.code}</strong></p>
-                {invite.url && <p className="meeting-management-invite__url">{invite.url}</p>}
-                {invite.expiresAt && (
-                  <p>유효 기간: {new Date(invite.expiresAt).toLocaleString('ko-KR')}까지 (7일)</p>
-                )}
-                <button type="button" className="meeting-management-invite__button" onClick={handleInviteCopy}>
-                  복사하기
-                </button>
-              </div>
-            )}
-            {inviteMessage && <p role="status">{inviteMessage}</p>}
-          </section>
-        )}
         <section className="meeting-management-members">
           <MeetingMyMemberList
-            members={members}
+            members={staffMembers}
+            title="모임장·관리자"
             meetingId={meeting.id}
             canManage={Boolean(canManage)}
             isOwner={isOwner}
+            ownerId={meeting.ownerId}
+            ownerLoginId={meeting.owner}
             currentUserId={currentUserId}
             onMemberAction={onMemberAction}
             isLoading={isLoading}

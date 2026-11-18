@@ -1,7 +1,9 @@
+import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import './MeetingMyAnnouncement.css';
 import profileImage from '../../../assets/images/profile.png';
 import { useNavigate } from 'react-router-dom';
+import Skeleton from '../../common/Skeleton/Skeleton';
 import EmptyState from '../../common/EmptyState/EmptyState';
 import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 
@@ -117,16 +119,24 @@ export default function MeetingMyAnnouncement({
             <p className="announcement-card-info">{latestNotice.content ?? ''}</p>
           </div>
         </div>
-      ) : !isLoading && !apiError ? (
+      ) : isLoading && !apiError ? (
+        // 공지를 불러오는 동안 빈 칸 대신 같은 크기의 스켈레톤을 보여줍니다.
+        <Skeleton
+          className="Announcement-card--loading"
+          width="min(48.61vw, 700px)"
+          height={200}
+          style={{ borderRadius: 10, marginTop: 20, maxWidth: '100%' }}
+        />
+      ) : !apiError ? (
         <EmptyState
           compact
           className="Announcement-card--empty"
-          title="등록된 공지사항이 없어요"
+          title="첫 공지사항을 올려보세요"
           description="새 공지사항을 올리면 이곳에서 확인할 수 있어요."
         />
       ) : null}
 
-      {isListOpen && (
+      {isListOpen && createPortal(
         <div className="announcement-dialog-backdrop" onMouseDown={() => setIsListOpen(false)}>
           <section
             className="announcement-dialog"
@@ -204,17 +214,19 @@ export default function MeetingMyAnnouncement({
               ) : !isLoading && !apiError ? (
                 <EmptyState
                   compact
-                  title="등록된 공지사항이 없어요"
+                  title="첫 공지사항을 올려보세요"
                   description="새 공지사항을 올리면 이곳에서 확인할 수 있어요."
                 />
               ) : null}
             </div>
           </section>
-        </div>
+        </div>,
+        document.body,
       )}
       {noticeToDelete && (
         <ConfirmationModal
-          message="이 공지사항을 삭제하시겠습니까?"
+          title="공지사항 삭제"
+          message="정말로 이 공지사항을 삭제하시겠습니까?"
           onCancel={() => setNoticeToDelete(null)}
           onConfirm={() => removeNotice(noticeToDelete)}
         />
