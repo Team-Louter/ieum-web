@@ -6,6 +6,7 @@ import EmptyState from '../../../components/common/EmptyState/EmptyState';
 import { profileApi, supportApi } from '../../../api/client';
 import { formatKoreanDateTime } from '../../../utils/dateTime';
 import './SettingSupportPage.css';
+import Button from '../../../components/common/Button/Button';
 
 const INQUIRY_CATEGORIES = ['계정', '복약', '보호자 연결', '친구·모임', '오류 신고', '기타'];
 const statusLabels = { RECEIVED: '접수 완료', ANSWERED: '답변 완료' };
@@ -258,13 +259,14 @@ function SettingSupportPage({ accountEmail = '' }) {
             </label>
             {formMessage && <p role="alert">{formMessage}</p>}
             <div className="setting-dialog__actions">
-              <button
+              <Button
                 type="submit"
                 className="setting-dialog__button setting-dialog__button--primary"
-                disabled={busy}
+                loading={busy}
+                loadingText="문의 접수 중"
               >
-                {busy ? '접수 중' : '문의 접수'}
-              </button>
+                문의 접수
+              </Button>
               <button
                 type="button"
                 className="setting-dialog__button"

@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
+import Button from '../../common/Button/Button';
 import './ImageCropModal.css';
 import closeIcon from '../../../assets/images/close.svg';
 
@@ -277,14 +278,15 @@ function ImageCropModal({ src, fileName = 'image', aspect = 1, onConfirm, onCanc
           <button type="button" onClick={onCancel} disabled={isSaving}>
             취소하기
           </button>
-          <button
+          <Button
             type="button"
             className="image-crop-modal__confirm"
             onClick={handleConfirm}
-            disabled={!natural || isSaving}
+            disabled={!natural}
+            loading={isSaving}
           >
-            {isSaving ? '처리 중' : '적용하기'}
-          </button>
+            적용하기
+          </Button>
         </div>
       </section>
     </div>,

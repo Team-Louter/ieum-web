@@ -221,22 +221,22 @@ function SettingGuardianPage({
                   <li key={connection.connectionId ?? connection.id ?? index}>
                     <span>{connection.name ?? connection.nickname ?? '어르신 계정'}</span>
                     <div className="setting-guardian-manager__pending-actions">
-                      <button
+                      <Button
                         type="button"
                         className="setting-dialog__button setting-dialog__button--primary"
                         onClick={() => handlePendingConnection(connection, 'accept')}
                         disabled={isBusy}
                       >
                         수락
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         className="setting-dialog__button setting-guardian-manager__reject"
                         onClick={() => handlePendingConnection(connection, 'reject')}
                         disabled={isBusy}
                       >
                         거절
-                      </button>
+                      </Button>
                     </div>
                   </li>
                 ))}
@@ -306,13 +306,15 @@ function SettingGuardianPage({
                 </p>
               )}
               <div className="setting-dialog__actions setting-guardian-manager__actions">
-                <button
+                <Button
                   className="setting-dialog__button setting-dialog__button--primary"
                   type="submit"
                   disabled={isBusy || !accountIdentifier.trim()}
+                  loading={isBusy}
+                  loadingText="요청 중…"
                 >
-                  {isBusy ? '요청 중…' : '어르신 연결 요청'}
-                </button>
+                  어르신 연결 요청
+                </Button>
                 <button
                   className="setting-dialog__button"
                   type="button"

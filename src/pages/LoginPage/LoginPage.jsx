@@ -5,6 +5,7 @@ import Button from '../../components/common/Button/Button';
 import ieumLogo from '../../assets/images/IeumLogo.svg';
 import PasswordField from '../../components/auth/PasswordField';
 import IDsearch from '../../components/auth/IDsearch';
+import useSubmitOnce from '../../hooks/useSubmitOnce';
 
 function LoginPage({ onNavigate = () => {}, onLogin }) {
     const [id, setId] = useState('');
@@ -12,7 +13,6 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
     const [showError, setShowError] = useState(false);
     const [isCapsLockOn, setIsCapsLockOn] = useState(false);
     const [errorMessage, setErrorMessage] = useState('아이디 또는 비밀번호가 맞지 않습니다.');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [findType, setFindType] = useState(null);
 
     function handleIdChange(e) {
@@ -29,17 +29,16 @@ function LoginPage({ onNavigate = () => {}, onLogin }) {
         setIsCapsLockOn(e.getModifierState('CapsLock'));
     }
 
-    async function handleSubmit(e) {
+    const [handleSubmit, isSubmitting] = useSubmitOnce(submitLogin);
+
+    async function submitLogin(e) {
         e.preventDefault();
-        setIsSubmitting(true);
         try {
             await onLogin?.({ loginId: id, password: pw });
             setShowError(false);
         } catch (error) {
             setErrorMessage(error?.message ?? '로그인에 실패했습니다.');
             setShowError(true);
-        } finally {
-            setIsSubmitting(false);
         }
     }
 

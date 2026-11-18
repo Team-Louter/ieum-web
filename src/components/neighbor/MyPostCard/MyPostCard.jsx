@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import './MyPostCard.css';
 import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
 import CardMoreMenu from '../../common/CardMoreMenu/CardMoreMenu';
+import Button from '../../common/Button/Button';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 const MAX_IMAGES = 5;
 
@@ -82,7 +84,9 @@ function MyPostCard({ post = {}, onDelete, onUpdate }) {
     setEditError('');
   }
 
-  async function handleEditSubmit(event) {
+  const [handleEditSubmit, isSaving] = useSubmitOnce(submitEdit);
+
+  async function submitEdit(event) {
     event.preventDefault();
     const originalCount = getExistingImages(post).length;
     const imagesChanged = newImages.length > 0 || keptImages.length !== originalCount;
@@ -204,7 +208,7 @@ function MyPostCard({ post = {}, onDelete, onUpdate }) {
             />
             {editError && <p role="alert">{editError}</p>}
             <div className="my-content-edit__actions">
-              <button type="submit">저장</button>
+              <Button type="submit" loading={isSaving} loadingText="저장 중">저장</Button>
               <button type="button" onClick={closeEditor}>
                 취소
               </button>
