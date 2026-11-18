@@ -188,13 +188,7 @@
   background-color: #e6f7eb;
 }
 
-.chat-message-pressable:focus-visible {
-  outline: 2px solid #246444;
-  outline-offset: 2px;
-}
-
-@media (pointer: coarse) {
-  .chat-message-pressable .chat-message-content {
+.chat-message-content {
     -webkit-touch-callout: none;
     user-select: none;
   }
@@ -241,43 +235,28 @@
   opacity: 0.55;
 }
 
-.message.message--options-open {
-  margin-bottom: 6px;
-}
-
-.chat-message-options {
+/* 내 메시지 왼쪽의 ⋯ 더보기(수정·삭제) */
+.chat-message-row {
   display: flex;
-  flex: none;
-  flex-direction: column;
+  align-items: center;
   align-self: flex-end;
-  width: min(160px, 100%);
-  margin-bottom: 14px;
-  padding: 4px;
-  border: 1px solid #e4e7e5;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 4px 18px rgb(0 0 0 / 12%);
+  gap: 6px;
+  max-width: 100%;
+  margin-bottom: 24px;
 }
 
-.chat-message-options button {
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #252a27;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
+.chat-message-row > .message {
+  margin-bottom: 0;
 }
 
-.chat-message-options button:hover,
-.chat-message-options button:focus-visible {
-  background: #f1f4f2;
+.chat-message-row .card-more-menu__trigger {
+  width: 30px;
+  height: 30px;
 }
 
-.chat-message-options .chat-message-options__delete {
-  color: #a82830;
+.chat-message-row .card-more-menu__list {
+  right: auto;
+  left: 0;
 }
 
 .chat-message-actions .chat-message-save {
