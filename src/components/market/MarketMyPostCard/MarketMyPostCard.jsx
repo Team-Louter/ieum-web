@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './MarketMyPostCard.css';
 import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
+import CardMoreMenu from '../../common/CardMoreMenu/CardMoreMenu';
 import MarketPostStatus from '../MarketPostStatus/MarketPostStatus';
 
 function MarketMyPostCard({
@@ -30,20 +31,19 @@ function MarketMyPostCard({
         <p>{title}</p>
         <p>{price}</p>
         <p>{address}</p>
-      </div>
-      <div className="market-my-post-card__button-container">
-        <button type="button" disabled={isComplete} onClick={() => onMarkSold?.(post.id)}>
-          {isComplete ? '거래완료' : '거래완료 처리'}
-        </button>
-        <button type="button" onClick={() => onEdit?.(post)}>
-          수정하기
-        </button>
-        <button type="button" onClick={() => setIsDeleteConfirmOpen(true)}>
-          삭제하기
-        </button>
+        <CardMoreMenu
+          label="게시물 메뉴"
+          items={[
+            { label: isComplete ? '거래완료' : '거래완료 처리', onClick: () => onMarkSold?.(post.id), disabled: isComplete },
+            { label: '수정하기', onClick: () => onEdit?.(post) },
+            { label: '삭제하기', onClick: () => setIsDeleteConfirmOpen(true), danger: true },
+          ]}
+        />
       </div>
       {isDeleteConfirmOpen && (
         <ConfirmationModal
+          title="게시물 삭제"
+          message="정말로 게시물을 삭제하시겠습니까?"
           onCancel={() => setIsDeleteConfirmOpen(false)}
           onConfirm={() => {
             setIsDeleteConfirmOpen(false);

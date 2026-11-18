@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import profilePlaceholder from '../../../assets/images/profile.png';
 import EmptyState from '../../common/EmptyState/EmptyState';
@@ -38,7 +39,7 @@ function FriendRequestsModal({
     if (event.target === event.currentTarget && processingId == null) onClose?.();
   }
 
-  return (
+  return createPortal(
     <div className="friend-requests-modal" onMouseDown={handleBackdropClick} role="presentation">
       <section
         className="friend-requests-modal__panel"
@@ -58,7 +59,9 @@ function FriendRequestsModal({
             aria-label="친구 신청 창 닫기"
             disabled={processingId != null}
           >
-            ×
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <path d="M5 5l14 14M19 5L5 19" />
+            </svg>
           </button>
         </header>
 
@@ -131,12 +134,13 @@ function FriendRequestsModal({
           <EmptyState
             compact
             className="friend-requests-modal__empty"
-            title="새로운 친구 신청이 없어요"
+            title="친구 신청이 오면 여기에 표시돼요"
             description="친구 신청을 받으면 이곳에서 확인할 수 있어요."
           />
         ) : null}
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

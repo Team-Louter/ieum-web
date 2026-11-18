@@ -1,25 +1,23 @@
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.08);
-}
-
 .modal-box {
-    width: min(48.61vw, 700px);
-    min-height: 340px;
-    max-width: 100%;
-    padding: 32px 50px;
-    display: flex;
+    width: min(600px, calc(100% - 32px));
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 24px clamp(16px, 5vw, 40px);
+    overflow-y: auto;
+    border: 0;
     flex-direction: column;
     align-items: center;
     border-radius: 10px;
     background: #ffffff;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.modal-box[open] {
+    display: flex;
+}
+
+.modal-box::backdrop {
+    background: rgb(0 0 0 / 30%);
 }
 
 .modal-box h2 {
@@ -30,9 +28,9 @@
     color: #000000;
 }
 
-.modal-box form,
+.login-page .modal-box .recovery-form,
 .modal-result {
-    width: min(41.67vw, 600px);
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,12 +69,13 @@
 .modal-email-row {
     display: flex;
     align-items: center;
-    gap: 25px;
-    width: min(41.67vw, 600px);
+    gap: clamp(8px, 2vw, 16px);
+    width: 100%;
 }
 
 .modal-email-row input {
-    width: min(31.25vw, 450px);
+    flex: 1;
+    min-width: 0;
     height: 60px;
     padding: 0 16px;
     border: 2px solid #dedede;
@@ -90,7 +89,9 @@
 }
 
 .modal-check-btn {
-    width: 125px;
+    min-width: 0;
+    padding-inline: clamp(8px, 2vw, 20px);
+    white-space: nowrap;
     height: 60px;
     flex-shrink: 0;
     border: none;
@@ -103,7 +104,7 @@
 }
 
 .modal-login-btn {
-    width: min(41.67vw, 600px);
+    width: 100%;
     height: 60px;
     margin-top: 0;
     border: none;

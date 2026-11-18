@@ -61,7 +61,7 @@
 .neighbor-post-create-form__text-fields {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 37px;
 }

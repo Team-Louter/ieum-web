@@ -30,6 +30,11 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
     [],
   );
 
+  // 입력을 시작하면 그 칸의 오류 문구를 바로 지웁니다.
+  function clearError(field) {
+    setErrors((currentErrors) => (currentErrors[field] ? { ...currentErrors, [field]: '' } : currentErrors));
+  }
+
   function setMediaError(message) {
     setErrors((currentErrors) => ({ ...currentErrors, media: message }));
   }
@@ -197,7 +202,10 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
               type="text"
               placeholder="제목을 입력해주세요."
               value={title}
-              onChange={(event) => setTitle(event.target.value)}
+              onChange={(event) => {
+                setTitle(event.target.value);
+                clearError('title');
+              }}
             />
             <p
               className="neighbor-post-create-form__error"
@@ -210,7 +218,10 @@ function PostCreateForm({ initialValues = {}, onSubmit }) {
             <textarea
               placeholder="내용을 입력해주세요."
               value={content}
-              onChange={(event) => setContent(event.target.value)}
+              onChange={(event) => {
+                setContent(event.target.value);
+                clearError('content');
+              }}
             />
             <p
               className="neighbor-post-create-form__error"

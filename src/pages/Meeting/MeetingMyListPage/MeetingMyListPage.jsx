@@ -35,7 +35,7 @@ export default function MeetingMyListPage({
           ))
         ) : isEmpty ? (
           <EmptyState
-            title="참여 중인 모임이 없어요"
+            title="모임에 참여해보세요"
             description="직접 만든 모임과 가입한 모임, 승인 대기 중인 모임이 여기에 표시돼요."
             actionLabel="모임 목록 보기"
             onAction={() => onNavigate?.('/meeting')}

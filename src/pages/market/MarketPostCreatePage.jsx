@@ -18,8 +18,9 @@ function MarketPostCreatePage({ initialValues, onSubmit }) {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/market';
   const menuItems = [
     { label: '게시물 보기', href: '/market', isActive: currentPath === '/market' },
-    { label: '내 게시물', href: '/market/my', isActive: currentPath === '/market/my' },
-    { label: '게시물 만들기', href: '/market/create', isActive: currentPath === '/market/create' },
+    // 게시물을 수정하는 중에는 '내 게시물' 탭이 켜져 있어야 합니다.
+    { label: '내 게시물', href: '/market/my', isActive: currentPath === '/market/my' || Boolean(editPost) },
+    { label: '게시물 만들기', href: '/market/create', isActive: currentPath === '/market/create' && !editPost },
   ];
 
   return (

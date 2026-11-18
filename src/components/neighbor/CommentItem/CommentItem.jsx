@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import './CommentItem.css';
+import ConfirmationModal from '../../common/ConfirmationModal/ConfirmationModal';
+import { formatRelativeTime } from '../../../utils/dateTime';
 
 /** 작성자 정보와 댓글 내용을 표시합니다. 내 댓글이면 수정·삭제할 수 있습니다. */
-function CommentItem({ profileImg, profileId, comment, isMine = false, onUpdate, onDelete }) {
+function CommentItem({ profileImg, profileId, comment, createdAt, isMine = false, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [draft, setDraft] = useState(comment);
 
   async function handleSubmit(event) {
@@ -40,6 +43,9 @@ function CommentItem({ profileImg, profileId, comment, isMine = false, onUpdate,
       ) : (
         <p>{comment}</p>
       )}
+      {createdAt && !isEditing && (
+        <p className="comment__time">{formatRelativeTime(createdAt)}</p>
+      )}
       {isMine && !isEditing && (
         <div className="comment__actions">
           <button
@@ -51,10 +57,21 @@ function CommentItem({ profileImg, profileId, comment, isMine = false, onUpdate,
           >
             수정
           </button>
-          <button type="button" onClick={() => onDelete?.()}>
+          <button type="button" onClick={() => setIsDeleteOpen(true)}>
             삭제
           </button>
         </div>
+      )}
+      {isDeleteOpen && (
+        <ConfirmationModal
+          title="댓글 삭제"
+          message="정말로 댓글을 삭제하시겠습니까?"
+          onCancel={() => setIsDeleteOpen(false)}
+          onConfirm={() => {
+            setIsDeleteOpen(false);
+            onDelete?.();
+          }}
+        />
       )}
     </div>
   );

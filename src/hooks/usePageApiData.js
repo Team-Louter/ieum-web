@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCurrentUser } from '../api/client';
 import loadPageData, { loadChatMessages } from '../api/pageData';
 import { publicRoutes } from '../app/routes';
@@ -149,5 +149,18 @@ export default function usePageApiData({
     };
   }, [path, resourceKey, activeChatRoomId, accessToken, reloadKey, user.userId]);
 
-  return { data, error, loading, initialLoading, user };
+  // 화면 데이터 일부만 바꿉니다. 전체를 다시 불러오지 않고 응답으로 받은 값만 반영할 때 씁니다.
+  const patchData = useCallback(
+    (updater) => {
+      setSavedResource((current) => {
+        const base = current.key === resourceKey ? current.data : (readCache(resourceKey) ?? {});
+        const next = updater(base);
+        writeCache(resourceKey, path, next);
+        return { key: resourceKey, data: next };
+      });
+    },
+    [resourceKey, path],
+  );
+
+  return { data, error, loading, initialLoading, user, patchData };
 }

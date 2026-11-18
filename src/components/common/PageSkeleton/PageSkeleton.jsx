@@ -2,6 +2,7 @@ import SettingItem from '../../setting/SettingItem/SettingItem';
 import SettingSidebar from '../../setting/SettingSidebar/SettingSidebar';
 import '../../../pages/setting/SettingsPage/SettingsPage.css';
 import '../../../pages/AddFriend/AddFriendPage.css';
+import '../../friends/FriendRequestsModal/FriendRequestsModal.css';
 import '../../myProfile/MyProfileEditButtons/MyProfileEditButtons.css';
 import '../../myProfile/MyProfileInfo/MyProfileInfo.css';
 import '../../profile/ProfileInfo/ProfileInfo.css';
@@ -12,7 +13,6 @@ import backIcon from '../../../assets/images/arrow.svg';
 import Layout from '../Layout/Layout';
 import LikeButton from '../../neighbor/LikeButton/LikeButton';
 import CommentButton from '../../neighbor/CommentButton/CommentButton';
-import dotSetting from '../../../assets/dot_setting.svg';
 import '../../meeting/MeetingKebabMenu/MeetingKebabMenu.css';
 import mapIcon from '../../../assets/images/mapfriend.svg';
 import searchIcon from '../../../assets/images/search.svg';
@@ -35,6 +35,7 @@ import NotificationPageSkeleton from './NotificationSkeleton';
 import PageTabNavigation from '../PageTabNavigation/PageTabNavigation';
 import Skeleton from '../Skeleton/Skeleton';
 import './PageSkeleton.css';
+import '../CardMoreMenu/CardMoreMenu.css';
 
 // 데이터를 불러오는 경로마다 어떤 모양의 스켈레톤을 보여줄지 정합니다.
 const skeletonVariants = {
@@ -56,6 +57,8 @@ const skeletonVariants = {
   '/myProfile/meetings': 'profile',
   '/myProfile/friends': 'profile',
   '/addfriend': 'addFriend',
+  '/addfriend/friends': 'friendList',
+  '/addfriend/requests': 'friendRequests',
   '/chatting': 'chat',
   '/settings': 'settings',
   '/guardian': 'guardian',
@@ -72,6 +75,9 @@ const tabbedVariants = [
   'meetingDetail',
   'members',
   'form',
+  'addFriend',
+  'friendList',
+  'friendRequests',
 ];
 
 
@@ -89,7 +95,18 @@ function getFixedTabs(pathname) {
   if (pathname.startsWith('/market')) {
     return feedTabs('/market', ['게시물 보기', '내 게시물', '게시물 만들기'], '/market/create')(pathname);
   }
-  return feedTabs('/meeting', ['모임 보기', '내 모임', '모임 만들기'], '/meeting/make')(pathname);
+  if (pathname.startsWith('/addfriend')) {
+    return [
+      { label: '내 친구', href: '/addfriend/friends', isActive: pathname === '/addfriend/friends' },
+      { label: '친구 추가', href: '/addfriend', isActive: pathname === '/addfriend' },
+      { label: '친구 요청', href: '/addfriend/requests', isActive: pathname === '/addfriend/requests' },
+    ];
+  }
+  const meetingTabs = feedTabs('/meeting', ['모임 보기', '내 모임', '모임 만들기'], '/meeting/make')(pathname);
+  // 모임 관리 화면에서는 '내 모임' 탭이 켜져 있어야 합니다.
+  return meetingTabs.map((tab, index) =>
+    index === 1 ? { ...tab, isActive: tab.isActive || pathname.startsWith('/meeting/management') } : tab,
+  );
 }
 
 function getProfileTabs(pathname) {
@@ -145,6 +162,15 @@ function renderProfileContent(pathname) {
           style={{ aspectRatio: '270 / 373.5', height: 'auto', borderRadius: 10 }}
         />
       ))}
+    </div>
+  );
+}
+
+/** 프로필 탭을 옮길 때 내용 영역만 채우는 스켈레톤입니다. 주소 끝(/meetings, /friends)으로 모양을 고릅니다. */
+export function ProfileContentSkeleton() {
+  return (
+    <div role="status" aria-busy="true" aria-label="불러오는 중">
+      {renderProfileContent(window.location.pathname.replace(/\/$/, ''))}
     </div>
   );
 }
@@ -223,7 +249,7 @@ function GuardianSkeleton({ status }) {
 }
 
 /** 회원 목록(제목줄 29 + 220x82 프로필): 실제 MeetingMyMemberList와 같은 클래스를 씁니다. */
-function MemberListSkeleton() {
+function MemberListSkeleton({ showMore = true, count = 3 }) {
   return (
     <div className="member-list-container">
       <div>
@@ -231,13 +257,15 @@ function MemberListSkeleton() {
           <p className="member-title">
             <Skeleton text width={90} height={29} />
           </p>
-          <button className="member-more" type="button" disabled>
-            더보기
-          </button>
+          {showMore && (
+            <button className="member-more" type="button" disabled>
+              더보기
+            </button>
+          )}
         </div>
       </div>
       <div className="member-list">
-        {Array.from({ length: 3 }, (_, index) => (
+        {Array.from({ length: count }, (_, index) => (
           <div className="page-skeleton__person" key={index}>
             <Skeleton circle width={50} height={50} />
             <Skeleton text width={90} />
@@ -289,7 +317,7 @@ function renderVariant(variant) {
         </div>
       );
     case 'marketMy':
-      // 중고장터 내 게시물: 실제 #post-card-list / .market-my-post-card (사진, 정보 3줄, 버튼 3개)
+      // 중고장터 내 게시물: 실제 #post-card-list / .market-my-post-card (사진, 정보 3줄)
       return (
         <div id="post-card-list">
           {Array.from({ length: 3 }, (_, index) => (
@@ -301,17 +329,6 @@ function renderVariant(variant) {
                 <Skeleton text width="80%" height={24} />
                 <Skeleton text width="50%" height={24} />
                 <Skeleton text width="60%" height={24} />
-              </div>
-              <div className="market-my-post-card__button-container">
-                <button type="button" disabled>
-                  거래완료 처리
-                </button>
-                <button type="button" disabled>
-                  수정하기
-                </button>
-                <button type="button" disabled>
-                  삭제하기
-                </button>
               </div>
             </article>
           ))}
@@ -382,9 +399,15 @@ function renderVariant(variant) {
             </div>
             <div className="meeting-my-card__actions">
               <div className="meeting-card-dot-container">
-                <button className="meeting-card-dot-button" type="button" disabled>
-                  <img className="meeting-card-dot-setting" src={dotSetting} alt="" />
-                </button>
+                <div className="card-more-menu card-more-menu--inline">
+                  <button className="card-more-menu__trigger" type="button" disabled aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                      <circle cx="5" cy="12" r="2" />
+                      <circle cx="12" cy="12" r="2" />
+                      <circle cx="19" cy="12" r="2" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -401,7 +424,7 @@ function renderVariant(variant) {
       );
     case 'members':
       // 모임 회원 목록: 실제와 같은 제목줄 + 프로필 목록
-      return <MemberListSkeleton />;
+      return <MemberListSkeleton showMore={false} count={9} />;
     case 'addFriend':
       // 친구 추가: 검색줄(고정 요소, 실제 모양 그대로) 48 + 28 간격 + 프로필 목록 (폭 700)
       return (
@@ -413,23 +436,53 @@ function renderVariant(variant) {
                 검색
               </button>
             </div>
-            <button className="add-friend-requests-button" type="button" disabled>
-              받은 친구 신청
-              <span>
-                <Skeleton text width={10} />
-              </span>
-            </button>
           </div>
           {/* 페이지 안의 검색 로딩 스켈레톤과 같은 클래스·개수를 써서 중간에 모양이 바뀌지 않게 합니다. */}
           <div className="add-friend-list add-friend-list--loading">
             {Array.from({ length: 8 }, (_, index) => (
               <div className="add-friend-profile add-friend-profile--skeleton" key={index}>
                 <Skeleton circle width="50px" height="50px" />
-                <Skeleton text width="110px" height="18px" />
+                <div className="add-friend-profile__skeleton-text">
+                  <Skeleton text width="110px" height="18px" />
+                  <Skeleton text width="80px" height="14px" />
+                </div>
               </div>
             ))}
           </div>
         </>
+      );
+    case 'friendList':
+      // 내 친구: 친구 추가 목록과 같은 격자
+      return (
+        <div className="add-friend-list add-friend-list--loading">
+          {Array.from({ length: 6 }, (_, index) => (
+            <div className="add-friend-profile add-friend-profile--skeleton" key={index}>
+              <Skeleton circle width="50px" height="50px" />
+              <div className="add-friend-profile__skeleton-text">
+                <Skeleton text width="110px" height="18px" />
+                <Skeleton text width="80px" height="14px" />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    case 'friendRequests':
+      // 친구 요청: 프로필 + 이름 + 버튼 두 개 행
+      return (
+        <ul className="friend-requests-modal__list">
+          {Array.from({ length: 3 }, (_, index) => (
+            <li className="friend-requests-modal__item" key={index}>
+              <Skeleton circle width={48} height={48} style={{ flex: '0 0 48px' }} />
+              <div className="friend-requests-modal__person">
+                <Skeleton text width="45%" height={22} />
+              </div>
+              <div className="friend-requests-modal__actions">
+                <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+                <Skeleton width={64} height={36} style={{ borderRadius: 8 }} />
+              </div>
+            </li>
+          ))}
+        </ul>
       );
     case 'form':
       // 모임 관리: 실제 화면과 같은 클래스 (사진 300x300, 입력 650x60·60·170, 옵션 2줄, 저장 버튼 60, 구분선, 회원 목록)
@@ -477,7 +530,10 @@ function renderVariant(variant) {
           <div className="profile-info">
             <Skeleton circle width={136} height={136} />
             <div className="profile-info__text">
-              <Skeleton text width={160} height={38} />
+              <div className="profile-skeleton__name">
+                <Skeleton text width={160} height={38} />
+                <Skeleton text width={90} height={18} />
+              </div>
               <Skeleton text width={120} height={24} />
               <Skeleton text width={160} height={22} />
             </div>
@@ -507,7 +563,10 @@ function renderVariant(variant) {
           <div className="my-profile-info">
             <Skeleton circle width={136} height={136} />
             <div className="my-profile-info__text">
-              <Skeleton text width={160} height={38} />
+              <div className="profile-skeleton__name">
+                <Skeleton text width={160} height={38} />
+                <Skeleton text width={90} height={18} />
+              </div>
               <Skeleton text width={120} height={24} />
               <Skeleton text width={160} height={22} />
             </div>
@@ -594,6 +653,8 @@ const layoutClasses = {
   profile: 'profile-layout',
   userProfile: 'profile-layout',
   addFriend: 'add-friend-layout',
+  friendList: 'add-friend-layout',
+  friendRequests: 'add-friend-layout',
 };
 
 /** 페이지 데이터를 처음 불러오는 동안 실제 화면과 비슷한 모양의 회색 블록을 보여줍니다. */
@@ -649,7 +710,7 @@ function PageSkeleton({ variant, role }) {
         />
       )}
       <div
-        className={`page-skeleton page-skeleton--${variant}${variant === 'addFriend' ? ' add-friend-page' : ''}`}
+        className={`page-skeleton page-skeleton--${variant}${['addFriend', 'friendList', 'friendRequests'].includes(variant) ? ' add-friend-page' : ''}`}
         {...status}
       >
         {renderVariant(variant)}

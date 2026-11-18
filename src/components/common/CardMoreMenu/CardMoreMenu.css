@@ -1,0 +1,88 @@
+.card-more-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.card-more-menu__trigger {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgb(255 255 255 / 92%);
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.card-more-menu__trigger:hover,
+.card-more-menu__trigger[aria-expanded='true'] {
+  background-color: #fff;
+  color: #000;
+}
+
+.card-more-menu__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  display: flex;
+  min-width: 140px;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 8px;
+  border: 2px solid #e1e1e1;
+  border-radius: 12px;
+  background-color: #fff;
+  list-style: none;
+}
+
+.card-more-menu__list button {
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #222;
+  font-size: var(--font-size-small);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.card-more-menu__list button:not(:disabled):hover {
+  background-color: #f0f0f0;
+}
+
+.card-more-menu__list button:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.card-more-menu__list .card-more-menu__item--danger {
+  color: #c62424;
+}
+
+.card-more-menu__list .card-more-menu__item--danger:not(:disabled):hover {
+  background-color: #fdf1f0;
+}
+
+.card-more-menu--inline {
+  position: relative;
+  top: auto;
+  right: auto;
+  flex: 0 0 auto;
+}
+
+.card-more-menu--inline .card-more-menu__trigger {
+  background-color: #f0f0f0;
+}
+
+.card-more-menu--inline .card-more-menu__trigger:hover,
+.card-more-menu--inline .card-more-menu__trigger[aria-expanded='true'] {
+  background-color: #e6e6e6;
+}

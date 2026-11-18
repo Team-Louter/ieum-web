@@ -1,6 +1,6 @@
 #default-layout.add-friend-layout main {
   align-items: center;
-  padding-top: 48px;
+  padding-top: 123px;
 }
 
 .add-friend-page {
@@ -262,4 +262,23 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* 친구·요청이 없을 때 안내 문구를 화면 가운데에 둡니다. (고정 탭 75px, 위 여백 123px 기준) */
+.add-friend-page--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 123px - 75px);
+}
+
+.add-friend-page--empty > .empty-state {
+  width: 100%;
+}
+
+/* 닉네임 + 아이디 두 줄 스켈레톤 (실제 프로필 카드의 글자 묶음과 같은 간격) */
+.add-friend-profile__skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }

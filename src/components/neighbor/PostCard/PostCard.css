@@ -93,6 +93,14 @@
 
 .content-info-p p {
   font-size: var(--font-size-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.content-info-p .content-info-p__time {
+  color: #888;
+  font-size: var(--font-size-small);
+  font-weight: 400;
 }
 
 .content-info-p p:nth-child(1) {

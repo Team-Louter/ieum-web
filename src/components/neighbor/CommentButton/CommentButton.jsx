@@ -27,6 +27,7 @@ function CommentButton({
             profileImg={comment.profileImage ?? comment.profile_image ?? profileImg}
             profileId={comment.nickname ?? comment.author?.nickname ?? ''}
             comment={comment.content ?? comment.text ?? ''}
+            createdAt={comment.createdAt}
             isMine={Boolean(currentLoginId) && (comment.profileId ?? '') === currentLoginId && comment.id != null}
             onUpdate={(content) => onUpdateComment?.(comment, content)}
             onDelete={() => onDeleteComment?.(comment)}
@@ -35,7 +36,7 @@ function CommentButton({
       ) : !isLoading && !apiError ? (
         <EmptyState
           compact
-          title="아직 댓글이 없어요"
+          title="첫 댓글을 남겨보세요"
           description="첫 댓글을 남겨 대화를 시작해 보세요."
         />
       ) : null}
@@ -46,7 +47,7 @@ function CommentButton({
     <>
       <button type="button" onClick={onToggle} aria-expanded={isOpen}>
         <img src={commentImg} alt="댓글 아이콘" />
-        <p>댓글{commentItems.length > 0 ? ` ${commentItems.length}` : ''}</p>
+        <p>{commentItems.length}</p>
       </button>
       {commentModal}
     </>

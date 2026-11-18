@@ -170,9 +170,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
         />
         <div className="market-post-create-form__text-fields">
           <div className="market-post-create-form__field">
-            <label htmlFor="market-post-title">제목</label>
             <input
               id="market-post-title"
+              aria-label="제목"
               type="text"
               placeholder="예: 사용하지 않은 생활용품"
               value={title}
@@ -184,9 +184,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
             </p>
           </div>
           <div className="market-post-create-form__field">
-            <label htmlFor="market-post-price">가격</label>
             <input
               id="market-post-price"
+              aria-label="가격"
               type="text"
               inputMode="numeric"
               placeholder="숫자만 입력해 주세요"
@@ -199,9 +199,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
             </p>
           </div>
           <div className="market-post-create-form__field">
-            <label htmlFor="market-post-region">거래 지역</label>
             <input
               id="market-post-region"
+              aria-label="거래 지역"
               type="text"
               placeholder="예: 대구 북구"
               value={region}
@@ -216,9 +216,9 @@ function MarketPostCreateForm({ initialValues = {}, initialImageUrl = '', isEdit
             </p>
           </div>
           <div className="market-post-create-form__field market-post-create-form__field--content">
-            <label htmlFor="market-post-content">상세 설명</label>
             <textarea
               id="market-post-content"
+              aria-label="상세 설명"
               placeholder="상품 상태와 거래 방법을 알려주세요."
               value={content}
               onChange={(event) => setContent(event.target.value)}

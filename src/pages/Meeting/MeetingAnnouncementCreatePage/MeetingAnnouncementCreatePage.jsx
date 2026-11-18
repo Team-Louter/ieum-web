@@ -13,7 +13,7 @@ export default function MeetingAnnouncementCreatePage({ initialValues = {}, onSu
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/meeting';
   const menuItems = [
     { label: '모임 보기', href: '/meeting', isActive: currentPath === '/meeting' },
-    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') },
+    { label: '내 모임', href: '/meeting/my', isActive: currentPath.startsWith('/meeting/my') || currentPath.startsWith('/meeting/management') },
     { label: '모임 만들기', href: '/meeting/make', isActive: currentPath === '/meeting/make' },
   ];
 

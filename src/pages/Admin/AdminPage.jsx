@@ -31,24 +31,12 @@ function AdminPage() {
     adminSession.set(result.accessToken);
   }
 
-  async function lock() {
-    try {
-      await adminApi.logout();
-    } catch {
-      // 서버 세션 종료에 실패해도 이 브라우저의 토큰은 지웁니다.
-    }
-    adminSession.clear();
-  }
-
   if (!isAuthed) return <AdminLogin onSubmit={login} />;
 
   return (
     <div className="admin-page">
       <header className="admin-topbar">
         <h1>이음 관리자</h1>
-        <button type="button" className="admin-button" onClick={lock}>
-          잠그기
-        </button>
       </header>
 
       <nav className="admin-tabs" role="tablist" aria-label="관리 메뉴">

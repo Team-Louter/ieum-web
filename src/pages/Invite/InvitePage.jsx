@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Skeleton from '../../components/common/Skeleton/Skeleton';
 import Layout from '../../components/common/Layout/Layout';
 import './InvitePage.css';
@@ -11,14 +11,17 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  // 가입을 마친 뒤의 상태입니다. 'pending'이면 모임장·관리자의 승인을 기다리는 중입니다.
+  const [joinState, setJoinState] = useState('');
+  const autoLoadedRef = useRef(false);
 
-  async function handleLoad(event) {
-    event?.preventDefault();
-    const trimmedCode = code.trim();
+  async function loadInvite(targetCode) {
+    const trimmedCode = targetCode.trim();
     if (!trimmedCode) return;
     setIsBusy(true);
     setMessage('');
     setIsError(false);
+    setJoinState('');
     try {
       setInvite(await onInviteLoad?.(trimmedCode));
     } catch (error) {
@@ -30,13 +33,32 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
     }
   }
 
+  function handleLoad(event) {
+    event?.preventDefault();
+    return loadInvite(code);
+  }
+
+  // 주소에 코드가 들어 있으면(/invite?code=...) 직접 열거나 새로고침해도 바로 모임 정보를 보여줍니다.
+  useEffect(() => {
+    if (autoLoadedRef.current || !initialCode.trim()) return;
+    autoLoadedRef.current = true;
+    loadInvite(initialCode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function handleJoin() {
     setIsBusy(true);
     setMessage('');
     setIsError(false);
     try {
-      await onInviteJoin?.(code.trim());
-      onNavigate?.('/meeting/my');
+      const membership = await onInviteJoin?.(code.trim());
+      const status = String(membership?.status ?? membership?.membershipStatus ?? '').toUpperCase();
+      if (status === 'PENDING' || (!status && invite?.approvalRequired)) {
+        // 승인제 모임은 바로 들어가지 못하므로 이 화면에서 가입 대기 중임을 알려줍니다.
+        setJoinState('pending');
+      } else {
+        onNavigate?.('/meeting/my');
+      }
     } catch (error) {
       setMessage(error?.message ?? '모임에 가입하지 못했습니다.');
       setIsError(true);
@@ -78,9 +100,19 @@ function InvitePage({ onInviteLoad, onInviteJoin, onNavigate }) {
               {invite.approvalRequired ? '가입 승인제' : '바로 가입'}
               {invite.isPrivate ? ' · 비공개' : ''}
             </p>
-            <button type="button" onClick={handleJoin} disabled={isBusy}>
-              {invite.approvalRequired ? '가입 신청하기' : '가입하기'}
-            </button>
+            {joinState === 'pending' ? (
+              <>
+                <p className="invite-page__pending" role="status">가입 승인 대기 중</p>
+                <p>모임장이나 관리자가 승인하면 모임에 들어갈 수 있어요.</p>
+                <button type="button" onClick={() => onNavigate?.('/meeting/my')}>
+                  내 모임 보기
+                </button>
+              </>
+            ) : (
+              <button type="button" onClick={handleJoin} disabled={isBusy}>
+                {invite.approvalRequired ? '가입 신청하기' : '가입하기'}
+              </button>
+            )}
           </div>
         )}
         {message && (

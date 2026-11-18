@@ -273,6 +273,7 @@ function SettingAccountPage({
 
       {isLeaveConfirmOpen && (
         <ConfirmationModal
+          title="나가기"
           message="정말 나가시겠습니까? 입력한 내용은 저장되지 않습니다."
           confirmLabel="나가기"
           cancelLabel="계속 변경하기"

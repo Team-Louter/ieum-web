@@ -23,7 +23,10 @@ function MyProfileInfo({ profile = {} }) {
         }}
       />
       <div className="my-profile-info__text">
-        <p>{displayName}</p>
+        <p>
+          <span>{displayName}</span>
+          {profile.id && <small>@{profile.id}</small>}
+        </p>
         <p>{introduction?.trim() || '내 소개가 없습니다'}</p>
         <div className="my-profile-info__stats">
           <p>게시물 {formatCount(postCount)}</p>

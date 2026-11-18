@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import SettingItem from '../../../components/setting/SettingItem/SettingItem';
+import Skeleton from '../../../components/common/Skeleton/Skeleton';
 import SettingDialog from '../../../components/setting/SettingDialog/SettingDialog';
 import EmptyState from '../../../components/common/EmptyState/EmptyState';
-import { announcementApi, profileApi, supportApi } from '../../../api/client';
+import { profileApi, supportApi } from '../../../api/client';
 import { formatKoreanDateTime } from '../../../utils/dateTime';
 import './SettingSupportPage.css';
 
@@ -37,6 +38,7 @@ function SettingSupportPage({ accountEmail = '' }) {
   const [inquiries, setInquiries] = useState([]);
   const [listState, setListState] = useState('loading');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [defaultEmail, setDefaultEmail] = useState(accountEmail);
   const [category, setCategory] = useState(INQUIRY_CATEGORIES[0]);
   const [subject, setSubject] = useState('');
@@ -46,9 +48,8 @@ function SettingSupportPage({ accountEmail = '' }) {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [questions, setQuestions] = useState(defaultQuestions);
-  const [features, setFeatures] = useState([]);
 
-  // FAQ와 새로운 기능 소식은 관리자가 등록한 내용을 보여 줍니다.
+  // FAQ는 관리자가 등록한 내용을 보여 줍니다.
   useEffect(() => {
     let isActive = true;
     supportApi
@@ -56,13 +57,6 @@ function SettingSupportPage({ accountEmail = '' }) {
       .then((response) => {
         const list = Array.isArray(response) ? response : response?.items;
         if (isActive && Array.isArray(list) && list.length > 0) setQuestions(list);
-      })
-      .catch(() => {});
-    announcementApi
-      .features()
-      .then((response) => {
-        const list = Array.isArray(response) ? response : response?.items;
-        if (isActive && Array.isArray(list)) setFeatures(list);
       })
       .catch(() => {});
     return () => {
@@ -149,24 +143,6 @@ function SettingSupportPage({ accountEmail = '' }) {
         </div>
       </SettingItem>
 
-      {features.length > 0 && (
-        <SettingItem
-          title="새로운 기능"
-          description="이음에 새로 생긴 기능을 소개합니다."
-          className="setting-support-page__card"
-        >
-          <ul className="setting-support-page__features">
-            {features.map((feature) => (
-              <li key={feature.id}>
-                <strong>{feature.title}</strong>
-                <p>{feature.content}</p>
-                <small>{formatKoreanDateTime(feature.publishedAt ?? feature.createdAt)}</small>
-              </li>
-            ))}
-          </ul>
-        </SettingItem>
-      )}
-
       <SettingItem
         title="문의하기"
         description="궁금한 점이나 불편한 점을 남겨 주세요."
@@ -180,40 +156,61 @@ function SettingSupportPage({ accountEmail = '' }) {
       <SettingItem
         title="내 문의 내역"
         description="접수한 문의를 확인할 수 있습니다."
+        actionLabel="내역 보기"
+        onAction={() => setIsHistoryOpen(true)}
         className="setting-support-page__card"
-      >
-        {listState === 'error' ? (
-          <p role="alert">문의 내역을 불러오지 못했습니다.</p>
-        ) : listState === 'ready' && inquiries.length === 0 ? (
-          <EmptyState
-            compact
-            title="접수한 문의가 없어요"
-            description="문의를 남기면 이곳에서 접수 내역을 확인할 수 있어요."
-          />
-        ) : (
-          <ul className="setting-support-page__inquiries">
-            {inquiries.map((inquiry) => (
-              <li key={inquiry.id}>
-                <div>
-                  <strong>{inquiry.subject}</strong>
-                  <span>{statusLabels[inquiry.status] ?? inquiry.status}</span>
+      />
+
+      {isHistoryOpen && (
+        <SettingDialog
+          title="내 문의 내역"
+          description="접수한 문의를 확인할 수 있습니다."
+          className="setting-support-page__inquiry-dialog"
+          onClose={() => setIsHistoryOpen(false)}
+        >
+        {listState === 'loading' ? (
+        <ul className="setting-support-page__inquiries" role="status" aria-busy="true" aria-label="문의 내역을 불러오는 중입니다.">
+          {[0, 1].map((row) => (
+            <li key={row}>
+              <Skeleton text width="55%" height="18px" />
+              <Skeleton text width="90%" height="14px" />
+              <Skeleton text width="35%" height="12px" />
+            </li>
+          ))}
+        </ul>
+      ) : listState === 'error' ? (
+        <p role="alert">문의 내역을 불러오지 못했습니다.</p>
+      ) : listState === 'ready' && inquiries.length === 0 ? (
+        <EmptyState
+          compact
+          title="궁금한 점을 문의해보세요"
+          description="문의를 남기면 이곳에서 접수 내역을 확인할 수 있어요."
+        />
+      ) : (
+        <ul className="setting-support-page__inquiries">
+          {inquiries.map((inquiry) => (
+            <li key={inquiry.id}>
+              <div>
+                <strong>{inquiry.subject}</strong>
+                <span>{statusLabels[inquiry.status] ?? inquiry.status}</span>
+              </div>
+              <p>{inquiry.message}</p>
+              {inquiry.reply && (
+                <div className="setting-support-page__reply">
+                  <strong>답변</strong>
+                  <p>{inquiry.reply}</p>
+                  {inquiry.repliedAt && <small>{formatKoreanDateTime(inquiry.repliedAt)}</small>}
                 </div>
-                <p>{inquiry.message}</p>
-                {inquiry.reply && (
-                  <div className="setting-support-page__reply">
-                    <strong>답변</strong>
-                    <p>{inquiry.reply}</p>
-                    {inquiry.repliedAt && <small>{formatKoreanDateTime(inquiry.repliedAt)}</small>}
-                  </div>
-                )}
-                <small>
-                  {inquiry.category} · {formatKoreanDateTime(inquiry.createdAt)}
-                </small>
-              </li>
-            ))}
-          </ul>
-        )}
-      </SettingItem>
+              )}
+              <small>
+                {inquiry.category} · {formatKoreanDateTime(inquiry.createdAt)}
+              </small>
+            </li>
+          ))}
+        </ul>
+      )}
+        </SettingDialog>
+      )}
 
       {isDialogOpen && (
         <SettingDialog

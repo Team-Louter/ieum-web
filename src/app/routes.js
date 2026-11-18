@@ -36,6 +36,8 @@ export const pageRoutes = {
   '/myProfile/friends': MyProfilePageFriend,
   '/friends/location': FriendLocationPage,
   '/addfriend': AddFriendPage,
+  '/addfriend/friends': AddFriendPage,
+  '/addfriend/requests': AddFriendPage,
   '/neighbor': NeighborFeedPage,
   '/neighbor/my': NeighborMyPostsPage,
   '/neighbor/create': NeighborCreatePostPage,

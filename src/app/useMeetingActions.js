@@ -15,6 +15,9 @@ function getMeetingUpdateRequest(values) {
     name: values.title ?? values.name ?? '',
     description: values.description ?? '',
     region: values.region ?? '',
+    // 가입 승인·비공개도 함께 보내야 저장 후에 설정이 되돌아가지 않습니다.
+    approvalRequired: Boolean(values.requireApproval ?? values.approvalRequired),
+    isPrivate: Boolean(values.isPrivate ?? values.private),
   };
 }
 
@@ -90,6 +93,13 @@ export default function useMeetingActions({ runAction, movePage }) {
       return runAction(
         () => meetingApi.approveMember(meetingId, userId),
         '모임 가입을 승인했습니다.',
+      );
+    }
+    if (action === '가입 거부') {
+      // 가입 요청을 거부하는 전용 API가 없어 회원 삭제 API로 요청을 지웁니다.
+      return runAction(
+        () => meetingApi.removeMember(meetingId, userId),
+        '가입 요청을 거부했습니다.',
       );
     }
     if (action === '관리자 임명') {

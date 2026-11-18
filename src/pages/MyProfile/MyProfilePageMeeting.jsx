@@ -1,3 +1,4 @@
+import { ProfileContentSkeleton } from '../../components/common/PageSkeleton/PageSkeleton';
 import './MyProfilePageMeeting.css';
 import MyProfileInfo from '../../components/myProfile/MyProfileInfo/MyProfileInfo';
 import Layout from '../../components/common/Layout/Layout';
@@ -43,11 +44,13 @@ function MyProfilePageMeeting({
             ))
           ) : isEmpty ? (
             <EmptyState
-              title="참여 중인 모임이 없어요"
+              title="모임에 참여해보세요"
               description="모임에 가입하면 내 프로필에 표시돼요."
               actionLabel="모임 목록 보기"
               onAction={() => onNavigate?.('/meeting')}
             />
+          ) : isLoading ? (
+            <ProfileContentSkeleton />
           ) : null}
         </div>
       </div>

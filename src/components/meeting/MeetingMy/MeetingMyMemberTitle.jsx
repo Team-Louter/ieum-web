@@ -1,13 +1,13 @@
 import './MeetingMyMemberTitle.css';
 import { useNavigate } from 'react-router-dom';
 
-export default function MeetingMyMemberTitle({ HowManyUser, onMore, meetingId, showMore = true }) {
+export default function MeetingMyMemberTitle({ HowManyUser, onMore, meetingId, showMore = true, title = '회원' }) {
   const navigate = useNavigate();
 
   return (
     <div>
       <div className="member-header">
-        <p className="member-title">회원 ({HowManyUser ?? 0}명)</p>
+        <p className="member-title">{title} ({HowManyUser ?? 0}명)</p>
         {showMore && (
           <button
             className="member-more"

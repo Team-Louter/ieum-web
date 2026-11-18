@@ -321,11 +321,12 @@ function NotificationsPage({
             )}
           </>
         ) : !displayError ? (
-          <EmptyState title="새 알림이 없어요" description="알림이 오면 이곳에서 확인할 수 있어요." />
+          <EmptyState title="알림이 오면 여기에 표시돼요" description="알림이 오면 이곳에서 확인할 수 있어요." />
         ) : null}
       </section>
       {isDeleteAllOpen && (
         <ConfirmationModal
+          title="알림 모두 삭제"
           message="알림을 모두 삭제할까요? 아직 불러오지 않은 알림도 함께 삭제돼요."
           confirmLabel="모두 삭제"
           onCancel={() => setIsDeleteAllOpen(false)}

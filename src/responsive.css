@@ -173,8 +173,7 @@ video {
   .login-page .links,
   .login-page .signup-group,
   .signup-page .signup-form,
-  .neighbor-post-create-form__submit,
-  .modal-box {
+  .neighbor-post-create-form__submit {
     width: calc(100% - 32px);
     max-width: 100%;
   }
@@ -219,12 +218,7 @@ video {
   .neighbor-post-create-form__text-fields > div,
   .neighbor-post-create-form__text-fields > div > input,
   .neighbor-post-create-form__text-fields > div > textarea,
-  .profile-action-buttons > button,
-  .modal-box form,
-  .modal-result,
-  .modal-email-row,
-  .modal-email-row input,
-  .modal-login-btn {
+  .profile-action-buttons > button {
     width: 100%;
     max-width: 100%;
   }
@@ -322,22 +316,6 @@ video {
     aspect-ratio: 1;
   }
 
-  /* 터치 화면에는 hover가 없어서 수정/삭제 버튼을 사진 아래에 항상 보여줍니다. */
-  .market-my-post-card__button-container {
-    position: static;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    background: none;
-  }
-
-  .market-my-post-card__button-container > button {
-    height: 34px;
-    font-size: var(--font-size-small);
-    white-space: nowrap;
-  }
 }
 
 @media (max-width: 768px) {

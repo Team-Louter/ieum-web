@@ -27,7 +27,7 @@
   align-items: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  padding: 20px;
+  padding: 0;
   overflow: hidden;
   border: 2px solid #dfdfdf;
   border-radius: 14px;
@@ -86,7 +86,7 @@
 
 .market-post-create-form__text-fields {
   display: grid;
-  grid-template-rows: repeat(3, auto) minmax(180px, 1fr);
+  grid-template-rows: repeat(3, auto) minmax(120px, 1fr);
   align-content: stretch;
   gap: 16px;
   min-width: 0;
@@ -97,6 +97,11 @@
   min-width: 0;
   flex-direction: column;
   gap: 8px;
+}
+
+/* 글자가 없는 인풋 아래 에러 문구가 빈 칸을 차지하지 않게 합니다. */
+.market-post-create-form__field--content {
+  min-height: 0;
 }
 
 .market-post-create-form__field > label {
@@ -126,7 +131,7 @@
 
 .market-post-create-form__field > textarea {
   flex: 1;
-  min-height: 180px;
+  min-height: 120px;
   padding: 14px 16px;
   line-height: 1.5;
   resize: none;

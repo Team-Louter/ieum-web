@@ -7,7 +7,7 @@ function SettingGuardianList({
   isEditing = false,
   isBusy = false,
   onRemove,
-  emptyMessage = '연결된 보호자/어르신이 없습니다.',
+  emptyMessage = '연결하면 복약 상태와 위치를 함께 확인할 수 있어요.',
   isLoading = false,
   apiError = '',
 }) {
@@ -18,7 +18,7 @@ function SettingGuardianList({
       <EmptyState
         compact
         className="setting-guardian-list__empty"
-        title="연결된 계정이 없어요"
+        title="가족 계정을 연결해보세요"
         description={emptyMessage}
       />
     );

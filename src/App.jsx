@@ -1,9 +1,11 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar/Sidebar';
+import AdminFallback from './pages/Admin/AdminFallback';
 import PageSkeleton, { getSkeletonVariant } from './components/common/PageSkeleton/PageSkeleton';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { profileApi, resolveApiAssetUrl, userApi } from './api/client';
+import { toCommunityPost } from './api/adapters';
 import useAuthSession from './hooks/useAuthSession';
 import useChatUnreadCount from './hooks/useChatUnreadCount';
 import useNotifications from './hooks/useNotifications';
@@ -20,6 +22,7 @@ import {
   defaultSelectedPost,
   defaultSettings,
 } from './app/constants';
+import { rememberInvitePath } from './utils/postLoginRedirect';
 import { getRouteId, getRouteKey, pageRoutes, publicRoutes } from './app/routes';
 import './App.css';
 
@@ -106,7 +109,7 @@ function AppContent({ accessToken, setAccessToken }) {
     : routeKey.startsWith('/profile')
       ? '/profile'
       : routeKey;
-  const { data, error, loading, initialLoading, user } = usePageApiData({
+  const { data, error, loading, initialLoading, user, patchData } = usePageApiData({
     path: dataPath,
     selectedId,
     activeChatRoomId,
@@ -163,7 +166,8 @@ function AppContent({ accessToken, setAccessToken }) {
   }
 
   // API 작업의 성공/실패 알림과 데이터 새로고침을 공통 처리합니다.
-  async function runAction(action, successMessage) {
+  // applyResult가 true를 돌려주면 응답을 화면에 직접 반영한 것이라 목록을 다시 불러오지 않습니다.
+  async function runAction(action, successMessage, { applyResult } = {}) {
     try {
       const result = await action();
       const message =
@@ -175,7 +179,7 @@ function AppContent({ accessToken, setAccessToken }) {
         setFeedback(message);
         setFeedbackIsError(false);
       }
-      setReloadKey((value) => value + 1);
+      if (applyResult?.(result) !== true) setReloadKey((value) => value + 1);
       return result;
     } catch (actionError) {
       setFeedback(actionError?.message ?? '요청에 실패했습니다.');
@@ -207,7 +211,22 @@ function AppContent({ accessToken, setAccessToken }) {
 
   const meetingActions = useMeetingActions({ runAction, movePage });
 
-  const postActions = usePostActions({ runAction, movePage });
+  // 응답으로 받은 게시물 하나만 목록에서 바꿉니다. 게시물 모양이 아니면 false를 돌려 목록을 다시 불러옵니다.
+  function patchPost(result) {
+    const isPost = result && typeof result === 'object' && result.id != null && 'title' in result;
+    if (!isPost || !(data.posts ?? []).some((post) => String(post.id) === String(result.id))) {
+      return false;
+    }
+    patchData((current) => ({
+      ...current,
+      posts: (current.posts ?? []).map((post) =>
+        String(post.id) === String(result.id) ? toCommunityPost(result) : post,
+      ),
+    }));
+    return true;
+  }
+
+  const postActions = usePostActions({ runAction, movePage, patchPost });
 
   // 화면 컴포넌트에 전달할 데이터와 클릭 동작을 한곳에 모읍니다.
   const submitHandlers = {
@@ -258,6 +277,7 @@ function AppContent({ accessToken, setAccessToken }) {
     friends: data.friends ?? [],
     friendRequests: data.friendRequests ?? [],
     posts: data.posts ?? [],
+    postsHasNext: Boolean(data.postsHasNext),
     meetings: data.meetings ?? [],
     meeting: data.meeting ?? location.state?.meeting ?? defaultMeeting,
     meetingId: selectedId,
@@ -299,7 +319,7 @@ function AppContent({ accessToken, setAccessToken }) {
     onDelete: (meetingId) => meetingActions.deleteMeeting(meetingId).catch(() => {}),
     onMemberAction: (member, action) =>
       meetingActions.handleMemberAction(selectedId, member, action).catch(() => {}),
-    onInviteCreate: () => meetingActions.createInvite(selectedId),
+    onInviteCreate: (meetingId) => meetingActions.createInvite(meetingId ?? selectedId),
     onInviteLoad: meetingActions.loadInvite,
     onInviteJoin: meetingActions.joinByInvite,
     onAnnouncementCreate: (meetingId) =>
@@ -351,6 +371,7 @@ function AppContent({ accessToken, setAccessToken }) {
 
   // 로그인하지 않았다면 서비스 화면 대신 로그인 화면으로 보냅니다.
   if (!publicRoutes.includes(routeKey) && !accessToken) {
+    rememberInvitePath(currentPath, location.search);
     return <Navigate to="/login" replace />;
   }
 
@@ -418,7 +439,7 @@ function SessionApp() {
   const path = location.pathname.replace(/\/$/, '') || '/login';
   if (path === '/admin') {
     return (
-      <Suspense fallback={null}>
+      <Suspense fallback={<AdminFallback />}>
         <AdminPage />
       </Suspense>
     );
@@ -434,7 +455,11 @@ function SessionApp() {
           </button>
         </div>
       );
-    if (!session.accessToken) return <Navigate to="/login" replace />;
+    if (!session.accessToken) {
+      // 초대 링크로 들어왔다면 로그인 뒤에 이 화면으로 돌아오도록 기억해 둡니다.
+      rememberInvitePath(path, location.search);
+      return <Navigate to="/login" replace />;
+    }
   }
   return <AppContent accessToken={session.accessToken} setAccessToken={session.setAccessToken} />;
 }

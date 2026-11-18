@@ -26,6 +26,7 @@ const settingMenuGroups = [
 ];
 
 function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) {
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   return (
@@ -55,7 +56,7 @@ function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) 
       ))}
 
       <div className="setting-sidebar__account-actions">
-        <button className="setting-sidebar__account-action" type="button" onClick={onLogout}>
+        <button className="setting-sidebar__account-action" type="button" onClick={() => setIsLogoutConfirmOpen(true)}>
           <img src={logoutIcon} alt="로그아웃 아이콘" />
           로그아웃 하기
         </button>
@@ -68,10 +69,25 @@ function SettingSidebar({ activeSection, onSelect, onLogout, onAccountDelete }) 
           계정 삭제하기
         </button>
       </div>
+      {isLogoutConfirmOpen && (
+        <ConfirmationModal
+          title="로그아웃"
+          message="로그아웃 하시겠습니까?"
+          confirmLabel="로그아웃"
+          cancelLabel="취소"
+          onCancel={() => setIsLogoutConfirmOpen(false)}
+          onConfirm={() => {
+            setIsLogoutConfirmOpen(false);
+            onLogout?.();
+          }}
+        />
+      )}
       {isDeleteConfirmOpen && (
         <ConfirmationModal
+          title="계정 삭제"
           message="계정을 삭제하시겠습니까? 삭제한 계정은 되돌릴 수 없습니다."
           confirmLabel="계정 삭제"
+          cancelLabel="취소"
           onCancel={() => setIsDeleteConfirmOpen(false)}
           onConfirm={() => {
             setIsDeleteConfirmOpen(false);
