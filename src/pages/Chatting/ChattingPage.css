@@ -189,12 +189,6 @@
 }
 
 .chat-message-content {
-    -webkit-touch-callout: none;
-    user-select: none;
-  }
-}
-
-.chat-message-content {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
