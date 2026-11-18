@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import AdminListSkeleton from './AdminSkeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import ActionModal from '../../components/common/ActionModal/ActionModal';
+import AdminModal from './AdminModal';
 import { adminApi } from '../../api/client';
 import { formatAdminDay, toList } from './adminFormat';
 
@@ -92,7 +95,7 @@ function AdminFeatures() {
   }
 
   const formView = (
-    <form className="admin-form admin-form--inline" onSubmit={submit}>
+    <form className="admin-form admin-form--modal" onSubmit={submit}>
       <label className="admin-field">
         제목
         <input
@@ -143,10 +146,27 @@ function AdminFeatures() {
       </header>
 
       {editingId === null && errorMessage && <p className="admin-error" role="alert">{errorMessage}</p>}
-      {editingId === 'new' && formView}
+      {editingId !== null && (
+        <AdminModal title={editingId === 'new' ? '소식 등록' : '소식 수정'} onClose={close}>
+          {formView}
+        </AdminModal>
+      )}
+
+      {deleteId !== null && (
+        <ActionModal
+          title="소식 삭제"
+          text={`"${features.find((item) => item.id === deleteId)?.title ?? ''}"을(를) 삭제할까요? 사용자 화면에서도 사라집니다.`}
+          danger
+          primaryLabel="삭제"
+          secondaryLabel="취소"
+          isBusy={busy}
+          onPrimary={() => remove(deleteId)}
+          onClose={() => setDeleteId(null)}
+        />
+      )}
 
       {listState === 'loading' ? (
-        <p className="admin-hint" role="status">불러오는 중입니다.</p>
+        <AdminListSkeleton />
       ) : listState === 'error' ? (
         <div role="alert">
           <p className="admin-error">소식을 불러오지 못했습니다.</p>
@@ -154,60 +174,38 @@ function AdminFeatures() {
             다시 시도
           </button>
         </div>
-      ) : features.length === 0 && editingId !== 'new' ? (
+      ) : features.length === 0 ? (
         <EmptyState compact title="등록된 소식이 없어요" description="소식 등록 버튼으로 새 기능을 알려 보세요." />
       ) : (
         <ul className="admin-list">
           {features.map((item) => (
             <li key={item.id} className="admin-list__item">
-              {editingId === item.id ? (
-                formView
-              ) : (
-                <>
-                  <div className="admin-list__body">
-                    <strong>
-                      {item.title}
-                      <span className={`admin-badge ${item.visible ? 'admin-badge--answered' : 'admin-badge--hidden'}`}>
-                        {item.visible ? '공개' : '비공개'}
-                      </span>
-                    </strong>
-                    <p>{item.content}</p>
-                    <small>{formatAdminDay(item.publishedAt ?? item.createdAt)}</small>
-                  </div>
-                  <div className="admin-list__actions">
-                    <button
-                      type="button"
-                      className="admin-button"
-                      disabled={busy}
-                      onClick={() => toggleVisibility(item)}
-                    >
-                      {item.visible ? '비공개로' : '공개로'}
-                    </button>
-                    <button type="button" className="admin-button" onClick={() => openEdit(item)}>
-                      수정
-                    </button>
-                    {deleteId === item.id ? (
-                      <>
-                        <button
-                          type="button"
-                          className="admin-button admin-button--danger"
-                          disabled={busy}
-                          onClick={() => remove(item.id)}
-                        >
-                          정말 삭제
-                        </button>
-                        <button type="button" className="admin-button" onClick={() => setDeleteId(null)}>
-                          취소
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" className="admin-button" onClick={() => setDeleteId(item.id)}>
-                        삭제
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
+              <div className="admin-list__body">
+                <strong>
+                  {item.title}
+                  <span className={`admin-badge ${item.visible ? 'admin-badge--answered' : 'admin-badge--hidden'}`}>
+                    {item.visible ? '공개' : '비공개'}
+                  </span>
+                </strong>
+                <p>{item.content}</p>
+                <small>{formatAdminDay(item.publishedAt ?? item.createdAt)}</small>
+              </div>
+              <div className="admin-list__actions">
+                <button
+                  type="button"
+                  className="admin-button"
+                  disabled={busy}
+                  onClick={() => toggleVisibility(item)}
+                >
+                  {item.visible ? '비공개로' : '공개로'}
+                </button>
+                <button type="button" className="admin-button" onClick={() => openEdit(item)}>
+                  수정
+                </button>
+                <button type="button" className="admin-button" onClick={() => setDeleteId(item.id)}>
+                    삭제
+                  </button>
+              </div>
             </li>
           ))}
         </ul>

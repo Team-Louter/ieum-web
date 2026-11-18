@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import AdminListSkeleton from './AdminSkeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { adminApi } from '../../api/client';
 import { INQUIRY_STATUS, formatAdminDate, toList } from './adminFormat';
@@ -141,7 +142,7 @@ function AdminInquiries() {
         </div>
 
         {listState === 'loading' ? (
-          <p className="admin-hint" role="status">불러오는 중입니다.</p>
+          <AdminListSkeleton />
         ) : listState === 'error' ? (
           <div role="alert">
             <p className="admin-error">문의 내역을 불러오지 못했습니다.</p>

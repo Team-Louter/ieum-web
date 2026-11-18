@@ -8,7 +8,8 @@
 .my-profile-info > img {
   width: 136px;
   height: 136px;
-  border-radius: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .my-profile-info__text {
@@ -49,4 +50,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 닉네임 아래에 아이디를 작게 보여 줍니다. */
+.my-profile-info__text > p:nth-child(1) > span,
+.my-profile-info__text > p:nth-child(1) > small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.my-profile-info__text > p:nth-child(1) > small {
+  margin-top: 4px;
+  color: #777;
+  font-size: var(--font-size-small);
+  font-weight: 400;
 }

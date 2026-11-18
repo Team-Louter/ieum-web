@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import AdminListSkeleton from './AdminSkeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import ActionModal from '../../components/common/ActionModal/ActionModal';
+import AdminModal from './AdminModal';
 import { adminApi } from '../../api/client';
 import { toList } from './adminFormat';
 
@@ -81,7 +84,7 @@ function AdminFaqs() {
   }
 
   const formView = (
-    <form className="admin-form admin-form--inline" onSubmit={submit}>
+    <form className="admin-form admin-form--modal" onSubmit={submit}>
       <label className="admin-field">
         질문
         <input
@@ -124,10 +127,27 @@ function AdminFaqs() {
       </header>
 
       {editingId === null && errorMessage && <p className="admin-error" role="alert">{errorMessage}</p>}
-      {editingId === 'new' && formView}
+      {editingId !== null && (
+        <AdminModal title={editingId === 'new' ? '질문 추가' : '질문 수정'} onClose={close}>
+          {formView}
+        </AdminModal>
+      )}
+
+      {deleteId !== null && (
+        <ActionModal
+          title="질문 삭제"
+          text={`"${faqs.find((item) => item.id === deleteId)?.question ?? ''}"을(를) 삭제할까요? 사용자 화면에서도 사라집니다.`}
+          danger
+          primaryLabel="삭제"
+          secondaryLabel="취소"
+          isBusy={busy}
+          onPrimary={() => remove(deleteId)}
+          onClose={() => setDeleteId(null)}
+        />
+      )}
 
       {listState === 'loading' ? (
-        <p className="admin-hint" role="status">불러오는 중입니다.</p>
+        <AdminListSkeleton />
       ) : listState === 'error' ? (
         <div role="alert">
           <p className="admin-error">질문을 불러오지 못했습니다.</p>
@@ -135,46 +155,24 @@ function AdminFaqs() {
             다시 시도
           </button>
         </div>
-      ) : faqs.length === 0 && editingId !== 'new' ? (
+      ) : faqs.length === 0 ? (
         <EmptyState compact title="등록된 질문이 없어요" description="질문 추가 버튼으로 첫 질문을 등록해 보세요." />
       ) : (
         <ul className="admin-list">
           {faqs.map((item) => (
             <li key={item.id} className="admin-list__item">
-              {editingId === item.id ? (
-                formView
-              ) : (
-                <>
-                  <div className="admin-list__body">
-                    <strong>{item.question}</strong>
-                    <p>{item.answer}</p>
-                  </div>
-                  <div className="admin-list__actions">
-                    <button type="button" className="admin-button" onClick={() => openEdit(item)}>
-                      수정
-                    </button>
-                    {deleteId === item.id ? (
-                      <>
-                        <button
-                          type="button"
-                          className="admin-button admin-button--danger"
-                          disabled={busy}
-                          onClick={() => remove(item.id)}
-                        >
-                          정말 삭제
-                        </button>
-                        <button type="button" className="admin-button" onClick={() => setDeleteId(null)}>
-                          취소
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" className="admin-button" onClick={() => setDeleteId(item.id)}>
-                        삭제
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
+              <div className="admin-list__body">
+                <strong>{item.question}</strong>
+                <p>{item.answer}</p>
+              </div>
+              <div className="admin-list__actions">
+                <button type="button" className="admin-button" onClick={() => openEdit(item)}>
+                  수정
+                </button>
+                <button type="button" className="admin-button" onClick={() => setDeleteId(item.id)}>
+                    삭제
+                  </button>
+              </div>
             </li>
           ))}
         </ul>
