@@ -1,3 +1,25 @@
 .common-button:disabled {
   cursor: wait;
 }
+
+/* 처리 중에는 글자를 숨기되 자리는 그대로 두어 버튼 크기가 변하지 않게 하고, 그 위에 점을 띄웁니다. */
+.common-button.is-loading {
+  position: relative;
+}
+
+.common-button__content {
+  visibility: hidden;
+}
+
+.common-button__dots {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 처리 중에는 흐려지지 않고 원래 색 그대로 점만 움직입니다. (페이지별 :disabled 흐림 규칙보다 우선) */
+.common-button.is-loading:disabled {
+  opacity: 1;
+}

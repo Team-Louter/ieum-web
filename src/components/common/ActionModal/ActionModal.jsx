@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import './ActionModal.css';
+import LoadingDots from '../LoadingDots/LoadingDots';
 
 /**
  * 제목, 안내 문구, 닫기(X) 버튼과 버튼 두 개(주요 / 보조)가 있는 공용 모달입니다.
@@ -69,7 +70,16 @@ function ActionModal({
             onClick={onPrimary}
             disabled={isBusy}
           >
-            {primaryLabel}
+            {isBusy ? (
+              <>
+                <span style={{ visibility: 'hidden' }}>{primaryLabel}</span>
+                <span className="action-modal__busy">
+                  <LoadingDots />
+                </span>
+              </>
+            ) : (
+              primaryLabel
+            )}
           </button>
           <button type="button" className="action-modal__button" onClick={onClose}>
             {secondaryLabel}

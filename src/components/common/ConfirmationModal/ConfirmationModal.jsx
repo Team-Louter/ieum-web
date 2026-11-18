@@ -1,4 +1,5 @@
 import ActionModal from '../ActionModal/ActionModal';
+import useSubmitOnce from '../../../hooks/useSubmitOnce';
 
 /**
  * 삭제 같은 되돌릴 수 없는 작업을 확인하는 공용 모달입니다. 문구와 버튼 이름만 바꿔 재사용합니다.
@@ -14,6 +15,9 @@ function ConfirmationModal({
   onCancel,
   onConfirm,
 }) {
+  // onConfirm이 서버 요청(Promise)이면 끝날 때까지 한 번만 실행되고 버튼에 점이 움직입니다.
+  const [handleConfirm, isBusy] = useSubmitOnce(() => onConfirm?.());
+
   return (
     <ActionModal
       title={title ?? message}
@@ -21,7 +25,8 @@ function ConfirmationModal({
       primaryLabel={confirmLabel}
       secondaryLabel={cancelLabel}
       danger={danger}
-      onPrimary={onConfirm}
+      onPrimary={handleConfirm}
+      isBusy={isBusy}
       onClose={onCancel}
     />
   );
