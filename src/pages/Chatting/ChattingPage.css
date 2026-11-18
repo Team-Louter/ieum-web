@@ -235,11 +235,13 @@
   align-items: center;
   align-self: flex-end;
   gap: 6px;
-  max-width: 100%;
+  max-width: 60%;
   margin-bottom: 24px;
 }
 
 .chat-message-row > .message {
+  min-width: 0;
+  max-width: none;
   margin-bottom: 0;
 }
 
@@ -406,6 +408,11 @@
     max-width: 82%;
     margin-bottom: 14px;
     padding: 10px 14px;
+  }
+
+  .chat-message-row {
+    max-width: 82%;
+    margin-bottom: 14px;
   }
 
   .chat-composer {
